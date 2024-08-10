@@ -1,5 +1,5 @@
-require('dotenv').config()
+import dotenv from 'dotenv';
 
-module.exports = {
-    PORT: process.env.PORT || 5000
-}
+dotenv.config();
+
+export const PORT = process.env.PORT || 5000;

@@ -1,13 +1,9 @@
-const { Router } = require('express')
-const usuariosRoutes = require('./usuario.routes')
+import { Router } from 'express';
+import usuariosRoutes from './usuario.routes.js';
 
-const rutas_init = () =>{
-    const router = Router()
+export const rutas_init = () => {
+    const router = Router();
 
-    router.use("/usuarios",usuariosRoutes)
-    return router
-
-
-}
-
-module.exports = { rutas_init }
+    router.use("/usuarios", usuariosRoutes);
+    return router;
+};

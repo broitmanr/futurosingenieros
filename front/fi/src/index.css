@@ -66,3 +66,27 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.tw-follow{
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  font-size: .8rem;
+}
+
+.tw-follow-header{
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tw-follow-avatar{
+  width: 48px;
+  height: 48px;
+  border-radius: 1000px;
+}
+
+.tw-follow-info{
+  display: flex;
+  flex-direction: column;
+}

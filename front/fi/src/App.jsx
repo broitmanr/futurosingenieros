@@ -7,15 +7,21 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        <img src={logo} className="logo" alt="Futuros Ingenieros Logo" />
-      </div>
-      <h1>Futuros Ingenieros</h1>
-      <p className="read-the-docs">
-        Estamos trabajando para vos
-      </p>
-    </>
+    <article className='tw-follow'>
+        <header className='tw-follow-header'>
+            <img className='tw-follow-avatar' src="https://unavatar.io/midudev" />
+            <div className='tw-follow-info'>
+                <strong>Alberto Fernandez</strong>
+                <span>@Albert</span>
+            </div>
+        </header>
+        <aside>
+            <button>
+                Seguir
+            </button>
+        </aside>
+
+    </article>
   )
 }
 

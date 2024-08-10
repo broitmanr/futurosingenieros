@@ -1,7 +1,8 @@
 import express from 'express';
 import { PORT } from './const/globalConstant.js';
-import { rutas_init } from './routes/index.routes.js';
+import {rutas_auth, rutas_init} from './routes/index.routes.js';
 import sequelize from './config/database.js';
+import errorHandler from './middlewares/error.js'
 
 const configuracionApi = async (app) => {
     app.use(express.json());
@@ -9,7 +10,9 @@ const configuracionApi = async (app) => {
 };
 
 const configuracionRouter = async (app) => {
-    app.use('/api/', rutas_init());
+    app.use('/api/', rutas_init())
+    app.use('/',rutas_auth())
+    app.use(errorHandler)
 };
 
 const init = async () => {

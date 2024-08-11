@@ -57,6 +57,6 @@ yarn.lock
 
 #.idea
 .idea/
-back/.env
-back/.gitignore
-.env
+
+/back/.env
+/back/.gitignore

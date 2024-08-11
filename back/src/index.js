@@ -7,6 +7,7 @@ import errorHandler from './middlewares/error.js'
 const configuracionApi = async (app) => {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+    app.use(errorHandler)
 };
 
 const configuracionRouter = async (app) => {

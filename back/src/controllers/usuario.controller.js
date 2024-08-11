@@ -6,8 +6,8 @@ const usuarioController = {
         // Implementación de la función listar
     },
 
-    crear: async (req, res) => {
-        // Implementación de la función crear
+    crear: async (req, res,next) => {
+
     },
 
     prueba: async (req, res) => {

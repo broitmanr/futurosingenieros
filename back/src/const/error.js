@@ -10,5 +10,13 @@ export default {
     'CredencialesInvalidas':{
         code:1002,
         message:'Sus credenciales son invalidas'
-    }
+    },
+    'SesionExpirada':{
+        code:1003,
+        message:'Su sesión ha expirado'
+    },
+    'UsuarioNoAutorizado':{
+        code:1004,
+        message:'El usuario no está autorizado'
+    },
 }

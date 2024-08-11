@@ -1,4 +1,5 @@
 import errors from '../const/error.js'
+import error from "../const/error.js";
 
 export default function (err,req,res,next){
 
@@ -10,9 +11,10 @@ export default function (err,req,res,next){
         }
     }
 
+
     if (err.isJoi){
         let errorType = err.details[0].type
-        let errorKey = 'validationError'
+        let errorKey = 'ValidationError'
 
         if (errorType === 'any.required'){
             errorKey = 'FaltanCampos'
@@ -22,4 +24,6 @@ export default function (err,req,res,next){
         response.error.message = errors[errorKey].message
 
     }
+
+    res.status(200).json(response)
 }

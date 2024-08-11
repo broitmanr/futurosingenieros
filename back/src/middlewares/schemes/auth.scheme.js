@@ -1,7 +1,7 @@
 import Joi from 'joi'
 
 let login = Joi.object({
-    email: Joi.string().email().required(),
+    mail: Joi.string().email().required(),
     password: Joi.string().required()
 })
 

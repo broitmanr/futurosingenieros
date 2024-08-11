@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import usuariosRoutes from './usuario.routes.js';
 import authRoutes from './auth.routes.js';
+import decodeJWT from '../middlewares/decodeJWT.js'
 
 export const rutas_init = () => {
     const router = Router();
 
-    router.use("/usuarios", usuariosRoutes);
+    router.use("/usuarios",decodeJWT, usuariosRoutes);
     return router;
 }
 

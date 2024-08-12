@@ -23,6 +23,15 @@ const DiasEspeciales = sequelize.define('DiasEspeciales', {
   cuentaAsistencia: {
     type: DataTypes.BOOLEAN,
     allowNull: false
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_by: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 }, {
   tableName: 'DiasEspeciales',

@@ -41,6 +41,15 @@ const Entrega = sequelize.define('Entrega', {
       model: Persona,
       key: 'ID'
     }
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_by: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 }, {
   tableName: 'Entrega',

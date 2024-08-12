@@ -22,6 +22,15 @@ const Grupo = sequelize.define('Grupo', {
       model: 'Curso',
       key: 'ID'
     }
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_by: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 }, {
   tableName: 'Grupo',

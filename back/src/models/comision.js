@@ -16,6 +16,15 @@ const Comision = sequelize.define('Comision', {
     allowNull: true,
     defaultValue: 'anio estipulado ejemplo: S21 -> 2',
   },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_by: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  }
 }, {
   tableName: 'Comision',
   timestamps: false,

@@ -14,6 +14,15 @@ const TipoNotificacion = sequelize.define('TipoNotificacion', {
   icono: {
     type: DataTypes.STRING(45),
     allowNull: true
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_by: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 }, {
   tableName: 'TipoNotificacion',

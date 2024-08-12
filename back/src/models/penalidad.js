@@ -28,6 +28,15 @@ const Penalidad = sequelize.define('Penalidad', {
       model: TipoPenalidad,
       key: 'ID'
     }
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_by: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 }, {
   tableName: 'Penalidad',

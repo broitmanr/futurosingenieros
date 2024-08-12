@@ -29,6 +29,15 @@ const Usuario = sequelize.define('Usuario', {
       model: Persona,
       key: 'ID'
     }
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_by: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 }, {
   tableName: 'Usuario',

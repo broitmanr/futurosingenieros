@@ -10,6 +10,15 @@ const TipoPenalidad = sequelize.define('TipoPenalidad', {
   descripcion: {
     type: DataTypes.STRING(300),
     allowNull: false
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_by: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 }, {
   tableName: 'TipoPenalidad',

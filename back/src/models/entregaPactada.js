@@ -35,6 +35,15 @@ const EntregaPactada = sequelize.define('EntregaPactada', {
       model: InstanciaEvaluativa,
       key: 'ID'
     }
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_by: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 }, {
   tableName: 'EntregaPactada',

@@ -28,6 +28,15 @@ const PersonaXCurso = sequelize.define('PersonaXCurso', {
   rol: {
     type: DataTypes.STRING(5),
     allowNull: false
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_by: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 }, {
   tableName: 'PersonaXCurso',

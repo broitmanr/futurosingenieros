@@ -3,6 +3,7 @@ import usuariosRoutes from './usuario.routes.js';
 import authRoutes from './auth.routes.js';
 import decodeJWT from '../middlewares/decodeJWT.js'
 
+
 export const rutas_init = () => {
     const router = Router();
 

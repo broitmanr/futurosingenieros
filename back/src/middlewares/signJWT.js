@@ -4,7 +4,7 @@ import {JWT_SECRET} from '../const/globalConstant.js'
 export default function (usuario){
     if (usuario){
         const token = jwt.sign({
-                id:usuario.ID
+                id:usuario.ID,
             },
             JWT_SECRET,
             {

@@ -3,6 +3,7 @@ import { PORT } from './const/globalConstant.js';
 import {rutas_auth, rutas_init} from './routes/index.routes.js';
 import sequelize from './config/database.js';
 import errorHandler from './middlewares/error.js'
+import cookieParser from 'cookie-parser'
 
 const configuracionApi = async (app) => {
     app.use(express.json());
@@ -11,6 +12,7 @@ const configuracionApi = async (app) => {
 };
 
 const configuracionRouter = async (app) => {
+    app.use(cookieParser())
     app.use('/api/', rutas_init())
     app.use('/',rutas_auth())
     app.use(errorHandler)

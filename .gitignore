@@ -59,4 +59,4 @@ yarn.lock
 .idea/
 
 /back/.env
-/back/.gitignore
+/back/package-lock.json

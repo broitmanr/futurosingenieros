@@ -4,6 +4,7 @@ import errors from '../const/error.js'
 import bcrypt from 'bcryptjs'
 import jwt from '../middlewares/signJWT.js'
 import Persona from '../models/persona.js'
+import rolservice from "../services/rolservice.js";
 
 export default {
     login: async (req,res,next)=>{
@@ -26,6 +27,7 @@ export default {
                 return next(errors.CredencialesInvalidas)
             }
 
+            res.cookie("jwt", jwt(user))
             res.json({
                 success:true,
                 data:{
@@ -53,7 +55,7 @@ export default {
             const user = await usuario.create({
                 mail:req.body.mail,
                 password:req.body.password,
-                rol:req.body.rol,
+                rol:rolservice.rolByMail(req.body.mail) ? 'D' : 'A',
                 persona_id:persona ? persona.ID : null
             })
 

@@ -7,7 +7,6 @@ async function crear(req, res,next) {
 
     // Obtener los datos del cuerpo de la solicitud
     const { cicloLectivo, materia_id, comision_id} = req.body;
-    console.log(cicloLectivo, materia_id,comision_id)
 
     try {
         // Crear un nuevo curso

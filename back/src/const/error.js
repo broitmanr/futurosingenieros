@@ -19,5 +19,9 @@ export default {
         code:1004,
         message:'El usuario no está autorizado'
     },
+    'FaltanParametros':{
+        code:1005,
+        message:"Faltan parametros"
+    }
 
 }

@@ -1,7 +1,7 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database');
-const Materia = require('./materia.js');
-const Comision = require('./comision.js');
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
+import Materia from './materia.js';
+import Comision from './comision.js';
 
 const Curso = sequelize.define('Curso', {
   ID: {
@@ -46,4 +46,4 @@ const Curso = sequelize.define('Curso', {
 Curso.belongsTo(Materia, { foreignKey: 'materia_id' });
 Curso.belongsTo(Comision, { foreignKey: 'comision_id' });
 
-module.exports = Curso;
+export default Curso

@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database');
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
 const Comision = sequelize.define('Comision', {
   ID: {
@@ -30,4 +30,4 @@ const Comision = sequelize.define('Comision', {
   timestamps: false,
 });
 
-module.exports = Comision;
+export default Comision

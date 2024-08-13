@@ -11,6 +11,8 @@ const usuarioController = {
     },
 
     prueba: async (req, res) => {
+
+        console.log(res.locals.usuario)
         try {
 
             // await usuario.findOrCreate({

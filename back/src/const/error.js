@@ -19,4 +19,5 @@ export default {
         code:1004,
         message:'El usuario no está autorizado'
     },
+
 }

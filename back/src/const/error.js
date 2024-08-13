@@ -22,6 +22,9 @@ export default {
     'FaltanParametros':{
         code:1005,
         message:"Faltan parametros"
+    },'UsuarioNoPersona':{
+        code:1006,
+        message:"El usuario no tiene persona asociada"
     }
 
 }

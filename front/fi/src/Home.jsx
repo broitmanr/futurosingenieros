@@ -1,26 +1,32 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 
 function Home(){
     return(
-        <div className="container d-flex flex-column justify-content-center align-items-center" 
+        <div className="home-container d-flex flex-column align-items-center" 
             style={{
-                height: '100vh' //Proporción altura del dispositivo
+                //display: 'flex',
+                //flexDirection: 'column',
+                minHeight: '100vh', 
+                justifyContent: 'center'
             }}>
             <h5 style={{ 
                 color: '#1A2035', 
                 fontWeight: 'bold', 
-                fontSize: '1.8rem' 
-                }}>¡Bienvenidos a Futuros Ingenieros!</h5>
-            <button className="btn" 
-                style={{ 
-                    backgroundColor: '#1A2035', 
-                    color: '#fff', 
-                    marginTop: '2rem',
-                    width: '10rem',
-                    fontSize: '1.4rem' 
-                }}>
-                Empezar
-            </button>
+                fontSize: '1.8rem'
+                }}>¡Bienvenidos a Futuros Ingenieros!</h5>    
+            <Link to="/catedras" style={{ textDecoration: 'none' }}>
+                <button className="btn" 
+                    style={{ 
+                        backgroundColor: '#1A2035', 
+                        color: '#fff', 
+                        marginTop: '2rem',
+                        width: '10rem',
+                        fontSize: '1.4rem'
+                    }}>
+                    Empezar
+                </button>
+            </Link>  
         </div>
     )
 }

@@ -1,5 +1,5 @@
-import materia from '../models/materia.js'
-import errors from '../const/error.js'
+const materia = require('../database/models/materia')
+const errors = require('../const/error')
 
 
 async function listarByAnio(req, res,next) {
@@ -23,6 +23,6 @@ async function listarByAnio(req, res,next) {
     }
 }
 
-export default {
+module.exports = {
     listarByAnio
 };

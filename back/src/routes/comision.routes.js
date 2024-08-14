@@ -1,9 +1,10 @@
-import { Router } from 'express';
-import comisionController from '../controllers/comision.controller.js';
-import validate from '../middlewares/validate.js'
-const router = Router();
+const express = require('express');
+
+const comisionController =require('../controllers/comision.controller')
+
+const router = express.Router();
 
 
 router.get('/', comisionController.listar);
 
-export default router;
+module.exports = router;

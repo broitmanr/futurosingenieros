@@ -1,9 +1,16 @@
-import usuario from "../models/usuario.js";
-import bcrypt from "bcryptjs";
+const models = require('../database/models/index')
+
 
 const usuarioController = {
     listar: async (req, res) => {
-        // Implementación de la función listar
+        const users = await models.usuario.findAll()
+
+        res.json({
+            success:true,
+            data:{
+                usuarios:users
+            }
+        })
     },
 
     crear: async (req, res,next) => {
@@ -33,4 +40,4 @@ const usuarioController = {
     }
 };
 
-export default usuarioController;
+module.exports = usuarioController;

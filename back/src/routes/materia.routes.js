@@ -1,9 +1,9 @@
-import { Router } from 'express';
-import materiaController from '../controllers/materia.controller.js';
-import validate from '../middlewares/validate.js'
+const { Router } = require('express')
+const materiaController = require('../controllers/materia.controller')
+
 const router = Router();
 
 
 router.get('/:anio', materiaController.listarByAnio);
 
-export default router;
+module.exports = router;

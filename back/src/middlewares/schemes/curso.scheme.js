@@ -1,4 +1,5 @@
-import Joi from 'joi'
+const Joi= require('joi')
+
 
 const crearCurso = Joi.object({
     cicloLectivo:Joi.number().required(),
@@ -11,4 +12,4 @@ const crearCurso = Joi.object({
 const validations = {
     crearCurso
 }
-export default validations;
+module.exports = validations;

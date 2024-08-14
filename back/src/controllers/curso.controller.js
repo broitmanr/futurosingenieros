@@ -1,7 +1,9 @@
-import curso from '../models/curso.js'
-import errors from '../const/error.js'
-import sequelize from "../config/database.js";
-import PersonaXCurso from "../models/personaXcurso.js";
+const curso = require('../database/models/curso')
+const errors = require('../const/error')
+const models = require('../database/models/index')
+
+
+
 
 // Función para crear un curso
 async function crear(req, res,next) {
@@ -15,14 +17,14 @@ async function crear(req, res,next) {
         return next(errors.UsuarioNoPersona)
     try {
 
-        const nuevoCurso = await curso.create({
+        const nuevoCurso = await models.Curso.create({
             cicloLectivo,
             materia_id,
             comision_id,
             updated_by: res.locals.usuario.ID
         }, {transaction});
 
-        await PersonaXCurso.create({
+        await models.PersonaXCurso.create({
             persona_id:res.locals.usuario.persona_id,
             curso_id: nuevoCurso.ID,
             rol:res.locals.usuario.rol,
@@ -39,6 +41,48 @@ async function crear(req, res,next) {
     }
 }
 
-export default {
-    crear
+async function ver(req, res,next) {
+    const { id } = req.params;
+
+    try {
+
+        const cursoVer = await models.Curso.findOne({
+            where:{
+              id:id,
+            },
+            include: [
+                {
+                    model: models.Materia,
+                    // attributes: ['ID', 'nombre'] // Ajusta los atributos según tus necesidades
+                },
+                {
+                    model: models.Comision,
+                    attributes: ['ID', 'nombre'] // Ajusta los atributos según tus necesidades
+                },
+                {
+                    model: models.PersonaXCurso,
+                    include: [
+                        {
+                            model: models.Persona,
+                            attributes: ['ID', 'nombre', 'apellido'] // Ajusta los atributos según tus necesidades
+                        }
+                    ],
+                    // attributes: ['persona_id']
+                }
+            ]
+        });
+
+        if (!cursoVer) {
+            return res.status(404).json({ error: 'Curso no encontrado' });
+        }
+
+        res.status(200).json(cursoVer);
+    } catch (error) {
+        console.error('Error al obtener el curso:', error);
+        res.status(500).json({ error: 'Error al obtener el curso' });
+    }
+}
+
+module.exports = {
+    crear, ver
 };

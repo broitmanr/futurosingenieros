@@ -1,4 +1,4 @@
-import errors from '../const/error.js'
+const errors = require ('../const/error.js')
 
 const checkRoleDocente = async function (req,res,next){
     if (res.locals.usuario && res.locals.usuario.rol === 'D'){
@@ -10,4 +10,4 @@ const checkRoleDocente = async function (req,res,next){
 
 }
 
-export default {checkRoleDocente};
+module.exports = {checkRoleDocente};

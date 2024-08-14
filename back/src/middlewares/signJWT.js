@@ -1,7 +1,7 @@
-import jwt from 'jsonwebtoken'
-import {JWT_SECRET} from '../const/globalConstant.js'
+const jwt = require('jsonwebtoken')
+const {JWT_SECRET} = require('../const/globalConstant')
 
-export default function (usuario){
+module.exports = function (usuario){
     if (usuario){
         const token = jwt.sign({
                 id:usuario.ID,

@@ -1,5 +1,5 @@
-import comision from '../models/comision.js'
-import errors from '../const/error.js'
+const comision = require('../database/models/comision')
+
 
 // Función para crear un curso
 async function listar(req, res,next) {
@@ -17,6 +17,6 @@ async function listar(req, res,next) {
     }
 }
 
-export default {
+module.exports = {
     listar
 };

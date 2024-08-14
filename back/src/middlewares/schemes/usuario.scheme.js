@@ -1,4 +1,4 @@
-import Joi from 'joi'
+const Joi= require('joi')
 
 const crearUsuario = Joi.object({
     email: Joi.string().required()
@@ -8,4 +8,4 @@ const crearUsuario = Joi.object({
 const validations = {
     crearUsuario
 }
-export default validations;
+module.exports =  validations;

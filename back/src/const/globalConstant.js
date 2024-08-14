@@ -1,6 +1,7 @@
-import dotenv from 'dotenv';
-
+const dotenv = require('dotenv')
 dotenv.config();
 
-export const PORT = process.env.PORT || 5000;
-export const JWT_SECRET = process.env.JWTSECRET;
+PORT = process.env.PORT || 5000;
+JWT_SECRET = process.env.JWTSECRET;
+
+module.exports = {PORT,JWT_SECRET}

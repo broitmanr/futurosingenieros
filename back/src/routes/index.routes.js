@@ -1,13 +1,13 @@
-import { Router } from 'express';
-import usuariosRoutes from './usuario.routes.js';
-import authRoutes from './auth.routes.js';
-import decodeJWT from '../middlewares/decodeJWT.js'
-import cursoRoutes from "./curso.routes.js";
-import comisionRoutes from "./comision.routes.js";
-import materiaRoutes from "./materia.routes.js";
+const { Router } = require('express')
+const usuariosRoutes = require('./usuario.routes')
+const authRoutes = require('./auth.routes')
+const decodeJWT = require('../middlewares/decodeJWT')
+const cursoRoutes = require('./curso.routes')
+const comisionRoutes = require('./comision.routes')
+const materiaRoutes = require('./materia.routes')
 
 
-export const rutas_init = () => {
+const rutas_init = () => {
     const router = Router();
 
     router.use("/usuarios",decodeJWT, usuariosRoutes)
@@ -17,9 +17,11 @@ export const rutas_init = () => {
     return router;
 }
 
-export const rutas_auth = () => {
+const rutas_auth = () => {
     const router = Router()
     router.use("/auth",authRoutes)
     return router
 
 }
+
+module.exports = { rutas_init, rutas_auth }

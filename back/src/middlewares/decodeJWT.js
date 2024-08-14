@@ -1,8 +1,8 @@
-import jwt from 'jsonwebtoken'
-import errors from '../const/error.js'
-import Usuario from "../models/usuario.js";
-import { JWT_SECRET } from "../const/globalConstant.js"
-import moment from 'moment'
+const jwt = require('jsonwebtoken')
+const errors = require('../const/error')
+const models = require('../database/models/index')
+const { JWT_SECRET } = require("../const/globalConstant")
+const moment = require('moment')
 
 
 const decodeJWT = async function (req,res,next){
@@ -36,7 +36,7 @@ const decodeJWT = async function (req,res,next){
                 return next(errors.SesionExpirada)
             res.locals.token = dataToken
             console.log(dataToken)
-            const usuario = await Usuario.findOne({
+            const usuario = await models.Usuario.findOne({
                 where:{
                     ID:dataToken.id
                 }
@@ -57,4 +57,4 @@ const decodeJWT = async function (req,res,next){
 
 }
 
-export default decodeJWT;
+module.exports = decodeJWT;

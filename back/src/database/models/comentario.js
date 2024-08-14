@@ -7,25 +7,9 @@ module.exports = (sequelize,DataTypes)=> {
       autoIncrement: true,
       primaryKey: true
     },
-    entrega_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Entrega,
-        key: 'ID'
-      }
-    },
     comentario: {
       type: DataTypes.STRING(500),
       allowNull: false
-    },
-    emisor_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Persona,
-        key: 'ID'
-      }
     },
     personaXentrega_id: {
       type: DataTypes.INTEGER,
@@ -48,5 +32,10 @@ module.exports = (sequelize,DataTypes)=> {
     tableName: 'Comentario',
     timestamps: false
   });
-return Comentario
+
+  Comentario.associate = models => {
+    Comentario.belongsTo(models.Entrega, { foreignKey: 'entrega_id', allowNull: false })
+    Comentario.belongsTo(models.Persona, { foreignKey: 'emisor_id', allowNull: false })
+  }
+  return Comentario;
 }

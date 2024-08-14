@@ -18,15 +18,6 @@ module.exports = (sequelize,DataTypes)=> {
       type: DataTypes.STRING(1),
       allowNull: true
     },
-    // persona_id: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: true,
-    //   unique: true,
-    //   references: {
-    //     model: Persona,
-    //     key: 'ID'
-    //   }
-    // },
     updated_at: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -40,5 +31,10 @@ module.exports = (sequelize,DataTypes)=> {
     tableName: 'Usuario',
     timestamps: false
   });
-  return Usuario
-}
+
+  Usuario.associate = models => {
+    Usuario.belongsTo(models.Persona, { foreignKey: 'persona_id', allowNull: true, unique: true });
+  };
+
+  return Usuario;
+};

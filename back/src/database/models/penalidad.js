@@ -7,25 +7,9 @@ module.exports = (sequelize,DataTypes)=> {
       autoIncrement: true,
       primaryKey: true
     },
-    personaxcurso_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: PersonaXCurso,
-        key: 'ID'
-      }
-    },
     descripcion: {
       type: DataTypes.STRING(100),
       allowNull: true
-    },
-    tipoPenalidad_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: TipoPenalidad,
-        key: 'ID'
-      }
     },
     updated_at: {
       type: DataTypes.DATE,
@@ -40,5 +24,11 @@ module.exports = (sequelize,DataTypes)=> {
     tableName: 'Penalidad',
     timestamps: false
   });
-return Penalidad
-}
+
+  Penalidad.associate = models => {
+    Penalidad.belongsTo(models.PersonaXCurso, { foreignKey: 'personaxcurso_id', allowNull: false })
+    Penalidad.belongsTo(models.TipoPenalidad, { foreignKey: 'tipoPenalidad_id', allowNull: false })
+  }
+
+  return Penalidad;
+};

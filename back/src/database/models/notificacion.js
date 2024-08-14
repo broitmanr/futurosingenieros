@@ -7,25 +7,9 @@ module.exports = (sequelize,DataTypes)=> {
       autoIncrement: true,
       primaryKey: true
     },
-    tipoNotificacion_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: TipoNotificacion,
-        key: 'ID'
-      }
-    },
     detalle: {
       type: DataTypes.STRING(100),
       allowNull: false
-    },
-    usuario_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Usuario,
-        key: 'ID'
-      }
     },
     leido: {
       type: DataTypes.BOOLEAN,
@@ -44,5 +28,10 @@ module.exports = (sequelize,DataTypes)=> {
     tableName: 'Notificacion',
     timestamps: false
   });
-return Notificacion
-}
+
+  Notificacion.associate = models => {
+    Notificacion.belongsTo(models.TipoNotificacion, { foreignKey: 'tipoNotificacion_id', allowNull: false })
+    Notificacion.belongsTo(models.Usuario, { foreignKey: 'usuario_id', allowNull: false })
+  }
+  return Notificacion
+};

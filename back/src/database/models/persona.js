@@ -40,10 +40,5 @@ module.exports = (sequelize,DataTypes)=> {
     tableName: 'Persona',
     timestamps: false
   });
-
-  Persona.associate = models =>{
-    // Persona.hasOne(models.Usuario)
-    Persona.hasMany(models.PersonaXCurso,{foreignKey:'persona_id'})
-  }
 return Persona
 }

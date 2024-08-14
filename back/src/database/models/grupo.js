@@ -15,14 +15,6 @@ module.exports = (sequelize,DataTypes)=> {
       type: DataTypes.STRING(50),
       allowNull: true
     },
-    curso_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'Curso',
-        key: 'ID'
-      }
-    },
     updated_at: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -36,5 +28,10 @@ module.exports = (sequelize,DataTypes)=> {
     tableName: 'Grupo',
     timestamps: false
   });
-  return Grupo
+
+  Grupo.associate = models => {
+    Grupo.belongsTo(models.Curso, { foreignKey: 'curso_id', allowNull: true })
+  }
+
+  return Grupo;
 }

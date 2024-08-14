@@ -27,14 +27,6 @@ const EntregaPactada = sequelize.define('EntregaPactada', {
     type: DataTypes.DATE,
     allowNull: true
   },
-  instanciaEvaluativa_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: InstanciaEvaluativa,
-      key: 'ID'
-    }
-  },
   updated_at: {
     type: DataTypes.DATE,
     allowNull: false,
@@ -47,6 +39,10 @@ const EntregaPactada = sequelize.define('EntregaPactada', {
 }, {
   tableName: 'EntregaPactada',
   timestamps: false
-});
+})
+
+EntregaPactada.associate = models => {
+  EntregaPactada.belongsTo(models.InstanciaEvaluativa, { foreignKey: 'instanciaEvaluativa_id', allowNull: false })
+}
 return EntregaPactada
 }

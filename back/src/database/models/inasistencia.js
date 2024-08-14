@@ -1,6 +1,6 @@
-'use strict'
+'use strict';
 
-module.exports = (sequelize,DataTypes)=> {
+module.exports = (sequelize, DataTypes) => {
   const Inasistencia = sequelize.define('Inasistencia', {
     ID: {
       type: DataTypes.INTEGER,
@@ -10,22 +10,6 @@ module.exports = (sequelize,DataTypes)=> {
     fecha: {
       type: DataTypes.DATE,
       allowNull: false
-    },
-    persona_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Persona,
-        key: 'ID'
-      }
-    },
-    curso_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Curso,
-        key: 'ID'
-      }
     },
     updated_at: {
       type: DataTypes.DATE,
@@ -40,5 +24,10 @@ module.exports = (sequelize,DataTypes)=> {
     tableName: 'Inasistencia',
     timestamps: false
   });
+
+  Inasistencia.associate = models => {
+    Inasistencia.belongsTo(models.Persona, { foreignKey: 'persona_id', allowNull: false })
+    Inasistencia.belongsTo(models.Curso, { foreignKey: 'curso_id', allowNull: false })
+  }
   return Inasistencia
 }

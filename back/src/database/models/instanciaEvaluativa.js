@@ -15,22 +15,6 @@ module.exports = (sequelize,DataTypes)=> {
       type: DataTypes.STRING(200),
       allowNull: true
     },
-    curso_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Curso,
-        key: 'ID'
-      }
-    },
-    tipoInstancia_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: TipoInstancia,
-        key: 'ID'
-      }
-    },
     porcentaje_ponderacion: {
       type: DataTypes.INTEGER,
       allowNull: true
@@ -48,5 +32,11 @@ module.exports = (sequelize,DataTypes)=> {
     tableName: 'InstanciaEvaluativa',
     timestamps: false
   });
+
+  InstanciaEvaluativa.associate = models => {
+    InstanciaEvaluativa.belongsTo(models.Curso, { foreignKey: 'curso_id', allowNull: false })
+    InstanciaEvaluativa.belongsTo(models.TipoInstancia, { foreignKey: 'tipoInstancia_id', allowNull: false })
+  }
+
   return InstanciaEvaluativa
 }

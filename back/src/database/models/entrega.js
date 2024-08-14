@@ -7,22 +7,6 @@ module.exports = (sequelize,DataTypes)=> {
       autoIncrement: true,
       primaryKey: true
     },
-    grupo_ID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Grupo,
-        key: 'ID'
-      }
-    },
-    entregaPactada_ID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: EntregaPactada,
-        key: 'ID'
-      }
-    },
     fecha: {
       type: DataTypes.DATE,
       allowNull: false
@@ -30,14 +14,6 @@ module.exports = (sequelize,DataTypes)=> {
     nota: {
       type: DataTypes.INTEGER,
       allowNull: true
-    },
-    persona_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: Persona,
-        key: 'ID'
-      }
     },
     updated_at: {
       type: DataTypes.DATE,
@@ -52,5 +28,12 @@ module.exports = (sequelize,DataTypes)=> {
     tableName: 'Entrega',
     timestamps: false
   });
-return Entrega
+
+  Entrega.associate = models => {
+    Entrega.belongsTo(models.Grupo, { foreignKey: 'grupo_ID', allowNull: false })
+    Entrega.belongsTo(models.EntregaPactada, { foreignKey: 'entregaPactada_ID', allowNull: false })
+    Entrega.belongsTo(models.Persona, { foreignKey: 'persona_id', allowNull: true })
+  }
+
+  return Entrega;
 }

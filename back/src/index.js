@@ -6,10 +6,16 @@ const errorHandler = require('./middlewares/error')
 // import errorHandler from './middlewares/error.js'
 // import cookieParser from 'cookie-parser'
 const cookieParser = require('cookie-parser')
+const cors = require('cors');
+
 
 const configuracionApi = async (app) => {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+    app.use(cors({
+        origin:process.env.RUTA_FRONT, // La URL del frontend
+        credentials: true // Esto permite que las cookies se envíen y reciban
+    }));
     app.use(errorHandler)
 };
 

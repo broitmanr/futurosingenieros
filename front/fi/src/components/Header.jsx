@@ -7,12 +7,13 @@ const Header = () => {
                 <div class="container-fluid d-flex justify-content-between align-items-center">
                     {/*Cambié href*/}
                     <a className="navbar-brand" href="/">
-                        <img src="logoFrlp.png" alt="Logo" style={{ height: '8rem' }} />
+                        {/*Ajusta tamaño de imagen según altura */}
+                        <img src="logoFrlp.png" alt="Logo" style={{ height: '8vh' }} />
                     </a>
                     <div className="navbar-brand position-absolute" 
                         style={{ 
                             fontWeight: 'bold', 
-                            fontSize: '1.8rem', 
+                            fontSize: '1.8vw', //Ajusta tamaño de letra según ancho
                             left: '50%', //Posiciona al texto en el centro
                             transform: 'translateX(-50%)' //Centra el texto
                         }}>

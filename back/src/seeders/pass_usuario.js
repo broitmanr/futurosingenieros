@@ -1,6 +1,6 @@
 
 'use strict';
-import usuario from '../models/usuario.js'
+import usuario from '../database/models/usuario.js'
 import bcrypt from "bcryptjs";
 
 module.exports = {

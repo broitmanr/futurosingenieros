@@ -1,16 +1,15 @@
 
-import usuario from '../models/usuario.js'
-import errors from '../const/error.js'
-import bcrypt from 'bcryptjs'
-import jwt from '../middlewares/signJWT.js'
-import Persona from '../models/persona.js'
-import rolservice from "../services/rolservice.js";
+const models = require('../database/models/index')
+const errors = require('../const/error')
+const bcrypt = require('bcryptjs')
+const jwt = require('../middlewares/signJWT')
+const rolservice = require("../services/rolservice")
 
-export default {
+module.exports = {
     login: async (req,res,next)=>{
         console.log(req.body)
         try{
-            const user = await usuario.findOne({
+            const user = await models.Usuario.findOne({
                 where:{
                     mail:req.body.mail
                 }
@@ -45,14 +44,14 @@ export default {
     registrarse: async (req,res,next)=>{
         try{
 
-            const persona = await Persona.findOne({
+            const persona = await models.persona.findOne({
                 where:{
                     legajo:req.body.legajo
                 }
             })
 
             req.body.password = bcrypt.hashSync(req.body.password,10)
-            const user = await usuario.create({
+            const user = await models.usuario.create({
                 mail:req.body.mail,
                 password:req.body.password,
                 rol:rolservice.rolByMail(req.body.mail) ? 'D' : 'A',

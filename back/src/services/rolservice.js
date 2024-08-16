@@ -7,4 +7,4 @@ class Rolservice {
     }
 }
 
-export default new Rolservice();
+module.exports = Rolservice;

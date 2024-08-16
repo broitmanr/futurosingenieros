@@ -1,7 +1,7 @@
-import errors from '../const/error.js'
-import error from "../const/error.js";
+const errors = require('../const/error')
 
-export default function (err,req,res,next){
+
+module.exports = function (err,req,res,next){
 
     let response ={
         success:false,

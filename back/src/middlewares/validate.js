@@ -1,4 +1,4 @@
-const validate = (scheme) => {
+module.exports = (scheme) => {
 
     return(req,res,next)=>{
         let result = scheme.validate(req.body)
@@ -10,4 +10,3 @@ const validate = (scheme) => {
     }
 }
 
-export default validate;

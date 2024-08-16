@@ -1,4 +1,4 @@
-export default {
+module.exports = {
     'ValidationError':{
        code:1000,
        message:'Error de validación'
@@ -19,4 +19,12 @@ export default {
         code:1004,
         message:'El usuario no está autorizado'
     },
+    'FaltanParametros':{
+        code:1005,
+        message:"Faltan parametros"
+    },'UsuarioNoPersona':{
+        code:1006,
+        message:"El usuario no tiene persona asociada"
+    }
+
 }

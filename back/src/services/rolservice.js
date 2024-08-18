@@ -1,7 +1,6 @@
 
 class Rolservice {
-
-    rolByMail(mail){
+    static rolByMail(mail){
         const regex = /@frlp\.utn\.edu\.ar$/;
         return regex.test(mail);
     }

@@ -25,5 +25,5 @@ module.exports = function (err,req,res,next){
 
     }
 
-    res.status(200).json(response)
+    res.status(response.error.code).json(response)
 }

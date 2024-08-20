@@ -8,10 +8,9 @@ const models = require('../database/models/index')
 // Función para crear un curso
 async function crear(req, res,next) {
 
-
     // Obtener los datos del cuerpo de la solicitud
     const { cicloLectivo, materia_id, comision_id} = req.body;
-    const transaction = await sequelize.transaction();
+    const transaction = await models.sequelize.transaction();
     // Si el usuario no tiene persona asociada entonces no puede crear el curso
     if (res.locals.usuario.persona_id == null)
         return next(errors.UsuarioNoPersona)

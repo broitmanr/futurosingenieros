@@ -14,6 +14,7 @@ const rutas_init = () => {
     router.use("/curso",decodeJWT,cursoRoutes)
     router.use("/comision",decodeJWT,comisionRoutes)
     router.use("/materia",decodeJWT,materiaRoutes)
+
     return router;
 }
 

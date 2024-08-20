@@ -83,6 +83,40 @@ async function ver(req, res,next) {
     }
 }
 
+async function listar(req, res,next) {
+    try {
+
+
+        // Agregar validar que sea los q el es docente
+        const cursos = await models.Curso.findAll({
+        include:[
+            {
+                model: models.Comision,
+                attributes: ['nombre']
+            },{
+                model:models.Materia,
+                attributes:['nombre']
+            }],
+
+
+        });
+
+        const cursosComplete = cursos.map(curso => ({
+            id:curso.ID,
+            anio: curso.cicloLectivo,
+            comision: curso.Comision.nombre,
+            materia: curso.Materium.nombre
+        }));
+
+
+
+        res.status(200).json(cursosComplete);
+    } catch (error) {
+        console.error('Error al obtener el curso:', error);
+        res.status(500).json({ error: 'Error al obtener el curso' });
+    }
+}
+
 module.exports = {
-    crear, ver
+    crear, ver,listar
 };

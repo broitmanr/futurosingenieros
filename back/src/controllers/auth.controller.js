@@ -44,14 +44,14 @@ module.exports = {
     registrarse: async (req,res,next)=>{
         try{
 
-            const persona = await models.persona.findOne({
+            const persona = await models.Persona.findOne({
                 where:{
                     legajo:req.body.legajo
                 }
             })
 
             req.body.password = bcrypt.hashSync(req.body.password,10)
-            const user = await models.usuario.create({
+            const user = await models.Usuario.create({
                 mail:req.body.mail,
                 password:req.body.password,
                 rol:rolservice.rolByMail(req.body.mail) ? 'D' : 'A',

@@ -7,13 +7,13 @@ const Subheader = () => {
                 style={{ 
                     backgroundColor: '#CCDCF1', 
                     color: '#1A2035', 
-                    padding: '0.8rem',
+                    padding: '0.8vh',
                     borderBottom: '0.14rem solid #1A2035' 
                 }} data-bs-theme="dark">
                 <div className="container-fluid d-flex justify-content-between align-items-center" 
                     style={{ 
                         fontWeight: 'bold', 
-                        fontSize: '1.4rem',
+                        fontSize: '1.4vw',
                         color: '#1A2035', 
                         paddingLeft: '8rem',
                         paddingRight: '8rem'

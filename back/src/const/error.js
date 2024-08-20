@@ -16,7 +16,7 @@ module.exports = {
         message:'Su sesión ha expirado'
     },
     'UsuarioNoAutorizado':{
-        code:1004,
+        code:401,
         message:'El usuario no está autorizado'
     },
     'FaltanParametros':{

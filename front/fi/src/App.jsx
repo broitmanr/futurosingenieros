@@ -4,7 +4,8 @@ import Header from './components/Header';
 import Subheader from './components/Subheader';
 import Footer from './components/Footer';
 import Home from './Home';
-import Catedras from './Catedras'
+import Cursos from './Cursos';
+import SignInSide from "./components/SignInSide.tsx";
 
 
 function App() {
@@ -15,7 +16,8 @@ function App() {
             <Subheader />
             <Routes>
                 <Route path="/" element={<Home />}/>
-                <Route path="/catedras" element={<Catedras />}/>
+                <Route path="/cursos" element={<Cursos />}/>
+                <Route path="/login" element={<SignInSide />}/>
             </Routes>
             <Footer />
         </BrowserRouter>

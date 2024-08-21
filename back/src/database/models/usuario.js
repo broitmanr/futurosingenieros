@@ -33,7 +33,7 @@ module.exports = (sequelize,DataTypes)=> {
   });
 
   Usuario.associate = models => {
-    Usuario.belongsTo(models.Persona, { foreignKey: 'persona_id', allowNull: true, unique: true });
+    Usuario.belongsTo(models.Persona, { foreignKey: 'persona_id', allowNull: false , unique: true });
   };
 
   return Usuario;

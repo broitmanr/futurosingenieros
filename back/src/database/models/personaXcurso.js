@@ -5,22 +5,6 @@ module.exports = (sequelize,DataTypes)=> {
       autoIncrement: true,
       primaryKey: true
     },
-    // persona_id: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false,
-    //   references: {
-    //     model: Persona,
-    //     key: 'ID'
-    //   }
-    // },
-    // curso_id: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false,
-    //   references: {
-    //     model: Curso,
-    //     key: 'ID'
-    //   }
-    // },
     rol: {
       type: DataTypes.STRING(5),
       allowNull: false
@@ -41,8 +25,18 @@ module.exports = (sequelize,DataTypes)=> {
   });
 
   PersonaXCurso.associate = models =>{
-    PersonaXCurso.belongsTo(models.Persona,{foreignKey:'persona_id'})
-    PersonaXCurso.belongsTo(models.Curso,{foreignKey:'curso_id'})
+    PersonaXCurso.belongsTo(models.Persona, {
+      foreignKey: {
+        name: 'persona_id',
+        allowNull: false
+      }
+    })
+    PersonaXCurso.belongsTo(models.Curso, {
+      foreignKey: {
+        name: 'curso_id',
+        allowNull: false
+      }
+    })
   }
   return PersonaXCurso
 }

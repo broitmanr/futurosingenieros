@@ -20,6 +20,11 @@ module.exports = (sequelize,DataTypes)=>{
     updated_by: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    codigoVinculacion: {
+      type: DataTypes.STRING(8),
+      unique: true,
+      allowNull: true,
     }
   }, {
     tableName: 'Curso',

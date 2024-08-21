@@ -8,8 +8,17 @@ const crearCurso = Joi.object({
 
 })
 
+const vincularEstudiante = Joi.object({
+    codigoVinculacion: Joi.string().required()
+})
+
+const generarCodigoVinculacion = Joi.object({
+    cursoId: Joi.number().required(),
+})
 
 const validations = {
-    crearCurso
+    crearCurso,
+    vincularEstudiante,
+    generarCodigoVinculacion
 }
 module.exports = validations;

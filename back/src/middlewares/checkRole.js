@@ -9,5 +9,14 @@ const checkRoleDocente = async function (req,res,next){
     }
 
 }
+const checkRoleEstudiante = async function (req,res,next){
+    if (res.locals.usuario && res.locals.usuario.rol === 'E'){
+        next()
+    }
+    else{
+        return next(errors.UsuarioNoAutorizado)
+    }
 
-module.exports = {checkRoleDocente};
+}
+
+module.exports = {checkRoleDocente, checkRoleEstudiante};

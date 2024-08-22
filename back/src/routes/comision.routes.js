@@ -1,10 +1,9 @@
-const express = require('express');
+const express = require('express')
 
-const comisionController =require('../controllers/comision.controller')
+const comisionController = require('../controllers/comision.controller')
 
-const router = express.Router();
+const router = express.Router()
 
+router.get('/', comisionController.listar)
 
-router.get('/', comisionController.listar);
-
-module.exports = router;
+module.exports = router

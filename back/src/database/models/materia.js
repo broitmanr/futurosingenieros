@@ -1,5 +1,4 @@
-
-module.exports = (sequelize,DataTypes)=> {
+module.exports = (sequelize, DataTypes) => {
   const Materia = sequelize.define('Materia', {
     ID: {
       type: DataTypes.INTEGER,
@@ -25,18 +24,17 @@ module.exports = (sequelize,DataTypes)=> {
     },
     updated_by: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     }
   }, {
     tableName: 'Materia',
     timestamps: false,
     freezeTableName: true
-  });
+  })
 
-  Materia.associate = models =>{
-    Materia.hasMany(models.Curso,{foreignKey:'materia_id'})
+  Materia.associate = models => {
+    Materia.hasMany(models.Curso, { foreignKey: 'materia_id' })
   }
-
 
   return Materia
 }

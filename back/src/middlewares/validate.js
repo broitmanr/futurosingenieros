@@ -1,12 +1,10 @@
 module.exports = (scheme) => {
-
-    return(req,res,next)=>{
-        let result = scheme.validate(req.body)
-        if (result.error){
-            next(result.error)
-        } else{
-            next()
-        }
+  return (req, res, next) => {
+    const { error } = scheme.validate({ ...req.params, ...req.query, ...req.body })
+    if (error) {
+      next(error)
+    } else {
+      next()
     }
+  }
 }
-

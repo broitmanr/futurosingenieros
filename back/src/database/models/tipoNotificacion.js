@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = (sequelize,DataTypes)=> {
+module.exports = (sequelize, DataTypes) => {
   const TipoNotificacion = sequelize.define('TipoNotificacion', {
     ID: {
       type: DataTypes.INTEGER,
@@ -22,11 +22,11 @@ module.exports = (sequelize,DataTypes)=> {
     },
     updated_by: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     }
   }, {
     tableName: 'TipoNotificacion',
     timestamps: false
-  });
-return TipoNotificacion
+  })
+  return TipoNotificacion
 }

@@ -1,0 +1,34 @@
+{
+  "responses": {
+    "Success": {
+      "description": "Operación exitosa",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./schemas.json#/schemas/Success"
+          }
+        }
+      }
+    },
+    "Unauthorized": {
+      "description": "No autorizado",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./schemas.json#/schemas/Error"
+          }
+        }
+      }
+    },
+    "NotFound": {
+      "description": "Recurso no encontrado",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./schemas.json#/schemas/Error"
+          }
+        }
+      }
+    }
+  }
+}

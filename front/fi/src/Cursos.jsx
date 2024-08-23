@@ -15,7 +15,7 @@ const Cursos = () => {
 
     // useEffect para hacer la petición con axios
     useEffect(() => {
-        axios.get('http://localhost:5000/api/cursos') // Ajusta la URL de la API según corresponda
+        axios.get('http://localhost:5000/api/curso', { withCredentials: true }) // Ajusta la URL de la API según corresponda
             .then(response => {
                 setCursos(response.data); // Almacena los datos obtenidos en el estado
                 setLoading(false); // Detiene el estado de carga

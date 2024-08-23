@@ -1,0 +1,22 @@
+{
+  "parameters": {
+    "courseId": {
+      "name": "courseId",
+      "in": "path",
+      "required": true,
+      "description": "ID del curso",
+      "schema": {
+        "type": "integer"
+      }
+    },
+    "userId": {
+      "name": "userId",
+      "in": "path",
+      "required": true,
+      "description": "ID del usuario",
+      "schema": {
+        "type": "integer"
+      }
+    }
+  }
+}

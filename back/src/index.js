@@ -7,6 +7,7 @@ const errorHandler = require('./middlewares/error')
 // import cookieParser from 'cookie-parser'
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
+const { swaggerDocs } = require('./swagger')
 
 
 const configuracionApi = async (app) => {
@@ -35,6 +36,7 @@ const init = async () => {
 
         app.listen(PORT, () => {
             console.log(`App escuchando en puerto ${PORT}`);
+            swaggerDocs(app,PORT)
         });
     } catch (err) {
         console.error('Error al conectarse a la base:', err);

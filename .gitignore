@@ -58,5 +58,7 @@ yarn.lock
 #.idea
 .idea/
 
+# Ignorar archivos en el backend
 /back/.env
 /back/package-lock.json
+/back/node_modules/

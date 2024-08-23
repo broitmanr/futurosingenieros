@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = (sequelize,DataTypes)=> {
+module.exports = (sequelize, DataTypes) => {
   const PersonaXGrupo = sequelize.define('PersonaXGrupo', {
     ID: {
       type: DataTypes.INTEGER,
@@ -14,12 +14,12 @@ module.exports = (sequelize,DataTypes)=> {
     },
     updated_by: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     }
   }, {
     tableName: 'PersonaXGrupo',
     timestamps: false
-  });
+  })
 
   PersonaXGrupo.associate = models => {
     PersonaXGrupo.belongsTo(models.Persona, { foreignKey: 'persona_ID', allowNull: false })

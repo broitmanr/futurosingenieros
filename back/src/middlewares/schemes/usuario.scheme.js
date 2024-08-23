@@ -1,11 +1,10 @@
-const Joi= require('joi')
+const Joi = require('joi')
 
 const crearUsuario = Joi.object({
-    email: Joi.string().required()
+  email: Joi.string().required()
 })
 
-
 const validations = {
-    crearUsuario
+  crearUsuario
 }
-module.exports =  validations;
+module.exports = validations

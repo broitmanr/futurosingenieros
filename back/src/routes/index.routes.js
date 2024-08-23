@@ -6,23 +6,22 @@ const cursoRoutes = require('./curso.routes')
 const comisionRoutes = require('./comision.routes')
 const materiaRoutes = require('./materia.routes')
 
+const rutasInit = () => {
+  const router = Router()
 
-const rutas_init = () => {
-    const router = Router();
 
-    router.use("/usuarios",decodeJWT, usuariosRoutes)
-    router.use("/curso",decodeJWT,cursoRoutes)
-    router.use("/comision",decodeJWT,comisionRoutes)
-    router.use("/materia",decodeJWT,materiaRoutes)
-
-    return router;
-}
-
-const rutas_auth = () => {
-    const router = Router()
-    router.use("/auth",authRoutes)
-    return router
+  router.use('/usuarios', decodeJWT, usuariosRoutes)
+  router.use('/curso', decodeJWT, cursoRoutes)
+  router.use('/comision', decodeJWT, comisionRoutes)
+  router.use('/materia', decodeJWT, materiaRoutes)
+  return router
 
 }
 
-module.exports = { rutas_init, rutas_auth }
+const rutasAuth = () => {
+  const router = Router()
+  router.use('/auth', authRoutes)
+  return router
+}
+
+module.exports = { rutasInit, rutasAuth }

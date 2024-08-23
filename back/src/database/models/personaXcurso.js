@@ -1,26 +1,10 @@
-module.exports = (sequelize,DataTypes)=> {
+module.exports = (sequelize, DataTypes) => {
   const PersonaXCurso = sequelize.define('PersonaXCurso', {
     ID: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true
     },
-    // persona_id: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false,
-    //   references: {
-    //     model: Persona,
-    //     key: 'ID'
-    //   }
-    // },
-    // curso_id: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false,
-    //   references: {
-    //     model: Curso,
-    //     key: 'ID'
-    //   }
-    // },
     rol: {
       type: DataTypes.STRING(5),
       allowNull: false
@@ -32,17 +16,27 @@ module.exports = (sequelize,DataTypes)=> {
     },
     updated_by: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     }
   }, {
     tableName: 'PersonaXCurso',
     timestamps: false,
     freezeTableName: true
-  });
+  })
 
-  PersonaXCurso.associate = models =>{
-    PersonaXCurso.belongsTo(models.Persona,{foreignKey:'persona_id'})
-    PersonaXCurso.belongsTo(models.Curso,{foreignKey:'curso_id'})
+  PersonaXCurso.associate = models => {
+    PersonaXCurso.belongsTo(models.Persona, {
+      foreignKey: {
+        name: 'persona_id',
+        allowNull: false
+      }
+    })
+    PersonaXCurso.belongsTo(models.Curso, {
+      foreignKey: {
+        name: 'curso_id',
+        allowNull: false
+      }
+    })
   }
   return PersonaXCurso
 }

@@ -1,7 +1,7 @@
 const models = require('../database/models/index.js')
 
-
 // Función para crear un curso
+
 async function listar(req, res,next) {
 
     try {
@@ -18,5 +18,5 @@ async function listar(req, res,next) {
 }
 
 module.exports = {
-    listar
-};
+  listar
+}

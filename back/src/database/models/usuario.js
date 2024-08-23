@@ -1,4 +1,4 @@
-module.exports = (sequelize,DataTypes)=> {
+module.exports = (sequelize, DataTypes) => {
   const Usuario = sequelize.define('Usuario', {
     ID: {
       type: DataTypes.INTEGER,
@@ -25,16 +25,16 @@ module.exports = (sequelize,DataTypes)=> {
     },
     updated_by: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     }
   }, {
     tableName: 'Usuario',
     timestamps: false
-  });
+  })
 
   Usuario.associate = models => {
-    Usuario.belongsTo(models.Persona, { foreignKey: 'persona_id', allowNull: true, unique: true });
-  };
+    Usuario.belongsTo(models.Persona, { foreignKey: 'persona_id', allowNull: false, unique: true })
+  }
 
-  return Usuario;
-};
+  return Usuario
+}

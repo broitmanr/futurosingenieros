@@ -1,7 +1,6 @@
 const models = require('../database/models/index.js')
 const errors = require('../const/error')
 
-
 async function listarByAnio(req, res,next) {
 
     // req.params.anio = 2
@@ -22,8 +21,9 @@ async function listarByAnio(req, res,next) {
         return next()
 
     }
+
 }
 
 module.exports = {
-    listarByAnio
-};
+  listarByAnio
+}

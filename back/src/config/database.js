@@ -1,8 +1,7 @@
-import Sequelize from 'sequelize';
-import pico from 'picocolors';
-import dotenv from 'dotenv';
+import Sequelize from 'sequelize'
+import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
 const host = process.env.DB_HOST
 const port = process.env.DB_PORT
@@ -11,12 +10,12 @@ const user = process.env.DB_USER
 const password = process.env.DB_PASSWORD
 
 const sequelize = new Sequelize(database, user, password, {
-    host: host,
-    dialect: 'mysql',
-    port: port,
-    logging: true
-    // logging: false - Si no quiero ver los logs de parte de la BD por sobre-informacion usar esta linea
-});
+  host,
+  dialect: 'mysql',
+  port,
+  logging: true
+  // logging: false - Si no quiero ver los logs de parte de la BD por sobre-informacion usar esta linea
+})
 
 // sequelize.authenticate()
 //     .then(() => {
@@ -30,4 +29,4 @@ const sequelize = new Sequelize(database, user, password, {
 //         console.error(pico.red('Error al conectarse a la base:'), pico.red(err));
 //     });
 
-export default sequelize;
+export default sequelize

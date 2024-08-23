@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = (sequelize, DataTypes) => {
   const Inasistencia = sequelize.define('Inasistencia', {
@@ -18,12 +18,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     updated_by: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     }
   }, {
     tableName: 'Inasistencia',
     timestamps: false
-  });
+  })
 
   Inasistencia.associate = models => {
     Inasistencia.belongsTo(models.Persona, { foreignKey: 'persona_id', allowNull: false })

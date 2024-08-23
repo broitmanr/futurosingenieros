@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = (sequelize,DataTypes)=> {
+module.exports = (sequelize, DataTypes) => {
   const Grupo = sequelize.define('Grupo', {
     ID: {
       type: DataTypes.INTEGER,
@@ -22,16 +22,16 @@ module.exports = (sequelize,DataTypes)=> {
     },
     updated_by: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     }
   }, {
     tableName: 'Grupo',
     timestamps: false
-  });
+  })
 
   Grupo.associate = models => {
     Grupo.belongsTo(models.Curso, { foreignKey: 'curso_id', allowNull: true })
   }
 
-  return Grupo;
+  return Grupo
 }

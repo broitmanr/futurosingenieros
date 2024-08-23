@@ -1,12 +1,11 @@
-const Joi= require('joi')
+const Joi = require('joi')
 
-let login = Joi.object({
-    mail: Joi.string().email().required(),
-    password: Joi.string().required()
+const login = Joi.object({
+  mail: Joi.string().email().required(),
+  password: Joi.string().required()
 })
 
-
 const validations = {
-    login
+  login
 }
 module.exports = validations

@@ -6,6 +6,7 @@ import axios from "axios";
 
 const Cursos = () => {
     const [show, setShow] = useState(false);
+
     const [cursos, setCursos] = useState([]); // Estado para almacenar los cursos
     const [loading, setLoading] = useState(true); // Estado para manejar el estado de carga
     const [error, setError] = useState(''); // Estado para manejar errores
@@ -15,7 +16,7 @@ const Cursos = () => {
 
     // useEffect para hacer la petición con axios
     useEffect(() => {
-        axios.get('http://localhost:5000/api/curso', { withCredentials: true }) // Ajusta la URL de la API según corresponda
+        axios.get('http://localhost:5000/api/cursos') // Ajusta la URL de la API según corresponda
             .then(response => {
                 setCursos(response.data); // Almacena los datos obtenidos en el estado
                 setLoading(false); // Detiene el estado de carga

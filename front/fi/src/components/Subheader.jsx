@@ -19,13 +19,13 @@ const Subheader = () => {
                         paddingRight: '8rem'
                     }}>
                     <div>
-                        <a class="nav-link active" href="https://www.frlp.utn.edu.ar/" target="_blank">Facultad</a>
+                        <a className="nav-link active" href="https://www.frlp.utn.edu.ar/" target="_blank">Facultad</a>
                     </div>
                     <div>
-                        <a class="nav-link active" href="https://alumnos.frlp.utn.edu.ar/Login?ReturnUrl=%2f" target="_blank">AlumnosWeb</a> 
+                        <a className="nav-link active" href="https://alumnos.frlp.utn.edu.ar/Login?ReturnUrl=%2f" target="_blank">AlumnosWeb</a> 
                     </div>
                     <div>
-                        <a class="nav-link active" href="https://profeweb.frlp.utn.edu.ar/Login?ReturnUrl=%2f" target="_blank">ProfeWeb</a>
+                        <a className="nav-link active" href="https://profeweb.frlp.utn.edu.ar/Login?ReturnUrl=%2f" target="_blank">ProfeWeb</a>
                     </div>
                     
                 </div>

@@ -4,11 +4,11 @@ const Header = () => {
     return ( 
         <React.Fragment>
             <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#1A2035' }} data-bs-theme="dark" >
-                <div class="container-fluid d-flex justify-content-between align-items-center">
+                <div className="container-fluid d-flex justify-content-between align-items-center">
                     {/*Cambié href*/}
                     <a className="navbar-brand" href="/">
                         {/*Ajusta tamaño de imagen según altura */}
-                        <img src="logoFrlp.png" alt="Logo" style={{ height: '8vh' }} />
+                        <img src="logoFrlp.png" alt="Logo" style={{ height: '12vh' }} />
                     </a>
                     <div className="navbar-brand position-absolute" 
                         style={{ 

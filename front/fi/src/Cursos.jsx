@@ -6,6 +6,7 @@ import axios from "axios";
 
 const Cursos = () => {
     const [show, setShow] = useState(false);
+
     const [cursos, setCursos] = useState([]); // Estado para almacenar los cursos
     const [loading, setLoading] = useState(true); // Estado para manejar el estado de carga
     const [error, setError] = useState(''); // Estado para manejar errores

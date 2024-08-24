@@ -1,0 +1,27 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Autenticación y Cursos",
+    "version": "1.0.0",
+    "description": "Documentación de la API de usuarios y cursos."
+  },
+  "paths": {
+    "/auth": {
+      "$ref": "./paths/auth.json"
+    },
+    "/api/curso": {
+      "$ref": "./paths/curso.json"
+    }
+  },
+  "components": {
+    "schemas": {
+      "$ref": "./components/schemas.json"
+    },
+    "parameters": {
+      "$ref": "./components/parameters.json"
+    },
+    "responses": {
+      "$ref": "./components/responses.json"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schemas": {
+    "UserLogin": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "user@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "Password123"
+        }
+      }
+    },
+    "Success": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Operación exitosa"
+        },
+        "code": {
+          "type": "integer",
+          "example": 200
+        }
+      }
+    },
+    "Error": {
+      "type":"object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Error ocurrido"
+        },
+        "code": {
+          "type": "integer",
+          "example": 500
+        }
+      }
+    },
+    "CourseList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/schemas/Curso"
+      }
+    },
+    "Curso": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "title": {
+          "type": "string",
+          "example": "Diseño de sistemas"
+        }
+      }
+    }
+  }
+}

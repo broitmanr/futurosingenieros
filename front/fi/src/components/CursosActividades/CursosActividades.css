@@ -1,0 +1,48 @@
+.banner-box {
+    border: 3px solid #007bff; /* Borde azul */
+    border-radius: 15px; /* Esquinas redondeadas más pronunciadas */
+    background-color: #ffffff; /* Fondo blanco */
+    padding: 40px; /* Espaciado interno */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada para resaltar */
+    text-align: center; /* Alineación centrada del texto */
+}
+
+.nombre-materia {
+    font-size: 2rem; /* Tamaño de fuente más grande para el título */
+    font-weight: bold; /* Negrita para darle más énfasis */
+    color: #343a40; /* Color oscuro del texto */
+    margin-bottom: 20px; /* Espacio adicional debajo del título */
+    font-family: 'Roboto', sans-serif; /* Fuente personalizada */
+    letter-spacing: 1px; /* Espaciado entre letras para mayor elegancia */
+}
+
+.nombre-comision, .anio-comision {
+    font-weight: 600; /* Fuente semi-negrita para mayor legibilidad */
+    color: #144376; /* Color azul para destacar el texto */
+}
+
+
+.aside-nav {
+    list-style-type: none; /* Eliminar los puntos de la lista */
+    padding: 0;
+    margin: 0;
+}
+
+.aside-item {
+    margin-bottom: 10px; /* Espacio entre los elementos */
+}
+
+.aside-link {
+    display: block;
+    padding: 10px 15px; /* Espaciado interno */
+    background-color: #f0f0f0; /* Color de fondo del rectángulo */
+    border: 1px solid #ccc; /* Borde del rectángulo */
+    border-radius: 5px; /* Bordes redondeados */
+    text-decoration: none; /* Eliminar subrayado del enlace */
+    color: #333; /* Color del texto */
+    transition: background-color 0.3s ease; /* Transición suave para el hover */
+}
+
+.aside-link:hover {
+    background-color: #e0e0e0; /* Cambio de color al pasar el cursor */
+}

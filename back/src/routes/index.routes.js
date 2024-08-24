@@ -9,11 +9,13 @@ const materiaRoutes = require('./materia.routes')
 const rutasInit = () => {
   const router = Router()
 
+
   router.use('/usuarios', decodeJWT, usuariosRoutes)
   router.use('/curso', decodeJWT, cursoRoutes)
   router.use('/comision', decodeJWT, comisionRoutes)
   router.use('/materia', decodeJWT, materiaRoutes)
   return router
+
 }
 
 const rutasAuth = () => {

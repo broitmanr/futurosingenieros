@@ -2,11 +2,46 @@
     min-height: 100vh; 
     align-items: center;
     padding: 3rem;
-    margin: 3rem;
     border-radius: 2rem;
-    margin-bottom: 3rem;
     display: flex;
+    flex-direction: column;
     justify-content: space-between
+}
+
+.text-title {
+    color: #1A2035; 
+    font-weight: bold; 
+    font-size: 1.5rem; 
+    margin-bottom: 1rem
+}
+
+.card-agregar-alumnos-container {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center; 
+    padding: 2rem;
+    margin-bottom: 3rem;
+    border: solid #1A2035;
+    border-radius: 0.24rem;
+    background-color: #CCDCF1;
+}
+
+.inputs-agregar-alumnos {
+    margin-right: 1.4rem;
+}
+
+.input-item { /* Estilos para los inputs para agregar alumno*/
+    border: #1A2035 0.1rem solid;
+}
+
+.text-input-item {
+    font-size: 14;
+    color: #1A2035
+}
+
+.btn-agregar-alumno {
+    border-radius: 0.24rem;
+    background-color: #1A2035;
 }
 
 .custom-datatable { 
@@ -14,6 +49,7 @@
     margin: 0 auto;
     border: 0.1rem solid #1A2035;
     border-radius: 0.24rem;
+    margin-bottom: 1rem;
 }
 
 .custom-datatable .p-datatable-header {

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import data from './data';
+import data from './shared/data';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import Curso from './CursoForm';
 import axios from "axios";

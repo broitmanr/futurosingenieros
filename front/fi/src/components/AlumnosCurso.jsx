@@ -7,10 +7,10 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { FloatLabel } from 'primereact/floatlabel'; //Se importa componente para agregar al alumno
 import { Button } from 'primereact/button';
-import { AlumnosDatos } from './dataAlumnos'; //Se importan los datos de prueba
+import { AlumnosDatos } from './shared/dataAlumnos'; //Se importan los datos de prueba
 import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
-import './AlumnosCurso.css' //Se importan los estilos
+import './styles/AlumnosCurso.css' //Se importan los estilos
 
 function AlumnosCurso() {
   //Estados para agregar un alumno

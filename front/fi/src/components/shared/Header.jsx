@@ -8,7 +8,7 @@ const Header = () => {
                     {/*Cambié href*/}
                     <a className="navbar-brand" href="/">
                         {/*Ajusta tamaño de imagen según altura */}
-                        <img src="logoFrlp.png" alt="Logo" style={{ height: '12vh' }} />
+                        <img src="/logoFrlp.png" alt="Logo" style={{ height: '12vh' }} />
                     </a>
                     <div className="navbar-brand position-absolute" 
                         style={{ 

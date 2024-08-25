@@ -37,7 +37,7 @@ export const CursosActividades = () => {
                                             <Link className='aside-link' to="#">Instancia Evaluativa</Link>
                                         </li>
                                         <li className='aside-item'>
-                                            <Link className='aside-link' to="#">Alumnos</Link>
+                                            <Link className='aside-link' to="/alumnos">Alumnos</Link>
                                         </li>
                                         <li className='aside-item'>
                                             <Link className='aside-link' to="#">Calificaciones</Link>

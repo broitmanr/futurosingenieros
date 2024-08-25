@@ -15,7 +15,7 @@ function Home(){
                 fontSize: '2.4rem', 
                 marginBottom: '12rem'
                 }}>¡Bienvenidos a Futuros Ingenieros!</h5>  
-            <form style={{ width: '40rem' }}> 
+            <form style={{ width: '40rem', textAlign: 'center' }}> 
 
 
                 <Link to="/cursos" style={{ textDecoration: 'none' }}>

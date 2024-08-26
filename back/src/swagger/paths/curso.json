@@ -1,16 +1,14 @@
 {
-  "paths": {
-    "/curso": {
-      "get": {
-        "summary": "Listar todos los cursos",
-        "responses": {
-          "200": {
-            "description": "Lista de cursos",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CourseList"
-                }
+  "/curso": {
+    "get": {
+      "summary": "Listar todos los cursos",
+      "responses": {
+        "200": {
+          "description": "Lista de cursos",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseList"
               }
             }
           }

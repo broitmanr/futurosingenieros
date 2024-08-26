@@ -1,41 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap'; 
 import axios from 'axios';
+import { Dropdown } from 'primereact/dropdown';
 
 function Curso({ show, handleClose }) {
-  const [anio, setAnio] = useState('');
+  const currentYear = new Date().getFullYear(); //Constante para obtener el año actual
+  const [anio, setAnio] = useState(currentYear);
   const [comisiones, setComisiones] = useState([]);
   const [materias, setMaterias] = useState([]);
-  const [selectedComision, setSelectedComision] = useState('');
+  const [selectedComision, setSelectedComision] = useState(null);
   const [selectedMateria, setSelectedMateria] = useState('');
 
   useEffect(() => {
-    if (anio) {
       axios.get('http://localhost:5000/api/comision', { withCredentials: true }) //Obtener comisiones
       .then(response => {
-        //Filtra la comision por año
-        const comisionesFiltradas = response.data.filter(comision => comision.anio === anio);
-        setComisiones(comisionesFiltradas)
+        setComisiones(response.data)
       })
       .catch (err => console.error('Error al obtener comisiones', err))
-    }
-  }, [anio])
+  }, [])
 
   useEffect(() => {
     if(selectedComision){
-      axios.get(`http://localhost:5000/api/materia/${anio}`, { withCredentials: true }) //Obtener materias
+      const anioComision = comisiones.find(comision => comision.ID === selectedComision)?.anio; //Se obtiene anio
+      axios.get(`http://localhost:5000/api/materia/${anioComision}`, { withCredentials: true }) //Obtiene las materias
       .then(response => {
         setMaterias(response.data)
       })
       .catch (err => console.err('Error al obtener materias', err))
     }
-  }, [selectedComision, anio])
+  }, [selectedComision, comisiones])
 
   const handleAnioChange = (e) => {
     const value = e.target.value;
-    if(
-      value === '' || (Number(value) >= 1 && Number(value) <= 5)
-    ) {
+    if( value === '' || !isNaN(value) && value >= currentYear ) { //Comprueba que sea un número y que sea >= al año actual
       setAnio(value)
       setSelectedComision('')
       setSelectedMateria('')
@@ -43,9 +40,7 @@ function Curso({ show, handleClose }) {
   };
 
   const handleConfirmar = (e) => { //Crear curso
-    console.log('Curso creado')
-    handleClose();
-    /*e.preventDefault();
+    e.preventDefault();
     axios.post('http://localhost:5000/api/curso', 
       { 
         cicloLectivo: anio,
@@ -58,7 +53,7 @@ function Curso({ show, handleClose }) {
       console.log('Curso creado con éxito', response.data)
       handleClose();
     })
-    .catch (err => console.log('Error al querer crear el curso', err))*/
+    .catch (err => console.log('Error al querer crear el curso', err))
   };
 
   const handleCancelar = () => { //Cancelar curso
@@ -68,6 +63,11 @@ function Curso({ show, handleClose }) {
     setSelectedMateria('')
     handleClose()
   };
+
+  const comisionOptions = comisiones.map(comision => ({
+    label: comision.nombre,
+    value: comision.ID,
+  }))
 
   return (
     <>
@@ -81,24 +81,27 @@ function Curso({ show, handleClose }) {
                 <Form.Label>Ciclo lectivo</Form.Label>
                 <Form.Control
                   type="number"
-                  placeholder="Ej: 1, 2, 3, 4, 5"
+                  placeholder={currentYear}
                   value={anio}
+                  min={currentYear}
                   onChange={handleAnioChange}
                 />
               </Form.Group>
-              <Form.Group className="mb-3" controlId="grupoComision">
+              <Form.Group className="mb-3 d-flex flex-column" controlId="grupoComision">
                 <Form.Label>Comisión</Form.Label>
-                <Form.Select aria-label="Floating label select example"
-                  value={selectedComision} onChange={(e) => setSelectedComision(e.target.value)}>
-                  <option value="">Seleccione una comisión</option>
-                  {comisiones.map(comision => (
-                    <option key={comision.ID} value={comision.ID}>{comision.nombre}</option>
-                  ))}
-                </Form.Select>
+                <Dropdown className="w-full" style={{ height: '2rem', fontSize: '0.9rem' }} 
+                  value={selectedComision} 
+                  onChange={(e) => setSelectedComision(e.value)} 
+                  options={comisionOptions} optionLabel="label" 
+                  editable 
+                  placeholder="Seleccione una comisión (Ej: S10, S21)"
+                  filter
+                  appendTo="self" //Muestra el drop dentro del modal
+                />
               </Form.Group>
               <Form.Group className="mb-3" controlId="grupoMateria">
                 <Form.Label>Materia</Form.Label>
-                <Form.Select aria-label="Floating label select example" 
+                <Form.Select aria-label="Floating label select example"
                   value={selectedMateria} onChange={(e) => setSelectedMateria(e.target.value)}>
                   <option value="">Seleccione una materia</option>
                   {materias.map(materia => (<option key={materia.ID} value={materia.ID}>{materia.nombre}</option>))}

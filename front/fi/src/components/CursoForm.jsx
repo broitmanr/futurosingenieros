@@ -96,6 +96,8 @@ function Curso({ show, handleClose }) {
                   editable 
                   placeholder="Seleccione una comisión (Ej: S10, S21)"
                   filter
+                  emptyMessage="Oops... no se encontró la comisión"
+                  emptyFilterMessage="Oops... no se encontró la comisión"
                   appendTo="self" //Muestra el drop dentro del modal
                 />
               </Form.Group>

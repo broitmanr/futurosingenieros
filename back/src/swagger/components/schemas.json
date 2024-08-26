@@ -42,7 +42,7 @@
     "CourseList": {
       "type": "array",
       "items": {
-        "$ref": "#/schemas/Curso"
+          "$ref": "#/components/schemas/Curso"
       }
     },
     "Curso": {

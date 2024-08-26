@@ -9,7 +9,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "../components/schemas.json#/schemas/CourseList"
+                  "$ref": "#/components/schemas/CourseList"
                 }
               }
             }
@@ -18,4 +18,4 @@
       }
     }
   }
-},
+}

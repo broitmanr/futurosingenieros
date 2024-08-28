@@ -3,9 +3,9 @@
     "UserLogin": {
       "type": "object",
       "properties": {
-        "email": {
-          "type": "string",
-          "example": "user@example.com"
+        "mail": {
+          "mail": "string",
+          "example": "user@frlp.utn.edu.ar"
         },
         "password": {
           "type": "string",
@@ -42,7 +42,7 @@
     "CourseList": {
       "type": "array",
       "items": {
-          "$ref": "#/components/schemas/Curso"
+        "$ref": "./schemas.json#/schemas/Curso"
       }
     },
     "Curso": {

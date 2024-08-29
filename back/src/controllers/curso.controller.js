@@ -2,6 +2,7 @@ const crypto = require('crypto')
 const errors = require('../const/error')
 const { red, green, yellow, blue } = require('picocolors')
 const models = require('../database/models/index')
+const generador = require('../services/generadores')
 
 // Función para crear un curso
 async function crear (req, res, next) {
@@ -136,7 +137,7 @@ async function generarCodigoVinculacion (req, res, next) {
     console.log(green(`El usuario logueado con ID ${docenteId} es docente del curso con ID ${cursoId}.`))
 
     // El código de vinculación es el ID del curso en hexadecimal
-    const codigoVinculacion = crypto.randomBytes(4).toString('hex').toUpperCase()
+    const codigoVinculacion = generador.generarCodigoAlfanumerico()
     await curso.update({ codigoVinculacion }, { transaction })
     await transaction.commit()
     console.log(blue(`Código de vinculación generado correctamente: ${codigoVinculacion}`))

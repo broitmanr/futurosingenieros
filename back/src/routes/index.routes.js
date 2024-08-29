@@ -5,6 +5,7 @@ const decodeJWT = require('../middlewares/decodeJWT')
 const cursoRoutes = require('./curso.routes')
 const comisionRoutes = require('./comision.routes')
 const materiaRoutes = require('./materia.routes')
+const instanciaEvaluativaRoutes = require('./instanciaEvaluativa.routes')
 
 const rutasInit = () => {
   const router = Router()
@@ -12,6 +13,7 @@ const rutasInit = () => {
 
   router.use('/usuarios', decodeJWT, usuariosRoutes)
   router.use('/curso', decodeJWT, cursoRoutes)
+  router.use('/instanciaEvaluativa', decodeJWT, instanciaEvaluativaRoutes)
   router.use('/comision', decodeJWT, comisionRoutes)
   router.use('/materia', decodeJWT, materiaRoutes)
   return router

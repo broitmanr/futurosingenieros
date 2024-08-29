@@ -57,6 +57,83 @@
           "example": "Diseño de sistemas"
         }
       }
+    },
+    "InstanciaEvaluativaInput": {
+      "type": "object",
+      "properties": {
+        "porcentajePonderacion": {
+          "type": "number",
+          "example": 20.5
+        },
+        "cursoID": {
+          "type": "integer",
+          "example": 1
+        },
+        "nombre": {
+          "type": "string",
+          "example": "Examen Final"
+        },
+        "tipoInstanciaID": {
+          "type": "string",
+          "example": "Examen"
+        },
+        "descripcion": {
+          "type": "string",
+          "example": "Examen final del curso"
+        }
+      },
+      "required": ["porcentajePonderacion", "cursoID", "nombre", "tipoInstancia"]
+    },
+    "InstanciaEvaluativa": {
+      "type": "object",
+      "properties": {
+        "porcentajePonderacion": {
+          "type": "number",
+          "example": 20.5
+        },
+        "cursoID": {
+          "type": "integer",
+          "example": 1
+        },
+        "nombre": {
+          "type": "string",
+          "example": "Examen Final"
+        },
+        "tipoInstancia": {
+          "type": "integer",
+          "example": 2
+        },
+        "descripcion": {
+          "type": "string",
+          "example": "Examen final del curso"
+        }
+      }
+    },
+    "TipoInstancia": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "integer",
+          "example": 1
+        },
+        "nombre": {
+          "type": "string",
+          "example": "Examen"
+        },
+        "descripcion": {
+          "type": "string",
+          "example": "Examen final"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "Error al listar los tipos de instancias evaluativas"
+        }
+      }
     }
   }
 }

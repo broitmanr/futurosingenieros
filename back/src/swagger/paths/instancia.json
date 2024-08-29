@@ -74,5 +74,51 @@
         }
       }
     }
+  },
+  "/api/instanciaEvaluativa/{cursoID}": {
+    "get": {
+      "tags": [
+        "Instancia Evaluativa"
+      ],
+      "summary": "Listar instancias evaluativas",
+      "description": "Obtiene una lista de instancias evaluativas asociadas a un curso específico.",
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/cursoID"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Lista de instancias evaluativas obtenida con éxito.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstanciaEvaluativa"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Error en la solicitud debido a datos inválidos.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponse"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Error interno del servidor al obtener las instancias evaluativas.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

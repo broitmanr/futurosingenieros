@@ -1,12 +1,12 @@
 {
   "parameters": {
-    "courseId": {
-      "name": "courseId",
+    "cursoID": {
+      "name": "cursoID",
       "in": "path",
       "required": true,
-      "description": "ID del curso",
+      "description": "ID del curso para obtener las instancias evaluativas.",
       "schema": {
-        "type": "integer"
+        "type": "string"
       }
     },
     "userId": {

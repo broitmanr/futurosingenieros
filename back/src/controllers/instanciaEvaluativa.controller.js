@@ -79,34 +79,36 @@ async function crear(req, res, next) {
 //   }
 // }
 //
-// async function listar (req, res, next) {
-//   try {
-//     // Agregar validar que sea los q el es docente
-//     const cursosIDs = await models.Curso.findAll({
-//       include: [
-//         {
-//           model: models.Comision,
-//           attributes: ['nombre']
-//         }, {
-//           model: models.Materia,
-//           attributes: ['nombre']
-//         }]
-//
-//     })
-//
-//     const cursosIDsComplete = cursosIDs.map(curso => ({
-//       id: curso.ID,
-//       anio: curso.cicloLectivo,
-//       comision: curso.Comision.nombre,
-//       materia: curso.Materium.nombre
-//     }))
-//
-//     res.status(200).json(cursosIDsComplete)
-//   } catch (error) {
-//     console.error(red('Error al listar los cursosIDs:', error))
-//     res.status(500).json({ error: 'Error al listar los cursosIDs' })
-//   }
-// }
+ async function listar (req, res, next) {
+
+   try {
+     if (req.params == null)
+       return next(errors.CredencialesInvalidas)
+     let curso = req.params.cursoID
+     const instanciasEvaluativas = await models.InstanciaEvaluativa.findAll({
+       where: {
+         curso_id: curso,
+       },
+       include: [
+         {
+           model: models.TipoInstancia,
+           attributes: ['ID','nombre']
+         }
+       ],
+       attributes:[
+           'ID',
+           'nombre',
+           'descripcion',
+           'porcentaje_ponderacion',
+       ]
+       //
+     })
+     res.status(200).json(instanciasEvaluativas)
+   } catch (error) {
+     console.error(red('Error al listar las instancias:', error))
+     res.status(500).json({error: 'Error al listar las instancias'})
+   }
+}
 //
 // async function generarCodigoVinculacion (req, res, next) {
 //   const { cursoId } = req.body
@@ -245,5 +247,5 @@ async function listarTiposInstancias (req, res, next) {
 }
 
 module.exports = {
-  crear, listarTiposInstancias
+  crear, listarTiposInstancias,listar
 }

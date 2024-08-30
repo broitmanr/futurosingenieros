@@ -193,7 +193,7 @@ async function vincularEstudiante (req, res, next) {
     await models.PersonaXCurso.create({
       persona_id: estudianteId,
       curso_id: curso.ID,
-      rol: 'E',
+      rol: 'A',
       updated_by: res.locals.usuario.ID
     }, { transaction })
 
@@ -227,7 +227,7 @@ async function agregarEstudiantes (req, res, next) {
         await models.PersonaXCurso.create({
           persona_id: estudianteId,
           curso_id: id,
-          rol: 'E',
+          rol: 'A',
           updated_by: res.locals.usuario.ID
         }, { transaction })
       }
@@ -277,6 +277,60 @@ async function verMiembrosCurso (req, res, next) {
     res.status(200).json(formatoParticipantes)
   } catch (error) {
     console.error(red('Error al obtener participantes:', error))
+    next(error)
+  }
+}
+
+
+async function agregarEstudianteByLegajo(req, res, next) {
+  const { id } = req.params
+  const { legajo } = req.body
+  const transaction = await models.sequelize.transaction()
+
+  try {
+    const curso = await models.Curso.findByPk(id, { transaction })
+    if (!curso) return res.status(404).json({ error: 'Curso no encontrado' })
+
+
+    const estudiante = await models.Persona.findOne({
+      where:{
+        legajo,
+        rol:'A'
+      },
+    })
+    if (!estudiante) return res.status(404).json({ error: 'No existe alumno con ese legajo' })
+
+    // Verificar si el docente está asociado al curso
+    const esDocente = await models.PersonaXCurso.findOne({
+      where: { persona_id: res.locals.usuario.persona_id, curso_id: id, rol: 'D' }
+    })
+
+    if (!esDocente) {
+      next(errors.UsuarioNoAutorizado)
+    }
+
+    const estudianteInCurso = await models.PersonaXCurso.findOne({
+      where:{
+        'persona_id':estudiante.ID,
+        'curso_id':id
+      }
+    })
+
+    if (estudianteInCurso) return res.status(409).json({error:'El alumno ya está en el curso'})
+
+    await models.PersonaXCurso.create({
+      persona_id: estudiante.ID,
+      curso_id: id,
+      rol: 'A',
+      updated_by: res.locals.usuario.ID
+    }, { transaction })
+
+
+
+    await transaction.commit()
+    res.status(201).json({ message: 'Alumno agregado al curso' })
+  } catch (error) {
+    await transaction.rollback()
     next(error)
   }
 }
@@ -401,5 +455,6 @@ async function eliminar (req, res, next) {
 }
 
 module.exports = {
-  crear, ver, listar, generarCodigoVinculacion, vincularEstudiante, agregarEstudiantes, verMiembrosCurso, eliminarEstudiante, actualizar, eliminar
+  crear, ver, listar, generarCodigoVinculacion, vincularEstudiante, agregarEstudiantes,
+  verMiembrosCurso, eliminarEstudiante, actualizar, eliminar, agregarEstudianteByLegajo
 }

@@ -12,6 +12,6 @@ const checkRole = function (...allowedRoles) {
 
 module.exports = {
   checkRoleDocente: checkRole('D'),
-  checkRoleEstudiante: checkRole('E'),
+  checkRoleEstudiante: checkRole('A'),
   checkRole
 }

@@ -61,9 +61,9 @@ const verMiembrosCurso = Joi.object({
     'number.integer': 'El ID del curso debe ser un número entero.',
     'any.required': 'El ID del curso es obligatorio.'
   }),
-  rol: Joi.string().valid('E', 'D').optional().messages({
+  rol: Joi.string().valid('A', 'D').optional().messages({
     'string.base': 'El rol debe ser una cadena de texto.',
-    'any.only': 'El rol debe ser "E" (Estudiante) o "D" (Docente).'
+    'any.only': 'El rol debe ser "A" (Estudiante) o "D" (Docente).'
   })
 })
 

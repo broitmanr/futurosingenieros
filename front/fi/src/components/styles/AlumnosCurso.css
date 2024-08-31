@@ -1,7 +1,7 @@
 .alumnos-container { /* Estilos del contenedor */
     min-height: 100vh; 
     align-items: center;
-    padding: 3rem;
+    padding: 1rem;
     border-radius: 2rem;
     display: flex;
     flex-direction: column;
@@ -12,22 +12,87 @@
     color: #1A2035; 
     font-weight: bold; 
     font-size: 1.5rem; 
-    margin-bottom: 1rem
+    margin-top: 1rem;
+    margin-bottom: 0.8rem
+}
+
+.custom-datatable { 
+    width: 80%; /* Tamaño de la tabla */
+    border: 0.1rem solid #1A2035;
+    border-radius: 0.24rem;
+    margin-bottom: 0.6rem;
+    margin-top: 0.8rem
+}
+
+.custom-datatable .p-datatable-header {
+    background-color: #1A2035 /* Color del encabezado */
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between; /* Alinea el ícono a la iquierda y el buscador general a la derecha*/
+    align-items: 'center';
+    width: 100%;
+    padding: 1rem;
+    border-radius: 1rem;
+    border-bottom: #1A2035 0.1rem solid
+}
+
+/* Fija el buscador general */
+.search-input {
+    width: 100%;
+    max-width: 18.75rem
+}
+
+@media (max-width: 48rem) {
+    .search-input {
+        width: 100%
+    }
+}
+
+.inputsFilters{ /* Inputs de filtros individuales */
+    border: 0.1rem solid #1A2035;
+    border-radius: 0.24rem;
+    height: 2.4rem
+}
+
+.custom-datatable .p-datatable-thead > tr > th {
+    background-color: #CCDCF1; /* Color de la fila de filtros */
+    color: #1A2035
+}
+
+.custom-datatable .p-datatable-tbody > tr > td {
+    background-color: white /* Color del cuerpo de la tabla */
+/*  border-top: #1A2035 solid; si se quiere agregar línea entre datos de la tabla */
+}
+
+.columns-data {
+    min-width: 12rem
+}
+
+.agregar-alumnos-container{
+    display: flex; 
+    flex-direction: row; 
+    align-items: center
 }
 
 .card-agregar-alumnos-container {
     display: flex; 
-    flex-direction: row; 
+    flex-direction: column; 
     align-items: center; 
     padding: 2rem;
     margin-bottom: 3rem;
     border: solid #1A2035;
     border-radius: 0.24rem;
     background-color: #CCDCF1;
+    margin: 2rem;
+    width: 20rem;
+    height: 16rem
 }
 
-.inputs-agregar-alumnos {
+.input-agregar-alumnos {
     margin-right: 1.4rem;
+    margin: 1.4rem
 }
 
 .input-item { /* Estilos para los inputs para agregar alumno*/
@@ -41,52 +106,25 @@
 
 .btn-agregar-alumno {
     border-radius: 0.24rem;
-    background-color: #1A2035;
+    background-color: #1A2035
 }
 
-.custom-datatable { 
-    width: 80%; /* Tamaño de la tabla */
-    margin: 0 auto;
-    border: 0.1rem solid #1A2035;
-    border-radius: 0.24rem;
-    margin-bottom: 1rem;
+.dialog-agregar-alumno{
+    width: 50vw
 }
 
-.custom-datatable .p-datatable-header {
-    background-color: #1A2035; /* Color del encabezado */
-}
-
-.table-header {
+.generar-codigo-container{
+    height: 10rem;
     display: flex;
-    justify-content: flex-end; /* Alinea el buscador general a la derecha*/
-    width: 100%;
-    padding: 1rem;
-    border-radius: 1rem;
-    border-bottom: #1A2035 0.1rem solid;
+    align-items: center;
+    justify-content: center
 }
 
-/* Fija el buscador general */
-.search-input {
-    width: 100%;
-    max-width: 18.75rem
-}
-
-@media (max-width: 48rem) {
-    .search-input {
-        width: 100%;
-    }
-}
-
-.custom-datatable .p-datatable-thead > tr > th {
-    background-color: #CCDCF1; /* Color de la fila de filtros */
-    color: #1A2035
-}
-
-.custom-datatable .p-datatable-tbody > tr > td {
-    background-color: white; /* Color del cuerpo de la tabla */
-/*  border-top: #1A2035 solid; si se quiere agregar línea entre datos de la tabla */
-}
-
-.columns-data {
-    min-width: 12rem
+.btn-generar-codigo {
+    border-radius: 0.24rem;
+    background-color: #1A2035;
+    align-self: flex-end;
+    align-self: center;
+    margin-bottom: 0.8rem;
+    height: 4rem
 }

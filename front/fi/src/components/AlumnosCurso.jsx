@@ -4,41 +4,83 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
 import { FloatLabel } from 'primereact/floatlabel'; //Se importa componente para agregar al alumno
 import { Button } from 'primereact/button';
+import { InputOtp } from 'primereact/inputotp';
+import { Dialog } from 'primereact/dialog';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { AlumnosDatos } from './shared/dataAlumnos'; //Se importan los datos de prueba
 import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import './styles/AlumnosCurso.css' //Se importan los estilos
+import { useParams } from 'react-router-dom';
+import { PiUserCirclePlusBold } from "react-icons/pi";
+import axios from 'axios';
 
 function AlumnosCurso() {
   //Estados para agregar un alumno
+  const { id } = useParams(); //Obtiene el id del curso pasado por parámetro
   const [legajo, setLegajo] = useState(''); //Estado para el legajo
-  const [nombre, setNombre] = useState(''); //Estado para el nombre
-  const [apellido, setApellido] = useState(''); //Estado para el apellido
-  const [alumnos, setAlumnos] = useState(null); //Estado para el listado de alumnos
+  const [codigoVinculacion, setCodigoVinculacion] = useState(''); //Estado para el código de vinculación
+  const [alumnos, setAlumnos] = useState([]); //Estado para el listado de alumnos
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    legajo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    nombre: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    apellido: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    'Persona.legajo': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    'Persona.nombre': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    'Persona.apellido': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //Maneja estado de la solicitud
   const [globalFilterValue, setGlobalFilterValue] = useState('');
+  const [visible, setVisible] = useState(false); //Manejo del Dialog
+
+  const handleScroll = () => { //Manejo del desplazo a la sección Agregar Alumnos
+    document.getElementById('agregarAlumnos').scrollIntoView({ behavior: 'smooth'})
+  };
 
   useEffect(() => {
-    try{
-      const data = AlumnosDatos.getData();
-      setAlumnos(data);
-    } catch (error) {
-      console.log('Error', error);
-    }finally{
-      setLoading(false);
-    }
-  }, []);
+    axios.get(`http://localhost:5000/api/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
+    .then(response => {
+      const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
+      setAlumnos(soloAlumnos)
+      setLoading(false)
+    })
+    .catch (err => { console.error('Error al obtener los alumnos', err)
+      /*const dataAlumnos = AlumnosDatos.getData();
+      setAlumnos(dataAlumnos)*/
+      setLoading(false)
+    })
+  }, [id])
 
-  const onGlobalFilterChange = (e) => {
+  const handleAgregarAlumnoConLegajo = async (e) => { //Agregar alumno con el legajo
+    e.preventDefault();
+    if(legajo) {
+      try {
+        const response = await axios.post(`http://localhost:5000/api/curso/${id}/estudiante`, {
+        legajo: legajo }, { withCredentials: true })
+        if (response.status === 201) {
+          setVisible(true)
+        }
+      } catch (err) {
+        console.log('Error al agregar al alumno', err)
+      }
+    } else {
+      console.log('Por favor, ingrese un legajo')
+    }
+  }
+
+  const handleGenerarCodigo = async (e) => { //Generar código de vinculación
+    e.preventDefault();
+    axios.post('http://localhost:5000/api/curso/generar-codigo', {
+      cursoId: id 
+    }, { withCredentials: true })
+    .then(response => {
+      console.log('Código generado con éxito', response.data.codigoVinculacion)
+      setCodigoVinculacion(response.data.codigoVinculacion)
+    })
+    .catch (err => console.log('Error al generar código', err))
+  };
+
+  const onGlobalFilterChange = (e) => { //Buscador general
     const value = e.target.value;
     let _filters = { ...filters };
     _filters['global'].value = value;
@@ -46,9 +88,35 @@ function AlumnosCurso() {
     setGlobalFilterValue(value);
   };
 
+  const onFilterChange = (e, field) => { //Filtros individuales
+    const value = e.target.value;
+    let _filters = {...filters }
+    _filters[field].value = value
+    setFilters(_filters)
+  }
+
+  const handleKeyPressLegajo = (e) => { //No acepta texto
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault()
+    }
+  }
+
+  const handleKeyNombreApellido = (e) => { //No acepta números
+    if (!/[a-zA-Z\s]/.test(e.key)) {
+      e.preventDefault()
+    }
+  }
+
   const renderHeader = () => {
     return (
       <div className="table-header">
+        {/* Icono que desplaza hacia abajo y su descripción */}
+        <OverlayTrigger overlay={
+          <Tooltip id="tooltip-agregar-alumno" className='tooltip-agregar-alumno'>Agregar alumno</Tooltip>}>
+          <span className="d-inline-block" >
+            <PiUserCirclePlusBold data-tip='Agregar alumno' onClick={handleScroll} color='#fff' size={40}/>
+          </span>
+        </OverlayTrigger>
         <IconField >
           <InputText
             className='search-input'
@@ -65,59 +133,97 @@ function AlumnosCurso() {
 
   return (
     <div className="alumnos-container">
-      <h5 className="text-title">Agregar alumno</h5>
-      <div className="card-agregar-alumnos-container">
-        <FloatLabel className="inputs-agregar-alumnos">
-          <InputText className="input-item" id="legajo" value={legajo} onChange={(e) => setLegajo(e.target.value)} />
-          <label className="text-input-item" for="legajo">Legajo</label>
-        </FloatLabel>
-        <FloatLabel className="inputs-agregar-alumnos">
-          <InputText className="input-item" id="nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
-          <label className="text-input-item" for="nombre">Nombre</label>
-        </FloatLabel>
-        <FloatLabel className="inputs-agregar-alumnos">
-          <InputText className="input-item" id="apellido" value={apellido} onChange={(e) => setApellido(e.target.value)} />
-          <label className="text-input-item" for="apellido">Apellido</label>
-        </FloatLabel>
-        <Button className="btn-agregar-alumno" label="Agregar" icon="pi pi-check" />
-      </div>
       <h5 className="text-title">Listado de alumnos</h5>
       <DataTable
         value={alumnos}
         paginator rows={10}
-        dataKey="id"
+        dataKey="ID"
         filters={filters}
         filterDisplay="row"
         loading={loading}
-        globalFilterFields={['legajo', 'nombre', 'apellido']}
+        globalFilterFields={['Persona.legajo', 'Persona.nombre', 'Persona.apellido']}
         header={header}
         emptyMessage="Lo siento, no se encontraron alumnos."
         className='custom-datatable'
       >
         <Column
           className='columns-data'
-          field="legajo"
+          field="Persona.legajo"
           header="Legajo"
           filter
           filterPlaceholder="Buscar por Legajo"
+          filterElement={
+            <input
+              className='inputsFilters'
+              type='text' 
+              onKeyPress={handleKeyPressLegajo} 
+              inputMode='numeric' 
+              onChange={(e) => onFilterChange(e, 'Persona.legajo')}
+            />
+          }
         />
         <Column
           className='columns-data'
-          field="nombre"
+          field="Persona.nombre"
           header="Nombre"
           filter
           filterPlaceholder="Buscar por Nombre"
+          filterElement={
+            <input
+              className='inputsFilters'
+              type='text' 
+              onKeyPress={handleKeyNombreApellido} 
+              inputMode='text'
+              onChange={(e) => onFilterChange(e, 'Persona.nombre')}
+            />
+          }
           sortable
         />
         <Column
           className='columns-data'
-          field="apellido"
+          field="Persona.apellido"
           header="Apellido"
           filter
           filterPlaceholder="Buscar por Apellido"
+          filterElement={
+            <input
+              className='inputsFilters'
+              type='text' 
+              onKeyPress={handleKeyNombreApellido} 
+              inputMode='text'
+              onChange={(e) => onFilterChange(e, 'Persona.apellido')}
+            />
+          }
           sortable
         />
       </DataTable>
+      <h5 className="text-title">Agregar alumno</h5>
+      <div className='agregar-alumnos-container' id='agregarAlumnos'>
+        <div className="card-agregar-alumnos-container">
+          {/* Agregar alumno manualmente */}
+          <h5 className='text-description-agregar-alumno'>Con Legajo</h5>
+          <FloatLabel className="input-agregar-alumnos">
+            <InputText className="input-item" id="legajo" value={legajo} onKeyPress={handleKeyPressLegajo} onChange={(e) => setLegajo(e.target.value)} />
+            <label className="text-input-item" htmlFor="legajo">Legajo</label>
+          </FloatLabel>
+          <Button className="btn-agregar-alumno" onClick={handleAgregarAlumnoConLegajo} label="Agregar" />
+          <Dialog className='dialog-agregar-alumno' header="Alumno agregado" visible={visible} onHide={() => setVisible(false)}
+            breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
+            <p className="m-0">
+              ¡Alumno con legajo {legajo} agregado con éxito!
+            </p>
+          </Dialog>
+        </div>
+        <div className="card-agregar-alumnos-container">
+          {/* Generar código de vinculación */}
+          <h5 className="text-description-agregar-alumno">Con código de vinculación</h5>
+          <div className='generar-codigo-container'>
+            { !codigoVinculacion && <InputOtp className="input-item" disabled /> }
+            { codigoVinculacion && <InputOtp className="input-item" value={codigoVinculacion} /> }
+          </div>
+          <Button className="btn-generar-codigo" onClick={handleGenerarCodigo} label="Generar" />
+        </div>
+      </div>
     </div>
   );
 }

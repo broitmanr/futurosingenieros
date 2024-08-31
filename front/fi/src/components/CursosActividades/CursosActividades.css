@@ -1,10 +1,54 @@
+.seccionBanner {
+    background-color: #e9ecef; /* Fondo gris claro */
+    padding: 50px 0; /* Espaciado vertical */
+}
+
 .banner-box {
-    border: 3px solid #007bff; /* Borde azul */
-    border-radius: 15px; /* Esquinas redondeadas más pronunciadas */
+    border: 3px solid #0056b3; /* Borde azul oscuro */
+    border-radius: 10px; /* Esquinas redondeadas */
     background-color: #ffffff; /* Fondo blanco */
-    padding: 40px; /* Espaciado interno */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada para resaltar */
+    padding: 25px; /* Espaciado interno */
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
     text-align: center; /* Alineación centrada del texto */
+    transform: translateY(-5px); /* Efecto de elevación */
+}
+
+.nombre-materia {
+    font-size: 2.2rem; /* Tamaño de fuente más grande */
+    font-weight: bold; /* Negrita */
+    color: #0056b3; /* Color azul oscuro */
+    margin-bottom: 15px; /* Espacio inferior */
+}
+
+.nombre-comision, .anio-comision {
+    font-size: 1.1rem; /* Tamaño de fuente menor */
+    font-weight: 500; /* Fuente semi-negrita */
+    color: #6c757d; /* Color gris */
+}
+
+/* Asegura que la lista ocupe el ancho completo del contenedor */
+.aside-nav {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+/* Estilo para el enlace */
+.aside-link {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Asegura que el enlace ocupe todo el ancho del contenedor */
+    padding: 10px; /* Ajusta el relleno según sea necesario */
+    text-decoration: none; /* Elimina el subrayado del enlace */
+    color: #000; /* Ajusta el color del texto */
+    background-color: #3676b5; /* Ajusta el color de fondo según sea necesario */
+    border: 1px solid #131313; /* Añade un borde si es necesario */
+    border-radius: 4px; /* Opcional: redondea las esquinas del botón */
+}
+
+/* Alineación y margen para el ícono dentro del enlace */
+.aside-link i {
+    margin-right: 8px; /* Espacio entre el ícono y el texto */
 }
 
 .nombre-materia {
@@ -29,20 +73,117 @@
 }
 
 .aside-item {
-    margin-bottom: 10px; /* Espacio entre los elementos */
+    margin-bottom: 1; /* Espacio entre los elementos */
 }
 
 .aside-link {
     display: block;
-    padding: 10px 15px; /* Espaciado interno */
-    background-color: #f0f0f0; /* Color de fondo del rectángulo */
-    border: 1px solid #ccc; /* Borde del rectángulo */
+    padding: 20px 15px; /* Espaciado interno */
+    background-color: #4e8ec3; /* Color de fondo del rectángulo */
+    border: 2px outset #393636; /* Borde del rectángulo */
     border-radius: 5px; /* Bordes redondeados */
+    font-family: 'oPoppins', sans-serif; /* Cambia el tipo de fuente */
     text-decoration: none; /* Eliminar subrayado del enlace */
-    color: #333; /* Color del texto */
+    font-size: 18px; /* Aumenta el tamaño del texto */
+    color: #131313; /* Color del texto */
     transition: background-color 0.3s ease; /* Transición suave para el hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para el efecto 3D */
 }
 
 .aside-link:hover {
-    background-color: #e0e0e0; /* Cambio de color al pasar el cursor */
+    background-color: #67b2ef; /* Cambio de color al pasar el cursor */
 }
+
+.aside-menu {
+    margin-left: -55px; /* Ajusta el valor según sea necesario */
+}
+
+.aside-link {
+    display: inline-block; /* Necesario para que funcione el efecto de escala */
+    transition: transform 0.3s ease;
+}
+
+.aside-link:hover {
+    transform: scale(1.1); /* Aumenta el tamaño al 110% */
+}
+
+.aside-link {
+    display: flex;
+    align-items: center;
+}
+
+.aside-link i {
+    margin-right: 8px; /* Ajusta el valor según el espacio deseado */
+}
+
+/*Eestilos del boton crear instancia*/
+
+/* Estilo base para el botón */
+.btn-primary {
+    background-color: #007bff; /* Color azul para el fondo */
+    border-color: #007bff; /* Color del borde */
+    color: #756e6e; /* Color del texto */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espaciado interno */
+    text-align: center; /* Alineación centrada del texto */
+    font-size: 1rem; /* Tamaño de fuente */
+    font-weight: bold; /* Negrita */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra suave para efecto 3D */
+    transition: all 0.3s ease; /* Transición suave para efectos */
+}
+
+/* Estilo para el botón en estado hover */
+/* Estilo base para el botón */
+.btn-primary {
+    background-color: #007bff; /* Color azul para el fondo */
+    border-color: #007bff; /* Color del borde */
+    color: #ffffff; /* Color del texto */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espaciado interno */
+    text-align: center; /* Alineación centrada del texto */
+    font-size: 1rem; /* Tamaño de fuente */
+    font-weight: bold; /* Negrita */
+    transition: all 0.3s ease; /* Transición suave para efectos */
+}
+
+/* Estilo para el botón en estado hover */
+.btn-primary:hover {
+    background-color: #0056b3; /* Azul más oscuro en hover */
+    border-color: #0056b3; /* Color del borde en hover */
+    color: #0c0c0c; /* Color del texto en hover */
+    transform: scale(1.10); /* Aumenta el tamaño del botón */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave para resaltar */
+}
+
+/* Estilo para el encabezado del modal */
+.modal-header {
+    background-color: #7fa7db; /* Color de fondo */
+    color: #1A2035; /* Color del texto */
+    font-weight: bold; /* Texto en negrita */
+}
+
+/* Estilo para el cuerpo del modal */
+.modal-body {
+    font-weight: bold; /* Texto en negrita */
+}
+
+/* Estilo para las etiquetas del formulario en el cuerpo del modal */
+.modal-body .form-label {
+    font-weight: bold; /* Texto en negrita para las etiquetas */
+}
+
+/* Estilo para los botones del modal */
+.modal-footer .btn-secondary {
+    background-color: #CCDCF1; /* Color de fondo */
+    color: #1A2035; /* Color del texto */
+    font-weight: bold; /* Texto en negrita */
+    border: 1px solid #1A2035; /* Color del borde */
+}
+
+.modal-footer .btn-primary {
+    background-color: #1A2035; /* Color de fondo */
+    color: #ffffff; /* Color del texto */
+    font-weight: bold; /* Texto en negrita */
+    border: 1px solid #1A2035; /* Color del borde */
+}
+

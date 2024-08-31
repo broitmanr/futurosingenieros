@@ -25,7 +25,7 @@
 }
 
 .custom-datatable .p-datatable-header {
-    background-color: #1A2035; /* Color del encabezado */
+    background-color: #1A2035 /* Color del encabezado */
 }
 
 .table-header {
@@ -35,7 +35,7 @@
     width: 100%;
     padding: 1rem;
     border-radius: 1rem;
-    border-bottom: #1A2035 0.1rem solid;
+    border-bottom: #1A2035 0.1rem solid
 }
 
 /* Fija el buscador general */
@@ -46,7 +46,7 @@
 
 @media (max-width: 48rem) {
     .search-input {
-        width: 100%;
+        width: 100%
     }
 }
 
@@ -62,7 +62,7 @@
 }
 
 .custom-datatable .p-datatable-tbody > tr > td {
-    background-color: white; /* Color del cuerpo de la tabla */
+    background-color: white /* Color del cuerpo de la tabla */
 /*  border-top: #1A2035 solid; si se quiere agregar línea entre datos de la tabla */
 }
 
@@ -73,7 +73,7 @@
 .agregar-alumnos-container{
     display: flex; 
     flex-direction: row; 
-    align-items: center;
+    align-items: center
 }
 
 .card-agregar-alumnos-container {
@@ -107,6 +107,10 @@
 .btn-agregar-alumno {
     border-radius: 0.24rem;
     background-color: #1A2035
+}
+
+.dialog-agregar-alumno{
+    width: 50vw
 }
 
 .generar-codigo-container{

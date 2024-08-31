@@ -57,11 +57,11 @@ function AlumnosCurso() {
       try {
         const response = await axios.post(`http://localhost:5000/api/curso/${id}/estudiante`, {
         legajo: legajo }, { withCredentials: true })
-      if (response.status === 2000) {
-        setVisible(true)
-      }
+        if (response.status === 201) {
+          setVisible(true)
+        }
       } catch (err) {
-          console.log('Error al agregar al alumno', err)
+        console.log('Error al agregar al alumno', err)
       }
     } else {
       console.log('Por favor, ingrese un legajo')
@@ -111,7 +111,7 @@ function AlumnosCurso() {
     return (
       <div className="table-header">
         {/* Icono que desplaza hacia abajo y su descripción */}
-        <OverlayTrigger style={{backgroundColor: '#CCDCF1'}} overlay={
+        <OverlayTrigger overlay={
           <Tooltip id="tooltip-agregar-alumno" className='tooltip-agregar-alumno'>Agregar alumno</Tooltip>}>
           <span className="d-inline-block" >
             <PiUserCirclePlusBold data-tip='Agregar alumno' onClick={handleScroll} color='#fff' size={40}/>
@@ -203,12 +203,12 @@ function AlumnosCurso() {
           {/* Agregar alumno manualmente */}
           <h5 className='text-description-agregar-alumno'>Con Legajo</h5>
           <FloatLabel className="input-agregar-alumnos">
-            <InputText className="input-item" id="legajo" value={legajo} onChange={(e) => setLegajo(e.target.value)} />
+            <InputText className="input-item" id="legajo" value={legajo} onKeyPress={handleKeyPressLegajo} onChange={(e) => setLegajo(e.target.value)} />
             <label className="text-input-item" htmlFor="legajo">Legajo</label>
           </FloatLabel>
           <Button className="btn-agregar-alumno" onClick={handleAgregarAlumnoConLegajo} label="Agregar" />
-          <Dialog header="Alumno agregado" visible={visible} onHide={() => setVisible(false)}
-            style={{ width: '50vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
+          <Dialog className='dialog-agregar-alumno' header="Alumno agregado" visible={visible} onHide={() => setVisible(false)}
+            breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
             <p className="m-0">
               ¡Alumno con legajo {legajo} agregado con éxito!
             </p>
@@ -218,7 +218,7 @@ function AlumnosCurso() {
           {/* Generar código de vinculación */}
           <h5 className="text-description-agregar-alumno">Con código de vinculación</h5>
           <div className='generar-codigo-container'>
-            { !codigoVinculacion && <InputOtp className="input-item" value={''} /> }
+            { !codigoVinculacion && <InputOtp className="input-item" disabled /> }
             { codigoVinculacion && <InputOtp className="input-item" value={codigoVinculacion} /> }
           </div>
           <Button className="btn-generar-codigo" onClick={handleGenerarCodigo} label="Generar" />

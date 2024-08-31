@@ -20,7 +20,7 @@ function App() {
               <Route path="/" element={<Home />}/>
               <Route path="/cursos" element={<Cursos />}/>
               <Route path="/login" element={<SignInSide />}/>
-              <Route path="/alumnos" element={<AlumnosCurso />}/>
+              <Route path="/alumnos/:id" element={<AlumnosCurso />}/>
                 {
                 // CONSIDERAR QUE NECESITAMOS PASAR EL ID DEL CURSO PARA VISUALIZAR Y ACTUAR SOBRE LAS ACTIVIDADES DE ESTE.
                 }

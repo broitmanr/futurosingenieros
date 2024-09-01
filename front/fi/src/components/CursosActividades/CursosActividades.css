@@ -187,3 +187,19 @@
     border: 1px solid #1A2035; /* Color del borde */
 }
 
+.actividad-boton {
+    background-color: #7995a9; /* Color de fondo */
+    color: rgb(7, 7, 7); /* Color del texto */
+    border: 1px solid #080808; /* Borde del botón */
+    padding: 10px 20px; /* Espaciado interno del botón */
+    margin: 5px 0; /* Espaciado externo del botón */
+    font-size: 16px; /* Tamaño de fuente */
+    cursor: pointer; /* Cambia el cursor al pasar por el botón */
+    border-radius: 4px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Transición para el efecto hover */
+    width: 100%; /* Hace que el botón ocupe el 100% del ancho del contenedor */
+  }
+  
+  .actividad-boton:hover {
+    background-color: #7e8d9f; /* Color de fondo al pasar el ratón */
+  }

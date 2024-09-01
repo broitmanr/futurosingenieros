@@ -16,6 +16,11 @@ export const CursosActividades = () => {
 
     const handleClose = () => setShow(false);
 
+    const mostrarInfoActividad = (actividad) => {
+        console.log("Información de la actividad:", actividad);
+        // Logica para mostrar la informacion de la actividad
+      };
+
     // useEffect para hacer la petición con axios
     useEffect(() => {
 
@@ -88,7 +93,7 @@ export const CursosActividades = () => {
                                 <nav>
                                     <ul className="aside-nav">
                                         <li className='aside-item'>
-                                            <Link className='aside-link' to="#">Instancia Evaluativa</Link>
+                                            <Link className='aside-link' to="#">Recursos</Link>
                                         </li>
                                         <li className='aside-item'>
                                             <Link className='aside-link' to="/alumnos">Alumnos</Link>
@@ -112,42 +117,43 @@ export const CursosActividades = () => {
                                 </nav>
                             </aside>
                         </div>
-
                         <div className="col-md-9">
-                            <Button variant="primary" onClick={() => setShow(true)} >
-                                <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
-                                Crear Instancia
-                            </Button>
-                            <h4 className="mt-3">Instancias evaluativas creadas</h4>
+    <Button variant="primary" onClick={() => setShow(true)}>
+        <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
+        Crear Instancia
+    </Button>
+    <h4 className="mt-3">Instancias evaluativas creadas</h4>
 
-                            <Actividad show={show} handleClose={handleClose} cursoID={curso.ID} setInstancias={setInstancias} />
+    <Actividad show={show} handleClose={handleClose} cursoID={curso.ID} setInstancias={setInstancias} />
 
-                            {
-                                isLoading ? (
-                                    <div className="text-center">Cargando...</div>
-                                )
-                                    :
-                                    (
-                                        instancias.length > 0 ?
-                                            Object.entries(instancias).map(([key, value]) => (
-                                                <div className="actividad d-flex row border border-2 mt-4 p-2" key={key}>
-                                                    <div className="col-md-8 d-flex align-items-center">
-                                                        <i className="fa-solid fa-tasks me-2"></i>
-                                                        <p className='actividad-nombre m-0'>{value.nombre}</p>
-                                                    </div>
-                                                    <div className="col-md-4 d-flex justify-content-end">
-                                                        <i className="fa fa-pencil me-2" aria-hidden="true"></i>
-                                                        <i className="fa-solid fa-trash text-danger"></i>
-                                                    </div>
-                                                </div>
-                                            ))
-                                            :
-                                            <p className='text-danger'>Este curso no posee actividades</p>
-                                    )
-                            }
-
-
+    {
+        isLoading ? (
+            <div className="text-center">Cargando...</div>
+        ) : (
+            instancias.length > 0 ? (
+                Object.entries(instancias).map(([key, value]) => (
+                    <button 
+                        className="actividad-boton" 
+                        key={key}
+                        onClick={() => mostrarInfoActividad(value)} // Maneja el clic en la actividad
+                    >
+                        <div className="col-md-12 d-flex align-items-center">
+                            <p className="actividad-nombre m-0">{value.nombre}</p>
+                            <div className="ms-auto d-flex align-items-center">
+                                <i className="fa fa-pencil me-2" aria-hidden="true"></i>
+                                <i className="fa-solid fa-trash text-danger"></i>
+                            </div>
                         </div>
+
+                    </button>
+                ))
+            ) : (
+                <p className='text-danger'>Este curso no posee instancias evaluativas.</p>
+            )
+        )
+    }
+</div>
+
                     </div>
                 </div>
 

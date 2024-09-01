@@ -1,23 +1,77 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import './CursosActividades.css';
 import { Button } from 'react-bootstrap';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Actividad from '../CursosActividades/ActividadForm'
+import axios from "axios";
 
 
 export const CursosActividades = () => {
     const [show, setShow] = useState(false);
+    const [instancias, setInstancias] = useState({});
+
+    const [curso, setCurso] = useState({});
+    const [isLoading, setLoading] = useState({});
+    const params = useParams();
+
     const handleClose = () => setShow(false);
-  
+
+    // useEffect para hacer la petición con axios
+    useEffect(() => {
+
+        
+
+
+        // OBTENER LOS DATOS DEL CURSO
+        axios.get(`http://localhost:5000/api/curso/${params.id}`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
+            .then(response => {
+                console.log(response.data);
+                setCurso(response.data)
+                setLoading(false); // Detiene el estado de carga
+            })
+            .catch(err => {
+                console.log(err)
+                // setError('Error al obtener los cursos');
+                setLoading(false);
+            });
+
+            // OBTENER LAS ACTIVIDADES DE ESE CURSO
+        axios.get(`http://localhost:5000/api/instanciaEvaluativa/${params.id}`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
+            .then(response => {
+                console.log(response.data);
+                setInstancias(response.data); // Almacena los datos obtenidos en el estado
+                setLoading(false); // Detiene el estado de carga
+            })
+            .catch(err => {
+                console.log(err)
+                // setError('Error al obtener los cursos');
+                setLoading(false);
+            });
+    }, []); // El array vacío asegura que el efecto solo se ejecute una vez al montar el componente
+
+
     return (
         <>
+
 
             <section className="seccionBanner py-5">
                 <div className="container">
                     <div className="row">
-                        <div className="col-md-6 mx-auto banner-box">
-                            <h2 className="nombre-materia">Diseño de sistemas</h2>
-                            <p><span className="nombre-comision">S32</span> - <span className="anio-comision">Año 2024</span></p>
+                        <div className="col-md-6 mx-auto border border-5 p-4">
+                            {
+                                isLoading
+                                    ?
+
+                                    <p className='text-danger text-center'>Cargando</p>
+
+                                    :
+                                    curso.Materium?.nombre &&
+                                    <>
+                                        <h2 className="nombre-materia">{curso.Materium.nombre}</h2>
+                                        <p><span className="nombre-comision">{curso.Comision.nombre}</span> - <span className="anio-comision">Año {curso.cicloLectivo}</span></p>
+                                    </>
+                            }
+
                         </div>
                     </div>
                 </div>
@@ -48,7 +102,6 @@ export const CursosActividades = () => {
                                             Notificaciones
                                             </Link>
                                         </li>
-
                                         <li className='aside-item d-flex align-items-center'>
                                             <Link className='aside-link' to="#">
                                             <i className="fa fa-cogs" aria-hidden="true"></i>
@@ -61,43 +114,37 @@ export const CursosActividades = () => {
                         </div>
 
                         <div className="col-md-9">
-                            <Button className='btn-primary' onClick={() => setShow (true)} >
-                            <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
+                            <Button variant="primary" onClick={() => setShow(true)} >
+                                <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
                                 Crear Instancia
                             </Button>
                             <h4 className="mt-3">Instancias evaluativas creadas</h4>
 
-                            <Actividad show={show} handleClose={handleClose} />
+                            <Actividad show={show} handleClose={handleClose} cursoID={curso.ID} setInstancias={setInstancias} />
 
-                            <div className="actividad d-flex row border border-2 mt-4 p-2">
-                                <div className="col-md-8 d-flex align-items-center">
-                                <i className="fa-solid fa-tasks me-2"></i>
-                                    <p className='actividad-nombre m-0'>Planificación del cronograma</p></div>
-                                <div className="col-md-4 d-flex justify-content-end">
-                                    <i className="fa fa-pencil me-2" aria-hidden="true"></i>
-                                    <i className="fa-solid fa-trash text-danger"></i>
-                                </div>
-                            </div>
-
-                            <div className="actividad d-flex row border border-2 mt-4 p-2">
-                                <div className="col-md-8 d-flex align-items-center">
-                                <i className="fa-solid fa-tasks me-2"></i>
-                                    <p className='actividad-nombre m-0'>Planificación de costos</p></div>
-                                <div className="col-md-4 d-flex justify-content-end">
-                                    <i className="fa fa-pencil me-2" aria-hidden="true"></i>
-                                    <i className="fa-solid fa-trash text-danger"></i>
-                                </div>
-                            </div>
-
-                            <div className="actividad d-flex row border border-2 mt-4 p-2">
-                                <div className="col-md-8 d-flex align-items-center">
-                                <i className="fa-solid fa-tasks me-2"></i>
-                                    <p className='actividad-nombre m-0'>Plan de gestion de riesgos</p></div>
-                                <div className="col-md-4 d-flex justify-content-end">
-                                    <i className="fa fa-pencil me-2" aria-hidden="true"></i>
-                                    <i className="fa-solid fa-trash text-danger"></i>
-                                </div>
-                            </div>
+                            {
+                                isLoading ? (
+                                    <div className="text-center">Cargando...</div>
+                                )
+                                    :
+                                    (
+                                        instancias.length > 0 ?
+                                            Object.entries(instancias).map(([key, value]) => (
+                                                <div className="actividad d-flex row border border-2 mt-4 p-2" key={key}>
+                                                    <div className="col-md-8 d-flex align-items-center">
+                                                        <i className="fa-solid fa-tasks me-2"></i>
+                                                        <p className='actividad-nombre m-0'>{value.nombre}</p>
+                                                    </div>
+                                                    <div className="col-md-4 d-flex justify-content-end">
+                                                        <i className="fa fa-pencil me-2" aria-hidden="true"></i>
+                                                        <i className="fa-solid fa-trash text-danger"></i>
+                                                    </div>
+                                                </div>
+                                            ))
+                                            :
+                                            <p className='text-danger'>Este curso no posee actividades</p>
+                                    )
+                            }
 
 
                         </div>

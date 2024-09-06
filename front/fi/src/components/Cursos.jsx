@@ -16,20 +16,40 @@ const Cursos = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const [shouldFetch, setShouldFetch] = useState(false); //Estados para manejar la actualización del curso
+ 
     // useEffect para hacer la petición con axios 
 
-    useEffect(() => {
-        axios.get('http://localhost:5000/api/curso', { withCredentials: true }) // Ajusta la URL de la API según corresponda
-            .then(response => {
+    const fetchCursos = async () => {
+        try{
+            const response = await axios.get('http://localhost:5000/api/curso', { withCredentials: true }) // Ajusta la URL de la API según corresponda
+            if(response.data) {
                 setCursos(response.data); // Almacena los datos obtenidos en el estado
                 setLoading(false); // Detiene el estado de carga
-            })
-            .catch(err => {
-                setCursos(data)
-                // setError('Error al obtener los cursos');
-                setLoading(false);
-            });
-    }, []); // El array vacío asegura que el efecto solo se ejecute una vez al montar el componente
+            }
+        } catch (err) {
+            setCursos(data)
+            // setError('Error al obtener los cursos');
+            setLoading(false);
+        }
+    }
+
+    useEffect(() =>{
+        fetchCursos()
+    }, [])
+
+    useEffect(() => {
+        if(shouldFetch){
+            fetchCursos()
+            setShouldFetch(false) //Resetea el estado de actualización
+        }
+    }, [shouldFetch])
+
+    const handleCursoAgregado = (nuevoCurso) => {
+        console.log('agregado', nuevoCurso)
+        setCursos(prevCursos => [...prevCursos, nuevoCurso])
+        setShouldFetch(true) //Activa el estado de actualización
+    };
 
     return ( 
         <div className="cursos-container" style={{ minHeight: '100vh', position: 'relative', padding: '2rem' }}>
@@ -44,7 +64,7 @@ const Cursos = () => {
                         }}>
                         Agregar curso
                     </Button>
-                    <Curso show={show} handleClose={handleClose} />
+                    <Curso loading={loading} show={show} handleClose={handleClose} handleCursoAgregado={handleCursoAgregado} />
                 </>
             )}
             { role === 'A' && (

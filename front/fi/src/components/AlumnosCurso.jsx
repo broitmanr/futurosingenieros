@@ -39,19 +39,23 @@ function AlumnosCurso() {
 
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    axios.get(`http://localhost:5000/api/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
-    .then(response => {
-      const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
-      setAlumnos(soloAlumnos)
-      setLoading(false)
-    })
-    .catch (err => { 
+  const fetchAlumnos = async () => {
+    try{
+      const response = await axios.get(`http://localhost:5000/api/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
+      if(response.data) {
+        const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
+        setAlumnos(soloAlumnos)
+        setLoading(false)
+      }
+    } catch (err) {
       console.error('Error al obtener los alumnos', err)
       const dataAlumnos = AlumnosDatos.getData();
       setAlumnos(dataAlumnos)
       setLoading(false)
-    })
+    }
+  }
+  useEffect(() => {
+    fetchAlumnos();
   }, [id])
 
   const handleAgregarAlumnoConLegajo = async (e) => { //Agregar alumno con el legajo
@@ -62,6 +66,7 @@ function AlumnosCurso() {
         legajo: legajo }, { withCredentials: true })
         if (response.status === 201) {
           setVisible(true)
+          fetchAlumnos(); //Actualiza lista de estudiantes
         }
       } catch (err) {
         console.log('Error al agregar al alumno', err)

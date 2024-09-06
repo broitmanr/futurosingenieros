@@ -5,7 +5,8 @@ module.exports = function (err, req, res, next) {
     success: false,
     error: {
       code: err.code || 500,
-      message: err.message || 'Internal server error'
+      message: err.message || 'Internal server error',
+      details: err.details || ''
     }
   }
 

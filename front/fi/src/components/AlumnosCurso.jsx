@@ -228,7 +228,7 @@ function AlumnosCurso() {
           <h5 className="text-description-agregar-alumno">Con código de vinculación</h5>
           <div className='generar-codigo-container'>
             { !codigoVinculacion && <InputOtp className="input-item" disabled /> }
-            { codigoVinculacion && <InputOtp className="input-item" value={codigoVinculacion} /> }
+            { codigoVinculacion && <InputOtp className="input-item" disabled value={codigoVinculacion} /> }
           </div>
           <Button className="btn-generar-codigo" onClick={handleGenerarCodigo} label="Generar" />
         </div>

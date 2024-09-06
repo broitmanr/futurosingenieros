@@ -2,19 +2,22 @@ import React, {useEffect, useState} from "react";
 import data from './shared/data';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import Curso from './CursoForm';
+import CursoVinculacion from './CursoVinculacion'
 import axios from "axios";
 import { useRole } from "../context/RolesContext";
 
 const Cursos = () => {
     const { role } = useRole();
     const [show, setShow] = useState(false);
-
+    const [showVincular, setShowVincular] = useState(false)
     const [cursos, setCursos] = useState([]); // Estado para almacenar los cursos
     const [loading, setLoading] = useState(true); // Estado para manejar el estado de carga
     const [error, setError] = useState(''); // Estado para manejar errores
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const handleCloseVincular = () => setShowVincular(false);
 
     const [shouldFetch, setShouldFetch] = useState(false); //Estados para manejar la actualización del curso
  
@@ -68,15 +71,18 @@ const Cursos = () => {
                 </>
             )}
             { role === 'A' && (
-                <Button variant="primary" /*onClick={() => setShow (true) }*/ 
-                    style={{ 
-                        position: 'absolute', 
-                        right: '6.6rem', 
-                        margin: 5,
-                        background: '#1A2035'
-                    }}>
-                    Vincular curso
-                </Button>
+                <>
+                    <Button variant="primary" onClick={() => setShowVincular (true) } 
+                        style={{ 
+                            position: 'absolute', 
+                            right: '6.6rem', 
+                            margin: 5,
+                            background: '#1A2035'
+                        }}>
+                        Vincular curso
+                    </Button>
+                    <CursoVinculacion showVincular={showVincular} handleCloseVincular={handleCloseVincular} />
+                </>
             )}
             {loading && <p>Cargando cursos...</p>}
             {error && <p>{error}</p>}

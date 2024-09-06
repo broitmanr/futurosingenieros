@@ -8,6 +8,7 @@ import Cursos from './components/Cursos.jsx';
 import SignInSide from "./components/SignInSide.tsx";
 import AlumnosCurso from './components/AlumnosCurso.jsx';
 import { CursosActividades } from './components/CursosActividades/CursosActividades.jsx';
+import PrivateRoute from './PrivateRoutes';
 
 
 function App() {
@@ -18,13 +19,35 @@ function App() {
             <Subheader />
             <Routes>
               <Route path="/" element={<Home />}/>
-              <Route path="/cursos" element={<Cursos />}/>
               <Route path="/login" element={<SignInSide />}/>
-              <Route path="/alumnos/:id" element={<AlumnosCurso />}/>
+              <Route
+                path="/cursos"
+                element={
+                  <PrivateRoute allowedRoles={['D', 'A']}>
+                    <Cursos />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/alumnos/:id"
+                element={
+                  <PrivateRoute allowedRoles={['D']}>
+                    <AlumnosCurso />
+                  </PrivateRoute>
+                }
+              />
+              
                 {
                 // CONSIDERAR QUE NECESITAMOS PASAR EL ID DEL CURSO PARA VISUALIZAR Y ACTUAR SOBRE LAS ACTIVIDADES DE ESTE.
                 }
-              <Route path="/cursos/:id/actividades" element={<CursosActividades />}/>
+              <Route
+                path="/cursos/:id/actividades"
+                element={
+                  <PrivateRoute allowedRoles={['D', 'A']}>
+                    <CursosActividades />
+                  </PrivateRoute>
+                }
+              />
             </Routes>
             <Footer />
         </BrowserRouter>

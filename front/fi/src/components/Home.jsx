@@ -18,8 +18,8 @@ function Home(){
             <form style={{ width: '40rem', textAlign: 'center' }}> 
 
 
-                <Link to="/cursos" style={{ textDecoration: 'none' }}>
-                    <button className="btn btn-primary" /*type="submit"*/ 
+                <Link to="/login" style={{ textDecoration: 'none' }}>
+                    <button className="btn btn-primary"
                         style={{ 
                             backgroundColor: '#1A2035', 
                             color: '#fff', 

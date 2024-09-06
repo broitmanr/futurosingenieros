@@ -37,6 +37,8 @@ function AlumnosCurso() {
     document.getElementById('agregarAlumnos').scrollIntoView({ behavior: 'smooth'})
   };
 
+  const [error, setError] = useState('');
+
   useEffect(() => {
     axios.get(`http://localhost:5000/api/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
     .then(response => {
@@ -44,9 +46,10 @@ function AlumnosCurso() {
       setAlumnos(soloAlumnos)
       setLoading(false)
     })
-    .catch (err => { console.error('Error al obtener los alumnos', err)
-      /*const dataAlumnos = AlumnosDatos.getData();
-      setAlumnos(dataAlumnos)*/
+    .catch (err => { 
+      console.error('Error al obtener los alumnos', err)
+      const dataAlumnos = AlumnosDatos.getData();
+      setAlumnos(dataAlumnos)
       setLoading(false)
     })
   }, [id])
@@ -134,6 +137,7 @@ function AlumnosCurso() {
   return (
     <div className="alumnos-container">
       <h5 className="text-title">Listado de alumnos</h5>
+      {error && <p>{error}</p>}
       <DataTable
         value={alumnos}
         paginator rows={10}

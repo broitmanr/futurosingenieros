@@ -3,8 +3,10 @@ import data from './shared/data';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import Curso from './CursoForm';
 import axios from "axios";
+import { useRole } from "../context/RolesContext";
 
 const Cursos = () => {
+    const { role } = useRole();
     const [show, setShow] = useState(false);
 
     const [cursos, setCursos] = useState([]); // Estado para almacenar los cursos
@@ -14,7 +16,8 @@ const Cursos = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    // useEffect para hacer la petición con axios
+    // useEffect para hacer la petición con axios 
+
     useEffect(() => {
         axios.get('http://localhost:5000/api/curso', { withCredentials: true }) // Ajusta la URL de la API según corresponda
             .then(response => {
@@ -28,20 +31,33 @@ const Cursos = () => {
             });
     }, []); // El array vacío asegura que el efecto solo se ejecute una vez al montar el componente
 
-
     return ( 
         <div className="cursos-container" style={{ minHeight: '100vh', position: 'relative', padding: '2rem' }}>
-            <Button variant="primary" onClick={() => setShow (true)} 
+            { role === 'D' && (
+                <>
+                    <Button variant="primary" onClick={() => setShow (true)} 
+                        style={{ 
+                            position: 'absolute', 
+                            right: '6.6rem', 
+                            margin: 5,
+                            background: '#1A2035'
+                        }}>
+                        Agregar curso
+                    </Button>
+                    <Curso show={show} handleClose={handleClose} />
+                </>
+            )}
+            { role === 'A' && (
+                <Button variant="primary" /*onClick={() => setShow (true) }*/ 
                     style={{ 
                         position: 'absolute', 
                         right: '6.6rem', 
                         margin: 5,
                         background: '#1A2035'
                     }}>
-                    Agregar curso
-            </Button>
-            <Curso show={show} handleClose={handleClose} />
-
+                    Vincular curso
+                </Button>
+            )}
             {loading && <p>Cargando cursos...</p>}
             {error && <p>{error}</p>}
             {/* Mostrar los cursos si se han cargado correctamente */}

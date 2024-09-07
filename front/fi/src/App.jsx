@@ -8,9 +8,14 @@ import Cursos from './components/Cursos.jsx';
 import SignInSide from "./components/SignInSide.tsx";
 import AlumnosCurso from './components/AlumnosCurso.jsx';
 import { CursosActividades } from './components/CursosActividades/CursosActividades.jsx';
+import { ActividadEntregas } from './components/ActividadEntregas/ActividadEntregas.jsx';
+import { DetalleEntrega } from './components/DetalleEntrega/DetalleEntrega.jsx';
 
 
 function App() {
+
+  
+  
   return (
     <div className="App">
         <BrowserRouter>
@@ -25,6 +30,9 @@ function App() {
                 // CONSIDERAR QUE NECESITAMOS PASAR EL ID DEL CURSO PARA VISUALIZAR Y ACTUAR SOBRE LAS ACTIVIDADES DE ESTE.
                 }
               <Route path="/cursos/:id/actividades" element={<CursosActividades />}/>
+              <Route path="/actividad/:id/entregas" element={<ActividadEntregas/>}/>
+              <Route path="/entrega/:id" element={<DetalleEntrega/>}/>
+
             </Routes>
             <Footer />
         </BrowserRouter>

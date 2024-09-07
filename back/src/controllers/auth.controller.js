@@ -30,7 +30,8 @@ module.exports = {
         success: true,
         data: {
           id: user.ID,
-          token: jwt(user)
+          token: jwt(user),
+          role: user.rol //Se incluye el rol
         }
       })
     } catch (err) {

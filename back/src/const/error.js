@@ -33,5 +33,13 @@ module.exports = {
   UsuarioNoPersona: {
     code: 400, // Código de estado HTTP 400 (Bad Request)
     message: 'El usuario no tiene persona asociada'
+  },
+  NotFoundError: {
+    code: 404, // Código 404: No encontrado. Indica que el recurso solicitado no existe.
+    message: 'El recurso solicitado no se pudo encontrar. Verifique la URL o el ID del recurso e intente nuevamente.'
+  },
+  ConflictError: {
+    code: 409,
+    message: 'La solicitud no se puede completar debido a un conflicto con el estado actual del recurso.'
   }
 }

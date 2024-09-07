@@ -2,40 +2,52 @@ export const AlumnosDatos = {
     getData() {
         return [
             {
-                id: '1',
-                legajo: '28090',
-                nombre: 'LAUTARO',
-                apellido: 'ARANDA'
+                ID: '1',
+                Persona: {
+                    legajo: '28090',
+                    nombre: 'LAUTARO',
+                    apellido: 'ARANDA'    
+                }
             },
             {
-                id: '2',
-                legajo: '27700',
-                nombre: 'CAMILA',
-                apellido: 'CABRERA'
+                ID: '2',
+                Persona: {
+                    legajo: '27700',
+                    nombre: 'CAMILA',
+                    apellido: 'CABRERA'
+                }
             },
             {
-                id: '3',
-                legajo: '31100',
-                nombre: 'MATIAS',
-                apellido: 'MACIAS'
+                ID: '3',
+                Persona: {
+                    legajo: '31100',
+                    nombre: 'MATIAS',
+                    apellido: 'MACIAS'
+                }
             },
             {
-                id: '4',
-                legajo: '26124',
-                nombre: 'TAMARA',
-                apellido: 'RODRIGUEZ'
+                ID: '4',
+                Persona: {
+                    legajo: '26124',
+                    nombre: 'TAMARA',
+                    apellido: 'RODRIGUEZ'
+                }
             },
             {
-                id: '5',
-                legajo: '31876',
-                nombre: 'LORENA',
-                apellido: 'ACUÑA'
+                ID: '5',
+                Persona: {
+                    legajo: '31876',
+                    nombre: 'LORENA',
+                    apellido: 'ACUÑA'
+                }
             },
             {
-                id: '6',
-                legajo: '30001',
-                nombre: 'BENJAMIN',
-                apellido: 'FLORES'
+                ID: '6',
+                Persona: {
+                    legajo: '30001',
+                    nombre: 'BENJAMIN',
+                    apellido: 'FLORES'
+                }
             },
         ];
     }

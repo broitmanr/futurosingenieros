@@ -15,6 +15,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Modal } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useRole } from '../context/RolesContext';
 
 const defaultTheme = createTheme();
 
@@ -26,6 +27,7 @@ export default function SignInSide() {
     const [modalMessage, setModalMessage] = useState('');
     const [isError, setIsError] = useState(false);
     const navigate = useNavigate();
+    const { setRole } = useRole();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -38,9 +40,11 @@ export default function SignInSide() {
         })
             .then(response => {
                 if (response.data && response.data.success) {
+                    setRole(response.data.data.role)
                     setIsError(false);
                     setModalMessage('Login Exitoso! Redirigiendo...');
                     setShowModal(true);
+                    navigate('/cursos')
                 } else {
                     setIsError(true);
                     setModalMessage('Algo falló. Inténtalo de nuevo.');

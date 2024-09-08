@@ -11,31 +11,28 @@ export const EntregaForm = ({show, handleClose}) => {
                 <Modal.Body>
                     <Form onSubmit={e => handleSubmit(e)}>
                         <Form.Group className="mb-3" controlId="grupoInstancia">
-                            <Form.Label>Nombre de la instancia</Form.Label>
-                            <Form.Control name="nombre" onChange={e => onChange(e)} type="text" placeholder="Escriba un nombre" />
+                            <Form.Label>Numero de entrega</Form.Label>
+                            <Form.Control name="nombre" onChange={e => onChange(e)} type="text" placeholder="Ingrese un numero" />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="grupoMateria">
-                            <Form.Label>Porcentaje de ponderacion</Form.Label>
-                            <Form.Select name="porcentajePonderacion" onChange={e => onChange(e)} aria-label="Floating label select example">
-                                <option>Seleccione el porcentaje</option>
-                                <option value="1">25%</option>
-                                <option value="2">50%</option>
-                                <option value="3">75%</option>
-                                <option value="3">100%</option>
-                            </Form.Select>
+                        <Form.Group className="mb-3" controlId="grupoInstancia">
+                            <Form.Label>Nombre de la entrega</Form.Label>
+                            <Form.Control name="nombre" onChange={e => onChange(e)} type="text" placeholder="Ingrese un nombre" />
+                        </Form.Group>
 
-                            <Form.Label>Tipo de instancia</Form.Label>
-                            <Form.Select name="tipoInstanciaID" onChange={e => onChange(e)} aria-label="Floating label select example">
-                                <option>Seleccione el tipo</option>
-                              
+                        <Form.Group className="mb-3" controlId="grupoInstancia">
+                            <Form.Label>Fecha de vencimiento 1</Form.Label>
+                            <Form.Control name="nombre" onChange={e => onChange(e)} type="text" placeholder="Ingrese una fecha" />
+                        </Form.Group>
 
-                            </Form.Select>
+                        <Form.Group className="mb-3" controlId="grupoInstancia">
+                            <Form.Label>Fecha de vencimiento 2</Form.Label>
+                            <Form.Control name="nombre" onChange={e => onChange(e)} type="text" placeholder="Ingrese una fecha" />
+                        </Form.Group>
 
-                            <Form.Group className="mb-3" controlId="grupoInstancia">
-                                <Form.Label>Descripcion (opcional)</Form.Label>
-                                <Form.Control name="descripcion" onChange={e => onChange(e)} type="text" placeholder="Escriba una descripcion" />
-                            </Form.Group>
+                        <Form.Group className="mb-3" controlId="grupoInstancia">
+                            <Form.Label>Descripcion</Form.Label>
+                            <Form.Control name="nombre" onChange={e => onChange(e)} type="text" placeholder="Ingrese una descripcion" />
                         </Form.Group>
 
                     </Form>

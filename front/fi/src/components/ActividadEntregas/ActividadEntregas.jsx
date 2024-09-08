@@ -14,9 +14,9 @@ export const ActividadEntregas = () => {
                     <div className="row">
                         <div className="col-md-6 mx-auto border border-5 p-4">
 
-                            <h2 className="nombre-materia">Planificación del cronograma</h2>
+                            <h2 className="nombre-materia">Trabajo integrador grupal</h2>
                             <div className="d-flex justify-content-between">
-                                <span>Porc. Ponderación: 50%</span>
+                                <span>Porc. Ponderación: 75%</span>
                                 <span>Trabajo integrador</span>
                                 <span>Instancia de prueba</span>
                             </div>
@@ -42,7 +42,7 @@ export const ActividadEntregas = () => {
 
                     <div className="row">
                         <div className="col-12 entrega">
-                            <h4 className="entrega-titulo">Planificación del cronograma</h4>
+                            <h4 className="entrega-titulo">Plan de gestión del cronograma</h4>
                             <span className="entrega-estado">Aprobada</span>
                             <p className="entrega-fecha">Fecha de entrega: <span>10/08</span></p>
                             <p className="entrega-vencimiento">Fecha de vencimiento: <span>17/08</span></p>
@@ -51,7 +51,7 @@ export const ActividadEntregas = () => {
 
                     <div className="row">
                         <div className="col-12 entrega">
-                            <h4 className="entrega-titulo">Planificación del cronograma</h4>
+                            <h4 className="entrega-titulo">Planificación del alcance</h4>
                             <span className="entrega-estado">Aprobada</span>
                             <p className="entrega-fecha">Fecha de entrega: <span>10/08</span></p>
                             <p className="entrega-vencimiento">Fecha de vencimiento: <span>17/08</span></p>

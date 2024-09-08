@@ -139,7 +139,7 @@ async function generarCodigoVinculacion (req, res, next) {
     const codigoVinculacion = generador.generarCodigoAlfanumerico()
     await curso.update({ codigoVinculacion }, { transaction })
     await transaction.commit()
-    res.json({
+    res.status(201).json({
       codigoVinculacion,
       mensaje: 'Código de vinculación generado exitosamente'
     })
@@ -157,9 +157,9 @@ async function vincularEstudiante (req, res, next) {
   const transaction = await models.sequelize.transaction()
   try {
     const { codigoVinculacion } = req.body
-    const estudianteId = res.locals.usuario.persona_id
+    const AlumnoId = res.locals.usuario.persona_id
 
-    if (!estudianteId) {
+    if (!AlumnoId) {
       await transaction.rollback()
       return next(errors.UsuarioNoPersona)
     }
@@ -176,18 +176,18 @@ async function vincularEstudiante (req, res, next) {
     }
 
     const vinculacionExistente = await models.PersonaXCurso.findOne({
-      where: { persona_id: estudianteId, curso_id: curso.ID },
+      where: { persona_id: AlumnoId, curso_id: curso.ID },
       transaction
     })
 
     if (vinculacionExistente) {
-      console.warn(yellow(`Advertencia: El estudiante con ID ${estudianteId} ya está vinculado al curso con ID ${curso.ID}.`))
+      console.warn(yellow(`Advertencia: El Alumno con ID ${AlumnoId} ya está vinculado al curso con ID ${curso.ID}.`))
       await transaction.rollback()
-      return next({ ...errors.ConflictError, details: `El estudiante con ID ${estudianteId} ya está vinculado al curso con ID ${curso.ID}.` })
+      return next({ ...errors.ConflictError, details: `El Alumno con ID ${AlumnoId} ya está vinculado al curso con ID ${curso.ID}.` })
     }
 
     await models.PersonaXCurso.create({
-      persona_id: estudianteId,
+      persona_id: AlumnoId,
       curso_id: curso.ID,
       rol: 'A',
       updated_by: res.locals.usuario.ID
@@ -197,18 +197,18 @@ async function vincularEstudiante (req, res, next) {
     res.status(200).json({ message: 'Estudiante vinculado al curso exitosamente' })
   } catch (error) {
     await transaction.rollback()
-    console.error(red('Error al vincular estudiante al curso:', error))
+    console.error(red('Error al vincular Alumno al curso:', error))
     next(error)
   }
 }
 
-// Funciones para gestion de estudiantes en un curso
+// Funciones para gestion de Alumnos en un curso
 
 async function agregarEstudiantes (req, res, next) {
   const { id } = req.params
-  const { estudiantes } = req.body // `estudiantes` es un array de persona_id
+  const { Alumnos } = req.body // `Alumnos` es un array de persona_id
   const transaction = await models.sequelize.transaction()
-  const estudiantesDuplicados = []
+  const AlumnosDuplicados = []
 
   try {
     const curso = await models.Curso.findByPk(id, { transaction })
@@ -219,36 +219,36 @@ async function agregarEstudiantes (req, res, next) {
     })
     if (!esDocente) return next(errors.UsuarioNoAutorizado)
 
-    for (const estudianteId of estudiantes) {
+    for (const AlumnoId of Alumnos) {
       const vinculacionExistente = await models.PersonaXCurso.findOne({
-        where: { persona_id: estudianteId, curso_id: id },
+        where: { persona_id: AlumnoId, curso_id: id },
         transaction
       })
 
       if (!vinculacionExistente) {
         await models.PersonaXCurso.create({
-          persona_id: estudianteId,
+          persona_id: AlumnoId,
           curso_id: id,
           rol: 'A',
           updated_by: res.locals.usuario.ID
         }, { transaction })
       } else {
-        console.warn(yellow(`Advertencia: El estudiante con ID ${estudianteId} ya está vinculado al curso con ID ${id}.`))
-        estudiantesDuplicados.push(estudianteId)
+        console.warn(yellow(`Advertencia: El Alumno con ID ${AlumnoId} ya está vinculado al curso con ID ${id}.`))
+        AlumnosDuplicados.push(AlumnoId)
       }
     }
 
     await transaction.commit()
     res.status(200).json({
-      message: 'Estudiantes agregados exitosamente al curso',
-      estudiantesDuplicados
+      message: 'Alumnos agregados exitosamente al curso',
+      AlumnosDuplicados
     })
   } catch (error) {
     await transaction.rollback()
-    console.error(red('Error al agregar estudiantes:', error))
+    console.error(red('Error al agregar Alumnos:', error))
     next({
       ...errors.InternalServerError,
-      details: 'Error al agregar estudiantes: ' + error.message
+      details: 'Error al agregar Alumnos: ' + error.message
     })
   }
 }
@@ -294,13 +294,13 @@ async function agregarEstudianteByLegajo (req, res, next) {
     const curso = await models.Curso.findByPk(id, { transaction })
     if (!curso) return next({ ...errors.NotFoundError, details: 'Curso no encontrado' })
 
-    const estudiante = await models.Persona.findOne({
+    const Alumno = await models.Persona.findOne({
       where: {
         legajo,
         rol: 'A'
       }
     })
-    if (!estudiante) return next({ ...errors.NotFoundError, details: 'Estudiante no encontrado' })
+    if (!Alumno) return next({ ...errors.NotFoundError, details: 'Estudiante no encontrado' })
 
     // Verificar si el docente está asociado al curso
     const esDocente = await models.PersonaXCurso.findOne({
@@ -311,17 +311,17 @@ async function agregarEstudianteByLegajo (req, res, next) {
       next(errors.UsuarioNoAutorizado)
     }
 
-    const estudianteInCurso = await models.PersonaXCurso.findOne({
+    const AlumnoInCurso = await models.PersonaXCurso.findOne({
       where: {
-        persona_id: estudiante.ID,
+        persona_id: Alumno.ID,
         curso_id: id
       }
     })
 
-    if (estudianteInCurso) return next({ ...errors.ConflictError, details: 'El estudiante ya está en el curso' })
+    if (AlumnoInCurso) return next({ ...errors.ConflictError, details: 'El Alumno ya está en el curso' })
 
     await models.PersonaXCurso.create({
-      persona_id: estudiante.ID,
+      persona_id: Alumno.ID,
       curso_id: id,
       rol: 'A',
       updated_by: res.locals.usuario.ID
@@ -335,10 +335,10 @@ async function agregarEstudianteByLegajo (req, res, next) {
   }
 }
 
-// Eliminar estudiantes de un curso
+// Eliminar Alumnos de un curso
 async function eliminarEstudiante (req, res, next) {
   const { id } = req.params
-  const { estudiantes } = req.body // `estudiantes` es un array de persona_id
+  const { Alumnos } = req.body // `Alumnos` es un array de persona_id
   const transaction = await models.sequelize.transaction()
 
   try {
@@ -348,24 +348,24 @@ async function eliminarEstudiante (req, res, next) {
       return next({ ...errors.NotFoundError, details: `No se encontro ningun curso con este ID: ${id}` })
     }
 
-    for (const estudianteId of estudiantes) {
-      const estudiante = await models.PersonaXCurso.findOne({
-        where: { persona_id: estudianteId, curso_id: id },
+    for (const AlumnoId of Alumnos) {
+      const Alumno = await models.PersonaXCurso.findOne({
+        where: { persona_id: AlumnoId, curso_id: id },
         transaction
       })
 
-      if (!estudiante) {
+      if (!Alumno) {
         await transaction.rollback()
-        return next({ ...errors.NotFoundError, details: `Estudiante con ID ${estudianteId} no encontrado en el curso` })
+        return next({ ...errors.NotFoundError, details: `Estudiante con ID ${AlumnoId} no encontrado en el curso` })
       }
-      await estudiante.destroy({ transaction })
+      await Alumno.destroy({ transaction })
     }
 
     await transaction.commit()
     res.status(200).json({ message: 'Estudiantes eliminados del curso exitosamente' })
   } catch (error) {
     await transaction.rollback()
-    console.error(red('Error al eliminar estudiantes del curso:', error))
+    console.error(red('Error al eliminar Alumnos del curso:', error))
     next(error)
   }
 }
@@ -407,7 +407,7 @@ async function actualizar (req, res, next) {
   }
 }
 
-async function eliminar (req, res, next) {
+async function eliminarCursos (req, res, next) {
   const { cursosIDs } = req.body // `cursosIDs` es un array de IDs de cursos
   const transaction = await models.sequelize.transaction()
   const docenteId = res.locals.usuario.persona_id
@@ -437,10 +437,10 @@ async function eliminar (req, res, next) {
     }
 
     await transaction.commit()
-    res.status(200).json({ message: 'cursosIDs eliminados exitosamente' })
+    res.status(200).json({ message: 'Cursos eliminados exitosamente' })
   } catch (error) {
     await transaction.rollback()
-    console.error(red('Error al eliminar los cursosIDs:', error))
+    console.error(red('Error al eliminar los cursos:', error))
     next(error)
   }
 }
@@ -455,6 +455,6 @@ module.exports = {
   verMiembrosCurso,
   eliminarEstudiante,
   actualizar,
-  eliminar,
+  eliminarCursos,
   agregarEstudianteByLegajo
 }

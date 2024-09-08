@@ -41,5 +41,9 @@ module.exports = {
   ConflictError: {
     code: 409,
     message: 'La solicitud no se puede completar debido a un conflicto con el estado actual del recurso.'
+  },
+  InternalServerError: {
+    code: 500,
+    message: 'Error interno del servidor'
   }
 }

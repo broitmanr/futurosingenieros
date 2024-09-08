@@ -7,7 +7,7 @@ const router = Router()
 
 router.post('/', validate(cursoScheme.cursoBase), checkRole.checkRoleDocente, cursoController.crear)
 router.get('/', cursoController.listar)
-router.delete('/', validate(cursoScheme.eliminarCurso), checkRole.checkRoleDocente, cursoController.eliminar)
+router.delete('/', validate(cursoScheme.eliminarCurso), checkRole.checkRoleDocente, cursoController.eliminarCursos)
 router.put('/:id', validate(cursoScheme.cursoBase), checkRole.checkRoleDocente, cursoController.actualizar)
 router.get('/:id', cursoController.ver)
 

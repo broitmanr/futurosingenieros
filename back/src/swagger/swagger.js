@@ -24,12 +24,12 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'API de Autenticación y Cursos',
+      title: 'API Backend de Futuros Ingenieros de la UTN FRLP 🎓',
       version: '1.0.0',
-      description: 'Documentación de la API de usuarios y cursos.'
+      description: 'Documentación de la API de usuarios y cursos para futuros ingenieros'
     },
-    components,
-    paths
+    paths,
+    components
   },
   apis: [] // Esta opción puede usarse para añadir anotaciones en archivos específicos
 }

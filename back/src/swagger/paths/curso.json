@@ -1,17 +1,434 @@
 {
-  "/curso": {
+  "/curso/": {
     "get": {
       "summary": "Listar todos los cursos",
+      "operationId": "listar",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
       "responses": {
-        "200": {
-          "description": "Lista de cursos",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "../components/schemas.json#/schemas/CourseList"
-              }
+       "200": {
+          "$ref": "#/components/responses/ListadoCurso"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    },
+    "post": {
+      "summary": "Crear un nuevo curso",
+      "operationId": "crear",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CursoInput"
             }
           }
+        }
+      },
+      "responses": {
+        "201": {
+          "$ref": "#/components/responses/CursoCreated"
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    },
+    "delete": {
+      "summary": "Eliminar cursos",
+      "operationId": "eliminarCursos",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/EliminarCurso"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/CursoDeleted"
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "404": {
+          "$ref": "#/components/responses/NotFoundError"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    }
+  },
+  "/curso/{id}": {
+    "get": {
+      "summary": "Obtener un curso por ID",
+      "operationId": "ver",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/cursoId"
+        }
+      ],
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/CursoCompleto"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "404": {
+          "$ref": "#/components/responses/NotFoundError"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    },
+    "put": {
+      "summary": "Actualizar un curso por ID",
+      "operationId": "actualizar",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/cursoId"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CursoInput"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/CursoUpdated"
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "403": {
+          "$ref": "#/components/responses/UsuarioNoAutorizado"
+        },
+        "404": {
+          "$ref": "#/components/responses/NotFoundError"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    }
+    },
+  "/curso/generar-codigo": {
+    "post": {
+      "summary": "Generar código de vinculación para un curso",
+      "operationId": "generarCodigoVinculacion",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GenerarCodigoVinculacion"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {  
+          "$ref": "#/components/responses/CodigoVinculacionGenerado"
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "403": {
+          "$ref": "#/components/responses/UsuarioNoAutorizado"
+        },
+        "404": {
+          "$ref": "#/components/responses/NotFoundError"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    }
+  },
+  "/curso/vincular-estudiante": {
+    "post": {
+      "summary": "Vincular un estudiante a un curso",
+      "operationId": "vincularEstudiante",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/VincularEstudiante"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/EstudianteVinculado"
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "403": {
+          "$ref": "#/components/responses/UsuarioNoAutorizado"
+        },
+        "404": {
+          "$ref": "#/components/responses/NotFoundError"
+        },
+        "409": {
+          "$ref": "#/components/responses/ConflictError"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    }
+  },
+  "/curso/{id}/estudiantes": {
+    "post": {
+      "summary": "Agregar estudiantes a un curso",
+      "operationId": "agregarEstudiantes",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/cursoId"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ListaIdAlumnos"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/AlumnosAgregados"
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "403": {
+          "$ref": "#/components/responses/UsuarioNoAutorizado"
+        },
+        "404": {
+          "$ref": "#/components/responses/NotFoundError"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    },
+    "delete": {
+      "summary": "Eliminar estudiantes de un curso",
+      "operationId": "eliminarEstudiantes",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/cursoId"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ListaIdAlumnos"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/EstudiantesRemoved"
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "404": {
+          "$ref": "#/components/responses/NotFoundError"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    }
+  },
+  "/curso/{id}/miembros": {
+    "get": {
+      "summary": "Ver miembros de un curso",
+      "operationId": "verMiembrosCurso",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/cursoId"
+        },
+        {
+          "name": "rol",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": ["A", "D"]
+          },
+          "description": "Rol del miembro (A para Alumno y D para Docente)"
+        }
+      ],
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/verMiembrosCurso"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "404": {
+          "$ref": "#/components/responses/NotFoundError"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    }
+  },
+  "/curso/{id}/estudiante": {
+    "post": {
+      "summary": "Agregar estudiante a un curso por legajo",
+      "operationId": "agregarEstudianteByLegajo",
+      "tags": ["Cursos"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/cursoId"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AgregarEstudianteByLegajo"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "$ref": "#/components/responses/AlumnoAgregado"
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "404": {
+          "$ref": "#/components/responses/NotFoundError"
+        },
+        "409": {
+          "$ref": "#/components/responses/ConflictError"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
         }
       }
     }

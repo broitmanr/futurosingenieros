@@ -1,138 +1,481 @@
 {
-  "schemas": {
-    "UserLogin": {
-      "type": "object",
-      "properties": {
-        "mail": {
-          "mail": "string",
-          "example": "user@frlp.utn.edu.ar"
+ "schemas": {
+      "UserLogin": {
+        "type": "object",
+        "properties": {
+          "mail": {
+            "type": "string",
+            "example": "user@frlp.utn.edu.ar"
+          },
+          "password": {
+            "type": "string",
+            "example": "Password123"
+          }
         },
-        "password": {
-          "type": "string",
-          "example": "Password123"
-        }
-      }
-    },
-    "Success": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string",
-          "example": "Operación exitosa"
-        },
-        "code": {
-          "type": "integer",
-          "example": 200
-        }
-      }
-    },
-    "Error": {
-      "type":"object",
-      "properties": {
-        "message": {
-          "type": "string",
-          "example": "Error ocurrido"
-        },
-        "code": {
-          "type": "integer",
-          "example": 500
-        }
-      }
-    },
-    "CourseList": {
-      "type": "array",
-      "items": {
-        "$ref": "./schemas.json#/schemas/Curso"
-      }
-    },
-    "Curso": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "example": 1
-        },
-        "title": {
-          "type": "string",
-          "example": "Diseño de sistemas"
-        }
-      }
-    },
-    "InstanciaEvaluativaInput": {
-      "type": "object",
-      "properties": {
-        "porcentajePonderacion": {
-          "type": "number",
-          "example": 20.5
-        },
-        "cursoID": {
-          "type": "integer",
-          "example": 1
-        },
-        "nombre": {
-          "type": "string",
-          "example": "Examen Final"
-        },
-        "tipoInstanciaID": {
-          "type": "string",
-          "example": "Examen"
-        },
-        "descripcion": {
-          "type": "string",
-          "example": "Examen final del curso"
+        "required": ["mail", "password"]
+      },
+      "Success": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Operación exitosa"
+          }
         }
       },
-      "required": ["porcentajePonderacion", "cursoID", "nombre", "tipoInstancia"]
-    },
-    "InstanciaEvaluativa": {
+      "AlumnoAddSuccess": {
       "type": "object",
       "properties": {
-        "porcentajePonderacion": {
-          "type": "number",
-          "example": 20.5
-        },
-        "cursoID": {
-          "type": "integer",
-          "example": 1
-        },
-        "nombre": {
+        "message": {
           "type": "string",
-          "example": "Examen Final"
+          "example": "Alumno agregado al curso"
+        }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error de validación"
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalles adicionales del error de validación"
+          }
+        }
+      },
+      "FaltanCampos": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Faltan campos en la petición"
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalles adicionales de los campos faltantes"
+          }
+        }
+      },
+      "CredencialesInvalidas": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401
+          },
+          "message": {
+            "type": "string",
+            "example": "Sus credenciales son inválidas"
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalles adicionales de las credenciales inválidas"
+          }
+        }
+      },
+      "SesionExpirada": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401
+          },
+          "message": {
+            "type": "string",
+            "example": "Su sesión ha expirado"
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalles adicionales de la sesión expirada"
+          }
+        }
+      },
+      "UsuarioNoAutorizado": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 403
+          },
+          "message": {
+            "type": "string",
+            "example": "El usuario no está autorizado"
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalles adicionales de la falta de autorización"
+          }
+        }
+      },
+      "FaltanParametros": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Faltan parámetros"
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalles adicionales de los parámetros faltantes"
+          }
+        }
+      },
+      "UsuarioNoPersona": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "El usuario no tiene persona asociada"
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalles adicionales de la falta de persona asociada"
+          }
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "example": "El recurso solicitado no se pudo encontrar. Verifique la URL o el ID del recurso e intente nuevamente."
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalles adicionales del recurso no encontrado"
+          }
+        }
+      },
+      "ConflictError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 409
+          },
+          "message": {
+            "type": "string",
+            "example": "La solicitud no se puede completar debido a un conflicto con el estado actual del recurso."
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalles adicionales del conflicto"
+          }
+        }
+      },
+      "InternalServerError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Error interno del servidor"
+          },
+          "details": {
+            "type": "string",
+            "example": "Detalles adicionales del error interno del servidor"
+          }
+        }
+      },
+      "CursoInput": {
+        "type": "object",
+        "properties": {
+          "cicloLectivo": {
+            "type": "integer",
+            "description": "El ciclo lectivo del curso",
+            "example": 2024
+          },
+          "materiaID": {
+            "type": "integer",
+            "description": "El ID de la materia",
+            "example": 15
+          },
+          "comisionID": {
+            "type": "integer",
+            "description": "El ID de la comisión",
+            "example": 22
+          }
         },
-        "tipoInstancia": {
+        "required": ["cicloLectivo", "materiaID", "comisionID"]
+      },
+      "GenerarCodigoVinculacion": {
+        "type": "object",
+        "properties": {
+          "cursoId": {
+            "type": "integer",
+            "description": "El ID del curso"
+          }
+        },
+        "required": ["cursoId"]
+      },
+      "VincularEstudiante": {
+        "type": "object",
+        "properties": {
+          "codigoVinculacion": {
+            "type": "string",
+            "description": "El código de vinculación del curso",
+            "example": "2AC7B12G"
+          }
+        },
+        "required": ["codigoVinculacion"]
+      },
+      "ListaIdAlumnos": {
+          "type": "object",
+          "properties": {
+            "estudiantes": {
+              "type": "array",
+              "items": {
+              "type": "integer",
+              "description": "Como debe ser cada valor de ID de estudiante"
+              },
+              "description": "Lista de IDs de estudiantes en formato de array separado por comas",
+              "example": [1, 9, 4, 51, 29]
+            }
+          },
+          "required": ["estudiantes"]
+        },
+      "EliminarCurso": {
+        "type": "object",
+        "properties": {
+          "cursosIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Lista de IDs de cursos"
+          }
+        },
+        "required": ["cursosIDs"]
+      },
+      "AgregarEstudianteByLegajo": {
+        "type": "object",
+        "properties": {
+          "legajo": {
+            "type": "string",
+            "description": "El legajo del estudiante",
+            "example": "12345"
+          }
+        },
+        "required": ["legajo"]
+      },
+      "CursoFormatoLista": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "anio": {
+            "type": "integer",
+            "example": 2024
+          },
+          "comision": {
+            "type": "string",
+            "example": "S31"
+          },
+          "maeteria": {
+            "type": "string",
+            "example": "Diseño de sistemas"
+          }
+        }
+      },
+      "CursosLista": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/CursoFormatoLista"
+        }
+      },
+      "InstanciaEvaluativaInput": {
+        "type": "object",
+        "properties": {
+          "porcentajePonderacion": {
+            "type": "number",
+            "example": 20.5
+          },
+          "cursoID": {
+            "type": "integer",
+            "example": 1
+          },
+          "nombre": {
+            "type": "string",
+            "example": "Examen Final"
+          },
+          "tipoInstanciaID": {
+            "type": "string",
+            "example": "Examen"
+          },
+          "descripcion": {
+            "type": "string",
+            "example": "Examen final del curso"
+          }
+        },
+        "required": ["porcentajePonderacion", "cursoID", "nombre", "tipoInstanciaID"]
+      },
+      "InstanciaEvaluativa": {
+        "type": "object",
+        "properties": {
+          "porcentajePonderacion": {
+            "type": "number",
+            "example": 20.5
+          },
+          "cursoID": {
+            "type": "integer",
+            "example": 1
+          },
+          "nombre": {
+            "type": "string",
+            "example": "Examen Final"
+          },
+          "tipoInstancia": {
+            "type": "integer",
+            "example": 2
+          },
+          "descripcion": {
+            "type": "string",
+            "example": "Examen final del curso"
+          }
+        }
+      },
+      "TipoInstancia": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "nombre": {
+            "type": "string",
+            "example": "Examen"
+          },
+          "descripcion": {
+            "type": "string",
+            "example": "Examen final"
+          }
+        }
+      },
+      "CursoCompleto": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "cicloLectivo": {
+            "type": "integer",
+            "example": 2024
+          },
+          "updated_at": {
+            "type": "date-time",
+            "example": "2024-08-20 20:22:09"
+          },
+          "updated_by": {
+            "type": "string",
+            "example": "admin"
+          },
+          "codigoVinculacion": {
+            "type": "string",
+            "example": "null"
+          },
+          "materia_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "comision_id": {
+            "type": "integer",
+            "example": 1
+          }
+        },
+        "required": ["ID", "cicloLectivo", "updated_at"]
+      },
+      "CodigoVinculacionSuccess": {
+      "type": "object",
+      "properties": {
+        "code": {
           "type": "integer",
-          "example": 2
+          "example": 201
         },
-        "descripcion": {
+        "message": {
           "type": "string",
-          "example": "Examen final del curso"
+          "example": "Código de vinculación generado exitosamente"
+        },
+        "codigoVinculacion": {
+          "type": "string",
+          "example": "2AC7B12G"
         }
       }
     },
-    "TipoInstancia": {
+    "AlumnosAgregadosSuccess": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Alumnos agregados exitosamente al curso"
+        },
+        "estudiantesDuplicados": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "description": "Cada uno debe ser un valor de ID de estudiante"
+          },
+          "description": "Lista de IDs de estudiantes duplicados en formato de array separado por comas",
+          "example": [1, 9, 4, 51, 29]
+        }
+      }
+    },
+    "FormatoMiembroCurso": {
       "type": "object",
       "properties": {
         "ID": {
           "type": "integer",
           "example": 1
         },
-        "nombre": {
+        "rol": {
           "type": "string",
-          "example": "Examen"
+          "example": "E"
         },
-        "descripcion": {
+        "persona_id": {
           "type": "string",
-          "example": "Examen final"
+          "example": "1"
+        },
+        "Persona": {
+          "type": "object",
+          "example": {
+            "nombre": "Juan",
+            "apellido": "Perez",
+            "legajo": "12345"
+          }
         }
       }
     },
-    "ErrorResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string",
-          "example": "Error al listar los tipos de instancias evaluativas"
-        }
+    "ListaMiembrosCurso": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/FormatoMiembroCurso"
       }
     }
   }

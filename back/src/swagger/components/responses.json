@@ -5,30 +5,240 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "./schemas.json#/schemas/Success"
+            "$ref": "#/components/schemas/Success"
           }
         }
       }
     },
-    "Unauthorized": {
-      "description": "No autorizado",
+    "ValidationError": {
+      "description": "Error de validación",
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "#/components/schemas/Error"
+            "$ref": "#/components/schemas/ValidationError"
           }
         }
       }
     },
-    "NotFound": {
-      "description": "Recurso no encontrado",
+    "FaltanCampos": {
+      "description": "Faltan campos en la petición",
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "#/components/schemas/Error"
+            "$ref": "#/components/schemas/FaltanCampos"
           }
+        }
+      }
+    },
+    "CredencialesInvalidas": {
+      "description": "Sus credenciales son inválidas",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/CredencialesInvalidas"
+          }
+        }
+      }
+    },
+    "SesionExpirada": {
+      "description": "Su sesión ha expirado",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/SesionExpirada"
+          }
+        }
+      }
+    },
+    "UsuarioNoAutorizado": {
+      "description": "El usuario no está autorizado",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/UsuarioNoAutorizado"
+          }
+        }
+      }
+    },
+    "FaltanParametros": {
+      "description": "Faltan parámetros",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/FaltanParametros"
+          }
+        }
+      }
+    },
+    "UsuarioNoPersona": {
+      "description": "El usuario no tiene persona asociada",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/UsuarioNoPersona"
+          }
+        }
+      }
+    },
+    "NotFoundError": {
+      "description": "El recurso solicitado no se pudo encontrar",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/NotFoundError"
+          }
+        }
+      }
+    },
+    "ConflictError": {
+      "description": "La solicitud no se puede completar debido a un conflicto",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ConflictError"
+          }
+        }
+      }
+    },
+    "InternalServerError": {
+      "description": "Error interno del servidor",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/InternalServerError"
+          }
+        }
+      }
+    },
+    "CursoCreated": {
+      "description": "Curso creado exitosamente",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref" : "#/components/schemas/CursoCompleto"
+            }
+          }
+        }
+      },
+    "CursoDeleted": {
+      "description": "Cursos eliminados exitosamente",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/Success"
+          }
+        }
+      }
+    },
+    "CursoUpdated": {
+      "description": "Curso actualizado exitosamente",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/Success"
+          }
+        }
+      }
+    },
+    "verMiembrosCurso":{
+      "description": "Miembros del curso obtenidos exitosamente",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ListaMiembrosCurso"
+          }
+        }
+      }
+    },
+    "AlumnoAgregado": {
+      "description": "Alumno agregado al curso",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AlumnoAddSuccess"
+          }
+        }
+      }
+    },
+    "AlumnosAgregados": {
+      "description": "Estudiantes agregados exitosamente al curso",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AlumnosAgregadosSuccess"
+          }
+        }
+      }
+    },
+    "EstudiantesRemoved": {
+      "description": "Estudiantes eliminados exitosamente",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/Success"
+          }
+        }
+      }
+    },
+    "EstudianteVinculado": {
+      "description": "Estudiante vinculado exitosamente",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/Success"
+          }
+        }
+      }
+    },
+    "InstanciaEvaluativa": {
+    "description": "Instancia evaluativa",
+    "content": {
+      "application/json": {
+        "schema": {
+          "$ref": "#/components/schemas/InstanciaEvaluativa"
         }
       }
     }
+  },
+  "TipoInstancia": {
+    "description": "Tipo de instancia evaluativa",
+    "content": {
+      "application/json": {
+        "schema": {
+          "$ref": "#/components/schemas/TipoInstancia"
+        }
+      }
+    }
+  },
+  "ListadoCurso": {
+    "description": "Listado de cursos obtenido exitosamente",
+    "content": {
+      "application/json": {
+        "schema": {
+          "$ref": "#/components/schemas/CursosLista"
+        }
+      }
+    }
+  },
+  "CursoCompleto": {
+    "description": "Curso obtenido exitosamente",
+    "content": {
+      "application/json": {
+        "schema": {
+          "$ref": "#/components/schemas/CursoCompleto"
+        }
+      }
+    }
+  },
+  "CodigoVinculacionGenerado": {
+    "description": "Código de vinculación generado exitosamente",
+    "content": {
+      "application/json": {
+        "schema": {
+          "$ref": "#/components/schemas/CodigoVinculacionSuccess"
+        }
+      }
+    }
+  }
   }
 }

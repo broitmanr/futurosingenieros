@@ -1,21 +1,23 @@
 {
   "parameters": {
-    "cursoID": {
-      "name": "cursoID",
-      "in": "path",
-      "required": true,
-      "description": "ID del curso para obtener las instancias evaluativas.",
-      "schema": {
-        "type": "string"
-      }
-    },
     "userId": {
       "name": "userId",
       "in": "path",
       "required": true,
       "description": "ID del usuario",
       "schema": {
-        "type": "integer"
+        "type": "integer",
+        "example": 82
+      }
+    },
+    "cursoId": {
+      "name": "cursoId",
+      "in": "path",
+      "required": true,
+      "description": "ID único del curso",
+      "schema": {
+        "type": "integer",
+        "example": 82
       }
     }
   }

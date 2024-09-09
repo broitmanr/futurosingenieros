@@ -33,5 +33,5 @@ const router = express.Router()
 router.post('/sign-in', validate(authScheme.login), authController.login)
 // router.post('/sign-in',authController.login)
 router.post('/sign-up', authController.registrarse)
-
+router.post('/sign-out', authController.logout)
 module.exports = router

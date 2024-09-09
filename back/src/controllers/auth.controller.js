@@ -31,7 +31,7 @@ module.exports = {
         data: {
           id: user.ID,
           token: jwt(user),
-          role: user.rol //Se incluye el rol
+          role: user.rol // Se incluye el rol
         }
       })
     } catch (err) {
@@ -64,6 +64,10 @@ module.exports = {
     } catch (err) {
       return next(err)
     }
+  },
+  logout: async (req, res, next) => {
+    res.clearCookie('jwt')
+    res.json({ success: true })
   }
 
 }

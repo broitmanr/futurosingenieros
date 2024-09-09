@@ -17,7 +17,7 @@
       },
       "responses": {
         "201": {
-          "description": "Instancia evaluativa creada con éxito",
+          "description": "Instancia evaluativa creada con éxito.",
           "content": {
             "application/json": {
               "schema": {
@@ -25,15 +25,16 @@
               }
             }
           }
+
         },
         "400": {
-          "$ref": "#/components/responses/BadRequest"
+          "$ref": "#/components/responses/ValidationError"
         },
         "401": {
-          "$ref": "#/components/responses/Unauthorized"
+          "$ref": "#/components/responses/CredencialesInvalidas"
         },
         "403": {
-          "$ref": "#/components/responses/Forbidden"
+          "$ref": "#/components/responses/UsuarioNoAutorizado"
         }
       },
       "security": [
@@ -63,14 +64,7 @@
           }
         },
         "500": {
-          "description": "Error al listar los tipos de instancias evaluativas",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ErrorResponse"
-              }
-            }
-          }
+          "$ref":"#/components/responses/InternalServerError"
         }
       }
     }
@@ -84,7 +78,7 @@
       "description": "Obtiene una lista de instancias evaluativas asociadas a un curso específico.",
       "parameters": [
         {
-          "$ref": "#/components/parameters/cursoID"
+          "$ref": "#/components/parameters/cursoId"
         }
       ],
       "responses": {
@@ -99,24 +93,10 @@
           }
         },
         "400": {
-          "description": "Error en la solicitud debido a datos inválidos.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ErrorResponse"
-              }
-            }
-          }
+          "$ref": "#/components/responses/ValidationError"
         },
         "500": {
-          "description": "Error interno del servidor al obtener las instancias evaluativas.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ErrorResponse"
-              }
-            }
-          }
+          "$ref": "#/components/responses/InternalServerError"
         }
       }
     }

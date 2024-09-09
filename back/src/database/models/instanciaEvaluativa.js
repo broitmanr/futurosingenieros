@@ -30,7 +30,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'InstanciaEvaluativa',
-    timestamps: false
+    timestamps: false,
+    freezeTableName: true
   })
 
   InstanciaEvaluativa.associate = models => {

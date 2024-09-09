@@ -1,0 +1,20 @@
+.entrega{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1rem;
+    border: 1px solid;
+    border-radius: 10px;
+    margin-top: 2rem!important;
+}
+.entrega-titulo{
+    width: 50%;
+}
+.entrega-estado{
+    width: 50%;
+}
+.entrega-fecha{
+    width: 50%;
+}
+.entrega-vencimiento{
+    width: 50%;
+}

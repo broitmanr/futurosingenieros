@@ -83,20 +83,48 @@ async function ver (req, res, next) {
 
 async function listar (req, res, next) {
   try {
-    // Agregar validar que sea los q el es docente
-    const cursosIDs = await models.Curso.findAll({
-      include: [
-        {
-          model: models.Comision,
-          attributes: ['nombre']
-        }, {
-          model: models.Materia,
-          attributes: ['nombre']
-        }]
+    const usuarioRol = res.locals.usuario.rol;
+    let cursos;
 
-    })
+    if(usuarioRol === 'D') {
+      const docenteId = res.locals.usuario.persona_id;
+      cursos = await models.Curso.findAll({
+        include: [
+          {
+            model: models.Comision,
+            attributes: ['nombre']
+          }, {
+            model: models.Materia,
+            attributes: ['nombre']
+          }, {
+            model: models.PersonaXCurso,
+            where: { persona_id: docenteId },
+            attributes: []
+          }
+        ]
+      })
+    } else if (usuarioRol === 'A') {
+      const estudianteId = res.locals.usuario.persona_id;
+      cursos = await models.Curso.findAll({
+        include: [
+          {
+            model: models.Comision,
+            attributes: ['nombre']
+          }, {
+            model: models.Materia,
+            attributes: ['nombre']
+          }, {
+            model: models.PersonaXCurso,
+            where: { persona_id: estudianteId },
+            attributes: []
+          }
+        ]
+      })
+    } else {
+      return res.status(400).json({ error: 'Rol no válido' })
+    }
 
-    const cursosIDsComplete = cursosIDs.map(curso => ({
+    const cursosIDsComplete = cursos.map(curso => ({
       id: curso.ID,
       anio: curso.cicloLectivo,
       comision: curso.Comision.nombre,

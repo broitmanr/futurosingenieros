@@ -37,18 +37,25 @@ function AlumnosCurso() {
     document.getElementById('agregarAlumnos').scrollIntoView({ behavior: 'smooth'})
   };
 
+  const [error, setError] = useState('');
+
+  const fetchAlumnos = async () => {
+    try{
+      const response = await axios.get(`http://localhost:5000/api/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
+      if(response.data) {
+        const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
+        setAlumnos(soloAlumnos)
+        setLoading(false)
+      }
+    } catch (err) {
+      console.error('Error al obtener los alumnos', err)
+      const dataAlumnos = AlumnosDatos.getData();
+      setAlumnos(dataAlumnos)
+      setLoading(false)
+    }
+  }
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
-    .then(response => {
-      const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
-      setAlumnos(soloAlumnos)
-      setLoading(false)
-    })
-    .catch (err => { console.error('Error al obtener los alumnos', err)
-      /*const dataAlumnos = AlumnosDatos.getData();
-      setAlumnos(dataAlumnos)*/
-      setLoading(false)
-    })
+    fetchAlumnos();
   }, [id])
 
   const handleAgregarAlumnoConLegajo = async (e) => { //Agregar alumno con el legajo
@@ -59,6 +66,7 @@ function AlumnosCurso() {
         legajo: legajo }, { withCredentials: true })
         if (response.status === 201) {
           setVisible(true)
+          fetchAlumnos(); //Actualiza lista de estudiantes
         }
       } catch (err) {
         console.log('Error al agregar al alumno', err)
@@ -134,6 +142,7 @@ function AlumnosCurso() {
   return (
     <div className="alumnos-container">
       <h5 className="text-title">Listado de alumnos</h5>
+      {error && <p>{error}</p>}
       <DataTable
         value={alumnos}
         paginator rows={10}
@@ -219,7 +228,7 @@ function AlumnosCurso() {
           <h5 className="text-description-agregar-alumno">Con código de vinculación</h5>
           <div className='generar-codigo-container'>
             { !codigoVinculacion && <InputOtp className="input-item" disabled /> }
-            { codigoVinculacion && <InputOtp className="input-item" value={codigoVinculacion} /> }
+            { codigoVinculacion && <InputOtp className="input-item" disabled value={codigoVinculacion} /> }
           </div>
           <Button className="btn-generar-codigo" onClick={handleGenerarCodigo} label="Generar" />
         </div>

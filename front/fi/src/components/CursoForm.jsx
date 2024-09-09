@@ -3,13 +3,26 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import { Dropdown } from 'primereact/dropdown';
 
-function Curso({ show, handleClose }) {
+function Curso({ show, handleClose, handleCursoAgregado }) {
   const currentYear = new Date().getFullYear(); //Constante para obtener el año actual
-  const [anio, setAnio] = useState(currentYear);
+  const initialForm = { //Constante para limpiar el form luego de agregar un curso
+    anio: currentYear,
+    selectedComision: '',
+    selectedMateria: ''
+  }
+  const [anio, setAnio] = useState(initialForm.anio);
   const [comisiones, setComisiones] = useState([]);
   const [materias, setMaterias] = useState([]);
-  const [selectedComision, setSelectedComision] = useState(null);
-  const [selectedMateria, setSelectedMateria] = useState('');
+  const [selectedComision, setSelectedComision] = useState(initialForm.selectedComision);
+  const [selectedMateria, setSelectedMateria] = useState(initialForm.selectedMateria);
+
+  useEffect(() => { //Limpia el form luego de agregar un curso
+    if(show){
+      setAnio(initialForm.anio)
+      setSelectedComision(initialForm.selectedComision)
+      setSelectedMateria(initialForm.selectedMateria)
+    }
+  }, [show])
 
   useEffect(() => {
       axios.get('http://localhost:5000/api/comision', { withCredentials: true }) //Obtener comisiones
@@ -51,6 +64,7 @@ function Curso({ show, handleClose }) {
     )
     .then(response => {
       console.log('Curso creado con éxito', response.data)
+      handleCursoAgregado(response.data) //Actualiza lista de cursos
       handleClose();
     })
     .catch (err => console.log('Error al querer crear el curso', err))
@@ -58,7 +72,7 @@ function Curso({ show, handleClose }) {
 
   const handleCancelar = () => { //Cancelar curso
     console.log('Curso cancelado')
-    setAnio('')
+    setAnio(currentYear)
     setSelectedComision('')
     setSelectedMateria('')
     handleClose()

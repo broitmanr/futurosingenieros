@@ -8,9 +8,15 @@ import Cursos from './components/Cursos.jsx';
 import SignInSide from "./components/SignInSide.tsx";
 import AlumnosCurso from './components/AlumnosCurso.jsx';
 import { CursosActividades } from './components/CursosActividades/CursosActividades.jsx';
+import { ActividadEntregas } from './components/ActividadEntregas/ActividadEntregas.jsx';
+import { DetalleEntrega } from './components/DetalleEntrega/DetalleEntrega.jsx';
+import PrivateRoute from './PrivateRoutes';
 
 
 function App() {
+
+  
+  
   return (
     <div className="App">
         <BrowserRouter>
@@ -18,13 +24,46 @@ function App() {
             <Subheader />
             <Routes>
               <Route path="/" element={<Home />}/>
-              <Route path="/cursos" element={<Cursos />}/>
               <Route path="/login" element={<SignInSide />}/>
-              <Route path="/alumnos/:id" element={<AlumnosCurso />}/>
+              <Route
+                path="/cursos"
+                element={
+                  <PrivateRoute allowedRoles={['D', 'A']}>
+                    <Cursos />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/alumnos/:id"
+                element={
+                  <PrivateRoute allowedRoles={['D']}>
+                    <AlumnosCurso />
+                  </PrivateRoute>
+                }
+              />
+              
+               
+               
+               
+               
+               
+               
+               
+               
                 {
                 // CONSIDERAR QUE NECESITAMOS PASAR EL ID DEL CURSO PARA VISUALIZAR Y ACTUAR SOBRE LAS ACTIVIDADES DE ESTE.
                 }
               <Route path="/cursos/:id/actividades" element={<CursosActividades />}/>
+              <Route path="/actividad/:id/entregas" element={<ActividadEntregas/>}/>
+              <Route path="/entrega/:id" element={<DetalleEntrega/>}/>
+              <Route
+                path="/cursos/:id/actividades"
+                element={
+                  <PrivateRoute allowedRoles={['D', 'A']}>
+                    <CursosActividades />
+                  </PrivateRoute>
+                }
+              />
             </Routes>
             <Footer />
         </BrowserRouter>

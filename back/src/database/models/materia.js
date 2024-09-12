@@ -29,11 +29,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: 'Materia',
     timestamps: false,
-    freezeTableName: true,
-    name: {
-      singular: 'Materia',
-      plural: 'Materias'
-    }
+    freezeTableName: true
   })
 
   Materia.associate = models => {

@@ -41,21 +41,9 @@ function App() {
                   </PrivateRoute>
                 }
               />
-              
-               
-               
-               
-               
-               
-               
-               
-               
                 {
                 // CONSIDERAR QUE NECESITAMOS PASAR EL ID DEL CURSO PARA VISUALIZAR Y ACTUAR SOBRE LAS ACTIVIDADES DE ESTE.
                 }
-              <Route path="/cursos/:id/actividades" element={<CursosActividades />}/>
-              <Route path="/actividad/:id/entregas" element={<ActividadEntregas/>}/>
-              <Route path="/entrega/:id" element={<DetalleEntrega/>}/>
               <Route
                 path="/cursos/:id/actividades"
                 element={
@@ -64,6 +52,8 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              <Route path="/actividad/:id/entregas" element={<ActividadEntregas/>}/>
+              <Route path="/entrega/:id" element={<DetalleEntrega/>}/>
             </Routes>
             <Footer />
         </BrowserRouter>

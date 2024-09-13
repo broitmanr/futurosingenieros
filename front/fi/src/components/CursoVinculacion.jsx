@@ -6,7 +6,7 @@ import { Button } from 'primereact/button';
 import './styles/CodigoVinculacion.css'
 
 function CursoVinculacion({ showVincular, handleCloseVincular }) {
-  const [vinculo, setVinculo] = useState(Array(4).fill(''));
+  const [vinculo, setVinculo] = useState('');
 
   //Se mueve al siguiente campo de entrada si se ingresó un valor
   const handleChangeValue = (e, index) => {

@@ -90,10 +90,10 @@ export default function SignInSide() {
                             mx: 4,
                             display: 'flex',
                             flexDirection: 'column',
-                            alignItems: 'center',
+                            alignItems: 'center'
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <Avatar sx={{ m: 1, bgcolor: '#CCDCF1', color: '#1A2035', border: '0.1rem solid #1A2035' }}>
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
@@ -129,6 +129,7 @@ export default function SignInSide() {
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
+                                style= {{ backgroundColor: '#1A2035' }}
                             >
                                 Entrar
                             </Button>

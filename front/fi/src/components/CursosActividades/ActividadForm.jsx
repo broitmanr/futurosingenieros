@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import axios from "axios";
-function Actividad({ show, handleClose, cursoID,setInstancias }) {
+function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAgregada }) {
 
   const [formData, setFormData] = useState({})
   const [tipoInstancias, setTipoInstancias] = useState([]);
@@ -25,9 +25,10 @@ function Actividad({ show, handleClose, cursoID,setInstancias }) {
              .then(response => {
                  console.log('actividad creada',response.data);
                  setFormData({})
-                 setInstancias(prevState => {
+                 /*setInstancias(prevState => {
                     return [...prevState, response.data]
-                 })
+                 })*/
+                 handleInstanciaAgregada(response.data)
              })
              .catch(err => {
                  alert('Error: '+ err.response.data.error.message)
@@ -36,7 +37,7 @@ function Actividad({ show, handleClose, cursoID,setInstancias }) {
              });
  
     handleClose();
-  };
+    }
 
 
   useEffect(() => {

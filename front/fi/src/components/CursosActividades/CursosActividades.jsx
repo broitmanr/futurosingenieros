@@ -16,6 +16,8 @@ export const CursosActividades = () => {
 
     const handleClose = () => setShow(false);
 
+    const [shouldFetchInstancia, setShouldFetchInstancia] = useState(false); //Estados para manejar la actualización de la instancia
+
     const mostrarInfoActividad = (actividad) => {
         console.log("Información de la actividad:", actividad);
         // Logica para mostrar la informacion de la actividad
@@ -23,10 +25,6 @@ export const CursosActividades = () => {
 
     // useEffect para hacer la petición con axios
     useEffect(() => {
-
-        
-
-
         // OBTENER LOS DATOS DEL CURSO
         axios.get(`http://localhost:5000/api/curso/${params.id}`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
             .then(response => {
@@ -39,27 +37,43 @@ export const CursosActividades = () => {
                 // setError('Error al obtener los cursos');
                 setLoading(false);
             });
+    }, []); // El array vacío asegura que el efecto solo se ejecute una vez al montar el componente
 
-            // OBTENER LAS ACTIVIDADES DE ESE CURSO
-        axios.get(`http://localhost:5000/api/instanciaEvaluativa/${params.id}`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
-            .then(response => {
+    // OBTENER LAS ACTIVIDADES DE ESE CURSO
+    const fetchCursoInstancia = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/instanciaEvaluativa/${params.id}`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
+            if(response.data){
                 console.log(response.data);
                 setInstancias(response.data); // Almacena los datos obtenidos en el estado
                 setLoading(false); // Detiene el estado de carga
-                
-            })
-            .catch(err => {
-                console.log(err)
-                // setError('Error al obtener los cursos');
-                setLoading(false);
-            });
-    }, []); // El array vacío asegura que el efecto solo se ejecute una vez al montar el componente
+            }
+        } catch (err) {
+            console.log(err)
+            // setError('Error al obtener los cursos');
+            setLoading(false);
+        }
+    }
 
+    useEffect(() => {
+        fetchCursoInstancia()
+    }, [])
+
+    useEffect(() => {
+        if(shouldFetchInstancia){
+            fetchCursoInstancia()
+            setShouldFetchInstancia(false) //Resetea el estado de actualización
+        }
+    }, [shouldFetchInstancia])
+
+    const handleInstanciaAgregada = (nuevaInstancia) => {
+        console.log('agregada', nuevaInstancia)
+        setInstancias(prevInstancia => [...prevInstancia, nuevaInstancia])
+        setShouldFetchInstancia(true) //Activa el estado de actualización
+    };
 
     return (
         <>
-
-
             <section className="seccionBanner py-5">
                 <div className="container">
                     <div className="row">
@@ -81,12 +95,9 @@ export const CursosActividades = () => {
                         </div>
                     </div>
                 </div>
-
-
             </section>
 
             <main className='contenido-principal'>
-
                 <div className="container">
                     <div className="row py-4">
                         <div className="col-md-3">
@@ -97,7 +108,7 @@ export const CursosActividades = () => {
                                             <Link className='aside-link' to="#">Recursos</Link>
                                         </li>
                                         <li className='aside-item'>
-                                            <Link className='aside-link' to="/alumnos/:id">Alumnos</Link>
+                                            <Link className='aside-link' to={`/alumnos/${curso.ID}`}>Alumnos</Link>
                                         </li>
                                         <li className='aside-item'>
                                             <Link className='aside-link' to="#">Calificaciones</Link>
@@ -119,53 +130,41 @@ export const CursosActividades = () => {
                             </aside>
                         </div>
                         <div className="col-md-9">
-    <Button variant="primary" onClick={() => setShow(true)}>
-        <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
-        Crear Instancia
-    </Button>
-    <h4 className="mt-3">Instancias evaluativas creadas</h4>
+                            <Button variant="primary" onClick={() => setShow(true)}>
+                                <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
+                                Crear Instancia
+                            </Button>
+                            <h4 className="mt-3">Instancias evaluativas creadas</h4>
 
-    <Actividad show={show} handleClose={handleClose} cursoID={curso.ID} setInstancias={setInstancias} />
-
-    {
-        isLoading ? (
-            <div className="text-center">Cargando...</div>
-        ) : (
-            
-
-            instancias.length > 0 ? (
-
-              
-                Object.entries(instancias).map(([key, value]) => (
-                    
-                    <Link to={`/actividad/${value.ID}/entregas`}
-                        className="actividad-boton" 
-                        key={key}
-                        
-                    >
-                        <div className="col-md-12 d-flex align-items-center">
-                            <p className="actividad-nombre m-0">{value.nombre}</p>
-                            <div className="ms-auto d-flex align-items-center">
-                                <i className="fa fa-pencil me-2" aria-hidden="true"></i>
-                                <i className="fa-solid fa-trash text-danger"></i>
-                            </div>
+                            <Actividad show={show} handleClose={handleClose} cursoID={curso.ID} setInstancias={setInstancias} handleInstanciaAgregada={handleInstanciaAgregada} />
+                            {
+                                isLoading ? (
+                                    <div className="text-center">Cargando...</div>
+                                ) : (
+                                    instancias.length > 0 ? (
+                                        Object.entries(instancias).map(([key, value]) => (  
+                                            <Link to={`/actividad/${value.ID}/entregas`}
+                                                className="actividad-boton" 
+                                                key={key}    
+                                            >
+                                                <div className="col-md-12 d-flex align-items-center">
+                                                    <p className="actividad-nombre m-0">{value.nombre}</p>
+                                                    <div className="ms-auto d-flex align-items-center">
+                                                        <i className="fa fa-pencil me-2" aria-hidden="true"></i>
+                                                        <i className="fa-solid fa-trash text-danger"></i>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <p className='text-danger'>Este curso no posee instancias evaluativas.</p>
+                                    )
+                                )
+                            }
                         </div>
-
-                    </Link>
-                ))
-            ) : (
-                <p className='text-danger'>Este curso no posee instancias evaluativas.</p>
-            )
-        )
-    }
-</div>
-
                     </div>
                 </div>
-
             </main>
-
-
         </>
     )
 }

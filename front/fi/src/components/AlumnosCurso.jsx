@@ -15,6 +15,7 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import './styles/AlumnosCurso.css' //Se importan los estilos
 import { useParams } from 'react-router-dom';
 import { PiUserCirclePlusBold } from "react-icons/pi";
+import { PiCopyBold } from "react-icons/pi";
 import axios from 'axios';
 
 function AlumnosCurso() {
@@ -87,6 +88,10 @@ function AlumnosCurso() {
     })
     .catch (err => console.log('Error al generar código', err))
   };
+
+  const copiarCodigo = () => {
+    navigator.clipboard.writeText(codigoVinculacion)
+  }
 
   const onGlobalFilterChange = (e) => { //Buscador general
     const value = e.target.value;
@@ -228,7 +233,12 @@ function AlumnosCurso() {
           <h5 className="text-description-agregar-alumno">Con código de vinculación</h5>
           <div className='generar-codigo-container'>
             { !codigoVinculacion && <InputOtp className="input-item" disabled /> }
-            { codigoVinculacion && <InputOtp className="input-item" disabled value={codigoVinculacion} /> }
+            { codigoVinculacion && 
+              <>
+                <InputOtp className="input-item" readOnly value={codigoVinculacion} />
+                <PiCopyBold className='clipboard-codigo-generado' onClick={copiarCodigo} size={24} />
+              </>
+            }
           </div>
           <Button className="btn-generar-codigo" onClick={handleGenerarCodigo} label="Generar" />
         </div>

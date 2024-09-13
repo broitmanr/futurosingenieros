@@ -5,7 +5,7 @@ import { InputOtp } from 'primereact/inputotp';
 import { Button } from 'primereact/button';
 import './styles/CodigoVinculacion.css'
 
-function CursoVinculacion({ showVincular, handleCloseVincular }) {
+function CursoVinculacion({ showVincular, handleCloseVincular, handleCursoAgregado }) {
   const [vinculo, setVinculo] = useState('');
 
   //Se mueve al siguiente campo de entrada si se ingresó un valor
@@ -36,6 +36,7 @@ function CursoVinculacion({ showVincular, handleCloseVincular }) {
       const response = await axios.post('http://localhost:5000/api/curso/vincular-estudiante', {
         codigoVinculacion
       }, { withCredentials: true })
+      handleCursoAgregado(response.data)
       setVinculo(Array(4).fill('')) //Limpia el input
       handleCloseVincular()
     } catch (err) {

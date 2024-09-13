@@ -83,7 +83,7 @@ const Cursos = () => {
                         }}>
                         Vincular curso
                     </Button>
-                    <CursoVinculacion showVincular={showVincular} handleCloseVincular={handleCloseVincular} />
+                    <CursoVinculacion showVincular={showVincular} handleCloseVincular={handleCloseVincular} handleCursoAgregado={handleCursoAgregado} />
                 </>
             )}
             {loading && <p>Cargando cursos...</p>}

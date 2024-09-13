@@ -46,6 +46,7 @@ export const CursosActividades = () => {
                 console.log(response.data);
                 setInstancias(response.data); // Almacena los datos obtenidos en el estado
                 setLoading(false); // Detiene el estado de carga
+                
             })
             .catch(err => {
                 console.log(err)
@@ -62,7 +63,7 @@ export const CursosActividades = () => {
             <section className="seccionBanner py-5">
                 <div className="container">
                     <div className="row">
-                        <div className="col-md-6 mx-auto border border-5 p-4">
+                        <div className="col-md-6 mx-auto contenedor-info-curso p-4">
                             {
                                 isLoading
                                     ?
@@ -96,7 +97,7 @@ export const CursosActividades = () => {
                                             <Link className='aside-link' to="#">Recursos</Link>
                                         </li>
                                         <li className='aside-item'>
-                                            <Link className='aside-link' to="/alumnos">Alumnos</Link>
+                                            <Link className='aside-link' to="/alumnos/:id">Alumnos</Link>
                                         </li>
                                         <li className='aside-item'>
                                             <Link className='aside-link' to="#">Calificaciones</Link>
@@ -130,12 +131,17 @@ export const CursosActividades = () => {
         isLoading ? (
             <div className="text-center">Cargando...</div>
         ) : (
+            
+
             instancias.length > 0 ? (
+
+              
                 Object.entries(instancias).map(([key, value]) => (
-                    <button 
+                    
+                    <Link to={`/actividad/${value.ID}/entregas`}
                         className="actividad-boton" 
                         key={key}
-                        onClick={() => mostrarInfoActividad(value)} // Maneja el clic en la actividad
+                        
                     >
                         <div className="col-md-12 d-flex align-items-center">
                             <p className="actividad-nombre m-0">{value.nombre}</p>
@@ -145,7 +151,7 @@ export const CursosActividades = () => {
                             </div>
                         </div>
 
-                    </button>
+                    </Link>
                 ))
             ) : (
                 <p className='text-danger'>Este curso no posee instancias evaluativas.</p>

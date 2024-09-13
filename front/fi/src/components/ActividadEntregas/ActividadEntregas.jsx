@@ -1,21 +1,33 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles/ActividadEntrega.css';
 import { Button } from 'react-bootstrap';
 import { EntregaForm } from './EntregaForm';
+import { Link, useParams } from 'react-router-dom';
 
 export const ActividadEntregas = () => {
     const [show, setShow] = useState(false);
+    const [idActividad, setIdActividad] = useState(null)
+   
+    const params = useParams();
     const handleClose = () => setShow(false);
+
+    useEffect(()=> {
+        const idActividad = params.id;
+        setIdActividad(idActividad)
+
+
+    },[])
+
     return (
         <>
             <section className="seccionBanner py-5">
                 <div className="container">
                     <div className="row">
-                        <div className="col-md-6 mx-auto border border-5 p-4">
+                        <div className="col-md-6 mx-auto recuadro-estilizado" style={{ maxWidth: '1000px', width: '100%' }}>
 
-                            <h2 className="nombre-materia">Trabajo integrador grupal</h2>
-                            <div className="d-flex justify-content-between">
+                            <h2 className="nombre-materia">Trabajo Integrador Grupal</h2>
+                            <div className="texto-informativo d-flex justify-content-between">
                                 <span>Porc. Ponderación: 75%</span>
                                 <span>Trabajo integrador</span>
                                 <span>Instancia de prueba</span>
@@ -30,19 +42,23 @@ export const ActividadEntregas = () => {
 
             <section className="seccion-entregas py-4">
                 <div className="container">
-                    <div className="d-flex justify-content-between">
+                    <div className="entrega-subtitulo d-flex justify-content-between">
                         <h2>Entregas</h2>
-                        <Button variant="primary" onClick={() => setShow(true)}>
+                        <Button className="crear-entrega" variant="primary" onClick={() => setShow(true)}>
                             <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
                             Crear Entrega
                         </Button>
                     </div>
                     
-                    <EntregaForm show={show} handleClose={handleClose}/>
+                    {
+                        idActividad ? <EntregaForm show={show} handleClose={handleClose} idActividad={idActividad}/> : null
+                    }
+                    
 
                     <div className="row">
-                        <div className="col-12 entrega">
+                        <div className="col-12 entrega estilo-entrega">
                             <h4 className="entrega-titulo">Plan de gestión del cronograma</h4>
+                            <Link className='estilo-detalle' to="/entrega/:id">Ver detalle</Link>
                             <span className="entrega-estado">Aprobada</span>
                             <p className="entrega-fecha">Fecha de entrega: <span>10/08</span></p>
                             <p className="entrega-vencimiento">Fecha de vencimiento: <span>17/08</span></p>
@@ -50,8 +66,9 @@ export const ActividadEntregas = () => {
                     </div>
 
                     <div className="row">
-                        <div className="col-12 entrega">
+                        <div className="col-12 entrega estilo-entrega">
                             <h4 className="entrega-titulo">Planificación del alcance</h4>
+                            <Link className='estilo-detalle' to="/entrega/:id">Ver detalle</Link>
                             <span className="entrega-estado">Aprobada</span>
                             <p className="entrega-fecha">Fecha de entrega: <span>10/08</span></p>
                             <p className="entrega-vencimiento">Fecha de vencimiento: <span>17/08</span></p>

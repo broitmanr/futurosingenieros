@@ -1,4 +1,5 @@
 .entrega{
+    position: relative; /* Define el contenedor como el punto de referencia */
     display: flex;
     flex-wrap: wrap;
     padding: 1rem;
@@ -8,13 +9,89 @@
 }
 .entrega-titulo{
     width: 50%;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #1E2A3D;
+    margin-bottom: 10px;
+    
 }
 .entrega-estado{
     width: 50%;
+    font-family: 'Roboto', sans-serif;
+    display: inline-block;
+    padding-left: 20px;
+    position: relative;
 }
 .entrega-fecha{
     width: 50%;
+    font-family: 'Roboto', sans-serif;
+    display: inline-block;
+    padding-left: 20px;
+    position: relative;
 }
 .entrega-vencimiento{
     width: 50%;
+    font-family: 'Roboto', sans-serif;
+    display: inline-block;
+    padding-left: 20px;
+    position: relative;
+}
+.texto-informativo {
+    font-family: 'Roboto', sans-serif;
+    display: inline-block;  
+    font-weight: bold !important;
+    font-weight: 700;
+    color: #fff;
+}
+
+.estilo-entrega{
+    border: 3px solid black;
+    background-color: #A9B6CC;
+}
+.estilo-detalle{
+        background-color: #1E2A3D;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 0.9em;
+        position: absolute; /* Posiciona el botón de manera absoluta dentro del contenedor .entrega */
+        bottom: 0; /* Alinea el botón con la parte inferior del contenedor */
+        right: 0; /* Alinea el botón con la parte derecha del contenedor */
+        transition: transform 0.2s ease;
+        transform: scale(1.05);
+}
+.entrega-subtitulo {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #193B70;
+    margin-bottom: 10px;
+}
+
+.entrega-estado::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 40%;
+    transform: translateY(-50%);
+}
+
+.nombre-materia {
+    font-size: 45px; /* Aumenta el tamaño del texto */
+    color: #fff;
+}
+
+.recuadro-estilizado{
+    border: 2px solid #000; /* Cambia el color y grosor del borde según tu preferencia */
+    padding: 10px; /* Ajusta el padding según tu necesidad */
+    border-radius: 8px; /* Opcional: para bordes redondeados */
+    background-color: #2c394e; /* Opcional: para un color de fondo */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Opcional: para una sombra sutil */
+    width: 100%;
+    max-width: 500px; /* Opcional: para limitar el ancho máximo del recuadro */
+    margin: 0 auto; /* Opcional: para centrar el recuadro horizontalmente */
 }

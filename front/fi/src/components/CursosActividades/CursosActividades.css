@@ -1,5 +1,6 @@
 .seccionBanner {
-    background-color: #e9ecef; /* Fondo gris claro */
+    background: rgb(127, 167, 219);
+    background: linear-gradient(313deg, rgba(127, 167, 219, 1) 0%, rgba(26, 32, 53, 1) 100%);
     padding: 50px 0; /* Espaciado vertical */
 }
 
@@ -20,17 +21,16 @@
     margin-bottom: 15px; /* Espacio inferior */
 }
 
-.nombre-comision, .anio-comision {
-    font-size: 1.1rem; /* Tamaño de fuente menor */
-    font-weight: 500; /* Fuente semi-negrita */
-    color: #6c757d; /* Color gris */
-}
+
 
 /* Asegura que la lista ocupe el ancho completo del contenedor */
 .aside-nav {
     padding: 0;
     margin: 0;
     list-style: none;
+    list-style-type: none; /* Eliminar los puntos de la lista */
+    padding: 0;
+    margin: 0;
 }
 
 /* Estilo para el enlace */
@@ -41,7 +41,7 @@
     padding: 10px; /* Ajusta el relleno según sea necesario */
     text-decoration: none; /* Elimina el subrayado del enlace */
     color: #000; /* Ajusta el color del texto */
-    background-color: #3676b5; /* Ajusta el color de fondo según sea necesario */
+    background-color: #1a2034; /* Ajusta el color de fondo según sea necesario */
     border: 1px solid #131313; /* Añade un borde si es necesario */
     border-radius: 4px; /* Opcional: redondea las esquinas del botón */
 }
@@ -51,47 +51,46 @@
     margin-right: 8px; /* Espacio entre el ícono y el texto */
 }
 
+.contenedor-info-curso{
+    border-radius: 10px;
+    border: 2px solid #fff !important;
+}
+
 .nombre-materia {
     font-size: 2rem; /* Tamaño de fuente más grande para el título */
     font-weight: bold; /* Negrita para darle más énfasis */
-    color: #343a40; /* Color oscuro del texto */
+    color: #fff; /* Color oscuro del texto */
     margin-bottom: 20px; /* Espacio adicional debajo del título */
     font-family: 'Roboto', sans-serif; /* Fuente personalizada */
     letter-spacing: 1px; /* Espaciado entre letras para mayor elegancia */
 }
 
 .nombre-comision, .anio-comision {
-    font-weight: 600; /* Fuente semi-negrita para mayor legibilidad */
-    color: #144376; /* Color azul para destacar el texto */
-}
-
-
-.aside-nav {
-    list-style-type: none; /* Eliminar los puntos de la lista */
-    padding: 0;
-    margin: 0;
+    font-size: 1.1rem; /* Tamaño de fuente menor */
+    font-weight: 500; /* Fuente semi-negrita */
+    color: #fff; /* Color gris */
 }
 
 .aside-item {
-    margin-bottom: 1; /* Espacio entre los elementos */
+    margin-bottom: 1rem; /* Espacio entre los elementos */
 }
 
 .aside-link {
     display: block;
-    padding: 20px 15px; /* Espaciado interno */
-    background-color: #4e8ec3; /* Color de fondo del rectángulo */
+    padding: 8px 16px;
+    background-color: #1A2035; /* Color de fondo del rectángulo */
     border: 2px outset #393636; /* Borde del rectángulo */
     border-radius: 5px; /* Bordes redondeados */
     font-family: 'oPoppins', sans-serif; /* Cambia el tipo de fuente */
     text-decoration: none; /* Eliminar subrayado del enlace */
-    font-size: 18px; /* Aumenta el tamaño del texto */
-    color: #131313; /* Color del texto */
+    font-size: 20px; /* Aumenta el tamaño del texto */
+    color: #ffffff; /* Color del texto */
     transition: background-color 0.3s ease; /* Transición suave para el hover */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para el efecto 3D */
 }
 
 .aside-link:hover {
-    background-color: #67b2ef; /* Cambio de color al pasar el cursor */
+    background-color: #374476; /* Cambio de color al pasar el cursor */
 }
 
 .aside-menu {
@@ -188,6 +187,7 @@
 }
 
 .actividad-boton {
+    display: block;
     background-color: #7995a9; /* Color de fondo */
     color: rgb(7, 7, 7); /* Color del texto */
     border: 1px solid #080808; /* Borde del botón */

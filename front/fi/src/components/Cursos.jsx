@@ -5,8 +5,10 @@ import Curso from './CursoForm';
 import CursoVinculacion from './CursoVinculacion'
 import axios from "axios";
 import { useRole } from "../context/RolesContext";
+import { Link } from "react-router-dom";
 
 const Cursos = () => {
+    
     const { role } = useRole();
     const [show, setShow] = useState(false);
     const [showVincular, setShowVincular] = useState(false)
@@ -105,7 +107,8 @@ const Cursos = () => {
                                         </Row>
                                     </Card.Title>
                                     <Card.Text>
-                                        {item.materia}
+                                        
+                                        <Link style={{textDecoration:'none', color:'#000'}} to={`/cursos/${item.id}/actividades`}>{item.materia}</Link>
                                     </Card.Text>
                                 </Card.Body>
                             </Card>

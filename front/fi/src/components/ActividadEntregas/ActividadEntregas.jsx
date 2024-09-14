@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import '../styles/ActividadEntrega.css';
 import { Button } from 'react-bootstrap';
@@ -15,8 +14,6 @@ export const ActividadEntregas = () => {
     useEffect(()=> {
         const idActividad = params.id;
         setIdActividad(idActividad)
-
-
     },[])
 
     return (
@@ -24,8 +21,7 @@ export const ActividadEntregas = () => {
             <section className="seccionBanner py-5">
                 <div className="container">
                     <div className="row">
-                        <div className="col-md-6 mx-auto recuadro-estilizado" style={{ maxWidth: '1000px', width: '100%' }}>
-
+                        <div className="col-md-6 mx-auto recuadro-estilizado">
                             <h2 className="nombre-materia">Trabajo Integrador Grupal</h2>
                             <div className="texto-informativo d-flex justify-content-between">
                                 <span>Porc. Ponderación: 75%</span>
@@ -44,7 +40,7 @@ export const ActividadEntregas = () => {
                 <div className="container">
                     <div className="entrega-subtitulo d-flex justify-content-between">
                         <h2>Entregas</h2>
-                        <Button className="crear-entrega" variant="primary" onClick={() => setShow(true)}>
+                        <Button className="crear-entrega" onClick={() => setShow(true)}>
                             <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
                             Crear Entrega
                         </Button>

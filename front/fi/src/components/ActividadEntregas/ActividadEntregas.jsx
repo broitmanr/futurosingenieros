@@ -3,8 +3,10 @@ import '../styles/ActividadEntrega.css';
 import { Button } from 'react-bootstrap';
 import { EntregaForm } from './EntregaForm';
 import { Link, useParams } from 'react-router-dom';
+import { useRole } from '../../context/RolesContext';
 
 export const ActividadEntregas = () => {
+    const { role } = useRole()
     const [show, setShow] = useState(false);
     const [idActividad, setIdActividad] = useState(null)
    
@@ -40,10 +42,12 @@ export const ActividadEntregas = () => {
                 <div className="container">
                     <div className="entrega-subtitulo d-flex justify-content-between">
                         <h2>Entregas</h2>
-                        <Button className="crear-entrega" onClick={() => setShow(true)}>
-                            <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
-                            Crear Entrega
-                        </Button>
+                        { role === 'D' && (
+                            <Button className="crear-entrega" onClick={() => setShow(true)}>
+                                <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
+                                Crear Entrega
+                            </Button>
+                        )}
                     </div>
                     
                     {

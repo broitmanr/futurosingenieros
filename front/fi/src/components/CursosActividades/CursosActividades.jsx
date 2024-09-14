@@ -4,9 +4,15 @@ import { Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import Actividad from '../CursosActividades/ActividadForm'
 import axios from "axios";
+import { FaRegPlusSquare } from "react-icons/fa";
+import { RiFileDownloadLine } from "react-icons/ri";
+import { PiUsersThreeBold } from "react-icons/pi";
+import { RiBarChartBoxLine } from "react-icons/ri";
+import { useRole } from '../../context/RolesContext';
 
 
 export const CursosActividades = () => {
+    const { role } = useRole()
     const [show, setShow] = useState(false);
     const [instancias, setInstancias] = useState({});
 
@@ -75,7 +81,7 @@ export const CursosActividades = () => {
     return (
         <>
             <section className="seccionBanner py-5">
-                <div className="container">
+                <div className="instancia-container">
                     <div className="row">
                         <div className="col-md-6 mx-auto contenedor-info-curso p-4">
                             {
@@ -104,25 +110,43 @@ export const CursosActividades = () => {
                             <aside className='aside-menu'>
                                 <nav>
                                     <ul className="aside-nav">
+                                        { role === 'D' && (
+                                            <>
+                                            <li className='aside-item d-flex align-items-center'>
+                                                <Link className='aside-link' onClick={() => setShow(true)}>
+                                                    <FaRegPlusSquare className='icons-aside-menu-actividades' />
+                                                    Crear instancia
+                                                </Link>
+                                                <Actividad show={show} handleClose={handleClose} cursoID={curso.ID} setInstancias={setInstancias} handleInstanciaAgregada={handleInstanciaAgregada} />
+                                            </li>
+                                            <li className='aside-item'>
+                                                <Link className='aside-link' to={`/alumnos/${curso.ID}`}>
+                                                    <PiUsersThreeBold className='icons-aside-menu-actividades' />
+                                                    Alumnos
+                                                </Link>
+                                            </li>
+                                            </>
+                                        )}
                                         <li className='aside-item'>
-                                            <Link className='aside-link' to="#">Recursos</Link>
-                                        </li>
-                                        <li className='aside-item'>
-                                            <Link className='aside-link' to={`/alumnos/${curso.ID}`}>Alumnos</Link>
-                                        </li>
-                                        <li className='aside-item'>
-                                            <Link className='aside-link' to="#">Calificaciones</Link>
-                                        </li>
-                                        <li className='aside-item d-flex align-items-center'>
                                             <Link className='aside-link' to="#">
-                                            <i className="fa fa-bell" aria-hidden="true"></i>
-                                            Notificaciones
+                                                <RiBarChartBoxLine className='icons-aside-menu-actividades' />
+                                                Rendimiento
                                             </Link>
                                         </li>
-                                        <li className='aside-item d-flex align-items-center'>
+                                        { role === 'A' && (
+                                            <>  
+                                            <li className='aside-item'>
+                                                <Link className='aside-link' to={`/alumnos/${curso.ID}`}>
+                                                    <PiUsersThreeBold className='icons-aside-menu-actividades' />
+                                                    Grupo
+                                                </Link>
+                                            </li>
+                                            </>
+                                        )}
+                                        <li className='aside-item'>
                                             <Link className='aside-link' to="#">
-                                            <i className="fa fa-cogs" aria-hidden="true"></i>
-                                            Configuracion
+                                                <RiFileDownloadLine className='icons-aside-menu-actividades' />
+                                                Recursos
                                             </Link>
                                         </li>
                                     </ul>
@@ -130,13 +154,7 @@ export const CursosActividades = () => {
                             </aside>
                         </div>
                         <div className="col-md-9">
-                            <Button variant="primary" onClick={() => setShow(true)}>
-                                <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
-                                Crear Instancia
-                            </Button>
                             <h4 className="mt-3">Instancias evaluativas creadas</h4>
-
-                            <Actividad show={show} handleClose={handleClose} cursoID={curso.ID} setInstancias={setInstancias} handleInstanciaAgregada={handleInstanciaAgregada} />
                             {
                                 isLoading ? (
                                     <div className="text-center">Cargando...</div>
@@ -144,15 +162,17 @@ export const CursosActividades = () => {
                                     instancias.length > 0 ? (
                                         Object.entries(instancias).map(([key, value]) => (  
                                             <Link to={`/actividad/${value.ID}/entregas`}
-                                                className="actividad-boton" 
+                                                className="actividad-boton no-underline" 
                                                 key={key}    
                                             >
                                                 <div className="col-md-12 d-flex align-items-center">
                                                     <p className="actividad-nombre m-0">{value.nombre}</p>
-                                                    <div className="ms-auto d-flex align-items-center">
-                                                        <i className="fa fa-pencil me-2" aria-hidden="true"></i>
-                                                        <i className="fa-solid fa-trash text-danger"></i>
-                                                    </div>
+                                                    { role === 'D' && (
+                                                        <div className="ms-auto d-flex align-items-center">
+                                                            <i className="fa fa-pencil me-2" aria-hidden="true"></i>
+                                                            <i className="fa-solid fa-trash text-danger"></i>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </Link>
                                         ))

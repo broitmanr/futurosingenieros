@@ -2,6 +2,7 @@
     background: rgb(127, 167, 219);
     background: linear-gradient(313deg, rgba(127, 167, 219, 1) 0%, rgba(26, 32, 53, 1) 100%);
     padding: 50px 0; /* Espaciado vertical */
+    text-align: center;
 }
 
 .banner-box {
@@ -20,8 +21,6 @@
     color: #0056b3; /* Color azul oscuro */
     margin-bottom: 15px; /* Espacio inferior */
 }
-
-
 
 /* Asegura que la lista ocupe el ancho completo del contenedor */
 .aside-nav {
@@ -66,7 +65,7 @@
 }
 
 .nombre-comision, .anio-comision {
-    font-size: 1.1rem; /* Tamaño de fuente menor */
+    font-size: 1.5rem; /* Tamaño de fuente menor */
     font-weight: 500; /* Fuente semi-negrita */
     color: #fff; /* Color gris */
 }
@@ -90,7 +89,7 @@
 }
 
 .aside-link:hover {
-    background-color: #374476; /* Cambio de color al pasar el cursor */
+    background-color: #324a76; /* Cambio de color al pasar el cursor */
 }
 
 .aside-menu {
@@ -113,6 +112,10 @@
 
 .aside-link i {
     margin-right: 8px; /* Ajusta el valor según el espacio deseado */
+}
+
+.icons-aside-menu-actividades{
+    margin-right: 0.5rem;
 }
 
 /*Eestilos del boton crear instancia*/
@@ -188,9 +191,9 @@
 
 .actividad-boton {
     display: block;
-    background-color: #7995a9; /* Color de fondo */
+    background-color: #CCDCF1; /* Color de fondo */
     color: rgb(7, 7, 7); /* Color del texto */
-    border: 1px solid #080808; /* Borde del botón */
+    border: 0.1rem solid #080808; /* Borde del botón */
     padding: 10px 20px; /* Espaciado interno del botón */
     margin: 5px 0; /* Espaciado externo del botón */
     font-size: 16px; /* Tamaño de fuente */
@@ -200,6 +203,16 @@
     width: 100%; /* Hace que el botón ocupe el 100% del ancho del contenedor */
   }
   
-  .actividad-boton:hover {
-    background-color: #7e8d9f; /* Color de fondo al pasar el ratón */
-  }
+.actividad-boton:hover {
+    background-color: #7fa7db; /* Color de fondo al pasar el ratón */
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+.actividad-nombre {
+    font-size: 1.02rem;
+    color: #1A2035;
+    font-style: italic;
+}

@@ -1,0 +1,104 @@
+{
+  "/api/instanciaEvaluativa": {
+    "post": {
+      "summary": "Crear nueva instancia evaluativa",
+      "description": "Permite a un docente crear una nueva instancia evaluativa en un curso.",
+      "tags": ["Instancia Evaluativa"],
+      "requestBody": {
+        "description": "Datos necesarios para crear una instancia evaluativa",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstanciaEvaluativaInput"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Instancia evaluativa creada con éxito.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstanciaEvaluativa"
+              }
+            }
+          }
+
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "403": {
+          "$ref": "#/components/responses/UsuarioNoAutorizado"
+        }
+      },
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ]
+    }
+  },
+  "/api/instanciaEvaluativa/tiposInstancias": {
+    "get": {
+      "summary": "Listar tipos de instancias evaluativas",
+      "description": "Obtiene una lista de todos los tipos de instancias evaluativas disponibles.",
+      "tags": ["Tipo Instancia"],
+      "responses": {
+        "200": {
+          "description": "Lista de tipos de instancias evaluativas obtenida exitosamente",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TipoInstancia"
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "$ref":"#/components/responses/InternalServerError"
+        }
+      }
+    }
+  },
+  "/api/instanciaEvaluativa/{cursoID}": {
+    "get": {
+      "tags": [
+        "Instancia Evaluativa"
+      ],
+      "summary": "Listar instancias evaluativas",
+      "description": "Obtiene una lista de instancias evaluativas asociadas a un curso específico.",
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/cursoId"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Lista de instancias evaluativas obtenida con éxito.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstanciaEvaluativa"
+              }
+            }
+          }
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "500": {
+          "$ref": "#/components/responses/InternalServerError"
+        }
+      }
+    }
+  }
+}

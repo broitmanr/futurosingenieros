@@ -1,0 +1,78 @@
+/* Estilos del header */
+.navbar-header-container{
+    background-color: #1A2035;
+    width: 100%;
+}
+
+.navbar-logo{
+    height: 12vh;
+}
+
+.navbar-brand-text-container{
+    font-weight: bold; 
+    color: #fff;
+    font-size: 1.8vw; /*Ajusta tamaño de letra según ancho*/
+    left: 50%; /*Posiciona al texto en el centro*/
+    transform: translateX(-50%) /*Centra el texto*/
+}
+
+.navbar-brand-text{
+    font-weight: bold; 
+    color: #fff;
+    text-align: center;
+}
+
+.user-items-container{
+    margin-right: 2rem;
+    position: relative;
+}
+
+.dropdown-toogle-user{
+    color: #fff;
+    cursor: pointer
+}
+
+.dropdown-menu-user{
+    position: absolute;
+    right: 0
+}
+
+.dropdown-item-user:focus, .dropdown-item-user:active, .dropdown-item-user:hover{
+    background-color: transparent !important;
+    color: inherit !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Estilos del subheader */
+.subheader-container{
+    background-color: #CCDCF1; 
+    color: #1A2035; 
+    padding: 0.8vh;
+    border-bottom: 0.14rem solid #1A2035 
+}
+
+.subheader-container-fluid{
+    font-weight: bold; 
+    font-size: 1.4vw;
+    color: #1A2035; 
+    padding-left: 8rem;
+    padding-right: 8rem;
+}
+
+/* Estilos del footer */
+.footer-container{
+    background-color: #1A2035; 
+    color: #fff;
+    text-align: center;
+    padding: 2vh;
+    margin-top: auto
+}
+
+.icon-footer{
+    margin-right: 1.2rem;
+}
+
+.text-footer{
+    font-size: 1.4vw
+}

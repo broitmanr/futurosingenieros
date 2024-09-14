@@ -5,17 +5,19 @@ const decodeJWT = require('../middlewares/decodeJWT')
 const cursoRoutes = require('./curso.routes')
 const comisionRoutes = require('./comision.routes')
 const materiaRoutes = require('./materia.routes')
+const instanciaEvaluativaRoutes = require('./instanciaEvaluativa.routes')
+const entregaPactadaRoutes = require('./entregaPactada.routes.js')
 
 const rutasInit = () => {
   const router = Router()
 
-
   router.use('/usuarios', decodeJWT, usuariosRoutes)
   router.use('/curso', decodeJWT, cursoRoutes)
+  router.use('/instanciaEvaluativa', decodeJWT, instanciaEvaluativaRoutes)
   router.use('/comision', decodeJWT, comisionRoutes)
   router.use('/materia', decodeJWT, materiaRoutes)
+  router.use('/entregaPactada', decodeJWT, entregaPactadaRoutes)
   return router
-
 }
 
 const rutasAuth = () => {

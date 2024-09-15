@@ -57,7 +57,7 @@ const Cursos = () => {
     };
 
     return ( 
-        <div className="cursos-container" style={{ minHeight: '100vh', position: 'relative', padding: '2rem' }}>
+        <div className="cursos-container" style={{ minHeight: '100vh', position: 'relative', padding: '2rem', backgroundColor: '#f2f6fc' }}>
             { role === 'D' && (
                 <>
                     <Button variant="primary" onClick={() => setShow (true)} 
@@ -93,7 +93,7 @@ const Cursos = () => {
                 <Row xs={1} md={3} className="g-4" style={{padding: '5rem'}}>
                     {cursos.map((item, idx) => (
                         <Col key={idx}>
-                            <Card>
+                            <Card style={{ border: '0.1rem solid #7fa7db' }}>
                                 <Card variant="top" style={{backgroundColor: '#7fa7db', height: '10rem'}}></Card>
                                 <Card.Body>
                                     <Card.Title>

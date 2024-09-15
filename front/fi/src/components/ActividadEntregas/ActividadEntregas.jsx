@@ -12,7 +12,7 @@ export const ActividadEntregas = () => {
     const [show, setShow] = useState(false);
     const [idActividad, setIdActividad] = useState(null)
     const [instancia, setInstancia] = useState({})
-    const [entregas, setEntregas] = useState({});
+    const [entregas, setEntregas] = useState([]);
     const [shouldFetchEntregas, setShouldFetchEntregas] = useState(false); //Estados para manejar la actualización de la instancia
 
 
@@ -131,13 +131,13 @@ export const ActividadEntregas = () => {
                             entregas.map((item, idx) => (
                                 <Row key={idx}>
                                     <Col className={'col-12 entrega estilo-entrega'}>
-                                        <h4 className="entrega-titulo">{item.nombre}</h4>
+                                        <h4 className="entrega-titulo">{item.nombre} <span>{item.numero}</span></h4>
                                         <Link className='estilo-detalle' to={`/entrega/${item.ID}`}>Ver detalle</Link>
                                         {/*TODO:Poner el estado real, todavia no lo tenemos, habria que joinear con entrega*/}
                                         <span className="entrega-estado"></span> {/* Para que no rompa el estilo */}
                                         <p className="entrega-fecha"><span></span></p> {/* Para que no rompa el estilo */}
-                                        <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('d/m/Y')}</span></p>
-                                        <p className="entrega-vencimiento">2° vencimiento: <span>{moment(item.fechavto2).format('d/m/Y')}</span></p>
+                                        <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('DD/MM/YY')}</span></p>
+                                        <p className="entrega-vencimiento">2° vencimiento: <span>{moment(item.fechavto2).format('DD/MM/YY')}</span></p>
                                     </Col>
                                 </Row>
                             ))

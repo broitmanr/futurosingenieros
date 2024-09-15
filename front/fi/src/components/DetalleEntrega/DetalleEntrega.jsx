@@ -2,6 +2,7 @@
 
 export const DetalleEntrega = () => {
     return (
+        <div className="entrega-detalle-container" style={{ backgroundColor: '#f2f6fc' }}>
         <>
 
             <section className="seccionBanner py-5">
@@ -28,9 +29,8 @@ export const DetalleEntrega = () => {
                
             </section>
             <div className="container">
-                    <div className="row">
-                        <div className="col-md-3 mx-auto border border-5 p-2 borde-negro">
-
+                <div className="row">
+                    <div className="col-md-3 mx-auto border border-5 p-2 borde-negro" style={{ width: '60%', height: '80%', marginBottom: '2rem' }}>
                         <h3
                             className="nombre-materia"
                             style={{
@@ -52,10 +52,10 @@ export const DetalleEntrega = () => {
                         <p style={{ fontSize: '16px' }}>
                             <span style={{ fontWeight: 'bold' }}>Fecha de entrega:</span> 10/08/2023
                         </p>
-                        </div>
                     </div>
                 </div>
-
+            </div>
         </>
+        </div>
     )
 }

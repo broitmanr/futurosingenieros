@@ -83,7 +83,7 @@ export default function SignInSide() {
                         backgroundPosition: 'left',
                     }}
                 />
-                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square sx={{ backgroundColor: '#f2f6fc' }}>
                     <Box
                         sx={{
                             my: 8,
@@ -96,7 +96,7 @@ export default function SignInSide() {
                         <Avatar sx={{ m: 1, bgcolor: '#CCDCF1', color: '#1A2035', border: '0.1rem solid #1A2035' }}>
                             <LockOutlinedIcon />
                         </Avatar>
-                        <Typography component="h1" variant="h5">
+                        <Typography component="h1" variant="h5" sx={{ marginBottom: '1.5rem' }}>
                             Entrar
                         </Typography>
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
@@ -111,6 +111,7 @@ export default function SignInSide() {
                                 autoFocus
                                 value={mail}
                                 onChange={(e) => setMail(e.target.value)}
+                                style={{ border: '0.1rem solid #1A2035', borderRadius: '0.4rem' }}
                             />
                             <TextField
                                 margin="normal"
@@ -123,13 +124,14 @@ export default function SignInSide() {
                                 autoComplete="current-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                style={{ border: '0.1rem solid #1A2035', borderRadius: '0.4rem' }}
                             />
                             <Button
                                 type="submit"
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
-                                style= {{ backgroundColor: '#1A2035' }}
+                                style= {{ backgroundColor: '#1A2035', marginTop: '3rem' }}
                             >
                                 Entrar
                             </Button>

@@ -103,7 +103,7 @@ export const CursosActividades = () => {
                 </div>
             </section>
 
-            <main className='contenido-principal'>
+            <main className='contenido-principal curso-actividades'>
                 <div className="container">
                     <div className="row py-4">
                         <div className="col-md-3">

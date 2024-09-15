@@ -50,14 +50,13 @@ export const ActividadEntregas = () => {
 
     }, [idActividad]);
 
-    // OBTENER LAS ACTIVIDADES DE ESE CURSO
     const fetchEntregaInstancia = async () => {
         try {
-            const response = await axios.get(`/entregaPactada/instancia/${params.id}`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
+            const response = await axios.get(`/entregaPactada/instancia/${params.id}`, { withCredentials: true })
             if(response.data){
                 console.log(response.data);
-                setEntregas(response.data); // Almacena los datos obtenidos en el estado
-                setLoading(false); // Detiene el estado de carga
+                setEntregas(response.data);
+                setLoading(false);
             }
         } catch (err) {
             console.log(err)
@@ -83,6 +82,7 @@ export const ActividadEntregas = () => {
         setShouldFetchEntregas(true) //Activa el estado de actualización
     };
     return (
+        <div className='actividad-entregas-container'>
         <>
             <section className="seccionBanner py-5">
                 <div className="container">
@@ -123,7 +123,7 @@ export const ActividadEntregas = () => {
                     </div>
                     
                     {
-                        idActividad ? <EntregaForm show={show} handleClose={handleClose} idActividad={idActividad}/> : null
+                        idActividad ? <EntregaForm show={show} handleClose={handleClose} idActividad={idActividad} handleEntregaAgregada={handleEntregaAgregada} /> : null
                     }
 
                     {isLoading && <p>Cargando cursos...</p>}
@@ -134,8 +134,8 @@ export const ActividadEntregas = () => {
                                         <h4 className="entrega-titulo">{item.nombre}</h4>
                                         <Link className='estilo-detalle' to={`/entrega/${item.ID}`}>Ver detalle</Link>
                                         {/*TODO:Poner el estado real, todavia no lo tenemos, habria que joinear con entrega*/}
-                                        <span className="entrega-estado">Aprobada</span>
-                                        <p className="entrega-fecha">Fecha de entrega: <span>10/08</span></p>
+                                        <span className="entrega-estado"></span> {/* Para que no rompa el estilo */}
+                                        <p className="entrega-fecha"><span></span></p> {/* Para que no rompa el estilo */}
                                         <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('d/m/Y')}</span></p>
                                         <p className="entrega-vencimiento">2° vencimiento: <span>{moment(item.fechavto2).format('d/m/Y')}</span></p>
                                     </Col>
@@ -147,7 +147,7 @@ export const ActividadEntregas = () => {
 
                 </div>
             </section>
-
         </>
+        </div>
     )
 }

@@ -3,7 +3,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import axios from "axios";
 
 
-export const EntregaForm = ({ show, handleClose, idActividad }) => {
+export const EntregaForm = ({ show, handleClose, idActividad, handleEntregaAgregada }) => {
     const [formData, setFormData] = useState({})
 
     const onChange = (e) => {
@@ -26,7 +26,7 @@ export const EntregaForm = ({ show, handleClose, idActividad }) => {
             .then(response => {
                 console.log('actividad creada', response.data);
                 setFormData({})
-                
+                handleEntregaAgregada(response.data)
                 /*setInstancias(prevState => {
                     return [...prevState, response.data]
                 })*/

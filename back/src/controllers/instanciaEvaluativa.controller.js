@@ -12,7 +12,7 @@ async function crear(req, res, next) {
   if (res.locals.usuario.persona_id == null) { return next(errors.UsuarioNoPersona) }
   try {
     const nuevaInstancia = await models.InstanciaEvaluativa.create({
-      porcentajePonderacion,
+      porcentaje_ponderacion:porcentajePonderacion,
       curso_id: cursoID,
       nombre,
       descripcion,
@@ -36,49 +36,35 @@ async function crear(req, res, next) {
     return next(errors.FaltanCampos)
   }
 }
-//
-// async function ver (req, res, next) {
-//   const { id } = req.params
-//
-//   try {
-//     const cursoVer = await models.Curso.findOne({
-//       where: {
-//         id
-//       },
-//       include: [
-//         {
-//           model: models.Materia
-//           // attributes: ['ID', 'nombre'] // Ajusta los atributos según tus necesidades
-//         },
-//         {
-//           model: models.Comision,
-//           attributes: ['ID', 'nombre'] // Ajusta los atributos según tus necesidades
-//         },
-//         {
-//           model: models.PersonaXCurso,
-//           include: [
-//             {
-//               model: models.Persona,
-//               attributes: ['ID', 'nombre', 'apellido'] // Ajusta los atributos según tus necesidades
-//             }
-//           ]
-//           // attributes: ['persona_id']
-//         }
-//       ]
-//     })
-//
-//     if (!cursoVer) {
-//       console.warn(yellow(`Advertencia: Curso con ID ${id} no encontrado.`))
-//       return res.status(404).json({ error: 'Curso no encontrado' })
-//     }
-//
-//     res.status(200).json(cursoVer)
-//   } catch (error) {
-//     console.error(red('Error al obtener el curso:', error))
-//     res.status(500).json({ error: 'Error al obtener el curso' })
-//   }
-// }
-//
+
+async function ver (req, res, next) {
+  const { id } = req.params
+
+  try {
+    const instanciaVer = await models.InstanciaEvaluativa.findOne({
+      where: {
+        id
+      },
+      include: [
+        {
+          model: models.TipoInstancia,
+          attributes: ['ID', 'nombre']
+        },
+      ]
+    })
+
+    if (!instanciaVer) {
+      console.warn(yellow(`Advertencia: Instancia con ID ${id} no encontrado.`))
+      return res.status(404).json({ error: 'Instancia no encontrado' })
+    }
+
+    res.status(200).json(instanciaVer)
+  } catch (error) {
+    console.error(red('Error al obtener el instancia:', error))
+    res.status(500).json({ error: 'Error al obtener el instancia' })
+  }
+}
+
  async function listar (req, res, next) {
 
    try {
@@ -106,6 +92,7 @@ async function crear(req, res, next) {
      res.status(200).json(instanciasEvaluativas)
    } catch (error) {
      console.error(red('Error al listar las instancias:', error))
+     // TODO: mandar como error
      res.status(500).json({error: 'Error al listar las instancias'})
    }
 }
@@ -242,10 +229,11 @@ async function listarTiposInstancias (req, res, next) {
     res.status(200).json(tiposinstancias)
   } catch (error) {
     console.error(red('Error al listar los tipos de instancias', error))
+    // TODO:mandar con error
     res.status(500).json({ error: 'Error al listar los tipos de instancias' })
   }
 }
 
 module.exports = {
-  crear, listarTiposInstancias,listar
+  crear, listarTiposInstancias,listar,ver
 }

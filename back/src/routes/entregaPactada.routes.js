@@ -18,8 +18,8 @@ router.get('/:id',
   entregaPactadaController.ver
 )
 
-router.get('/curso/:cursoId',
-  entregaPactadaController.listarEntregasCurso
+router.get('/instancia/:instanciaID',
+  entregaPactadaController.listarEntregasInstancia
 )
 
 router.put('/:id',

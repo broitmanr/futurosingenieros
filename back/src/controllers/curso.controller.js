@@ -121,6 +121,7 @@ async function listar (req, res, next) {
         ]
       })
     } else {
+      // TODO:mostrar error
       return res.status(400).json({ error: 'Rol no válido' })
     }
 

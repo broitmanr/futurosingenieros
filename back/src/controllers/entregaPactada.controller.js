@@ -72,30 +72,21 @@ async function ver (req, res, next) {
 }
 
 // Función para listar todas las entregas pactadas de un curso
-async function listarEntregasCurso (req, res, next) {
-  const { cursoId } = req.params
-  console.log('Valor que llega del id en el params', cursoId)
+async function listarEntregasInstancia (req, res, next) {
+  const { instanciaID } = req.params
+  // Se podria verificar que pertenezca el curso a la persona
+  console.log('Valor que llega del id en el params', instanciaID)
   try {
     const entregasPactadas = await models.EntregaPactada.findAll({
       attributes: ['ID', 'nombre', 'numero', 'descripcion', 'fechavto1', 'fechavto2'],
-      include: [
-        {
-          model: models.InstanciaEvaluativa,
-          attributes: ['ID', 'curso_id'],
-          where: { curso_id: cursoId },
-          include: [
-            {
-              model: models.Curso,
-              attributes: ['ID', 'cicloLectivo', 'materia_id', 'comision_id']
-            }
-          ]
-        }
-      ]
+      where: {
+        instanciaEvaluativa_id: instanciaID
+      }
     })
+
 
     res.status(200).json(entregasPactadas)
   } catch (error) {
-    console.error(red('Error al listar las entregas pactadas:', error))
     next({
       ...errors.InternalServerError,
       details: 'Error al listar las entregas pactadas: ' + error.message
@@ -176,7 +167,7 @@ async function eliminar (req, res, next) {
 module.exports = {
   crear,
   ver,
-  listarEntregasCurso,
+  listarEntregasInstancia,
   actualizar,
   eliminar
 }

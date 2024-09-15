@@ -48,7 +48,7 @@ export const CursosActividades = () => {
     // OBTENER LAS ACTIVIDADES DE ESE CURSO
     const fetchCursoInstancia = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/instanciaEvaluativa/${params.id}`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
+            const response = await axios.get(`http://localhost:5000/api/instanciaEvaluativa/curso/${params.id}`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
             if(response.data){
                 console.log(response.data);
                 setInstancias(response.data); // Almacena los datos obtenidos en el estado

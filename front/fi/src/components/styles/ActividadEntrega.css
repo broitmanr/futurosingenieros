@@ -37,14 +37,14 @@
     transform: translateX(39%);
 }
 .entrega-fecha{
-    width: 50%;
+    width: 34%;
     font-family: 'Roboto', sans-serif;
     display: inline-block;
     padding-left: 20px;
     position: relative;
 }
 .entrega-vencimiento{
-    width: 50%;
+    width: 33%;
     font-family: 'Roboto', sans-serif;
     display: inline-block;
     padding-left: 20px;

@@ -52,8 +52,22 @@ function App() {
                   </PrivateRoute>
                 }
               />
-              <Route path="/actividad/:id/entregas" element={<ActividadEntregas/>}/>
-              <Route path="/entrega/:id" element={<DetalleEntrega/>}/>
+              <Route 
+                path="/actividad/:id/entregas" 
+                element={
+                  <PrivateRoute allowedRoles={['D', 'A']}>
+                    <ActividadEntregas />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/entrega/:id" 
+                element={
+                  <PrivateRoute allowedRoles={['D', 'A']}>
+                    <DetalleEntrega />
+                  </PrivateRoute>
+                }
+              />
             </Routes>
             <Footer />
         </BrowserRouter>

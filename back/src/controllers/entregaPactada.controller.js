@@ -84,7 +84,6 @@ async function listarEntregasInstancia (req, res, next) {
       }
     })
 
-
     res.status(200).json(entregasPactadas)
   } catch (error) {
     next({

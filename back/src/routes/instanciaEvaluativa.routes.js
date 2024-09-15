@@ -6,8 +6,8 @@ const checkRole = require('../middlewares/checkRole')
 const router = Router()
 
 router.post('/', validate(instanciaEvaluativa.instanciaBase), checkRole.checkRoleDocente, InstanciaEvaluativa.crear)
-router.get('/tiposInstancias',InstanciaEvaluativa.listarTiposInstancias)
-router.get('/:id', checkRole.checkRole('D', 'A'),InstanciaEvaluativa.ver)
-router.get('/curso/:cursoID',InstanciaEvaluativa.listar)
+router.get('/tiposInstancias', InstanciaEvaluativa.listarTiposInstancias)
+router.get('/:id', checkRole.checkRole('D', 'A'), InstanciaEvaluativa.ver)
+router.get('/curso/:cursoID', InstanciaEvaluativa.listar)
 
 module.exports = router

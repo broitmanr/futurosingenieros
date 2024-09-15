@@ -1,23 +1,21 @@
-const crypto = require('crypto')
 const errors = require('../const/error')
 const models = require('../database/models/index')
-const { red, green, yellow, blue } = require('picocolors')
-
+const { red, yellow } = require('picocolors')
 
 // Función para crear una entrega
-async function crear(req, res, next) {
-  const { porcentajePonderacion,cursoID, nombre, tipoInstanciaID, descripcion} = req.body
+async function crear (req, res, next) {
+  const { porcentajePonderacion, cursoID, nombre, tipoInstanciaID, descripcion } = req.body
   const transaction = await models.sequelize.transaction()
   // Si el usuario no tiene persona asociada entonces no puede crear el curso
   if (res.locals.usuario.persona_id == null) { return next(errors.UsuarioNoPersona) }
   try {
     const nuevaInstancia = await models.InstanciaEvaluativa.create({
-      porcentaje_ponderacion:porcentajePonderacion,
+      porcentaje_ponderacion: porcentajePonderacion,
       curso_id: cursoID,
       nombre,
       descripcion,
-      tipoInstancia_id:tipoInstanciaID,
-      updated_by: res.locals.usuario.ID,
+      tipoInstancia_id: tipoInstanciaID,
+      updated_by: res.locals.usuario.ID
     }, { transaction })
 
     // await models.PersonaXCurso.create({
@@ -49,7 +47,7 @@ async function ver (req, res, next) {
         {
           model: models.TipoInstancia,
           attributes: ['ID', 'nombre']
-        },
+        }
       ]
     })
 
@@ -65,36 +63,34 @@ async function ver (req, res, next) {
   }
 }
 
- async function listar (req, res, next) {
-
-   try {
-     if (req.params == null)
-       return next(errors.CredencialesInvalidas)
-     let curso = req.params.cursoID
-     const instanciasEvaluativas = await models.InstanciaEvaluativa.findAll({
-       where: {
-         curso_id: curso,
-       },
-       include: [
-         {
-           model: models.TipoInstancia,
-           attributes: ['ID','nombre']
-         }
-       ],
-       attributes:[
-           'ID',
-           'nombre',
-           'descripcion',
-           'porcentaje_ponderacion',
-       ]
-       //
-     })
-     res.status(200).json(instanciasEvaluativas)
-   } catch (error) {
-     console.error(red('Error al listar las instancias:', error))
-     // TODO: mandar como error
-     res.status(500).json({error: 'Error al listar las instancias'})
-   }
+async function listar (req, res, next) {
+  try {
+    if (req.params == null) { return next(errors.CredencialesInvalidas) }
+    const curso = req.params.cursoID
+    const instanciasEvaluativas = await models.InstanciaEvaluativa.findAll({
+      where: {
+        curso_id: curso
+      },
+      include: [
+        {
+          model: models.TipoInstancia,
+          attributes: ['ID', 'nombre']
+        }
+      ],
+      attributes: [
+        'ID',
+        'nombre',
+        'descripcion',
+        'porcentaje_ponderacion'
+      ]
+      //
+    })
+    res.status(200).json(instanciasEvaluativas)
+  } catch (error) {
+    console.error(red('Error al listar las instancias:', error))
+    // TODO: mandar como error
+    res.status(500).json({ error: 'Error al listar las instancias' })
+  }
 }
 //
 // async function generarCodigoVinculacion (req, res, next) {
@@ -223,8 +219,7 @@ async function listarTiposInstancias (req, res, next) {
     // Agregar validar que sea los q el es docente
     const tiposinstancias = await models.TipoInstancia.findAll({
       attributes: ['ID', 'nombre', 'descripcion']
-    });
-
+    })
 
     res.status(200).json(tiposinstancias)
   } catch (error) {
@@ -235,5 +230,5 @@ async function listarTiposInstancias (req, res, next) {
 }
 
 module.exports = {
-  crear, listarTiposInstancias,listar,ver
+  crear, listarTiposInstancias, listar, ver
 }

@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   Persona.associate = models => {
-    Persona.hasMany(models.PersonaXCurso,{
+    Persona.hasMany(models.PersonaXCurso, {
       foreignKey: 'persona_id'
     })
   }

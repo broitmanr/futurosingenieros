@@ -83,11 +83,11 @@ async function ver (req, res, next) {
 
 async function listar (req, res, next) {
   try {
-    const usuarioRol = res.locals.usuario.rol;
-    let cursos;
+    const usuarioRol = res.locals.usuario.rol
+    let cursos
 
-    if(usuarioRol === 'D') {
-      const docenteId = res.locals.usuario.persona_id;
+    if (usuarioRol === 'D') {
+      const docenteId = res.locals.usuario.persona_id
       cursos = await models.Curso.findAll({
         include: [
           {
@@ -104,7 +104,7 @@ async function listar (req, res, next) {
         ]
       })
     } else if (usuarioRol === 'A') {
-      const estudianteId = res.locals.usuario.persona_id;
+      const estudianteId = res.locals.usuario.persona_id
       cursos = await models.Curso.findAll({
         include: [
           {

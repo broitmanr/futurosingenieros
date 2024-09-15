@@ -11,16 +11,15 @@ const instanciaBase = Joi.object({
   descripcion: Joi.string().optional(),
   porcentajePonderacion: Joi.number().greater(0).less(100).messages({
     'any.required': 'El curso es obligatorio.',
-    'number.greater':'El rango es de 0 a 100',
-    'number.less':'El rango es de 0 a 100'
+    'number.greater': 'El rango es de 0 a 100',
+    'number.less': 'El rango es de 0 a 100'
   }),
   tipoInstanciaID: Joi.number().integer().required().messages({
     'number.integer': 'El ID del tipo instancia debe ser un número entero.',
     'any.required': 'El ID del tipo instancia es obligatorio.'
-  }),
+  })
 })
 
-
 module.exports = {
-  instanciaBase,
+  instanciaBase
 }

@@ -1,10 +1,10 @@
-const nodemailer = require("nodemailer");
+const nodemailer = require('nodemailer')
 
 const { NODEMAILER_HOST, NODEMAILER_PORT, NODEMAILER_USER, NODEMAILER_PASS } =
-  process.env;
+  process.env
 
 const transporter = nodemailer.createTransport({
-  service: "outlook",
+  service: 'outlook',
   host: NODEMAILER_HOST,
   port: NODEMAILER_PORT,
   secure: false,
@@ -12,12 +12,12 @@ const transporter = nodemailer.createTransport({
   requireTLS: true,
   auth: {
     user: NODEMAILER_USER,
-    pass: NODEMAILER_PASS,
+    pass: NODEMAILER_PASS
   },
   tls: {
-    ciphers: "SSLv3",
-    rejectUnauthorized: false,
-  },
-});
+    ciphers: 'SSLv3',
+    rejectUnauthorized: false
+  }
+})
 
-module.exports = transporter;
+module.exports = transporter

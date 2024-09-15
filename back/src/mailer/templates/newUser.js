@@ -55,7 +55,7 @@ const newUser = (props) => {
       <p><b>Comunidad VENICE</b></p>
       <p><b>P.D.</b> No te pierdas nuestras novedades y promociones especiales. Seguinos en nuestras redes sociales para estar al tanto de todo lo que tenemos para ofrecerte!</p>
     </body>
-  </html>`;
-};
+  </html>`
+}
 
-module.exports = newUser;
+module.exports = newUser

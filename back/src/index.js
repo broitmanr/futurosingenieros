@@ -6,7 +6,7 @@ const errorHandler = require('./middlewares/error')
 // import errorHandler from './middlewares/error.js'
 // import cookieParser from 'cookie-parser'
 const cookieParser = require('cookie-parser')
-const cors = require('cors');
+const cors = require('cors')
 const { swaggerDocs } = require('./swagger/swagger')
 
 const configuracionApi = async (app) => {
@@ -33,16 +33,14 @@ const init = async () => {
     // sequelize.sync();
     console.log('Conexión establecida exitosamente. 1')
     app.listen(PORT, () => {
-        console.log(`App escuchando en puerto ${PORT}`);
-        swaggerDocs(app,PORT)
-    });
-    } catch (err) {
-        console.error('Error al conectarse a la base:', err);
-    }
-    await configuracionApi(app);
-    await configuracionRouter(app);
-
+      console.log(`App escuchando en puerto ${PORT}`)
+      swaggerDocs(app, PORT)
+    })
+  } catch (err) {
+    console.error('Error al conectarse a la base:', err)
+  }
+  await configuracionApi(app)
+  await configuracionRouter(app)
 }
-
 
 init()

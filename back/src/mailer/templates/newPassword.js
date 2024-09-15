@@ -54,7 +54,7 @@ const newPassword = (props) => {
         <p>Nos estamos viendo,</p>
         <p><b>Comunidad VENICE</b></p>
       </body>
-    </html>`;
-};
+    </html>`
+}
 
-module.exports = newPassword;
+module.exports = newPassword

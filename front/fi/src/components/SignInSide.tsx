@@ -111,7 +111,30 @@ export default function SignInSide() {
                                 autoFocus
                                 value={mail}
                                 onChange={(e) => setMail(e.target.value)}
-                                style={{ border: '0.1rem solid #1A2035', borderRadius: '0.4rem' }}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: '#1A2035', 
+                                            borderRadius: '0.4rem', 
+                                            borderWidth: '0.1rem'
+                                        },
+                                        '&:hover fieldset': {
+                                            borderWidth: '0.1rem',
+                                            borderColor: '#1a2035',
+                                            textColor: '#1a2035'
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderWidth: '0.1rem',
+                                            borderColor: '#1a2035'
+                                        },
+                                        '&.Mui-focused input': {
+                                            color: '#1a2035'
+                                        }
+                                    },
+                                    '& .MuiInputLabel-root.Mui-focused': {
+                                        color: '#1a2035'
+                                    }
+                                }}
                             />
                             <TextField
                                 margin="normal"
@@ -124,7 +147,30 @@ export default function SignInSide() {
                                 autoComplete="current-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                style={{ border: '0.1rem solid #1A2035', borderRadius: '0.4rem' }}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: '#1A2035', 
+                                            borderRadius: '0.4rem', 
+                                            borderWidth: '0.1rem'
+                                        },
+                                        '&:hover fieldset': {
+                                            borderWidth: '0.1rem',
+                                            borderColor: '#1a2035',
+                                            textColor: '#1a2035'
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderWidth: '0.1rem',
+                                            borderColor: '#1a2035'
+                                        },
+                                        '&.Mui-focused input': {
+                                            color: '#1a2035'
+                                        }
+                                    },
+                                    '& .MuiInputLabel-root.Mui-focused': {
+                                        color: '#1a2035'
+                                    }
+                                }}
                             />
                             <Button
                                 type="submit"

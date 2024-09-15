@@ -27,7 +27,7 @@ const Cursos = () => {
 
     const fetchCursos = async () => {
         try{
-            const response = await axios.get('http://localhost:5000/api/curso', { withCredentials: true }) // Ajusta la URL de la API según corresponda
+            const response = await axios.get('/curso', { withCredentials: true }) // Ajusta la URL de la API según corresponda
             if(response.data) {
                 setCursos(response.data); // Almacena los datos obtenidos en el estado
                 setLoading(false); // Detiene el estado de carga

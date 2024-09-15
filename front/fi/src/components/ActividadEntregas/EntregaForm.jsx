@@ -22,7 +22,7 @@ export const EntregaForm = ({ show, handleClose, idActividad }) => {
         formData.numero = parseInt(formData.numero)
         console.log(formData);
         // PASAR LA DATA EN REQ BODY.
-        axios.post(`http://localhost:5000/api/entregaPactada`, formData, { withCredentials: true }) // Ajusta la URL de la API según corresponda
+        axios.post(`/entregaPactada`, formData, { withCredentials: true }) // Ajusta la URL de la API según corresponda
             .then(response => {
                 console.log('actividad creada', response.data);
                 setFormData({})

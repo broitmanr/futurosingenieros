@@ -25,7 +25,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
   }, [show])
 
   useEffect(() => {
-      axios.get('http://localhost:5000/api/comision', { withCredentials: true }) //Obtener comisiones
+      axios.get('/comision', { withCredentials: true }) //Obtener comisiones
       .then(response => {
         setComisiones(response.data)
       })
@@ -35,7 +35,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
   useEffect(() => {
     if(selectedComision){
       const anioComision = comisiones.find(comision => comision.ID === selectedComision)?.anio; //Se obtiene anio
-      axios.get(`http://localhost:5000/api/materia/${anioComision}`, { withCredentials: true }) //Obtiene las materias
+      axios.get(`/materia/${anioComision}`, { withCredentials: true }) //Obtiene las materias
       .then(response => {
         setMaterias(response.data)
       })
@@ -54,7 +54,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
 
   const handleConfirmar = (e) => { //Crear curso
     e.preventDefault();
-    axios.post('http://localhost:5000/api/curso', 
+    axios.post('/curso',
       { 
         cicloLectivo: anio,
         materiaID: selectedMateria,

@@ -11,11 +11,12 @@ import { CursosActividades } from './components/CursosActividades/CursosActivida
 import { ActividadEntregas } from './components/ActividadEntregas/ActividadEntregas.jsx';
 import { DetalleEntrega } from './components/DetalleEntrega/DetalleEntrega.jsx';
 import PrivateRoute from './PrivateRoutes';
+import axios from "axios";
 
+axios.defaults.baseURL = 'http://localhost:5000/api'
 
 function App() {
 
-  
   
   return (
     <div className="App">

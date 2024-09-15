@@ -23,7 +23,7 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
     console.log(formData);
 
     // PASAR LA DATA EN REQ BODY.
-     axios.post(`http://localhost:5000/api/instanciaEvaluativa`,formData, { withCredentials: true }) // Ajusta la URL de la API según corresponda
+     axios.post(`/instanciaEvaluativa`,formData, { withCredentials: true }) // Ajusta la URL de la API según corresponda
              .then(response => {
                  console.log('actividad creada',response.data);
                  setFormData({})
@@ -44,7 +44,7 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
 
   useEffect(() => {
     // LISTAR EL TIPO DE INSTANCIAS DISPONIBLES PARA EL SELECT
-    axios.get(`http://localhost:5000/api/instanciaEvaluativa/tiposInstancias`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
+    axios.get(`/instanciaEvaluativa/tiposInstancias`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
       .then(response => {
         console.log(response.data);
         setTipoInstancias(response.data)

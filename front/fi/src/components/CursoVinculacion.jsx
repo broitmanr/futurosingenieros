@@ -33,7 +33,7 @@ function CursoVinculacion({ showVincular, handleCloseVincular, handleCursoAgrega
       return;
     }
     try{
-      const response = await axios.post('http://localhost:5000/api/curso/vincular-estudiante', {
+      const response = await axios.post('/curso/vincular-estudiante', {
         codigoVinculacion
       }, { withCredentials: true })
       handleCursoAgregado(response.data)

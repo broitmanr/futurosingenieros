@@ -42,7 +42,7 @@ function AlumnosCurso() {
 
   const fetchAlumnos = async () => {
     try{
-      const response = await axios.get(`http://localhost:5000/api/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
+      const response = await axios.get(`/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
       if(response.data) {
         const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
         setAlumnos(soloAlumnos)
@@ -63,7 +63,7 @@ function AlumnosCurso() {
     e.preventDefault();
     if(legajo) {
       try {
-        const response = await axios.post(`http://localhost:5000/api/curso/${id}/estudiante`, {
+        const response = await axios.post(`/curso/${id}/estudiante`, {
         legajo: legajo }, { withCredentials: true })
         if (response.status === 201) {
           setVisible(true)
@@ -79,7 +79,7 @@ function AlumnosCurso() {
 
   const handleGenerarCodigo = async (e) => { //Generar código de vinculación
     e.preventDefault();
-    axios.post('http://localhost:5000/api/curso/generar-codigo', {
+    axios.post('/curso/generar-codigo', {
       cursoId: id 
     }, { withCredentials: true })
     .then(response => {

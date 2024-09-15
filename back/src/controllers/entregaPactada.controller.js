@@ -71,7 +71,7 @@ async function ver (req, res, next) {
   }
 }
 
-// Función para listar todas las entregas pactadas de un curso
+// Función para listar todas las entregas pactadas de una instancia evaluativa
 async function listarEntregasInstancia (req, res, next) {
   const { instanciaID } = req.params
   // Se podria verificar que pertenezca el curso a la persona

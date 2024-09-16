@@ -70,6 +70,10 @@
     color: #fff; /* Color gris */
 }
 
+.curso-actividades{
+    background-color: #f2f6fc;
+}
+
 .aside-item {
     margin-bottom: 1rem; /* Espacio entre los elementos */
 }
@@ -118,7 +122,7 @@
     margin-right: 0.5rem;
 }
 
-/*Eestilos del boton crear instancia*/
+/*Estilos del boton crear instancia*/
 
 /* Estilo base para el botón */
 .btn-primary {
@@ -212,7 +216,6 @@
 }
 
 .actividad-nombre {
-    font-size: 1.02rem;
+    font-size: 1.03rem;
     color: #1A2035;
-    font-style: italic;
 }

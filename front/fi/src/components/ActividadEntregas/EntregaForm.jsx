@@ -3,7 +3,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import axios from "axios";
 
 
-export const EntregaForm = ({ show, handleClose, idActividad }) => {
+export const EntregaForm = ({ show, handleClose, idActividad, handleEntregaAgregada }) => {
     const [formData, setFormData] = useState({})
 
     const onChange = (e) => {
@@ -26,7 +26,7 @@ export const EntregaForm = ({ show, handleClose, idActividad }) => {
             .then(response => {
                 console.log('actividad creada', response.data);
                 setFormData({})
-                
+                handleEntregaAgregada(response.data)
                 /*setInstancias(prevState => {
                     return [...prevState, response.data]
                 })*/
@@ -49,14 +49,15 @@ export const EntregaForm = ({ show, handleClose, idActividad }) => {
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={e => handleSubmit(e)}>
-                        <Form.Group className="mb-3" controlId="grupoInstancia">
-                            <Form.Label>Numero de entrega</Form.Label>
-                            <Form.Control name="numero" onChange={e => onChange(e)} type="number" placeholder="Ingrese un numero" />
-                        </Form.Group>
 
                         <Form.Group className="mb-3" controlId="grupoInstancia">
                             <Form.Label>Nombre de la entrega</Form.Label>
                             <Form.Control name="nombre" onChange={e => onChange(e)} type="text" placeholder="Ingrese un nombre" />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="grupoInstancia">
+                            <Form.Label>Numero de entrega</Form.Label>
+                            <Form.Control name="numero" onChange={e => onChange(e)} type="number" placeholder="Ingrese un numero" />
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="grupoInstancia">

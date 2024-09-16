@@ -239,6 +239,60 @@
         }
       }
     }
-  }
+  },
+  "EntregaPactadaCreated": {
+      "description": "Entrega pactada creada exitosamente",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/EntregaPactadaSuccess"
+          }
+        }
+      }
+    },
+  "EntregaPactadaCompleta": {
+      "description": "Detalles de la entrega pactada",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/EntregaPactadaInput"
+          }
+        }
+      }
+    },
+   "EntregaPactadaUpdated": {
+      "description": "Entrega pactada actualizada exitosamente",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/EntregaPactadaInput"
+          }
+        }
+      }
+    },
+    "EntregaPactadaDeleted": {
+      "description": "Entrega pactada eliminada exitosamente",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/Success"
+          }
+        }
+      }
+    },
+    "ListadoEntregasPactadas": {
+      "description": "Listado de entregas pactadas",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EntregaPactadaInput"
+            }
+          }
+        }
+      }
+    }
   }
 }
+

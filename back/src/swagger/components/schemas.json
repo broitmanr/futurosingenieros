@@ -477,6 +477,54 @@
       "items": {
         "$ref": "#/components/schemas/FormatoMiembroCurso"
       }
+    },
+    "EntregaPactadaSuccess": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 201
+        },
+        "message": {
+          "type": "string",
+          "example": "EntregaPactada generada exitosamente"
+        },
+        "data": {
+          "$ref": "#/components/schemas/EntregaPactadaInput"
+        }
+      }
+    },
+    "EntregaPactadaInput": {
+      "type": "object",
+      "properties": {
+        "nombre": {
+          "type": "string",
+          "example": "Entrega 1"
+        },
+        "numero": {
+          "type": "integer",
+          "example": 1
+        },
+        "descripcion": {
+          "type": "string",
+          "example": "Descripción de la entrega"
+        },
+        "fechavto1": {
+          "type": "string",
+          "format": "date",
+          "example": "2023-10-01"
+        },
+        "fechavto2": {
+          "type": "string",
+          "format": "date",
+          "example": "2023-10-15"
+        },
+        "instanciaEvaluativaID": {
+          "type": "integer",
+          "example": 1
+        }
+      },
+      "required": ["nombre", "numero", "descripcion", "fechavto1", "fechavto2", "instanciaEvaluativaID"]
     }
   }
 }

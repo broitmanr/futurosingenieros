@@ -1,0 +1,174 @@
+{
+    "/entregasPactadas/": {
+      "post": {
+        "summary": "Crear una nueva entrega pactada",
+        "operationId": "crearEntregaPactada",
+        "tags": ["EntregasPactadas"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaPactadaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/EntregaPactadaCreated"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/CredencialesInvalidas"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/entregasPactadas/{id}": {
+      "get": {
+        "summary": "Obtener una entrega pactada por ID",
+        "operationId": "verEntregaPactada",
+        "tags": ["EntregasPactadas"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/entregaPactadaId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/EntregaPactadaCompleta"
+          },
+          "401": {
+            "$ref": "#/components/responses/CredencialesInvalidas"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "summary": "Actualizar una entrega pactada por ID",
+        "operationId": "actualizarEntregaPactada",
+        "tags": ["EntregasPactadas"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/entregaPactadaId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaPactadaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/EntregaPactadaCompleta"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/CredencialesInvalidas"
+          },
+          "403": {
+            "$ref": "#/components/responses/UsuarioNoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar una entrega pactada por ID",
+        "operationId": "eliminarEntregaPactada",
+        "tags": ["EntregasPactadas"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/entregaPactadaId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/EntregaPactadaDeleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/CredencialesInvalidas"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/entregasPactadas/instancia/{instanciaID}": {
+      "get": {
+        "summary": "Listar todas las entregas pactadas de una instancia evaluativa",
+        "operationId": "listarEntregasInstancia",
+        "tags": ["EntregasPactadas"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanciaID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ListadoEntregasPactadas"
+          },
+          "401": {
+            "$ref": "#/components/responses/CredencialesInvalidas"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+}

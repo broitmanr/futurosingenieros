@@ -19,6 +19,26 @@
         "type": "integer",
         "example": 82
       }
+    },
+    "entregaPactadaId": {
+      "name": "id",
+      "in": "path",
+      "required": true,
+      "description": "ID de la entrega pactada",
+      "schema": {
+        "type": "integer",
+        "example": 3
+      }
+    },
+    "instanciaID": {
+      "name": "instanciaID",
+      "in": "path",
+      "required": true,
+      "description": "ID de la instancia evaluativa",
+      "schema": {
+        "type": "integer",
+        "example": 1
+      }
     }
   }
 }

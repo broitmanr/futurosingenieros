@@ -100,8 +100,6 @@ export const ActividadEntregas = () => {
                                             <span>{instancia.descripcion}</span>
                                         </div>
                                     </>
-
-
                             }
                         </div>
                     </div>
@@ -137,7 +135,9 @@ export const ActividadEntregas = () => {
                                         <span className="entrega-estado"></span> {/* Para que no rompa el estilo */}
                                         <p className="entrega-fecha"><span></span></p> {/* Para que no rompa el estilo */}
                                         <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('DD/MM/YY')}</span></p>
-                                        <p className="entrega-vencimiento">2° vencimiento: <span>{moment(item.fechavto2).format('DD/MM/YY')}</span></p>
+                                        { item.fechavto2 &&
+                                            <p className="entrega-vencimiento">2° vencimiento: <span>{moment(item.fechavto2).format('DD/MM/YY')}</span></p>
+                                        }
                                     </Col>
                                 </Row>
                             ))

@@ -11,6 +11,18 @@ async function crear (req, res, next) {
   // Si el usuario no tiene persona asociada entonces no puede crear el curso
   if (res.locals.usuario.persona_id == null) { return next(errors.UsuarioNoPersona) }
   try {
+    // Verificamos si ya existe un curso con los mismos datos de ciclo lectivo, materia y comisión
+    const cursoExistente = await models.Curso.findOne({
+      where: {
+        cicloLectivo,
+        materiaID,
+        comisionID
+      }
+    })
+    if (cursoExistente) {
+      console.warn(yellow(`Advertencia: Ya existe un curso con esos datos, con ID ${cursoExistente.id}`))
+      return next({ ...errors.ConflictError, details: `Ya existe un curso con esos datos, cursoExistente: ${cursoExistente}` })
+    }
     const nuevoCurso = await models.Curso.create({
       cicloLectivo,
       materia_id: materiaID,
@@ -121,8 +133,7 @@ async function listar (req, res, next) {
         ]
       })
     } else {
-      // TODO:mostrar error
-      return res.status(400).json({ error: 'Rol no válido' })
+      next({ ...errors.UsuarioNoAutorizado, details: 'No tiene permiso para listar los cursos.' })
     }
 
     const cursosIDsComplete = cursos.map(curso => ({

@@ -15,6 +15,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
   const [materias, setMaterias] = useState([]);
   const [selectedComision, setSelectedComision] = useState(initialForm.selectedComision);
   const [selectedMateria, setSelectedMateria] = useState(initialForm.selectedMateria);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Estado para controlar el estado de la solicitud
 
   useEffect(() => { //Limpia el form luego de agregar un curso
     if(show){
@@ -54,6 +55,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
 
   const handleConfirmar = (e) => { //Crear curso
     e.preventDefault();
+    setIsSubmitting(true); // Establecer isSubmitting en true cuando se inicie la solicitud
     axios.post('/curso',
       { 
         cicloLectivo: anio,
@@ -68,6 +70,9 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
       handleClose();
     })
     .catch (err => console.log('Error al querer crear el curso', err))
+    .finally(() => {
+      setIsSubmitting(false); // Establecer isSubmitting en false cuando la solicitud se complete o falle
+    });
   };
 
   const handleCancelar = () => { //Cancelar curso
@@ -135,8 +140,8 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
                   }}>
                 Cancelar
               </Button>
-              <Button variant="primary" type="submit" style={{ backgroundColor: '#1A2035' }}>
-                Confirmar
+              <Button variant="primary" type="submit" style={{ backgroundColor: '#1A2035' }} disabled={isSubmitting}>
+                {isSubmitting ? 'Confirmando...' : 'Confirmar'}
               </Button>
             </div>
           </Modal.Footer>

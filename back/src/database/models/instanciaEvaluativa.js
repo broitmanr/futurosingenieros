@@ -27,6 +27,11 @@ module.exports = (sequelize, DataTypes) => {
     updated_by: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    grupo: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     tableName: 'InstanciaEvaluativa',

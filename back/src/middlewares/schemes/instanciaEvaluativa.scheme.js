@@ -17,6 +17,9 @@ const instanciaBase = Joi.object({
   tipoInstanciaID: Joi.number().integer().required().messages({
     'number.integer': 'El ID del tipo instancia debe ser un número entero.',
     'any.required': 'El ID del tipo instancia es obligatorio.'
+  }),
+  grupo: Joi.boolean().required().messages({
+    'any.required': 'El valor de grupo es obligatorio y debe ser un booleano.'
   })
 })
 

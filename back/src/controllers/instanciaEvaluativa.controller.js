@@ -4,7 +4,7 @@ const { red, yellow } = require('picocolors')
 
 // Función para crear una entrega
 async function crear (req, res, next) {
-  const { porcentajePonderacion, cursoID, nombre, tipoInstanciaID, descripcion } = req.body
+  const { porcentajePonderacion, cursoID, nombre, tipoInstanciaID, descripcion, grupo } = req.body
   const transaction = await models.sequelize.transaction()
   // Si el usuario no tiene persona asociada entonces no puede crear el curso
   if (res.locals.usuario.persona_id == null) { return next(errors.UsuarioNoPersona) }
@@ -14,6 +14,7 @@ async function crear (req, res, next) {
       curso_id: cursoID,
       nombre,
       descripcion,
+      grupo,
       tipoInstancia_id: tipoInstanciaID,
       updated_by: res.locals.usuario.ID
     }, { transaction })

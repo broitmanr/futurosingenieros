@@ -98,6 +98,7 @@ export const ActividadEntregas = () => {
                                             <span>Porc. Ponderación: {instancia.porcentaje_ponderacion}</span>
                                             <span>{instancia.TipoInstancium.nombre}</span>
                                             <span>{instancia.descripcion}</span>
+                                            <span>{instancia.grupo ? 'Grupal' : 'Individual'}</span>
                                         </div>
                                     </>
                             }

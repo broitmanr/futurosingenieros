@@ -5,16 +5,22 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
 
   const [formData, setFormData] = useState({})
   const [tipoInstancias, setTipoInstancias] = useState([]);
+  const [isGrupal, setIsGrupal] = useState(false)
   const [isLoading, setLoading] = useState({});
 
-
   const onChange = (e) => {
-    
     setFormData(prevState => {
       return { ...prevState, [e.target.name]: e.target.value }
     })
   };
 
+  const handleSwitchChange = () => {
+    setIsGrupal(!isGrupal)
+    setFormData(prevState => ({
+      ...prevState,
+      grupo: !isGrupal ? 1 : 0
+    }))
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,10 +43,9 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
                  // setError('Error al crear la actividad');
                
              });
- 
     handleClose();
-    }
-
+    setIsGrupal(false)
+  }
 
   useEffect(() => {
     // LISTAR EL TIPO DE INSTANCIAS DISPONIBLES PARA EL SELECT
@@ -117,7 +122,18 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
                 <Form.Control name="descripcion" onChange={e => onChange(e)} type="text" placeholder="Escriba una descripcion" />
               </Form.Group>
             </Form.Group>
-
+            <Form.Group className="mb-3" controlId="esGrupal">
+              <Form.Label>¿Es grupal?</Form.Label>
+              <Form.Check
+                inline
+                type="switch"
+                id="custom-isGrupal"
+                label={isGrupal ? "Sí, es en grupo" : "No, es individual"}
+                checked={isGrupal}
+                onChange={handleSwitchChange}
+                className='float-end'
+              />
+            </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>

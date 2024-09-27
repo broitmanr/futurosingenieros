@@ -10,6 +10,7 @@ import AlumnosCurso from './components/AlumnosCurso.jsx';
 import { CursosActividades } from './components/CursosActividades/CursosActividades.jsx';
 import { ActividadEntregas } from './components/ActividadEntregas/ActividadEntregas.jsx';
 import { DetalleEntrega } from './components/DetalleEntrega/DetalleEntrega.jsx';
+import Rendimiento from './components/Rendimiento/Rendimiento.jsx'
 import PrivateRoute from './PrivateRoutes';
 import axios from "axios";
 
@@ -66,6 +67,14 @@ function App() {
                 element={
                   <PrivateRoute allowedRoles={['D', 'A']}>
                     <DetalleEntrega />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/rendimiento" 
+                element={
+                  <PrivateRoute allowedRoles={['D', 'A']}>
+                    <Rendimiento />
                   </PrivateRoute>
                 }
               />

@@ -1,0 +1,24 @@
+.rendimiento-container{
+    min-height: 70vh;
+}
+
+.tabs-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+}
+
+.tabs-container .p-tabview-nav{
+    border-bottom: none;
+}
+
+.tab-header-text .p-tabview-nav-link{
+    color: #1A2035;
+    text-decoration: none;
+}
+
+.p-tabview-nav-link{
+    margin: 0.3rem;
+    color: #1A2035; 
+}

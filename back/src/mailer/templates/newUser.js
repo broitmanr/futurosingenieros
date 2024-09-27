@@ -1,7 +1,7 @@
 const newUser = (props) => {
   return `
     <head>
-    <title>Bienvenido a VENICE IDUMENTARIA</title>
+    <title>Bienvenido a Futuros Ingenieros</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -42,19 +42,27 @@ const newUser = (props) => {
     </style>
   </head>
   <body>
-      <img src="https://res.cloudinary.com/dmfzplfra/image/upload/v1711678602/VENICE/LOGO_1-removebg-preview_j1tfcu.png" alt="venice logo"/>
-      <h3>Buenas Prendas 🤙</h3>
       
-      <p><b>Hola ${props.email},</b></p>
-      <p>¡Bienvenido a Venice! Estamos emocionados de tenerte en nuestra comunidad de amantes de las remeras originales. Sabemos que encontrar prendas únicas y de calidad puede ser todo un desafío, especialmente cuando buscas algo que refleje tu estilo personal. Es por eso que creamos Venice, para ofrecerte una amplia selección de remeras originales y de excelente calidad..</p>
-      <p>¿Alguna vez sentiste que queres destacarte con una remera única pero no sabes dónde encontrarla? Estamos acá para resolver ese problema. Simplemente descubrí nuestra colección y encontrarás una variedad de remeras originales que se adaptan a tu estilo y personalidad.</p>
-      <p>Además, nos aseguramos de que nuestras remeras sean de la mejor calidad, para que te sientas cómodo y seguro luciéndolas. Y si estás buscando algo específico, nuestro equipo está aquí para ayudarte a encontrar la remera perfecta para ti.</p>
-      <p>Queremos que disfrutes vistiendo remeras originales, por eso hemos hecho Venice lo más fácil posible para vos. Además, estamos constantemente agregando nuevas colecciones y diseños para mantenerte actualizado con las últimas tendencias en moda.</p>
-      <p>¿Estás listo para explorar nuestra colección?  ¡Visita nuestro sitio web <a href="https://venice-nine.vercel.app/">Ingresar</a> y encontrá la remera original perfecta para vos hoy mismo!</p>
-      <p>Nos estamos viendo!,</p>
-      <p><b>Comunidad VENICE</b></p>
-      <p><b>P.D.</b> No te pierdas nuestras novedades y promociones especiales. Seguinos en nuestras redes sociales para estar al tanto de todo lo que tenemos para ofrecerte!</p>
-    </body>
+      <h3>Bienvenid@🤙</h3>
+      
+      <p><b>Hola ${props.nombre},</b></p>
+        <hr>
+       <p>¡Bienvenido/a a nuestro sistema de seguimiento de trabajos! Sabemos que la vida universitaria puede ser bastante ajetreada, así que hemos creado esta herramienta para hacerte las cosas más fáciles.<br>
+       Acá vas a poder:</p>
+        <ul>
+        <li>Subir tus trabajos de manera rápida y sin complicaciones.</li>
+        <li>Recibir recordatorios cuando se acerque la fecha de entrega, para que no te agarren los plazos de sorpresa.</li>
+        <li>Ver las correcciones y comentarios de tus profesores para que puedas mejorar cada vez más.</li>
+        <li>Organizar grupos de trabajo y coordinar fácilmente con tus compañeros.</li>
+        </ul>
+        <br><br>
+        <p>La idea es que puedas enfocarte en tus estudios y proyectos, mientras nosotros te ayudamos a mantener todo bajo control. Si te surge alguna duda o necesitas ayuda, no dudes en contactarnos. ¡Estamos para darte una mano!
+         <br>¡Mucho éxito en todo lo que viene!</p>
+        <br><hr>
+        Saludos,
+        Equipo de Soporte Académico
+       </p>    
+  </body>
   </html>`
 }
 

@@ -1,4 +1,4 @@
-const transporter = require('../mailer/mailer')
+const {transporter} = require('back/src/mailer/mailer')
 const { NODEMAILER_USER } = process.env
 
 const sendEmail = (to, subject, html) => {
@@ -9,7 +9,7 @@ const sendEmail = (to, subject, html) => {
     subject,
     html:
       html ||
-      `<h1>Email testing</h1> <p>Este es un email de prueba enviado a <b>${to}</b> usando la librería Nodemailer.</p> <p>No olvides visitar nuestra webs para encontrar las mejores recetas de cocina, con los ingredientes que tengas en tu alacena.</p><a href="https://mangiare.vercel.app/">MANGIARE</a>`
+      `<h1>Email testing</h1>`
   }
 
   transporter.sendMail(emailOptions, (error, info) => {

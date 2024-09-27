@@ -4,15 +4,14 @@ const { NODEMAILER_HOST, NODEMAILER_PORT, NODEMAILER_USER, NODEMAILER_PASS } =
   process.env
 
 const transporter = nodemailer.createTransport({
-  service: 'outlook',
-  host: NODEMAILER_HOST,
+  host: 'mail.futurosingenieros.site',
   port: NODEMAILER_PORT,
   secure: false,
-  secureConnection: false,
-  requireTLS: true,
+  // secureConnection: true,
+  // requireTLS: true,
   auth: {
-    user: NODEMAILER_USER,
-    pass: NODEMAILER_PASS
+    user: 'gerencia@futurosingenieros.site',
+    pass: 'PAGApk5dKD'
   },
   tls: {
     ciphers: 'SSLv3',
@@ -20,4 +19,7 @@ const transporter = nodemailer.createTransport({
   }
 })
 
-module.exports = transporter
+
+module.exports = transporter;
+
+

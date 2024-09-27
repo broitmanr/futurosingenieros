@@ -1,0 +1,92 @@
+{
+  "/api/grupo": {
+    "post": {
+      "summary": "Crea un grupo",
+      "description": "Permite a un alumno crear un grupo en un curso.",
+      "tags": ["Grupo"],
+      "requestBody": {
+        "description": "Datos para crear el curso",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Grupo"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Grupo creado con éxito.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Grupo"
+              }
+            }
+          }
+
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "403": {
+          "$ref": "#/components/responses/UsuarioNoAutorizado"
+        }
+      },
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ]
+    }
+  },
+  "/api/grupo/addPersona": {
+    "post": {
+      "summary": "Agrega a un grupo",
+      "description": "Permite a un alumno agregar personas a un grupo.",
+      "tags": ["Grupo"],
+      "requestBody": {
+        "description": "Datos para agregar a la persona",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AddPersonaGrupo"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Persona agregada con exito",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Grupo"
+              }
+            }
+          }
+
+        },
+        "400": {
+          "$ref": "#/components/responses/ValidationError"
+        },
+        "401": {
+          "$ref": "#/components/responses/CredencialesInvalidas"
+        },
+        "403": {
+          "$ref": "#/components/responses/UsuarioNoAutorizado"
+        }
+      },
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ]
+    }
+  }
+}

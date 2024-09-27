@@ -1,6 +1,7 @@
 const models = require('../database/models/index')
 const errors = require('../const/error')
 const bcrypt = require('bcryptjs')
+const sendMailWithTemplate = require('../mailer/sendEmailWithTemplate')
 const jwt = require('../middlewares/signJWT')
 const rolservice = require('../services/rolservice')
 
@@ -46,19 +47,34 @@ module.exports = {
           legajo: req.body.legajo
         }
       })
-
+      // Todo: verificar que el mail termine o con frlp.utn.edu.ar
       req.body.password = bcrypt.hashSync(req.body.password, 10)
-      const user = await models.Usuario.create({
-        mail: req.body.mail,
-        password: req.body.password,
-        rol: rolservice.rolByMail(req.body.mail) ? 'D' : 'A',
-        persona_id: persona ? persona.ID : null
-      })
+      // const user = await models.Usuario.create({
+      //   mail: req.body.mail,
+      //   password: req.body.password,
+      //   rol: rolservice.rolByMail(req.body.mail) ? 'D' : 'A',
+      //   persona_id: persona ? persona.ID : null
+      // })
+
+      let nombre = persona ? persona.nombre : user.mail.split('@')[0]
+
+      try{
+        sendMailWithTemplate(req.body.mail,"newUser",{nombre:nombre})
+
+      }catch (e){
+        console.log(e)
+        res.json({
+          success:false,
+          data:{
+          'error': e
+          }
+        })
+      }
 
       res.json({
         success: true,
         data: {
-          id: user.ID
+          // id: user.ID
         }
       })
     } catch (err) {

@@ -1,7 +1,6 @@
 const validate = (schemas) => {
   return (req, res, next) => {
     const validationErrors = []
-
     if (schemas.params) {
       const { error } = schemas.params.validate(req.params, { abortEarly: false })
       if (error) {
@@ -16,6 +15,7 @@ const validate = (schemas) => {
       }
     }
 
+    console.log(schemas)
     if (schemas.body) {
       const { error } = schemas.body.validate(req.body, { abortEarly: false })
       if (error) {

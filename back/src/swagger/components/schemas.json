@@ -412,23 +412,23 @@
         },
         "required": ["ID", "cicloLectivo", "updated_at"]
       },
-      "CodigoVinculacionSuccess": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "example": 201
-        },
-        "message": {
-          "type": "string",
-          "example": "Código de vinculación generado exitosamente"
-        },
-        "codigoVinculacion": {
-          "type": "string",
-          "example": "2AC7B12G"
+     "CodigoVinculacionSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 201
+          },
+          "message": {
+            "type": "string",
+            "example": "Código de vinculación generado exitosamente"
+          },
+          "codigoVinculacion": {
+            "type": "string",
+            "example": "2AC7B12G"
+          }
         }
-      }
-    },
+      },
     "AlumnosAgregadosSuccess": {
       "type": "object",
       "properties": {
@@ -525,6 +525,32 @@
         }
       },
       "required": ["nombre", "numero", "descripcion", "fechavto1", "fechavto2", "instanciaEvaluativaID"]
-    }
-  }
+    },
+   "Grupo": {
+     "type": "object",
+     "properties": {
+       "cursoID": {
+         "type": "integer",
+         "example": 1
+       },
+       "nombre": {
+         "type": "string",
+         "example": "Futuros ingenieros"
+       }
+     }
+   },
+   "AddPersonaGrupo": {
+     "type": "object",
+     "properties": {
+       "grupoID": {
+         "type": "integer",
+         "example": 12
+       },
+       "legajo": {
+         "type": "integer",
+         "example": "30000"
+       }
+     }
+   }
+ }
 }

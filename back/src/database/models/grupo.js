@@ -31,6 +31,8 @@ module.exports = (sequelize, DataTypes) => {
 
   Grupo.associate = models => {
     Grupo.belongsTo(models.Curso, { foreignKey: 'curso_id', allowNull: true })
+    // Grupo.hasMany(models.PersonaXGrupo, { foreignKey: 'grupo_id' })
+    Grupo.belongsToMany(models.Persona, { through: 'PersonaXGrupo', foreignKey:'grupo_id', otherKey:'persona_id'});
   }
 
   return Grupo

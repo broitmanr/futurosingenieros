@@ -141,70 +141,83 @@ async function addToGroup(req, res, next) {
     return next(errors.FaltanCampos)
   }
 }
-//
-// async function ver (req, res, next) {
-//   const { id } = req.params
-//
-//   try {
-//     const instanciaVer = await models.InstanciaEvaluativa.findOne({
-//       where: {
-//         id
-//       },
-//       include: [
-//         {
-//           model: models.TipoInstancia,
-//           attributes: ['ID', 'nombre']
-//         }
-//       ]
-//     })
-//
-//     if (!instanciaVer) {
-//       console.warn(yellow(`Advertencia: Instancia con ID ${id} no encontrado.`))
-//       next({ ...errors.NotFoundError, details: `Instancia con ID ${id} no encontrada` })
-//     }
-//
-//     res.status(200).json(instanciaVer)
-//   } catch (error) {
-//     console.error(red('Error al obtener el instancia:', error))
-//     next({
-//       ...errors.InternalServerError,
-//       details: 'Error al obtener la instancia: ' + error.message
-//     })
-//   }
-// }
-//
-// async function listar (req, res, next) {
-//   try {
-//     if (req.params == null) { return next(errors.CredencialesInvalidas) }
-//     const curso = req.params.cursoID
-//     const instanciasEvaluativas = await models.InstanciaEvaluativa.findAll({
-//       where: {
-//         curso_id: curso
-//       },
-//       include: [
-//         {
-//           model: models.TipoInstancia,
-//           attributes: ['ID', 'nombre']
-//         }
-//       ],
-//       attributes: [
-//         'ID',
-//         'nombre',
-//         'descripcion',
-//         'porcentaje_ponderacion'
-//       ]
-//       //
-//     })
-//     res.status(200).json(instanciasEvaluativas)
-//   } catch (error) {
-//     console.error(red('Error al listar las instancias de un curso:', error))
-//     next({
-//       ...errors.InternalServerError,
-//       details: 'Error al listar las instancias de un curso:' + error.message
-//     })
-//   }
-// }
-//
+
+async function ver (req, res, next) {
+  const { id } = req.params
+  try {
+    const grupo = await models.Grupo.findOne({
+      where: {
+        id
+      },
+      include: [
+        {
+          model: models.Persona,
+          attributes:['ID','rol','dni','legajo','apellido','nombre']
+
+        },
+        {
+          model: models.Curso,
+          include:[
+            {
+              model:models.Materia,
+              attributes:['ID','nombre','anio']
+            }
+          ],attributes:['ID','cicloLectivo']
+        }
+      ],
+      attributes:['ID','numero','nombre','curso_id']
+    })
+
+    if (!grupo) {
+      console.warn(yellow(`Advertencia: grupo con ID ${id} no encontrado.`))
+      next({ ...errors.NotFoundError, details: `grupo con ID ${id} no encontrada` })
+    }
+
+    res.status(200).json(grupo)
+  } catch (error) {
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener el grupo: ' + error.message
+    })
+  }
+}
+
+async function listar (req, res, next) {
+  try {
+    if (req.params == null) { return next(errors.CredencialesInvalidas) }
+    const curso = req.params.cursoID
+    const grupos = await models.Grupo.findAll({
+      where: {
+        curso_id: curso
+      },
+      include: [
+        {
+          model: models.Persona,
+          attributes:['ID','rol','dni','legajo','apellido','nombre']
+
+        },
+        {
+          model: models.Curso,
+          include:[
+            {
+              model:models.Materia,
+              attributes:['ID','nombre','anio']
+            }
+          ],attributes:['ID','cicloLectivo']
+        }
+      ],
+      attributes:['ID','numero','nombre','curso_id']
+    })
+    if (grupos.length == 0){return next({...errors.NotFoundError,details:'No se encontraron grupos para ese curso'})}
+    res.status(200).json(grupos)
+  } catch (error) {
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al listar los grupos de un curso:' + error.message
+    })
+  }
+}
+
 // async function listarTiposInstancias (req, res, next) {
 //   try {
 //     // Agregar validar que sea los q el es docente
@@ -223,5 +236,5 @@ async function addToGroup(req, res, next) {
 // }
 
 module.exports = {
-  crear,addToGroup
+  crear,addToGroup,ver,listar
 }

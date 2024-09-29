@@ -43,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
 
   EntregaPactada.associate = models => {
     EntregaPactada.belongsTo(models.InstanciaEvaluativa, { foreignKey: 'instanciaEvaluativa_id', allowNull: false })
+    EntregaPactada.hasMany(models.Entrega,{foreignKey:'entregaPactada_ID'})
   }
   return EntregaPactada
 }

@@ -1,7 +1,7 @@
 const models = require('../database/models/index')
 const errors = require('../const/error')
 const bcrypt = require('bcryptjs')
-const sendMailWithTemplate = require('../mailer/sendEmailWithTemplate')
+const transporter = require('../mailer/sendEmailWithTemplate')
 const jwt = require('../middlewares/signJWT')
 const rolservice = require('../services/rolservice')
 
@@ -58,9 +58,10 @@ module.exports = {
 
       let nombre = persona ? persona.nombre : user.mail.split('@')[0]
 
-      try{
-        sendMailWithTemplate(req.body.mail,"newUser",{nombre:nombre})
 
+      try{
+        const mailresponse = await transporter.mailRegistro(req.body.mail, nombre)
+        console.log(mailresponse)
       }catch (e){
         console.log(e)
         res.json({

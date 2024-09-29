@@ -4,6 +4,7 @@ import axios from 'axios';
 import moment from "moment";
 import { useRole } from "../../context/RolesContext";
 import { Dialog } from 'primereact/dialog';
+import './DetalleEntrega.css'
 
 export const DetalleEntrega = () => {
     const { role } = useRole()
@@ -34,7 +35,8 @@ export const DetalleEntrega = () => {
     }
 
     return (
-        <div className="entrega-detalle-container" style={{ backgroundColor: '#f2f6fc', minHeight: '70vh', display:'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className="entrega-detalle-container">
+            { role === 'A' &&
             <>
                 <div className="container d-flex justify-content-center">
                     <div className="row" style={{ width: '100%', height: '25rem', marginTop: '1rem', marginBottom: '1rem' }}>
@@ -61,8 +63,6 @@ export const DetalleEntrega = () => {
                                     )
                                 )
                             }
-                            { role === 'A' &&
-                                <>
                                 <button onClick={handleEntregar} style={{ 
                                     backgroundColor: '#1A2035', 
                                     color: '#fff', 
@@ -79,12 +79,11 @@ export const DetalleEntrega = () => {
                                     breakpoints={{ '960px': '75vw', '641px': '100vw' }}
                                     >
                                 </Dialog>
-                                </> 
-                            }
                         </div>
                     </div>
-                </div>
+                </div>  
             </>
+            }
         </div>
     )
 }

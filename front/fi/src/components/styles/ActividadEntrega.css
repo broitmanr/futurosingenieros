@@ -114,3 +114,14 @@
 .nombre-instancia{
     color: #F2F6FC;
 }
+
+.panel-individual{
+    margin-right: 1rem;
+}
+
+.panel-individual .p-panelmenu-header-link{
+    text-decoration: none;
+    background-color: #1A2035;;
+    color: #fff;
+    border-radius: 0.4rem;
+}

@@ -4,6 +4,8 @@ import {Button, Card, Col, Row} from 'react-bootstrap';
 import { EntregaForm } from './EntregaForm';
 import { Link, useParams } from 'react-router-dom';
 import { useRole } from '../../context/RolesContext';
+import { PanelMenu } from 'primereact/panelmenu';
+import DetalleEntregaDocente from '../DetalleEntrega/DetalleEntregaDocente'
 import moment from 'moment'
 import axios from 'axios';
 
@@ -14,7 +16,7 @@ export const ActividadEntregas = () => {
     const [instancia, setInstancia] = useState({})
     const [entregas, setEntregas] = useState([]);
     const [shouldFetchEntregas, setShouldFetchEntregas] = useState(false); //Estados para manejar la actualización de la instancia
-
+    const [selectedEntrega, setSelectedEntrega] = useState(null)
 
     const params = useParams();
     const handleClose = () => setShow(false);
@@ -60,14 +62,19 @@ export const ActividadEntregas = () => {
             }
         } catch (err) {
             console.log(err)
-            // setError('Error al obtener los cursos');
             setLoading(false);
         }
     }
 
     useEffect(() => {
         fetchEntregaInstancia()
-    }, [])
+        
+    }, [params.id])
+
+    const panelItems = entregas.map(entrega => ({
+        label: entrega.nombre,
+        command: () => setSelectedEntrega(entrega)
+    }));
 
     useEffect(() => {
         if(shouldFetchEntregas){
@@ -111,20 +118,30 @@ export const ActividadEntregas = () => {
 
             <section className="seccion-entregas py-4">
                 <div className="container">
+                    { role === 'D' && ( 
+                    <>
                     <div className="entrega-subtitulo d-flex justify-content-between">
                         <h2>Entregas</h2>
-                        { role === 'D' && (
+                        
                             <Button className="crear-entrega" onClick={() => setShow(true)}>
                                 <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
                                 Crear Entrega
                             </Button>
-                        )}
+                        
                     </div>
-                    
                     {
                         idActividad ? <EntregaForm show={show} handleClose={handleClose} idActividad={idActividad} handleEntregaAgregada={handleEntregaAgregada} /> : null
                     }
-
+                    <div className='p-grid'>
+                        <div className='p-col-3'>
+                            <PanelMenu className="md:w-18rem float-start panel-individual" model={panelItems} />
+                        </div>
+                        {selectedEntrega && <DetalleEntregaDocente entrega={selectedEntrega} />}
+                    </div>
+                    </>
+                    )}
+                    {role === 'A' &&
+                    <>
                     {isLoading && <p>Cargando cursos...</p>}
                     {!isLoading && (
                             entregas.map((item, idx) => (
@@ -142,10 +159,9 @@ export const ActividadEntregas = () => {
                                     </Col>
                                 </Row>
                             ))
-
                     )}
-
-
+                    </>
+                    }
                 </div>
             </section>
         </>

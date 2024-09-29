@@ -7,6 +7,77 @@
     overflow: hidden;
 }
 
-.detalle-entrega-individual-docente{
+.container-box-entrega-detalle{
+    display: flex;
+    flex-direction: row;
+    width: 100%; 
+    height: 25rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem
+}
+
+.box-entrega-detalle{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    border: solid #1a2035;
+    border-radius: 0.6rem
+}
+
+.nombre-entrega-detalle{
+    color: #344474;
+    font-size: 1.8rem
+}
+
+.descripcion-entrega-detalle{
+    font-size: 1.2rem
+}
+
+.fechas-entrega-detalle{
+    font-size: 1.09rem;
+    justify-self: flex-end
+}
+
+.fechas-entrega{
+    font-weight: bold;
+    color: #344474
+}
+
+.btn-entrega-detalle-entregar{
+    background-color: #1A2035;
+    color: #fff;
+    width: 6.9rem;
+    height: 3.1rem;
+    font-size: 1.4rem;
+    border: 0.2rem solid #F2F6FC;
+    border-radius: 0.5rem
+}
+
+.dialog-agregar-entrega-detalle .p-dialog-header{
+    justify-self: center;
+    text-align: center
+}
+
+/* Estilos para la entrega detalle docente */
+.table-header-entrega-docente{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center
+}
+
+.fechas-entrega-docente-container{
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.09rem
+}
+
+.fecha2-entrega-docente{
+    margin-left: 2rem;
+}
+
+.detalle-entrega-docente{
     width: 100%;
 }

@@ -39,23 +39,23 @@ export const DetalleEntrega = () => {
             { role === 'A' &&
             <>
                 <div className="container d-flex justify-content-center">
-                    <div className="row" style={{ width: '100%', height: '25rem', marginTop: '1rem', marginBottom: '1rem' }}>
-                        <div className="col-md-6 mx-auto border- border-2 p-4 d-flex flex-column justify-content-between align-items-center" style={{ border: 'solid #1a2035', borderRadius: '0.6rem' }}>
+                    <div className="container-box-entrega-detalle">
+                        <div className="col-md-6 mx-auto border- border-2 p-4 box-entrega-detalle">
                             { isLoading ? (
                                 <p className='text-danger text-center'>Cargando</p>
                             ) : (
                                     entregaDetalle.nombre && (
                                     <>
                                         <div>
-                                            <h2 className="nombre-materia text-center" style={{ color: '#344474' }}>{entregaDetalle.nombre} <span>{entregaDetalle.numero}</span></h2>
-                                            <p style={{ textAlign: 'center', fontSize: '1.2rem' }}>{entregaDetalle.descripcion}</p>
+                                            <h2 className="nombre-entrega-detalle">{entregaDetalle.nombre}</h2>
+                                            <p className='descripcion-entrega-detalle'>{entregaDetalle.descripcion}</p>
                                         </div>
                                         <div>
-                                            <p style={{ fontSize: '1.09rem', textJustify: 'end' }}>
-                                                <span style={{ fontWeight: 'bold', color: '#344474' }}>Fecha de vencimiento:</span> {moment(entregaDetalle.fechavto1).format('DD/MM/YY')}
+                                            <p className="fechas-entrega-detalle">
+                                                <span className="fechas-entrega">Fecha de vencimiento:</span> {moment(entregaDetalle.fechavto1).format('DD/MM/YY')}
                                             </p>
-                                        { entregaDetalle.fechavto2 && <p style={{ fontSize: '1.09rem', justifySelf: 'flex-end' }}>
-                                                <span style={{ fontWeight: 'bold', color: '#344474' }}>Fecha de vencimiento 2:</span> {moment(entregaDetalle.fechavto2).format('DD/MM/YY')}
+                                        { entregaDetalle.fechavto2 && <p className="fechas-entrega-detalle">
+                                                <span className="fechas-entrega">Fecha de vencimiento 2:</span> {moment(entregaDetalle.fechavto2).format('DD/MM/YY')}
                                             </p>
                                         }
                                         </div>
@@ -63,17 +63,8 @@ export const DetalleEntrega = () => {
                                     )
                                 )
                             }
-                                <button onClick={handleEntregar} style={{ 
-                                    backgroundColor: '#1A2035', 
-                                    color: '#fff', 
-                                    width: '6.9rem',
-                                    height: '3.1rem',
-                                    fontSize: '1.4rem',
-                                    border: '0.2rem solid #F2F6FC',
-                                    borderRadius: '0.5rem' 
-                                }}>Entregar</button>
-                                <Dialog className='dialog-agregar-alumno' header='¡Fantástico, usted ha hecho la entrega!' 
-                                    headerStyle={{ justifySelf: 'center', textAlign: 'center' }}
+                                <button onClick={handleEntregar} className="btn-entrega-detalle-entregar">Entregar</button>
+                                <Dialog className='dialog-agregar-entrega-detalle' header='¡Fantástico, usted ha hecho la entrega!'
                                     visible={visible} 
                                     onHide={() => setVisible(false)}
                                     breakpoints={{ '960px': '75vw', '641px': '100vw' }}

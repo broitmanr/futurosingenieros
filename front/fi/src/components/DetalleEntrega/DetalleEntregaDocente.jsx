@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
+import './DetalleEntrega.css'
 import moment from 'moment';
 
 export default function DetallaEntregaIndividual({entrega}) {
@@ -20,7 +21,7 @@ export default function DetallaEntregaIndividual({entrega}) {
         { field: 'email', header: 'Email' },
         { field: 'estado', header: 'Estado' },
         { field: 'calificacion', header: 'Calificación' },
-        { field: 'archivo', header: 'Archivo' }
+        { field: 'ver', header: 'Ver' }
     ];
 
     const isPositiveInteger = (val) => {
@@ -78,21 +79,21 @@ export default function DetallaEntregaIndividual({entrega}) {
 
     const renderHeader = () => {
         return (
-            <div className="table-header" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
+            <div className="table-header-entrega-docente">
                 { isLoading ? (
                     <p className='text-danger text-center'>Cargando</p>
                     ) : (
                         entrega.nombre && (
                         <>
                             <div >
-                                <h5 className="nombre-materia" style={{ color: '#1a2035', fontSize: '1.8rem' }}>{entrega.nombre} <span>{entrega.numero}</span></h5>
-                                <p style={{ fontSize: '1.2rem' }}>{entrega.descripcion}</p>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.09rem' }}>
-                                    <p style={{ marginRight: '1rem' }}>
-                                        <span style={{ fontWeight: 'bold', color: '#1a2035' }}>F. vencimiento:</span> {moment(entrega.fechavto1).format('DD/MM/YY')}
+                                <h5 className="nombre-entrega-detalle">{entrega.nombre}</h5>
+                                <p className='descripcion-entrega-detalle'>{entrega.descripcion}</p>
+                                <div className='fechas-entrega-docente-container'>
+                                    <p>
+                                        <span className='fechas-entrega'>F. vencimiento:</span> {moment(entrega.fechavto1).format('DD/MM/YY')}
                                     </p>
-                                    { entrega.fechavto2 && <p>
-                                        <span style={{ fontWeight: 'bold', color: '#1a2035' }}>F. vencimiento 2:</span> {moment(entrega.fechavto2).format('DD/MM/YY')}
+                                    { entrega.fechavto2 && <p className='fecha2-entrega-docente'>
+                                        <span className='fechas-entrega'>F. vencimiento 2:</span> {moment(entrega.fechavto2).format('DD/MM/YY')}
                                         </p>
                                     }
                                 </div>
@@ -108,11 +109,11 @@ export default function DetallaEntregaIndividual({entrega}) {
 
     return (
         <div className="card p-fluid">
-            <DataTable className='detalle-entrega-individual-docente' value={pruebaDatos} editMode="cell" tableStyle={{ minWidth: '50rem' }} header={header} reorderableColumns>
+            <DataTable className='detalle-entrega-docente' value={pruebaDatos} editMode="cell" header={header} reorderableColumns>
                 {columns.map(({ field, header }) => {
-                    return <Column key={field} field={field} header={header} style={{ width: '25%' }} 
+                    return <Column key={field} field={field} header={header} 
                         editor={(options) => {
-                            if (field === 'nombre' || field === 'legajo' || field === 'email' || field === 'archivo'){
+                            if (field === 'nombre' || field === 'legajo' || field === 'email' || field === 'ver'){
                                 return <InputText value={options.value} readOnly />
                             }else{
                                 return cellEditor(options)

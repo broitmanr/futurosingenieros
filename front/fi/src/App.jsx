@@ -10,7 +10,7 @@ import AlumnosCurso from './components/AlumnosCurso.jsx';
 import { CursosActividades } from './components/CursosActividades/CursosActividades.jsx';
 import { ActividadEntregas } from './components/ActividadEntregas/ActividadEntregas.jsx';
 import { DetalleEntrega } from './components/DetalleEntrega/DetalleEntrega.jsx';
-import ArchivoPrueba from './components/PruebaPDFViewer/PruebaPDFViewer.tsx';
+import ArchivoPrueba from './components/PruebaPDFViewer/App.tsx';
 import Rendimiento from './components/Rendimiento/Rendimiento.jsx'
 import PrivateRoute from './PrivateRoutes';
 import axios from "axios";

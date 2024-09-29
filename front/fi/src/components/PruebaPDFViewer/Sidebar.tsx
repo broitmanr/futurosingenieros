@@ -1,88 +1,108 @@
-import type { IHighlight } from "react-pdf-highlighter";
 import React from "react";
+import type { Highlight } from "react-pdf-highlighter-extended";
+import "./style/Sidebar.css";
+import { CommentedHighlight } from "./types";
 
-interface Props {
-  highlights: Array<IHighlight>;
+interface SidebarProps {
+  highlights: Array<CommentedHighlight>;
   resetHighlights: () => void;
   toggleDocument: () => void;
 }
 
-const updateHash = (highlight: IHighlight) => {
+
+const updateHash = (highlight: Highlight) => {
   document.location.hash = `highlight-${highlight.id}`;
 };
 
 
-
-export function Sidebar({
+const Sidebar = ({
   highlights,
   toggleDocument,
   resetHighlights,
-}: Props) {
+}: SidebarProps) => {
   return (
-    <div className="sidebar" style={{ width: "25vw" }}>
+    <div className="sidebar" style={{ width: "25vw", maxWidth: "500px" }}>
+      {/* Description section */}
       <div className="description" style={{ padding: "1rem" }}>
         <h2 style={{ marginBottom: "1rem" }}>
-          react-pdf-highlighter
+          nombre de la entrega v1.pdf
         </h2>
+        <b>Fecha de entrega: 10/02/24</b>
 
-        <p style={{ fontSize: "0.7rem" }}>
-          <a href="https://github.com/agentcooper/react-pdf-highlighter">
-            Open in GitHub
-          </a>
-        </p>
-
-        <p>
+        <p className={'mt-2'}>
           <small>
-            To create area highlight hold ⌥ Option key (Alt), then click and
-            drag.
+            Para marcar un area especifica mantené apretado alt y selecciona dicha area
           </small>
         </p>
       </div>
-
-      <ul className="sidebar__highlights">
-        {highlights.map((highlight, index) => (
-          <li
-            // biome-ignore lint/suspicious/noArrayIndexKey: This is an example app
-            key={index}
-            className="sidebar__highlight"
-            onClick={() => {
-              updateHash(highlight);
-            }}
-          >
-            <div>
-              <strong>{highlight.comment.text}</strong>
-              {highlight.content.text ? (
-                <blockquote style={{ marginTop: "0.5rem" }}>
-                  {`${highlight.content.text.slice(0, 90).trim()}…`}
-                </blockquote>
-              ) : null}
-              {highlight.content.image ? (
-                <div
-                  className="highlight__image"
-                  style={{ marginTop: "0.5rem" }}
-                >
-                  <img src={highlight.content.image} alt={"Screenshot"} />
-                </div>
-              ) : null}
-            </div>
-            <div className="highlight__location">
-              Page {highlight.position.pageNumber}
-            </div>
-          </li>
-        ))}
-      </ul>
-      <div style={{ padding: "1rem" }}>
-        <button type="button" onClick={toggleDocument}>
-          Toggle PDF document
+      <div style={{ padding: "0.5rem" }}>
+        <button onClick={toggleDocument} className="sidebar__toggle">
+          Siguiente Entrega >
         </button>
       </div>
-      {highlights.length > 0 ? (
-        <div style={{ padding: "1rem" }}>
-          <button type="button" onClick={resetHighlights}>
+
+      {/* Highlights list */}
+      {highlights && (
+        <ul className="sidebar__highlights">
+          {highlights.map((highlight, index) => (
+            <li
+              key={index}
+              className="sidebar__highlight"
+              onClick={() => {
+                updateHash(highlight);
+              }}
+            >
+              <div>
+                {/* Highlight comment and text */}
+                <strong>{highlight.comment}</strong>
+                {highlight.content.text && (
+                  <blockquote style={{ marginTop: "0.5rem" }}>
+                    {`${highlight.content.text.slice(0, 90).trim()}…`}
+                  </blockquote>
+                )}
+
+                {/* Highlight image */}
+                {highlight.content.image && (
+                  <div
+                    className="highlight__image__container"
+                    style={{ marginTop: "0.5rem" }}
+                  >
+                    <img
+                      src={highlight.content.image}
+                      alt={"Screenshot"}
+                      className="highlight__image"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="container d-flex justify-content-between">
+                <div className="highlight__user">
+                  - {highlight.user}
+                </div>
+                <div className="highlight__date">
+                  {highlight.date}
+                </div>
+              </div>
+              <div className="highlight__location">
+                Page {highlight.position.boundingRect.pageNumber}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+
+
+   {/*   {highlights && highlights.length > 0 && (
+        <div style={{ padding: "0.5rem" }}>
+          <button onClick={resetHighlights} className="sidebar__reset">
             Reset highlights
           </button>
         </div>
-      ) : null}
+      )}*/}
     </div>
   );
-}
+};
+
+export default Sidebar;

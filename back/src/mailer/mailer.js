@@ -1,25 +1,17 @@
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
 
-const { NODEMAILER_HOST, NODEMAILER_PORT, NODEMAILER_USER, NODEMAILER_PASS } =
-  process.env
-
+const { NODEMAILER_PORT, NODEMAILER_HOST, NODEMAILER_FROM, NODEMAILER_PASS } = process.env
 const transporter = nodemailer.createTransport({
-  host: 'mail.futurosingenieros.site',
-  port: NODEMAILER_PORT,
-  secure: false,
-  // secureConnection: true,
-  // requireTLS: true,
+  host: NODEMAILER_HOST,  // Cambia a la dirección SMTP de tu poste.io
+  port: NODEMAILER_PORT,                   // Puerto SMTP, puede ser 587 (STARTTLS) o 465 (SSL/TLS)
+  secure: false,               // true para el puerto 465, false para otros puertos (STARTTLS)
   auth: {
-    user: 'gerencia@futurosingenieros.site',
-    pass: 'PAGApk5dKD'
+    user: NODEMAILER_FROM,
+    pass: NODEMAILER_PASS        // La contraseña de la cuenta de correo
   },
-  tls: {
-    ciphers: 'SSLv3',
-    rejectUnauthorized: false
+  tls:{
+    rejectUnauthorized:false
   }
-})
-
+});
 
 module.exports = transporter;
-
-

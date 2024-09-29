@@ -1,49 +1,43 @@
 const transporter = require('./mailer')
-const newUser = require('./templates/newUser')
-// const newPassword = require('./templates/newPassword')
-const { NODEMAILER_USER } = process.env
+const {func} = require("joi");
 
-const sendEmailWithTemplate = (to, template, props) => {
-  console.log('Enviando Email...')
-  let emailOptions
+const { NODEMAILER_FROM } = process.env
 
-  switch (template) {
-    case 'newUser':
-      emailOptions = {
-        from: NODEMAILER_USER,
-        to,
-        subject: 'Bienvenido a Futuros Ingenieros',
-        html: newUser(props)
+async function mailRegistro(mail,nombre) {
+
+  const mailOptions = {
+    from: NODEMAILER_FROM,   // Dirección del remitente
+    to: mail,                        // Dirección del destinatario (usuario registrado)
+    subject: '¡Felicitaciones por tu registro!',  // Asunto del correo
+    text: `Hola ${nombre}, felicitaciones por registrarte en nuestro sitio.`,  // Texto en plano
+    html: `
+        <img src="cid:logo@empresa.com" alt="Logo de la Empresa" style="width: 200px;"/><br><hr>
+        <p>Hola <b>${nombre}</b>, felicitaciones por registrarte en nuestro sitio.</p><hr>
+        <p>Ahora seras una persona mas feliz</p>`,
+    attachments: [
+      {
+        filename: 'logo.png',           // Archivo de imagen del logotipo
+        path: '../back/src/utils/logo.png', // Ruta a la imagen en tu servidor local
+        cid: 'logo@empresa.com'         // El Content-ID que se usará en el HTML
       }
-      break
+    ]
+  };
 
-    // case 'newPassword':
-    //   emailOptions = {
-    //     from: NODEMAILER_USER,
-    //     to,
-    //     subject: 'Recuperación de contraseña',
-    //     html: newPassword({ email: to, password: props.password })
-    //   }
-    //   break
-
-    default:
-      emailOptions = {
-        from: NODEMAILER_USER,
-        to,
-        subject: 'Testing email using templates',
-        html: testing({ email: to })
-      }
-      break
-  }
-
-  transporter.sendMail(emailOptions, (error, info) => {
+  transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.log(error)
-      console.log('Email error: ', error.message)
-    } else {
-      console.log('Email enviado satisfactoriamente 📧')
+      console.error('Error al enviar el correo:', error);
+      return 'error'
     }
-  })
+    console.log('Correo enviado:', info.response);
+    return 'success'
+  });
 }
 
-module.exports = sendEmailWithTemplate
+module.exports = {
+  mailRegistro
+}
+
+
+
+
+

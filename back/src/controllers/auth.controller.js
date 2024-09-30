@@ -56,18 +56,17 @@ module.exports = {
       //   persona_id: persona ? persona.ID : null
       // })
 
-      let nombre = persona ? persona.nombre : user.mail.split('@')[0]
+      const nombre = persona ? persona.nombre : user.mail.split('@')[0]
 
-
-      try{
+      try {
         const mailresponse = await transporter.mailRegistro(req.body.mail, nombre)
         console.log(mailresponse)
-      }catch (e){
+      } catch (e) {
         console.log(e)
         res.json({
-          success:false,
-          data:{
-          'error': e
+          success: false,
+          data: {
+            error: e
           }
         })
       }

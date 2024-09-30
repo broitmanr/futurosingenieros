@@ -59,24 +59,23 @@ const uploadEntregaFile = async (req, res, next) => {
 
 const crearEntrega = async (req, res, next) => {
   try {
-    const { fecha, nota, grupoId, personaId } = req.body
+    const { fecha, nota, grupoId, personaId, entregaPactadaId } = req.body
     const { file } = req
-
+    const entregaPactada = await models.EntregaPactada.findByPk(entregaPactadaId) // Encuentra la EntregaPactada
+    if (!entregaPactada) {
+      console.warn(yellow('Advertencia: EntregaPactada no encontrada.'))
+      return next({ ...errors.NotFoundError, details: 'EntregaPactada no encontrada' })
+    }
     const nuevaEntrega = await handleTransaction(async (transaction) => {
       const entrega = await models.Entrega.create({
         fecha,
         nota,
         grupo_ID: grupoId,
-        persona_id: personaId
+        persona_id: personaId,
+        entregaPactada_ID: entregaPactadaId
       }, { transaction })
 
-      const entregaPactada = await models.EntregaPactada.findByPk(entrega.entregaPactada_ID) // Encuentra la EntregaPactada
-      if (!entregaPactada) {
-        console.warn(yellow('Advertencia: EntregaPactada no encontrada.'))
-        await transaction.rollback()
-        return next({ ...errors.NotFoundError, details: 'EntregaPactada no encontrada' })
-      }
-      const entregaPactadaNombre = entregaPactada.nombre // Obtén el nombre de EntregaPactada
+      const entregaPactadaNombre = entregaPactada.nombre // Obtenemos el nombre de EntregaPactada
       const usuarioId = res.locals.usuario.ID // ID del usuario
 
       const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID // ID de la carpeta raíz

@@ -2,102 +2,185 @@ const errors = require('../const/error')
 const { red, yellow } = require('picocolors')
 const { handleTransaction } = require('../const/transactionHelper')
 const models = require('../database/models/index')
-const { validarDocenteInstanciaEvaluativa } = require('../middlewares/validarDocente')
+const GoogleDriveService = require('../services/GoogleDriveService') // Importa el servicio de Google Drive
+const fs = require('fs') // Para manejar el stream de archivos
 
-// Función para crear una entrega pactada
-async function crear (req, res, next) {
+const googleDriveService = new GoogleDriveService()
 
-  const { nombre, numero, descripcion, fechavto1, fechavto2, instanciaEvaluativaID } = req.body
-  const nuevaEntregaPactada = await handleTransaction(async (transaction) => {
-    return await models.EntregaPactada.create({
-      nombre,
-      numero,
-      descripcion,
-      fechavto1,
-      fechavto2,
-      instanciaEvaluativa_id: instanciaEvaluativaID,
-      updated_by: res.locals.usuario.ID
-    }, { transaction })
-  }, next)
+const uploadEntregaFile = async (req, res, next) => {
+  try {
+    const { file } = req
+    const { entregaId } = req.params
 
-  if (nuevaEntregaPactada) {
-    res.status(201).json({ message: 'EntregaPactada generada exitosamente', data: nuevaEntregaPactada })
+    const entrega = await models.Entrega.findByPk(entregaId, {
+      include: [{ model: models.EntregaPactada, attributes: ['nombre'] }] // Incluye el nombre de EntregaPactada
+    })
+
+    if (!entrega) {
+      return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
+    }
+
+    const entregaPactadaNombre = (await models.EntregaPactada.findByPk(entrega.entregaPactada_ID)).nombre
+    const usuarioId = res.locals.usuario.ID // ID del usuario
+
+    const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID // ID de la carpeta raíz
+
+    // Crear carpeta de Usuario/EntregaPactada si no existe
+    const usuarioFolderId = await googleDriveService.getOrCreateFolder(folderId, usuarioId.toString())
+    const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(usuarioFolderId, entregaPactadaNombre)
+
+    const fileName = file.originalname
+    const mimeType = file.mimetype
+
+    const fileStream = fs.createReadStream(file.path)
+    const driveFile = await googleDriveService.uploadFile(fileStream, fileName, mimeType, entregaPactadaFolderId)
+
+    const archivo = await models.Archivo.create({
+      nombre: fileName,
+      referencia: driveFile.webViewLink,
+      extension: mimeType,
+      entrega_id: entregaId
+    })
+
+    fs.unlinkSync(file.path)
+
+    res.status(200).json({
+      message: 'Archivo subido exitosamente',
+      archivo
+    })
+  } catch (error) {
+    console.error('Error al subir el archivo:', error)
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al subir el archivo: ' + error.message
+    })
   }
 }
 
-// Función para ver una entrega pactada
+const crearEntrega = async (req, res, next) => {
+  try {
+    const { fecha, nota, grupoId, personaId } = req.body
+    const { file } = req
+
+    const nuevaEntrega = await handleTransaction(async (transaction) => {
+      const entrega = await models.Entrega.create({
+        fecha,
+        nota,
+        grupo_ID: grupoId,
+        persona_id: personaId
+      }, { transaction })
+
+      const entregaPactada = await models.EntregaPactada.findByPk(entrega.entregaPactada_ID) // Encuentra la EntregaPactada
+      if (!entregaPactada) {
+        console.warn(yellow('Advertencia: EntregaPactada no encontrada.'))
+        await transaction.rollback()
+        return next({ ...errors.NotFoundError, details: 'EntregaPactada no encontrada' })
+      }
+      const entregaPactadaNombre = entregaPactada.nombre // Obtén el nombre de EntregaPactada
+      const usuarioId = res.locals.usuario.ID // ID del usuario
+
+      const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID // ID de la carpeta raíz
+
+      // Crear carpeta de Usuario/EntregaPactada si no existe
+      const usuarioFolderId = await googleDriveService.getOrCreateFolder(folderId, usuarioId.toString())
+      const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(usuarioFolderId, entregaPactadaNombre)
+
+      const fileName = file.originalname
+      const mimeType = file.mimetype
+
+      const fileStream = fs.createReadStream(file.path)
+      const driveFile = await googleDriveService.uploadFile(fileStream, fileName, mimeType, entregaPactadaFolderId)
+
+      const archivo = await models.Archivo.create({
+        nombre: fileName,
+        referencia: driveFile.webViewLink,
+        extension: mimeType,
+        entrega_id: entrega.ID
+      }, { transaction })
+
+      fs.unlinkSync(file.path)
+
+      return { entrega, archivo }
+    }, next)
+
+    if (nuevaEntrega) {
+      res.status(201).json({
+        message: 'Entrega y archivo subidos exitosamente',
+        entrega: nuevaEntrega.entrega,
+        archivo: nuevaEntrega.archivo
+      })
+    }
+  } catch (error) {
+    console.error('Error al crear la entrega y subir el archivo:', error)
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al crear la entrega y subir el archivo: ' + error.message
+    })
+  }
+}
+
+// Función para ver una entrega
 async function ver (req, res, next) {
   const { id } = req.params
 
   try {
-    const entregaPactada = await models.Entrega.findOne({
-      where: { id },
-      attributes: ['ID', 'nombre', 'numero', 'descripcion', 'fechavto1', 'fechavto2', 'instanciaEvaluativa_id'],
+    const entrega = await models.Entrega.findOne({
+      where: { ID: id },
+      attributes: ['ID', 'fecha', 'nota', 'grupo_ID', 'persona_id'],
       include: [
         {
-          model: models.InstanciaEvaluativa,
-          attributes: ['ID', 'nombre', 'descripcion', 'curso_id'],
+          model: models.Grupo,
+          attributes: ['ID', 'numero', 'nombre'],
           include: [
             {
-              model: models.Curso,
-              attributes: ['ID', 'cicloLectivo'],
-              include: [
-                {
-                  model: models.Materia,
-                  attributes: ['nombre']
-                },
-                {
-                  model: models.Comision,
-                  attributes: ['nombre']
-                }
-              ]
+              model: models.Persona,
+              attributes: ['ID', 'rol', 'dni', 'legajo', 'apellido', 'nombre']
             }
           ]
+        },
+        {
+          model: models.Persona,
+          attributes: ['ID', 'rol', 'dni', 'legajo', 'apellido', 'nombre']
         }
       ]
     })
 
-    if (!entregaPactada) {
-      console.warn(`Advertencia: Entrega pactada con ID ${id} no encontrada.`)
-      return next({ ...errors.NotFoundError, details: 'Entrega pactada no encontrada' })
+    if (!entrega) {
+      console.warn(`Advertencia: Entrega con ID ${id} no encontrada.`)
+      return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
     }
 
-    res.status(200).json(entregaPactada)
+    res.status(200).json(entrega)
   } catch (error) {
-    console.error('Error al obtener la entrega pactada:', error)
+    console.error('Error al obtener la entrega:', error)
     next({
       ...errors.InternalServerError,
-      details: 'Error al obtener la entrega pactada: ' + error.message
+      details: 'Error al obtener la entrega: ' + error.message
     })
   }
 }
 
-// un docente puede listar las entregas dada una entrega pactada
+// Un docente puede listar las entregas
 async function listarEntregasDocente (req, res, next) {
-  const { entregaPactada_id } = req.params
+  const { grupoId } = req.params
 
   try {
-    const entregaPactada = await models.EntregaPactada.findByPk(entregaPactada_id,{
-      include:[{
-        model:models.Entrega,
-        attributes:['ID','fecha','nota'],
-        include:[{
-          model:models.Grupo,
-          attributes:['ID','numero','nombre','curso_id'],
-          include:[{
-            model:models.Persona,
-            attributes:['ID','rol','dni','legajo','apellido','nombre']
-          }]
-        }, {
-          model:models.Persona,
-          attributes:['ID','rol','dni','legajo','apellido','nombre']
-        }]
-      }]
+    const entregas = await models.Entrega.findAll({
+      where: { grupo_ID: grupoId },
+      attributes: ['ID', 'fecha', 'nota'],
+      include: [
+        {
+          model: models.Persona,
+          attributes: ['ID', 'rol', 'dni', 'legajo', 'apellido', 'nombre']
+        }
+      ]
     })
-    if (!entregaPactada){return next({...errors.NotFoundError,details:"No se encontro la entrega pactada"})}
 
-    res.status(200).json(entregaPactada.Entregas)
+    if (!entregas.length) {
+      return next({ ...errors.NotFoundError, details: 'No se encontraron entregas para el grupo' })
+    }
 
+    res.status(200).json(entregas)
   } catch (error) {
     next({
       ...errors.InternalServerError,
@@ -106,77 +189,72 @@ async function listarEntregasDocente (req, res, next) {
   }
 }
 
-// Función para actualizar una entrega pactada
+// Función para actualizar una entrega
 async function actualizar (req, res, next) {
   const { id } = req.params
-  const { nombre, numero, descripcion, fechavto1, fechavto2, instanciaEvaluativaID } = req.body
+  const { fecha, nota, grupoId, personaId } = req.body
 
   try {
     await handleTransaction(async (transaction) => {
-      const entregaPactada = await models.EntregaPactada.findOne({
-        where: { id },
-        attributes: ['ID', 'instanciaEvaluativa_id'],
+      const entrega = await models.Entrega.findOne({
+        where: { ID: id },
+        attributes: ['ID'],
         transaction
       })
 
-      // Validar si el usuario tiene permisos sobre la nueva instancia evaluativa
-      if (instanciaEvaluativaID !== entregaPactada.instanciaEvaluativa_id) {
-        req.body.instanciaEvaluativaID = instanciaEvaluativaID
-        const validacion = await validarDocenteInstanciaEvaluativa(req, res, next, true) // true porque no se quiere llamar a next en caso de error
-
-        if (validacion && validacion.error) {
-          await transaction.rollback() // Rollback de la transacción si no se tiene permisos sobre la instancia evaluativa o no se encuentra la instancia evaluativa en la base de datos
-          return next(validacion.error)
-        }
+      if (!entrega) {
+        console.warn(yellow(`Advertencia: Entrega con ID ${id} no encontrada.`))
+        await transaction.rollback()
+        return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
       }
 
-      await entregaPactada.update({
-        nombre,
-        numero,
-        descripcion,
-        fechavto1,
-        fechavto2,
-        instanciaEvaluativa_id: instanciaEvaluativaID,
+      await entrega.update({
+        fecha,
+        nota,
+        grupo_ID: grupoId,
+        persona_id: personaId,
         updated_by: res.locals.usuario.ID
       }, { transaction })
 
-      res.status(200).json(entregaPactada)
+      res.status(200).json(entrega)
     }, next)
   } catch (error) {
-    console.error(red('Error al actualizar la entrega pactada:', error))
+    console.error(red('Error al actualizar la entrega:', error))
     next({
       ...errors.InternalServerError,
-      details: 'Error al actualizar la entrega pactada: ' + error.message
+      details: 'Error al actualizar la entrega: ' + error.message
     })
   }
 }
 
-// Función para eliminar una entrega pactada
+// Función para eliminar una entrega
 async function eliminar (req, res, next) {
   const { id } = req.params
 
-  const entregaPactadaEliminada = await handleTransaction(async (transaction) => {
-    const entregaPactada = await models.EntregaPactada.findByPk(id, {
+  const entregaEliminada = await handleTransaction(async (transaction) => {
+    const entrega = await models.Entrega.findByPk(id, {
       attributes: ['ID'],
       transaction
     })
 
-    if (!entregaPactada) {
-      console.warn(yellow(`Advertencia: Entrega pactada con ID ${id} no encontrada.`))
+    if (!entrega) {
+      console.warn(yellow(`Advertencia: Entrega con ID ${id} no encontrada.`))
       await transaction.rollback()
-      return next({ ...errors.NotFoundError, details: 'Entrega pactada no encontrada' })
+      return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
     }
 
-    await entregaPactada.destroy({ transaction })
-    return entregaPactada
+    await entrega.destroy({ transaction })
+    return entrega
   }, next)
 
-  if (entregaPactadaEliminada) {
-    res.status(200).json({ message: 'Entrega pactada eliminada exitosamente' })
+  if (entregaEliminada) {
+    res.status(200).json({ message: 'Entrega eliminada exitosamente' })
   }
 }
 
 module.exports = {
   listarEntregasDocente,
-
+  uploadEntregaFile,
+  crearEntrega,
+  ver
 }

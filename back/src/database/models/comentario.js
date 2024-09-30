@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
   Comentario.associate = models => {
     Comentario.belongsTo(models.Entrega, { foreignKey: 'entrega_id', allowNull: false })
     Comentario.belongsTo(models.Persona, { foreignKey: 'emisor_id', allowNull: false })
+    Comentario.belongsTo(models.Archivo, { foreignKey: 'archivo_id', allowNull: false })
   }
   return Comentario
 }

@@ -9,6 +9,7 @@ const instanciaEvaluativaRoutes = require('./instanciaEvaluativa.routes')
 const entregaPactadaRoutes = require('./entregaPactada.routes.js')
 const grupoRoutes = require('./grupo.routes.js')
 const entregaRoutes = require('./entrega.routes.js')
+const inasistenciaRoutes = require('./inasistencia.routes.js')
 
 const rutasInit = () => {
   const router = Router()
@@ -21,6 +22,7 @@ const rutasInit = () => {
   router.use('/entregaPactada', decodeJWT, entregaPactadaRoutes)
   router.use('/grupo', decodeJWT, grupoRoutes)
   router.use('/entrega', decodeJWT, entregaRoutes)
+  router.use('/inasistencia', decodeJWT, inasistenciaRoutes)
   return router
 }
 

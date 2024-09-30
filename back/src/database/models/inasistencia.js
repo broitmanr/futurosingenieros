@@ -7,8 +7,8 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true
     },
-    fecha: {
-      type: DataTypes.DATE,
+    cantidad: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     updated_at: {

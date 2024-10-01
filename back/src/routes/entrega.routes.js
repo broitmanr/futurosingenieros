@@ -16,8 +16,8 @@ router.get('/listarEntregas/:entregaPactada_id',
 )
 
 // Nueva ruta para subir un archivo a una entrega existente
-router.post('/upload/:id',
-  upload.single('file'),
+router.post('/upload/:entregaId',
+  upload.single('pdf'),
   entregaController.uploadEntregaFile
 )
 

@@ -9,9 +9,9 @@ const googleDriveService = new GoogleDriveService()
 
 const uploadEntregaFile = async (req, res, next) => {
   try {
-    const { file } = req
+    const file  = req.file
     const { entregaId } = req.params
-
+    console.log("archivo",file)
     const entrega = await models.Entrega.findByPk(entregaId, {
       include: [{ model: models.EntregaPactada, attributes: ['nombre'] }] // Incluye el nombre de EntregaPactada
     })
@@ -38,7 +38,7 @@ const uploadEntregaFile = async (req, res, next) => {
     const archivo = await models.Archivo.create({
       nombre: fileName,
       referencia: driveFile.webViewLink,
-      extension: mimeType,
+      extension: mimeType.split('/')[1],
       entrega_id: entregaId
     })
 

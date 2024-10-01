@@ -7,72 +7,24 @@ const fs = require('fs') // Para manejar el stream de archivos
 
 const googleDriveService = new GoogleDriveService()
 
-const uploadEntregaFile = async (req, res, next) => {
-  try {
-    const file  = req.file
-    const { entregaId } = req.params
-    console.log("archivo",file)
-    const entrega = await models.Entrega.findByPk(entregaId, {
-      include: [{ model: models.EntregaPactada, attributes: ['nombre'] }] // Incluye el nombre de EntregaPactada
-    })
-
-    if (!entrega) {
-      return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
-    }
-
-    const entregaPactadaNombre = (await models.EntregaPactada.findByPk(entrega.entregaPactada_ID)).nombre
-    const usuarioId = res.locals.usuario.ID // ID del usuario
-
-    const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID // ID de la carpeta raíz
-
-    // Crear carpeta de Usuario/EntregaPactada si no existe
-    const usuarioFolderId = await googleDriveService.getOrCreateFolder(folderId, usuarioId.toString())
-    const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(usuarioFolderId, entregaPactadaNombre)
-
-    const fileName = file.originalname
-    const mimeType = file.mimetype
-
-    const fileStream = fs.createReadStream(file.path)
-    const driveFile = await googleDriveService.uploadFile(fileStream, fileName, mimeType, entregaPactadaFolderId)
-
-    const archivo = await models.Archivo.create({
-      nombre: fileName,
-      referencia: driveFile.webViewLink,
-      extension: mimeType.split('/')[1],
-      entrega_id: entregaId
-    })
-
-    fs.unlinkSync(file.path)
-
-    res.status(200).json({
-      message: 'Archivo subido exitosamente',
-      archivo
-    })
-  } catch (error) {
-    console.error('Error al subir el archivo:', error)
-    next({
-      ...errors.InternalServerError,
-      details: 'Error al subir el archivo: ' + error.message
-    })
-  }
-}
-
 const crearEntrega = async (req, res, next) => {
   try {
     const { fecha, nota, grupoId, personaId, entregaPactadaId } = req.body
-    const { file } = req
+    const file = req.file
     const entregaPactada = await models.EntregaPactada.findByPk(entregaPactadaId) // Encuentra la EntregaPactada
     if (!entregaPactada) {
       console.warn(yellow('Advertencia: EntregaPactada no encontrada.'))
       return next({ ...errors.NotFoundError, details: 'EntregaPactada no encontrada' })
     }
+
     const nuevaEntrega = await handleTransaction(async (transaction) => {
       const entrega = await models.Entrega.create({
         fecha,
         nota,
         grupo_ID: grupoId,
         persona_id: personaId,
-        entregaPactada_ID: entregaPactadaId
+        entregaPactada_ID: entregaPactadaId,
+        updated_by: res.locals.usuario.ID
       }, { transaction })
 
       const entregaPactadaNombre = entregaPactada.nombre // Obtenemos el nombre de EntregaPactada
@@ -80,24 +32,39 @@ const crearEntrega = async (req, res, next) => {
 
       const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID // ID de la carpeta raíz
 
-      // Crear carpeta de Usuario/EntregaPactada si no existe
+      // Obtenemos la carpeta del usuario y la entrega pactada, si no existe la creamos
       const usuarioFolderId = await googleDriveService.getOrCreateFolder(folderId, usuarioId.toString())
       const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(usuarioFolderId, entregaPactadaNombre)
 
-      const fileName = file.originalname
+      // Crear el registro del archivo en la base de datos para obtener su ID
+      const archivo = await models.Archivo.create({
+        nombre: '', // Nombre temporal, se actualizará después
+        referencia: '',
+        extension: file.mimetype.split('/')[1],
+        entrega_id: entrega.ID
+      }, { transaction })
+
+      // Cambiar el nombre del archivo al ID del archivo.pdf
+      const fileName = `${archivo.ID}.pdf`
       const mimeType = file.mimetype
 
       const fileStream = fs.createReadStream(file.path)
       const driveFile = await googleDriveService.uploadFile(fileStream, fileName, mimeType, entregaPactadaFolderId)
 
-      const archivo = await models.Archivo.create({
+      // Actualizar el registro del archivo con el nombre y la referencia correctos
+      await archivo.update({
         nombre: fileName,
-        referencia: driveFile.webViewLink,
-        extension: mimeType,
-        entrega_id: entrega.ID
+        referencia: driveFile.webViewLink
       }, { transaction })
 
-      fs.unlinkSync(file.path)
+      // Eliminar el archivo temporal
+      fs.unlink(file.path, (err) => {
+        if (err) {
+          console.error(red('Error al eliminar el archivo temporal:', err))
+        } else {
+          console.log(yellow(`Archivo temporal ${file.path} eliminado`))
+        }
+      })
 
       return { entrega, archivo }
     }, next)
@@ -117,9 +84,8 @@ const crearEntrega = async (req, res, next) => {
     })
   }
 }
-
 // Función para ver una entrega
-async function ver (req, res, next) {
+async function ver(req, res, next) {
   const { id } = req.params
 
   try {
@@ -160,7 +126,7 @@ async function ver (req, res, next) {
 }
 
 // Un docente puede listar las entregas
-async function listarEntregasDocente (req, res, next) {
+async function listarEntregasDocente(req, res, next) {
   const { grupoId } = req.params
 
   try {
@@ -189,7 +155,7 @@ async function listarEntregasDocente (req, res, next) {
 }
 
 // Función para actualizar una entrega
-async function actualizar (req, res, next) {
+async function actualizar(req, res, next) {
   const { id } = req.params
   const { fecha, nota, grupoId, personaId } = req.body
 
@@ -227,7 +193,7 @@ async function actualizar (req, res, next) {
 }
 
 // Función para eliminar una entrega
-async function eliminar (req, res, next) {
+async function eliminar(req, res, next) {
   const { id } = req.params
 
   const entregaEliminada = await handleTransaction(async (transaction) => {

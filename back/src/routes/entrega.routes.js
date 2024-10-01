@@ -7,19 +7,13 @@ const router = Router()
 
 router.post('/',
   checkRole.checkRoleEstudiante,
-  upload.single('file'),
+  upload.single('pdf'),
   entregaController.crearEntrega
 )
 
 router.get('/listarEntregas/:entregaPactada_id',
   checkRole.checkRoleDocente,
   entregaController.listarEntregasDocente
-)
-
-// Nueva ruta para subir un archivo a una entrega existente
-router.post('/upload/:entregaId',
-  upload.single('pdf'),
-  entregaController.uploadEntregaFile
 )
 
 // Descomentar y actualizar si es necesario

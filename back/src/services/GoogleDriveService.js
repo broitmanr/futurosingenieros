@@ -5,7 +5,7 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 class GoogleDriveService {
-  constructor () {
+  constructor() {
     this.credentials = {
       type: process.env.GOOGLE_TYPE,
       project_id: process.env.GOOGLE_PROJECT_ID,
@@ -20,10 +20,10 @@ class GoogleDriveService {
       universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN
     }
     this.applicationName = 'Your Application Name'
-    this.SCOPES = ['https://www.googleapis.com/auth/drive.file']
+    this.SCOPES = ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive.comments']
   }
 
-  async getDriveService () {
+  async getDriveService() {
     const auth = new GoogleAuth({
       credentials: this.credentials,
       scopes: this.SCOPES
@@ -32,7 +32,7 @@ class GoogleDriveService {
     return google.drive({ version: 'v3', auth: authClient })
   }
 
-  async createFolder (folderName, parentFolderId) {
+  async createFolder(folderName, parentFolderId) {
     const drive = await this.getDriveService()
     const fileMetadata = {
       name: folderName,
@@ -46,7 +46,7 @@ class GoogleDriveService {
     return folder.data.id
   }
 
-  async uploadFile (fileStream, fileName, mimeType, folderId) {
+  async uploadFile(fileStream, fileName, mimeType, folderId) {
     const drive = await this.getDriveService()
     const fileMetadata = {
       name: fileName,
@@ -64,7 +64,7 @@ class GoogleDriveService {
     return file.data
   }
 
-  async getFolderByName (parentFolderId, folderName) {
+  async getFolderByName(parentFolderId, folderName) {
     const drive = await this.getDriveService()
     const query = `name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder' and '${parentFolderId}' in parents and trashed = false`
     const response = await drive.files.list({
@@ -74,7 +74,7 @@ class GoogleDriveService {
     return response.data.files[0]
   }
 
-  async getFile (fileId) {
+  async getFile(fileId) {
     const drive = await this.getDriveService()
     const response = await drive.files.get({
       fileId,
@@ -83,13 +83,53 @@ class GoogleDriveService {
     return response.data
   }
 
-  async getOrCreateFolder (parentFolderId, folderName) {
+  async getOrCreateFolder(parentFolderId, folderName) {
     let folder = await this.getFolderByName(parentFolderId, folderName)
     if (!folder) {
       folder = await this.createFolder(folderName, parentFolderId)
     }
     return folder.id
   }
+
+  /* async createComment (fileId, content) {
+  const drive = await this.getDriveService()
+  const comment = await drive.comments.create({
+    fileId,
+    resource: {
+      content
+    }
+  })
+  return comment.data
+}
+
+async listComments (fileId) {
+  const drive = await this.getDriveService()
+  const response = await drive.comments.list({
+    fileId,
+    fields: 'comments(id, content, createdTime, modifiedTime)'
+  })
+  return response.data.comments
+}
+
+async updateComment (fileId, commentId, content) {
+  const drive = await this.getDriveService()
+  const comment = await drive.comments.update({
+    fileId,
+    commentId,
+    resource: {
+      content
+    }
+  })
+  return comment.data
+}
+
+async deleteComment (fileId, commentId) {
+  const drive = await this.getDriveService()
+  await drive.comments.delete({
+    fileId,
+    commentId
+  })
+} */
 }
 
 module.exports = GoogleDriveService

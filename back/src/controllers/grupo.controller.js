@@ -4,10 +4,10 @@ const { red, yellow } = require('picocolors')
 
 // Función para crear una entrega
 async function crear (req, res, next) {
-  const {cursoID, nombre} = req.body
+  const { cursoID, nombre } = req.body
 
-  const curso = await models.Curso.findByPk(cursoID);
-  if (!curso){
+  const curso = await models.Curso.findByPk(cursoID)
+  if (!curso) {
     return next(errors.NotFoundError)
   }
 
@@ -15,28 +15,27 @@ async function crear (req, res, next) {
   const grupoPersona = await models.PersonaXGrupo.findOne({
     include: [{
       model: models.Grupo,
-      where: { curso_id:cursoID },  // Condición de que el grupo pertenezca al curso
-      attributes: []  // No necesitamos atributos de Grupo, solo la relación
+      where: { curso_id: cursoID }, // Condición de que el grupo pertenezca al curso
+      attributes: [] // No necesitamos atributos de Grupo, solo la relación
     }],
-    where:{
-      persona_ID:res.locals.usuario.persona_id,
+    where: {
+      persona_ID: res.locals.usuario.persona_id
     }
   })
 
   const alumno = await models.PersonaXCurso.findOne({
     where: { persona_id: res.locals.usuario.persona_id, curso_id: cursoID, rol: 'A' }
   })
-  if (!alumno){
-    return next({ ...errors.CredencialesInvalidas, details: `No tienes acceso a este curso` })
-
+  if (!alumno) {
+    return next({ ...errors.CredencialesInvalidas, details: 'No tienes acceso a este curso' })
   }
 
   if (grupoPersona) {
-    return next({ ...errors.ConflictError, details: `El usuario ya tiene un grupo asociado a este curso` })
+    return next({ ...errors.ConflictError, details: 'El usuario ya tiene un grupo asociado a este curso' })
   }
 
-  const cantidadGrupos = await models.Grupo.count({ where: { curso_id:cursoID } });
-  const nuevoNumero = cantidadGrupos + 1;
+  const cantidadGrupos = await models.Grupo.count({ where: { curso_id: cursoID } })
+  const nuevoNumero = cantidadGrupos + 1
 
   const transaction = await models.sequelize.transaction()
 
@@ -44,7 +43,7 @@ async function crear (req, res, next) {
     const grupo = await models.Grupo.create({
       curso_id: cursoID,
       nombre,
-      numero:nuevoNumero,
+      numero: nuevoNumero,
       updated_by: res.locals.usuario.ID
     }, { transaction })
 
@@ -64,77 +63,72 @@ async function crear (req, res, next) {
   }
 }
 
-async function addToGroup(req, res, next) {
-  const {grupoID, legajo} = req.body
+async function addToGroup (req, res, next) {
+  const { grupoID, legajo } = req.body
   console.log(grupoID)
 
-  const grupo = await models.Grupo.findByPk(grupoID);
-  if (!grupo){
-    return next({ ...errors.NotFoundError, details: `No se encontro ese grupo` })
+  const grupo = await models.Grupo.findByPk(grupoID)
+  if (!grupo) {
+    return next({ ...errors.NotFoundError, details: 'No se encontro ese grupo' })
   }
   if (res.locals.usuario.persona_id == null) { return next(errors.UsuarioNoPersona) }
 
   const persona = await models.Persona.findOne({
-    where:{
+    where: {
       legajo,
-      rol:'A'
+      rol: 'A'
     }
   })
   console.log(persona)
-  if (!persona){
-    return next({ ...errors.NotFoundError, details: `No se encontro alumno con este legajo` })
+  if (!persona) {
+    return next({ ...errors.NotFoundError, details: 'No se encontro alumno con este legajo' })
   }
 
   const personaXCurso = await models.PersonaXCurso.findOne({
-    where:{
-      curso_id:grupo.curso_id,
-      rol:'A',
-      persona_id:persona.ID,
+    where: {
+      curso_id: grupo.curso_id,
+      rol: 'A',
+      persona_id: persona.ID
     }
   })
-  if (!personaXCurso){
+  if (!personaXCurso) {
     return next({ ...errors.ConflictError, details: `No se puede añadir a ${persona.nombre} ${persona.apellido} por no pertenecer al curso` })
   }
 
-    const grupoPersona = await models.PersonaXGrupo.findOne({
-      include: [{
-        model: models.Grupo,
-        where: { curso_id:grupo.curso_id },  // Condición de que el grupo pertenezca al curso
-        attributes: []  // No necesitamos atributos de Grupo, solo la relación
-      }],
-      where:{
-        persona_ID:persona.ID,
-      }
-    })
-
-
-    const alumno = await models.PersonaXCurso.findOne({
-      where: { persona_id: res.locals.usuario.persona_id, curso_id: grupo.curso_id, rol: 'A' }
-    })
-    if (!alumno){
-      return next({ ...errors.CredencialesInvalidas, details: `No tienes acceso a este curso` })
-
+  const grupoPersona = await models.PersonaXGrupo.findOne({
+    include: [{
+      model: models.Grupo,
+      where: { curso_id: grupo.curso_id }, // Condición de que el grupo pertenezca al curso
+      attributes: [] // No necesitamos atributos de Grupo, solo la relación
+    }],
+    where: {
+      persona_ID: persona.ID
     }
+  })
 
-    if (grupoPersona) {
-      return next({ ...errors.ConflictError, details: `La persona ya tiene un grupo asociado a este curso` })
-    }
+  const alumno = await models.PersonaXCurso.findOne({
+    where: { persona_id: res.locals.usuario.persona_id, curso_id: grupo.curso_id, rol: 'A' }
+  })
+  if (!alumno) {
+    return next({ ...errors.CredencialesInvalidas, details: 'No tienes acceso a este curso' })
+  }
 
+  if (grupoPersona) {
+    return next({ ...errors.ConflictError, details: 'La persona ya tiene un grupo asociado a este curso' })
+  }
 
-    const transaction = await models.sequelize.transaction()
+  const transaction = await models.sequelize.transaction()
 
-    try {
+  try {
+    await models.PersonaXGrupo.create({
+      persona_ID: persona.ID,
+      grupo_ID: grupo.ID,
+      updated_by: res.locals.usuario.ID
+    }, { transaction })
 
-
-      await models.PersonaXGrupo.create({
-        persona_ID: persona.ID,
-        grupo_ID: grupo.ID,
-        updated_by: res.locals.usuario.ID
-      }, { transaction })
-
-      await transaction.commit()
-      // Responder con el curso creado
-      res.status(201).json(grupo)
+    await transaction.commit()
+    // Responder con el curso creado
+    res.status(201).json(grupo)
   } catch (error) {
     await transaction.rollback()
     console.error(red(`Error al crear el grupo:${error}`))
@@ -152,20 +146,21 @@ async function ver (req, res, next) {
       include: [
         {
           model: models.Persona,
-          attributes:['ID','rol','dni','legajo','apellido','nombre']
+          attributes: ['ID', 'rol', 'dni', 'legajo', 'apellido', 'nombre']
 
         },
         {
           model: models.Curso,
-          include:[
+          include: [
             {
-              model:models.Materia,
-              attributes:['ID','nombre','anio']
+              model: models.Materia,
+              attributes: ['ID', 'nombre', 'anio']
             }
-          ],attributes:['ID','cicloLectivo']
+          ],
+          attributes: ['ID', 'cicloLectivo']
         }
       ],
-      attributes:['ID','numero','nombre','curso_id']
+      attributes: ['ID', 'numero', 'nombre', 'curso_id']
     })
 
     if (!grupo) {
@@ -193,22 +188,23 @@ async function listar (req, res, next) {
       include: [
         {
           model: models.Persona,
-          attributes:['ID','rol','dni','legajo','apellido','nombre']
+          attributes: ['ID', 'rol', 'dni', 'legajo', 'apellido', 'nombre']
 
         },
         {
           model: models.Curso,
-          include:[
+          include: [
             {
-              model:models.Materia,
-              attributes:['ID','nombre','anio']
+              model: models.Materia,
+              attributes: ['ID', 'nombre', 'anio']
             }
-          ],attributes:['ID','cicloLectivo']
+          ],
+          attributes: ['ID', 'cicloLectivo']
         }
       ],
-      attributes:['ID','numero','nombre','curso_id']
+      attributes: ['ID', 'numero', 'nombre', 'curso_id']
     })
-    if (grupos.length == 0){return next({...errors.NotFoundError,details:'No se encontraron grupos para ese curso'})}
+    if (grupos.length === 0) { return next({ ...errors.NotFoundError, details: 'No se encontraron grupos para ese curso' }) }
     res.status(200).json(grupos)
   } catch (error) {
     next({
@@ -236,5 +232,5 @@ async function listar (req, res, next) {
 // }
 
 module.exports = {
-  crear,addToGroup,ver,listar
+  crear, addToGroup, ver, listar
 }

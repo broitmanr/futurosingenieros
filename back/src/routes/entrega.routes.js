@@ -7,6 +7,7 @@ const router = Router()
 
 router.post('/',
   checkRole.checkRoleEstudiante,
+  upload.single('file'),
   entregaController.crearEntrega
 )
 
@@ -19,12 +20,6 @@ router.get('/listarEntregas/:entregaPactada_id',
 router.post('/upload/:entregaId',
   upload.single('pdf'),
   entregaController.uploadEntregaFile
-)
-
-// Nueva ruta para crear una entrega con un archivo asociado
-router.post('/crear-con-archivo',
-  upload.single('file'),
-  entregaController.crearEntrega
 )
 
 // Descomentar y actualizar si es necesario

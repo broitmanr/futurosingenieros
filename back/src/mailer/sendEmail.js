@@ -1,4 +1,4 @@
-const {transporter} = require('back/src/mailer/mailer')
+const { transporter } = require('back/src/mailer/mailer')
 const { NODEMAILER_USER } = process.env
 
 const sendEmail = (to, subject, html) => {
@@ -9,7 +9,7 @@ const sendEmail = (to, subject, html) => {
     subject,
     html:
       html ||
-      `<h1>Email testing</h1>`
+      '<h1>Email testing</h1>'
   }
 
   transporter.sendMail(emailOptions, (error, info) => {

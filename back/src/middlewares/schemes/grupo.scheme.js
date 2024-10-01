@@ -10,7 +10,7 @@ const crearGrupo = Joi.object({
   })
 })
 
-const addPersonaGrupo  = Joi.object({
+const addPersonaGrupo = Joi.object({
   grupoID: Joi.number().integer().required().messages({
     'number.integer': 'El ID del grupo debe ser un número entero.',
     'any.required': 'El ID del grupo es obligatorio.'
@@ -74,5 +74,5 @@ const addPersonaGrupo  = Joi.object({
 // })
 
 module.exports = {
- crearGrupo,addPersonaGrupo
+  crearGrupo, addPersonaGrupo
 }

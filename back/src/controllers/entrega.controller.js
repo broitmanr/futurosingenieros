@@ -9,20 +9,48 @@ const googleDriveService = new GoogleDriveService()
 
 const crearEntrega = async (req, res, next) => {
   try {
-    const { fecha, nota, grupoId, personaId, entregaPactadaId } = req.body
+    const { entregaPactadaId } = req.body
     const file = req.file
-    const entregaPactada = await models.EntregaPactada.findByPk(entregaPactadaId) // Encuentra la EntregaPactada
+    const entregaPactada = await models.EntregaPactada.findByPk(entregaPactadaId,{
+      include:[
+        {
+          model:models.InstanciaEvaluativa,
+          attributes:['grupo','curso_id']
+        }
+      ]
+    }) // Encuentra la EntregaPactada
     if (!entregaPactada) {
       console.warn(yellow('Advertencia: EntregaPactada no encontrada.'))
       return next({ ...errors.NotFoundError, details: 'EntregaPactada no encontrada' })
     }
+    const entregaGrupal = entregaPactada.InstanciaEvaluativa.grupo
+    let grupoId=null
+    if (entregaGrupal){
+      const personaXgrupo = await models.PersonaXGrupo.findOne({
+        where:{
+          persona_id: res.locals.usuario.persona_id,
+        },
+        include:[
+          {
+            model:models.Grupo,
+            where:{
+              curso_id:entregaPactada.InstanciaEvaluativa.curso_id
+            }
+          }
+        ]
+      })
+      if (!personaXgrupo){
+        return next({ ...errors.NotFoundError, details: 'No se encontro grupo para la persona y la entrega es grupal' })
+      }
+      grupoId = personaXgrupo.grupo_ID
+    }
 
     const nuevaEntrega = await handleTransaction(async (transaction) => {
       const entrega = await models.Entrega.create({
-        fecha,
-        nota,
-        grupo_ID: grupoId,
-        persona_id: personaId,
+        fecha: Date.now(),
+        nota:null,
+        grupo_ID: grupoId ?? null,
+        persona_id: res.locals.usuario.persona_id,
         entregaPactada_ID: entregaPactadaId,
         updated_by: res.locals.usuario.ID
       }, { transaction })
@@ -45,6 +73,7 @@ const crearEntrega = async (req, res, next) => {
       }, { transaction })
 
       // Cambiar el nombre del archivo al ID del archivo.pdf
+
       const fileName = `${archivo.ID}.pdf`
       const mimeType = file.mimetype
 
@@ -219,7 +248,6 @@ async function eliminar(req, res, next) {
 
 module.exports = {
   listarEntregasDocente,
-  uploadEntregaFile,
   crearEntrega,
   ver
 }

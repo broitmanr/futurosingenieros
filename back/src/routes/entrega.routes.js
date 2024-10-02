@@ -16,6 +16,10 @@ router.get('/listarEntregas/:entregaPactada_id',
   entregaController.listarEntregasDocente
 )
 
+router.get('/archivo/:id',
+  checkRole.checkRoleEstudiante,
+  entregaController.obtenerArchivo
+)
 // Descomentar y actualizar si es necesario
 // router.get('/:id',
 //   validate({ params: entregaPactadaScheme.idParams }),

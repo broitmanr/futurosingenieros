@@ -1,0 +1,35 @@
+.TituloRendimiento {
+    color:'#193B70';
+    text-shadow:
+    1px 1px 2px rgb(30, 50, 120), /* Sombra ajustada */
+    0 0 1em rgb(50, 70, 150),      /* Sombra ajustada */
+    0 0 0.2em rgb(20, 30, 80);     /* Sombra ajustada */
+  font:
+    1.9em Georgia,
+    "Bitstream Charter",
+    "URW Bookman L",
+    "Century Schoolbook L",
+    serif;
+}
+.CatedraProyecto{
+    border: 3px solid black;
+    font: 1.2em;
+
+}
+
+.table-container {
+    width: 90%; /* Ajusta el porcentaje según lo que necesites */
+    max-width: 900px; /* Ancho máximo para evitar que sea demasiado grande */
+    margin: 70px auto 0 auto; /* Márgenes: 50px arriba, auto a los lados, 0 abajo */
+    overflow-x: auto; /* Permite scroll horizontal si es necesario */
+  }
+
+.table-container .table{
+    margin: 40px 0; /* Márgenes arriba y abajo */
+    background-color: brown;
+    border: 1px solid black; /* Bordes */
+    
+}
+
+
+  

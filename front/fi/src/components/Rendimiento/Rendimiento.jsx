@@ -130,9 +130,6 @@ function Rendimiento() {
             <div>
                 <TabView className="tabs-container">
                     <TabPanel className='tab-header-text' header="Alumnos">
-                        <p className="m-0">
-                            Acá va el rendimiento del alumno
-                        </p>
                         < RendimientoAlumno/>
 
                     </TabPanel>

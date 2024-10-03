@@ -5,20 +5,71 @@
 .tabs-container{
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
     text-decoration: none;
+    flex-grow: 1;
 }
 
 .tabs-container .p-tabview-nav{
     border-bottom: none;
+    justify-content: center;
+}
+
+.tab-header-text{
+    font-size: 1.2rem;
+    text-align: center;  
 }
 
 .tab-header-text .p-tabview-nav-link{
-    color: #1A2035;
+    color: #3b4e92;
+    text-decoration: none;
+}
+
+.tab-header-text .p-tabview-nav-link:hover{
+    font-size: 1.3rem;
+    color: #344474;
     text-decoration: none;
 }
 
 .p-tabview-nav-link{
     margin: 0.3rem;
     color: #1A2035; 
+}
+
+.custom-datatable-asistencia { 
+    width: 80%; /* Tamaño de la tabla */
+    border: 0.1rem solid #1A2035;
+    border-radius: 0.24rem;
+    margin: 0 auto;
+}
+
+.custom-datatable-asistencia .p-datatable-header {
+    background-color: #1A2035 /* Color del encabezado */;
+    height: 5.4rem;
+    display: flex;
+    align-items: center;
+}
+
+.table-header-asistencia {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    border-radius: 1rem;
+    margin-top: 0;
+}
+
+.custom-datatable-asistencia .p-datatable-thead > tr > th {
+    background-color: #CCDCF1; /* Color de la fila de filtros */
+    color: #1A2035
+}
+
+.custom-datatable-asistencia .p-datatable-tbody > tr > td {
+    background-color: white /* Color del cuerpo de la tabla */
+/*  border-top: #1A2035 solid; si se quiere agregar línea entre datos de la tabla */
+}
+
+.columns-data-asistencia {
+    font-size: 0.87rem;
+    min-width: 12rem
 }

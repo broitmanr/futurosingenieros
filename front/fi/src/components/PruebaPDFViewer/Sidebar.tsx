@@ -37,7 +37,7 @@ const Sidebar = ({
       </div>
       <div style={{ padding: "0.5rem" }}>
         <button onClick={toggleDocument} className="sidebar__toggle">
-          Siguiente Entrega >
+          Siguiente Entrega
         </button>
       </div>
 

@@ -27,8 +27,9 @@ function AlumnosCurso() {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     'Persona.legajo': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    'Persona.nombre': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    'Persona.apellido': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    /*'Persona.nombre': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    'Persona.apellido': { value: null, matchMode: FilterMatchMode.STARTS_WITH },*/
+    'nombreCompleto': { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
   const [loading, setLoading] = useState(true); //Maneja estado de la solicitud
   const [globalFilterValue, setGlobalFilterValue] = useState('');
@@ -45,7 +46,11 @@ function AlumnosCurso() {
       const response = await axios.get(`/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
       if(response.data) {
         const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
-        setAlumnos(soloAlumnos)
+        const alumnosNombreCompleto = soloAlumnos.map(alumno => ({
+          ...alumno,
+          nombreCompleto: `${alumno.Persona.apellido}, ${alumno.Persona.nombre}`
+        }))
+        setAlumnos(alumnosNombreCompleto)
         setLoading(false)
       }
     } catch (err) {
@@ -127,7 +132,7 @@ function AlumnosCurso() {
         <OverlayTrigger overlay={
           <Tooltip id="tooltip-agregar-alumno" className='tooltip-agregar-alumno'>Agregar alumno</Tooltip>}>
           <span className="d-inline-block" >
-            <PiUserCirclePlusBold data-tip='Agregar alumno' onClick={handleScroll} color='#fff' size={40}/>
+            <PiUserCirclePlusBold data-tip='Agregar alumno' onClick={handleScroll} color='#fff' size={38}/>
           </span>
         </OverlayTrigger>
         <IconField >
@@ -163,7 +168,7 @@ function AlumnosCurso() {
         <Column
           className='columns-data'
           field="Persona.legajo"
-          header="Legajo"
+          header="LEGAJO"
           filter
           filterPlaceholder="Buscar por Legajo"
           filterElement={
@@ -178,34 +183,17 @@ function AlumnosCurso() {
         />
         <Column
           className='columns-data'
-          field="Persona.nombre"
-          header="Nombre"
+          field="nombreCompleto"
+          header="NOMBRE COMPLETO"
           filter
-          filterPlaceholder="Buscar por Nombre"
+          filterPlaceholder="Buscar por Nombre completo"
           filterElement={
             <input
               className='inputsFilters'
               type='text' 
               onKeyPress={handleKeyNombreApellido} 
               inputMode='text'
-              onChange={(e) => onFilterChange(e, 'Persona.nombre')}
-            />
-          }
-          sortable
-        />
-        <Column
-          className='columns-data'
-          field="Persona.apellido"
-          header="Apellido"
-          filter
-          filterPlaceholder="Buscar por Apellido"
-          filterElement={
-            <input
-              className='inputsFilters'
-              type='text' 
-              onKeyPress={handleKeyNombreApellido} 
-              inputMode='text'
-              onChange={(e) => onFilterChange(e, 'Persona.apellido')}
+              onChange={(e) => onFilterChange(e, 'nombreCompleto')}
             />
           }
           sortable

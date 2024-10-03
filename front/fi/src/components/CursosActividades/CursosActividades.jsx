@@ -9,11 +9,14 @@ import { RiFileDownloadLine } from "react-icons/ri";
 import { PiUsersThreeBold } from "react-icons/pi";
 import { RiBarChartBoxLine } from "react-icons/ri";
 import { useRole } from '../../context/RolesContext';
+import { ModalCrearGrupo } from './ModalCrearGrupo';
 
 
 export const CursosActividades = () => {
+    
     const { role } = useRole()
     const [show, setShow] = useState(false);
+    const [showGrupo, setShowGrupo] = useState(false);
     const [instancias, setInstancias] = useState({});
 
     const [curso, setCurso] = useState({});
@@ -21,6 +24,7 @@ export const CursosActividades = () => {
     const params = useParams();
 
     const handleClose = () => setShow(false);
+    const handleCloseGrupo = () => setShowGrupo(false);
 
     const [shouldFetchInstancia, setShouldFetchInstancia] = useState(false); //Estados para manejar la actualización de la instancia
 
@@ -128,7 +132,7 @@ export const CursosActividades = () => {
                                             </>
                                         )}
                                         <li className='aside-item'>
-                                            <Link className='aside-link' to="/rendimiento">
+                                            <Link className='aside-link' to={`/rendimiento/${curso.ID}`}>
                                                 <RiBarChartBoxLine className='icons-aside-menu-actividades' />
                                                 Rendimiento
                                             </Link>
@@ -136,10 +140,11 @@ export const CursosActividades = () => {
                                         { role === 'A' && (
                                             <>  
                                             <li className='aside-item'>
-                                                <Link className='aside-link' to={`/alumnos/${curso.ID}`}>
+                                                <Link className='aside-link' onClick={() => setShowGrupo(true)}>
                                                     <PiUsersThreeBold className='icons-aside-menu-actividades' />
                                                     Grupo
                                                 </Link>
+                                                <ModalCrearGrupo show={showGrupo} handleClose={handleCloseGrupo}/>
                                             </li>
                                             </>
                                         )}

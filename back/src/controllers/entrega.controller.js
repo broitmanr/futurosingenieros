@@ -70,17 +70,13 @@ const crearEntrega = async (req, res, next) => {
           updated_by: res.locals.usuario.ID
         }, { transaction })
 
-        const entregaPactadaNombre = entregaPactada.nombre // Obtenemos el nombre de EntregaPactada
-        const usuarioId = res.locals.usuario.ID // ID del usuario
-
-        const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID // ID de la carpeta raíz
-
-        // Obtenemos la carpeta del usuario y la entrega pactada, si no existe la creamos
+        const entregaPactadaNombre = entregaPactada.nombre
+        const usuarioId = res.locals.usuario.ID
+        const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID
         const usuarioFolderId = await googleDriveService.getOrCreateFolder(folderId, usuarioId.toString())
         const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(usuarioFolderId, entregaPactadaNombre)
         const mimeType = file.mimetype
-        console.log(picocolors.bgYellow(`Tipo de archivo: ${file.mimetype}`))
-        // Crear el registro del archivo en la base de datos para obtener su ID
+
         const archivo = await models.Archivo.create({
           nombre: '', // Nombre temporal, se actualizará después
           referencia: '',

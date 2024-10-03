@@ -8,6 +8,21 @@ async function crear (req, res, next) {
   const transaction = await models.sequelize.transaction()
   // Si el usuario no tiene persona asociada entonces no puede crear el curso
   if (res.locals.usuario.persona_id == null) { return next(errors.UsuarioNoPersona) }
+
+  // Verifico que no sea mayor a 100
+  const instancias = await models.InstanciaEvaluativa.findAll({
+    where: { curso_id: cursoID }, // Ajusta el nombre del campo según tu modelo
+    attributes: ['porcentaje_ponderacion'],
+  });
+
+  const totalPonderacion = instancias.reduce((acc, instancia) => {
+    return acc + instancia.porcentaje_ponderacion;
+  }, 0);
+  if (totalPonderacion + porcentajePonderacion > 100) {
+    return next({...errors.ConflictError,details:'El porcentaje de ponderación de las instancias supera el 100%, haga los cambios e intente nuevamente'})
+  }
+
+
   try {
     const nuevaInstancia = await models.InstanciaEvaluativa.create({
       porcentaje_ponderacion: porcentajePonderacion,

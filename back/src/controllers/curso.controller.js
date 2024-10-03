@@ -86,7 +86,23 @@ async function ver (req, res, next) {
       return next({ ...errors.NotFoundError, details: 'Curso no encontrado' })
     }
 
-    res.status(200).json(cursoVer)
+    const instancias = await models.InstanciaEvaluativa.findAll({
+      where: { curso_id: cursoVer.ID }, // Ajusta el nombre del campo según tu modelo
+      attributes: ['porcentaje_ponderacion'],
+    });
+
+    // Sumar los porcentajes de ponderación de las instancias evaluativas
+    const totalPonderacion = instancias.reduce((acc, instancia) => {
+      return acc + instancia.porcentaje_ponderacion;
+    }, 0);
+
+    // Añadir el total de ponderación al objeto de respuesta
+    const response = {
+      ...cursoVer.toJSON(),
+      totalPonderacion
+    };
+
+    res.status(200).json(response)
   } catch (error) {
     console.error(red('Error al obtener el curso:', error))
     next({

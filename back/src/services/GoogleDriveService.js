@@ -27,10 +27,9 @@ class GoogleDriveService {
 
   async getDriveService () {
     if (!this.driveClient){
-      console.log("entro por el no")
       const auth = new GoogleAuth({
-      credentials: this.credentials,
-      scopes: this.SCOPES
+        credentials: this.credentials,
+        scopes: this.SCOPES
       })
       const authClient = await auth.getClient()
       this.driveClient = google.drive({ version: 'v3', auth: authClient })

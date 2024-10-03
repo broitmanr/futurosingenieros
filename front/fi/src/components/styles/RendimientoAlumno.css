@@ -17,8 +17,17 @@
 
 }
 
-div.table {
-    margin: 40px 0 !important; /* Márgenes arriba y abajo */
+.table-container {
+    width: 90%; /* Ajusta el porcentaje según lo que necesites */
+    max-width: 900px; /* Ancho máximo para evitar que sea demasiado grande */
+    margin: 70px auto 0 auto; /* Márgenes: 50px arriba, auto a los lados, 0 abajo */
+    overflow-x: auto; /* Permite scroll horizontal si es necesario */
+  }
+
+.table-container .table{
+    margin: 40px 0; /* Márgenes arriba y abajo */
+    background-color: brown;
+    border: 1px solid black; /* Bordes */
     
 }
 

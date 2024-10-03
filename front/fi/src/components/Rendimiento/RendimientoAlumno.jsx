@@ -1,4 +1,4 @@
-import '../styles/RendimientoAlumno.css'
+import '../styles/RendimientoAlumno.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export const RendimientoAlumno = () => {
@@ -20,35 +20,36 @@ export const RendimientoAlumno = () => {
           color: 'black',       // Color de texto negro
         }}>
           Cantidad de Faltas</h3>
-          
+      <div className="table-container">    
         <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Instancias</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Calificacion</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">Parcial Inicio</th>
-              <td>Aprobado</td>
-              <td>8</td>
-            </tr>
-            <tr>
-              <th scope="row">Trabajo Integrador</th>
-              <td>Modificar</td>
-              <td>Sin calificar</td>
-            </tr>
-            <tr>
-              <th scope="row">Parcial Ejecucion</th>
-              <td>desaprobado</td>
-              <td>2</td>
-            </tr>
-          </tbody>
-        </table>
-    </div>
-  );
-}
+            <thead>
+              <tr>
+                <th scope="col">Instancias</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Calificacion</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Parcial Inicio</th>
+                <td>Aprobado</td>
+                <td>8</td>
+              </tr>
+              <tr>
+                <th scope="row">Trabajo Integrador</th>
+                <td>Modificar</td>
+                <td>Sin calificar</td>
+              </tr>
+              <tr>
+                <th scope="row">Parcial Ejecucion</th>
+                <td>desaprobado</td>
+                <td>2</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+      </div>
+    );
+  }
 
 export default RendimientoAlumno;

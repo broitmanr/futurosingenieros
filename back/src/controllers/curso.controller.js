@@ -326,15 +326,45 @@ async function verMiembrosCurso (req, res, next) {
 
     const participantes = await models.PersonaXCurso.findAll({
       where: whereClause,
-      include: [{ model: models.Persona, attributes: ['nombre', 'apellido', 'legajo'] }]
+      include: [
+          {
+            model: models.Persona,
+            attributes: ['nombre', 'apellido', 'legajo'],
+            include:[
+              {
+                model: models.Usuario,
+                attributes: ['mail']
+              },
+              {
+                model: models.InasistenciasPorCurso, // Incluir la vista aquí
+                attributes: ['total_inasistencias'], // Atributos que necesitas de la vista
+                required: false, // Permitir que las personas sin inasistencias aún sean incluidas
+                where: { curso_id: id } // Filtrar por curso_id
+              }
+            ]
+          }
+      ]
     })
 
-    const formatoParticipantes = participantes.map(participante => ({
-      ID: participante.ID,
-      rol: participante.rol,
-      persona_id: participante.persona_id,
-      Persona: participante.Persona
-    }))
+    const formatoParticipantes = participantes.map(participante => {
+      const persona = participante.Persona.get({ plain: true });
+      const totalInasistencias = persona.InasistenciasPorCursos.length > 0 ?
+          persona.InasistenciasPorCursos[0].total_inasistencias : 0; // Total inasistencias o 0 si no hay
+
+      return {
+        ID: participante.ID,
+        rol: participante.rol,
+        persona_id: participante.persona_id,
+        Persona: {
+          nombre: persona.nombre,
+          apellido: persona.apellido,
+          legajo: persona.legajo,
+          mail: persona.Usuario ? persona.Usuario.mail : null, // Maneja el caso donde Usuario es null
+          total_inasistencias: totalInasistencias // Asigna el total de inasistencias
+        }
+      };
+    });
+
 
     res.status(200).json(formatoParticipantes)
   } catch (error) {

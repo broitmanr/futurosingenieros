@@ -73,7 +73,7 @@ function App() {
                 }
               />
               <Route 
-                path="/rendimiento" 
+                path="/rendimiento/:id" 
                 element={
                   <PrivateRoute allowedRoles={['D', 'A']}>
                     <Rendimiento />

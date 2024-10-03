@@ -10,18 +10,14 @@ import moment from 'moment';
 export default function DetallaEntregaIndividual({entrega}) {
     const [isLoading, setLoading] = useState(false);
     const pruebaDatos = [
-        { legajo: 303132, nombre: 'Camila', email: '@', estado: 'Modificar', calificacion: 1 },
-        { legajo: 313230, nombre: 'Sonia', email: '@', estado: 'Aprobado', calificacion: 6 },
-        { legajo: 323031, nombre: 'Lorenzo', email: '@', estado: 'Modificar', calificacion: 5 }
+        { legajo: 303132, nombre: 'Camila', estado: 'Modificar', calificacion: 1 },
+        { legajo: 313230, nombre: 'Sonia', estado: 'Aprobado', calificacion: 6 },
+        { legajo: 323031, nombre: 'Lorenzo', estado: 'Modificar', calificacion: 5 }
     ]
 
     const columns = [
-        { field: 'legajo', header: 'Legajo' },
-        { field: 'nombre', header: 'Nombre' },
-        { field: 'email', header: 'Email' },
         { field: 'estado', header: 'Estado' },
-        { field: 'calificacion', header: 'Calificación' },
-        { field: 'ver', header: 'Ver' }
+        { field: 'calificacion', header: 'Calificación' }
     ];
 
     const isPositiveInteger = (val) => {
@@ -110,18 +106,28 @@ export default function DetallaEntregaIndividual({entrega}) {
     return (
         <div className="card p-fluid">
             <DataTable className='detalle-entrega-docente' value={pruebaDatos} editMode="cell" header={header} reorderableColumns>
+                <Column
+                    className='columns-data-entrega-docente'
+                    field="legajo"
+                    header="LEGAJO"
+                />
+                <Column
+                    className='columns-data-entrega-docente'
+                    field="nombre"
+                    header="NOMBRE"
+                    sortable
+                /> 
                 {columns.map(({ field, header }) => {
-                    return <Column key={field} field={field} header={header} 
-                        editor={(options) => {
-                            if (field === 'nombre' || field === 'legajo' || field === 'email' || field === 'ver'){
-                                return <InputText value={options.value} readOnly />
-                            }else{
-                                return cellEditor(options)
-                            }
-                        }}
-                        onCellEditComplete={onCellEditComplete} 
-                        sortable={field === 'nombre'} />;
+                    return <Column key={field} field={field} header={header} className='columns-data-entrega-docente'
+                        editor={(options) => cellEditor(options)}
+                        onCellEditComplete={onCellEditComplete}
+                    />;
                 })}
+                <Column
+                    className='columns-data-entrega-docente'
+                    //field="ver"
+                    header="VER"
+                />
             </DataTable>
         </div>
     );

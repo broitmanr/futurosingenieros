@@ -17,15 +17,16 @@
 }
 
 .custom-datatable { 
-    width: 80%; /* Tamaño de la tabla */
+    width: 60%; /* Tamaño de la tabla */
     border: 0.1rem solid #1A2035;
     border-radius: 0.24rem;
-    margin-bottom: 0.6rem;
-    margin-top: 0.8rem
+    margin-top: 1rem;
+    margin-bottom: 0.8rem
 }
 
 .custom-datatable .p-datatable-header {
-    background-color: #1A2035 /* Color del encabezado */
+    background-color: #1A2035 /* Color del encabezado */;
+    margin: 0 auto;
 }
 
 .table-header {
@@ -33,9 +34,9 @@
     justify-content: space-between; /* Alinea el ícono a la iquierda y el buscador general a la derecha*/
     align-items: 'center';
     width: 100%;
-    padding: 1rem;
+    padding: 0.5rem;
     border-radius: 1rem;
-    border-bottom: #1A2035 0.1rem solid
+    border-bottom: #1A2035 0.1rem solid;
 }
 
 /* Fija el buscador general */
@@ -53,12 +54,15 @@
 .inputsFilters{ /* Inputs de filtros individuales */
     border: 0.1rem solid #1A2035;
     border-radius: 0.24rem;
-    height: 2.4rem
+    height: 2.4rem;
+    text-align: center;
 }
 
 .custom-datatable .p-datatable-thead > tr > th {
     background-color: #CCDCF1; /* Color de la fila de filtros */
-    color: #1A2035
+    color: #1A2035;
+    margin: 0 auto;
+    padding: 0.5rem;
 }
 
 .custom-datatable .p-datatable-tbody > tr > td {
@@ -67,6 +71,7 @@
 }
 
 .columns-data {
+    font-size: 0.9rem;
     min-width: 12rem
 }
 

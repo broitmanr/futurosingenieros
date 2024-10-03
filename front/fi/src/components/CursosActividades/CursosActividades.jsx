@@ -128,7 +128,7 @@ export const CursosActividades = () => {
                                             </>
                                         )}
                                         <li className='aside-item'>
-                                            <Link className='aside-link' to="/rendimiento">
+                                            <Link className='aside-link' to={`/rendimiento/${curso.ID}`}>
                                                 <RiBarChartBoxLine className='icons-aside-menu-actividades' />
                                                 Rendimiento
                                             </Link>

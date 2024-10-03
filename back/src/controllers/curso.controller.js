@@ -2,6 +2,9 @@ const errors = require('../const/error')
 const { red, yellow } = require('picocolors')
 const models = require('../database/models/index')
 const generador = require('../services/generadores')
+const {join} = require("path");
+const xlsx = require('xlsx');
+const fs = require('fs');
 
 // Función para crear un curso
 async function crear (req, res, next) {
@@ -124,7 +127,7 @@ async function listar (req, res, next) {
             attributes: ['nombre']
           }, {
             model: models.Materia,
-            attributes: ['nombre']
+            attributes: ['nombre','imagen']
           }, {
             model: models.PersonaXCurso,
             where: { persona_id: estudianteId },
@@ -136,11 +139,13 @@ async function listar (req, res, next) {
       next({ ...errors.UsuarioNoAutorizado, details: 'No tiene permiso para listar los cursos.' })
     }
 
+    const fileId='18q1oU58wOUHBI5UGzJkevZdQ-p9qK5cV'
     const cursosIDsComplete = cursos.map(curso => ({
       id: curso.ID,
       anio: curso.cicloLectivo,
       comision: curso.Comision.nombre,
-      materia: curso.Materium.nombre
+      materia: curso.Materium.nombre,
+      image:`${req.protocol}://${req.get('host')}/api/archivo/imagen/nombre/${curso.Materium.imagen}`
     }))
 
     res.status(200).json(cursosIDsComplete)
@@ -485,6 +490,95 @@ async function eliminarCursos (req, res, next) {
   }
 }
 
+
+async function agregarEstudiantesExcel(req, res, next) {
+  try {
+    const cursoId = req.params.id
+    const curso = await models.Curso.findByPk(cursoId)
+    if (!curso) return next({ ...errors.NotFoundError, details: 'No se encontro ningun curso con ese ID, por favor vuelva a intentar.' })
+    // Verificar que el curso pertenece al docente logueado
+    const esDocente = await models.PersonaXCurso.findOne({
+      where: { persona_id: res.locals.usuario.persona_id, curso_id: cursoId, rol: 'D' },
+    })
+
+    if (!esDocente) {
+      return next({ ...errors.UsuarioNoAutorizado, details: 'No tienes permiso para generar el código de vinculación de este curso.' })
+    }
+    if (!req.file) {
+      return next({...errors.CredencialesInvalidas,details:'No se proporcionó ningún excel'})
+    }
+
+     // Ruta del archivo subido
+    // const filePath = join(__dirname, '../../uploads/', req.file.filename);
+    console.log("uuuurrñll",req.file.path)
+    const filePath=req.file.path
+    // Leer el archivo Excel
+    const workbook = xlsx.readFile(filePath);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]]; // Primera hoja del Excel
+    const rows = xlsx.utils.sheet_to_json(sheet); // Convertir a JSON las filas
+
+    let inexistentes = []
+    let existentes = []
+    // Procesar cada fila del Excel
+    for (const row of rows) {
+      const legajo = row.Legajo;
+      const nombres = row.Nombres; // Este campo contiene "Apellido, Nombre"
+      console.log(yellow(`Excel legajo: ${legajo} -- ${nombres} `));
+      // Buscar el alumno por legajo
+      let alumno = await models.Persona.findOne({ where: { legajo } });
+
+      const [apellido, nombre] = nombres.split(',').map(part => part.trim());
+
+
+      if (alumno){
+        const existeEnCurso = await models.PersonaXCurso.findOne({
+          where: {
+            persona_id: alumno.ID,
+            curso_id: cursoId,
+            rol:'A'
+          },
+          include:[{model:models.Persona}]
+        });
+
+        if (!existeEnCurso) {
+          await models.PersonaXCurso.create({
+            persona_id: alumno.ID,
+            curso_id: cursoId,
+            rol: 'A',
+            updated_by: res.locals.usuario.ID
+          });
+
+        }else{
+          const personaexiste = {
+            nombre:nombre,
+            apellido:apellido,
+            legajo:legajo
+          }
+          existentes.push(personaexiste)
+        }
+      }else{
+        const personaNoexiste = {
+          nombre:nombre,
+          apellido:apellido,
+          legajo:legajo
+        }
+        inexistentes.push(personaNoexiste)
+
+      }
+
+    }
+
+    // Elimina el archivo después de procesarlo
+    fs.unlinkSync(filePath);
+
+    // Responder al cliente indicando éxito
+    res.status(200).json({ message: 'Archivo procesado correctamente y registros actualizados ',existentes:existentes,inexistentes:inexistentes});
+  } catch (error) {
+    console.error('Error al procesar el archivo Excel:', error);
+    res.status(500).json({ message: 'Hubo un error al procesar el archivo Excel' });
+  }
+}
+
 module.exports = {
   crear,
   ver,
@@ -496,5 +590,6 @@ module.exports = {
   eliminarEstudiante,
   actualizar,
   eliminarCursos,
-  agregarEstudianteByLegajo
+  agregarEstudianteByLegajo,
+  agregarEstudiantesExcel,
 }

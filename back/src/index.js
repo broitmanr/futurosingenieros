@@ -3,11 +3,13 @@ const { PORT } = require('./const/globalConstant')
 const { rutasAuth, rutasInit } = require('./routes/index.routes')
 // import sequelize from './config/database.js';
 const errorHandler = require('./middlewares/error')
-// import errorHandler from './middlewares/error.js'
-// import cookieParser from 'cookie-parser'
+// import errorHandler from './middlewares/error.js';
+// import cookieParser from 'cookie-parser';
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const { swaggerDocs } = require('./swagger/swagger')
+// const { inicializarArchivosDesdeCarpeta } = require('./controllers/archivo.controller')
+const { set } = require('./mailer/mailer')
 
 const configuracionApi = async (app) => {
   app.use(express.json())
@@ -24,6 +26,13 @@ const configuracionRouter = async (app) => {
   app.use('/api/', rutasInit())
   app.use('/', rutasAuth())
   app.use(errorHandler)
+  /* setTimeout(() => {
+    // Definir el ID de la carpeta y llamar a la función
+    const carpetaId = '1m0G7726_malY8pAMFtMKhMXRIzW2GvMx'; // Usar solo el ID de la carpeta
+    console.log('Llamando a inicializarArchivosDesdeCarpeta...');
+    inicializarArchivosDesdeCarpeta(carpetaId); // Llamar a la función para inicializar archivos
+    console.log('Función inicializarArchivosDesdeCarpeta ejecutada.')
+  }, 5000) */
 }
 
 const init = async () => {
@@ -31,7 +40,7 @@ const init = async () => {
   try {
     // await sequelize.authenticate();
     // sequelize.sync();
-    console.log('Conexión establecida exitosamente. 1')
+    console.log('Conexión establecida exitosamente.')
     app.listen(PORT, () => {
       console.log(`App escuchando en puerto ${PORT}`)
       swaggerDocs(app, PORT)

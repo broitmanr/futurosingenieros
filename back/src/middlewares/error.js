@@ -1,6 +1,7 @@
 const errors = require('../const/error')
 
 module.exports = function (err, req, res, next) {
+  console.error(err) // Loguear el error para depuración
   const response = {
     success: false,
     error: {

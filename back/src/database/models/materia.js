@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    imagen: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
     updated_at: {
       type: DataTypes.DATE,
       allowNull: false,

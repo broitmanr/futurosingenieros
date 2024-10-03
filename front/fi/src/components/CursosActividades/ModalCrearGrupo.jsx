@@ -33,18 +33,18 @@ export const ModalCrearGrupo = ({show, handleClose}) => {
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="legajoIntegranteUno">
-              <Form.Label>Nombre de la instancia</Form.Label>
-              <Form.Control name="legajoEstudiantes[]" onChange={e => onChange(e)} type="text" placeholder="Escriba un nombre" />
+              <Form.Label>Legajo integrante 2</Form.Label>
+              <Form.Control name="legajoEstudiantes[]" onChange={e => onChange(e)} type="text" placeholder="Escriba un legajo" />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="legajoIntegranteDos">
-              <Form.Label>Nombre de la instancia</Form.Label>
-              <Form.Control name="legajoEstudiantes[]" onChange={e => onChange(e)} type="text" placeholder="Escriba un nombre" />
+              <Form.Label>Legajo integrante 3</Form.Label>
+              <Form.Control name="legajoEstudiantes[]" onChange={e => onChange(e)} type="text" placeholder="Escriba un legajo" />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="legajoIntegranteTres">
-              <Form.Label>Nombre de la instancia</Form.Label>
-              <Form.Control name="legajoEstudiantes[]" onChange={e => onChange(e)} type="text" placeholder="Escriba un nombre" />
+              <Form.Label>Legajo integrante 4</Form.Label>
+              <Form.Control name="legajoEstudiantes[]" onChange={e => onChange(e)} type="text" placeholder="Escriba un legajo" />
             </Form.Group>
 
           </Form>

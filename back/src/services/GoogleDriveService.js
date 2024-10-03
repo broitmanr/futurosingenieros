@@ -1,6 +1,7 @@
 const { google } = require('googleapis')
 const { GoogleAuth } = require('google-auth-library')
 const dotenv = require('dotenv')
+const errors = require('../const/error')
 
 dotenv.config()
 
@@ -20,75 +21,134 @@ class GoogleDriveService {
       universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN
     }
     this.applicationName = 'Your Application Name'
-    this.SCOPES = ['https://www.googleapis.com/auth/drive.file']
+    this.SCOPES = ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive']
+    this.driveClient = null;
   }
 
   async getDriveService () {
-    const auth = new GoogleAuth({
+    if (!this.driveClient){
+      console.log("entro por el no")
+      const auth = new GoogleAuth({
       credentials: this.credentials,
       scopes: this.SCOPES
-    })
-    const authClient = await auth.getClient()
-    return google.drive({ version: 'v3', auth: authClient })
-  }
-
-  async createFolder (folderName, parentFolderId) {
-    const drive = await this.getDriveService()
-    const fileMetadata = {
-      name: folderName,
-      mimeType: 'application/vnd.google-apps.folder',
-      parents: parentFolderId ? [parentFolderId] : []
+      })
+      const authClient = await auth.getClient()
+      this.driveClient = google.drive({ version: 'v3', auth: authClient })
     }
-    const folder = await drive.files.create({
-      resource: fileMetadata,
-      fields: 'id'
-    })
-    return folder.data.id
+    return this.driveClient
   }
 
-  async uploadFile (fileStream, fileName, mimeType, folderId) {
-    const drive = await this.getDriveService()
-    const fileMetadata = {
-      name: fileName,
-      parents: [folderId]
+  async createFolder (folderName, parentFolderId, next) {
+    try {
+      const drive = await this.getDriveService()
+      const fileMetadata = {
+        name: folderName,
+        mimeType: 'application/vnd.google-apps.folder',
+        parents: parentFolderId ? [parentFolderId] : []
+      }
+      const folder = await drive.files.create({
+        resource: fileMetadata,
+        fields: 'id'
+      })
+      return folder.data.id
+    } catch (error) {
+      console.error('Error al crear la carpeta en Google Drive:', error)
+      next({ ...errors.InternalServerError, details: 'Error al crear la carpeta en Google Drive - ' + error.message })
     }
-    const media = {
-      mimeType,
-      body: fileStream
+  }
+
+  async uploadFile (fileStream, fileName, mimeType, folderId, next) {
+    try {
+      const drive = await this.getDriveService()
+      const fileMetadata = {
+        name: fileName,
+        parents: [folderId]
+      }
+      const media = {
+        mimeType,
+        body: fileStream
+      }
+      const file = await drive.files.create({
+        resource: fileMetadata,
+        media,
+        fields: 'id, webViewLink'
+      })
+      return file.data
+    } catch (error) {
+      console.error('Error al subir el archivo a Google Drive:', error)
+      next({ ...errors.InternalServerError, details: 'Error al subir el archivo a Google Drive - ' + error.message })
     }
-    const file = await drive.files.create({
-      resource: fileMetadata,
-      media,
-      fields: 'id, webViewLink'
-    })
-    return file.data
   }
 
-  async getFolderByName (parentFolderId, folderName) {
-    const drive = await this.getDriveService()
-    const query = `name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder' and '${parentFolderId}' in parents and trashed = false`
-    const response = await drive.files.list({
-      q: query,
-      fields: 'files(id, name)'
-    })
-    return response.data.files[0]
-  }
-
-  async getFile (fileId) {
-    const drive = await this.getDriveService()
-    const response = await drive.files.get({
-      fileId,
-      alt: 'media'
-    }, { responseType: 'stream' })
-    return response.data
-  }
-
-  async getOrCreateFolder (parentFolderId, folderName) {
-    let folder = await this.getFolderByName(parentFolderId, folderName)
-    if (!folder) {
-      folder = await this.createFolder(folderName, parentFolderId)
+  async getFolderByName (parentFolderId, folderName, next) {
+    try {
+      const drive = await this.getDriveService()
+      const query = `name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder' and '${parentFolderId}' in parents and trashed = false`
+      const response = await drive.files.list({
+        q: query,
+        fields: 'files(id, name)'
+      })
+      return response.data.files[0]
+    } catch (error) {
+      console.error('Error al obtener la carpeta de Google Drive:', error)
+      next({ ...errors.InternalServerError, details: 'Error al obtener la carpeta de Google Drive - ' + error.message })
     }
-    return folder.id
+  }
+
+  async getOrCreateFolder (parentFolderId, folderName, next) {
+    try {
+      let folder = await this.getFolderByName(parentFolderId, folderName, next)
+      if (!folder) {
+        folder = await this.createFolder(folderName, parentFolderId, next)
+      }
+      return folder.id
+    } catch (error) {
+      console.error('Error al obtener o crear la carpeta en Google Drive:', error)
+      next({ ...errors.InternalServerError, details: 'Error al obtener o crear la carpeta en Google Drive - ' + error.message })
+    }
+  }
+
+  async getFile (fileId, next) {
+    try {
+      console.log(`Obteniendo archivo con ID: ${fileId}`)
+      console.time('getDriveService');
+      const drive = await this.getDriveService()
+      console.timeEnd('getDriveService');
+      console.time('response');
+      const response = await drive.files.get({
+        fileId,
+        alt: 'media'
+      }, { responseType: 'stream' })
+      console.timeEnd('response');
+      return response.data
+    } catch (error) {
+      console.error('Error al obtener el archivo de Google Drive:', error)
+      next({ ...errors.InternalServerError, details: 'Error al obtener el archivo de Google Drive - ' + error.message })
+    }
+  }
+
+  extractFileIdFromLink (link) {
+    const regex = /\/d\/(.*?)\//
+    const match = link.match(regex)
+    if (match && match[1]) {
+      return match[1]
+    } else {
+      throw new Error('No se pudo extraer el ID del archivo del enlace')
+    }
+  }
+
+  async listFilesInFolder (folderId, next) {
+    try {
+      const drive = await this.getDriveService() // Asegúrate de obtener el servicio de Google Drive
+      const response = await drive.files.list({
+        q: `'${folderId}' in parents`, // Filtrar por folderId
+        fields: 'files(id, name, webViewLink)'
+      })
+      return response.data.files
+    } catch (error) {
+      console.error('Error al listar archivos en la carpeta:', error)
+      next({ ...errors.InternalServerError, details: 'Error al listar archivos en la carpeta' + error.message })
+    }
   }
 }
 

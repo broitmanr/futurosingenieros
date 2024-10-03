@@ -30,6 +30,7 @@
     "process": "^0.11.10",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
+    "sharp": "^0.33.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^10.0.0",

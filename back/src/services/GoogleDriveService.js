@@ -22,15 +22,20 @@ class GoogleDriveService {
     }
     this.applicationName = 'Your Application Name'
     this.SCOPES = ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive']
+    this.driveClient = null;
   }
 
   async getDriveService () {
-    const auth = new GoogleAuth({
+    if (!this.driveClient){
+      console.log("entro por el no")
+      const auth = new GoogleAuth({
       credentials: this.credentials,
       scopes: this.SCOPES
-    })
-    const authClient = await auth.getClient()
-    return google.drive({ version: 'v3', auth: authClient })
+      })
+      const authClient = await auth.getClient()
+      this.driveClient = google.drive({ version: 'v3', auth: authClient })
+    }
+    return this.driveClient
   }
 
   async createFolder (folderName, parentFolderId, next) {
@@ -106,11 +111,15 @@ class GoogleDriveService {
   async getFile (fileId, next) {
     try {
       console.log(`Obteniendo archivo con ID: ${fileId}`)
+      console.time('getDriveService');
       const drive = await this.getDriveService()
+      console.timeEnd('getDriveService');
+      console.time('response');
       const response = await drive.files.get({
         fileId,
         alt: 'media'
       }, { responseType: 'stream' })
+      console.timeEnd('response');
       return response.data
     } catch (error) {
       console.error('Error al obtener el archivo de Google Drive:', error)

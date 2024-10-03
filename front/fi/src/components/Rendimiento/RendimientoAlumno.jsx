@@ -14,12 +14,21 @@ export const RendimientoAlumno = () => {
           marginTop: '10px'
       }}>
         Catedra: Proyecto Final</h3>
-        <h3 className='catedraProyecto'
+        <div className='containerFaltas'>
+        <h3
         style={{
-          textAlign: 'right',    // Alineado a la derecha
-          color: 'black',       // Color de texto negro
+          textAlign:'right',           // Alineado a la derecha
+          color: 'black',
+          backgroundColor: '#193B70',  // Fondo claro
+          padding: '20px 20px',        // Espacio interno
+          border: '2px solid #4A90E2', // Borde azul
+          borderRadius: '15px',        // Bordes redondeados
+          boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Sombra
+          display: 'inline-block',     // Para ajustar el recuadro al tamaño del texto
+          margin: '10px 0'             // Margen superior e inferior
         }}>
-          Cantidad de Faltas</h3>
+          Cantidad de Inasistencias: 9</h3>
+          </div>
       <div className="table-container">    
         <table className="table">
             <thead>

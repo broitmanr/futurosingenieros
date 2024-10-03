@@ -11,6 +11,7 @@ import axios from 'axios';
 import './Rendimiento.css'
 import { RendimientoAlumno } from './RendimientoAlumno';
 
+
 function Rendimiento() {
     const { id } = useParams(); //Obtiene el id del curso pasado por parámetro
     const { role } = useRole()
@@ -135,7 +136,7 @@ function Rendimiento() {
                     </TabPanel>
                     <TabPanel className='tab-header-text' header="Grupos">
                         <p className="m-0">
-                            Acá va el rendimiento del grupo
+                           
                         </p>
                     </TabPanel>
                     { role === 'D' &&

@@ -14,21 +14,35 @@
 .CatedraProyecto{
     border: 3px solid black;
     font: 1.2em;
+    border: 2px solid #4A90E2; /* Borde del recuadro en color azul */
+    padding: 20px; /* Espacio interno del recuadro */
 
 }
 
-.table-container {
-    width: 90%; /* Ajusta el porcentaje según lo que necesites */
-    max-width: 900px; /* Ancho máximo para evitar que sea demasiado grande */
-    margin: 70px auto 0 auto; /* Márgenes: 50px arriba, auto a los lados, 0 abajo */
-    overflow-x: auto; /* Permite scroll horizontal si es necesario */
+.text-box {
+    border: 2px solid #132438 !important; /* Borde del recuadro en color azul */
+    padding: 20px; /* Espacio interno del recuadro */
+    border-radius: 15px; /* Esquinas redondeadas */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    background-color: #f9f9f9; /* Fondo claro */
+    margin: 20px 0; /* Espaciado alrededor del recuadro */
+    font-family: 'Arial', sans-serif; /* Fuente */
   }
 
+
 .table-container .table{
-    margin: 40px 0; /* Márgenes arriba y abajo */
+    margin: 10px 15; /* Márgenes arriba y abajo */
     background-color: brown;
-    border: 1px solid black; /* Bordes */
+    border: 2px solid black; /* Bordes */
     
+}
+
+.containerFaltas{
+    display: flex;
+    justify-content: flex-end; /* Alinea a la derecha */
+    margin-bottom: 15px; /* Espacio debajo del recuadro */
+    float: 'right'!important; 
+    font: 0.5em !important;           
 }
 
 

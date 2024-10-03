@@ -2,6 +2,9 @@ const errors = require('../const/error')
 const { red, yellow } = require('picocolors')
 const models = require('../database/models/index')
 const generador = require('../services/generadores')
+const {join} = require("path");
+const xlsx = require('xlsx');
+const fs = require('fs');
 
 // Función para crear un curso
 async function crear (req, res, next) {
@@ -485,6 +488,87 @@ async function eliminarCursos (req, res, next) {
   }
 }
 
+
+async function agregarEstudiantesExcel(req, res, next) {
+  try {
+    const cursoId = req.params.id
+    const curso = await models.Curso.findByPk(cursoId)
+    if (!curso) return next({ ...errors.NotFoundError, details: 'No se encontro ningun curso con ese ID, por favor vuelva a intentar.' })
+    // Verificar que el curso pertenece al docente logueado
+    const esDocente = await models.PersonaXCurso.findOne({
+      where: { persona_id: res.locals.usuario.persona_id, curso_id: cursoId, rol: 'D' },
+    })
+
+    if (!esDocente) {
+      return next({ ...errors.UsuarioNoAutorizado, details: 'No tienes permiso para generar el código de vinculación de este curso.' })
+    }
+    if (!req.file) {
+      return next({...errors.CredencialesInvalidas,details:'No se proporcionó ningún excel'})
+    }
+
+     // Ruta del archivo subido
+    const filePath = join(__dirname, '../../uploads/', req.file.filename);
+    console.log("uuuurrñll",filePath)
+    // Leer el archivo Excel
+    const workbook = xlsx.readFile(filePath);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]]; // Primera hoja del Excel
+    const rows = xlsx.utils.sheet_to_json(sheet); // Convertir a JSON las filas
+
+
+    let existentes = []
+    // Procesar cada fila del Excel
+    for (const row of rows) {
+      const legajo = row.Legajo;
+      const nombres = row.Nombres; // Este campo contiene "Apellido, Nombre"
+
+      // Buscar el alumno por legajo
+      let alumno = await models.Persona.findOne({ where: { legajo } });
+
+      // if (!alumno) {
+      //   // Si no existe el alumno, crear la entidad Alumno
+      //   const [apellido, nombre] = nombres.split(',').map(part => part.trim());
+      //   alumno = await models.Persona.create({
+      //     legajo,
+      //     apellido,
+      //     nombre
+      //   });
+      // }
+
+      if (alumno){
+        const existeEnCurso = await models.PersonaXCurso.findOne({
+          where: {
+            persona_id: alumno.ID,
+            curso_id: cursoId,
+            rol:'A'
+          }
+        });
+
+        if (!existeEnCurso) {
+          await models.PersonaXCurso.create({
+            persona_id: alumno.ID,
+            cursoId: cursoId,
+            rol: 'A',
+            updated_by: res.locals.usuario.ID
+          });
+        }else{
+          existentes.push(existeEnCurso.legajo)
+        }
+      }
+
+
+    }
+
+    // Elimina el archivo después de procesarlo
+    fs.unlinkSync(filePath);
+
+    // Responder al cliente indicando éxito
+    res.status(200).json({ message: 'Archivo procesado correctamente y registros actualizados ',existentes:existentes});
+  } catch (error) {
+    console.error('Error al procesar el archivo Excel:', error);
+    res.status(500).json({ message: 'Hubo un error al procesar el archivo Excel' });
+  }
+}
+
 module.exports = {
   crear,
   ver,
@@ -496,5 +580,6 @@ module.exports = {
   eliminarEstudiante,
   actualizar,
   eliminarCursos,
-  agregarEstudianteByLegajo
+  agregarEstudianteByLegajo,
+  agregarEstudiantesExcel,
 }

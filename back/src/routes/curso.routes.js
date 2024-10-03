@@ -3,6 +3,7 @@ const cursoController = require('../controllers/curso.controller')
 const validate = require('../middlewares/validate')
 const cursoScheme = require('../middlewares/schemes/curso.scheme')
 const checkRole = require('../middlewares/checkRole')
+const {uploadExcel} = require('../middlewares/multerConfig')
 const router = Router()
 
 router.post('/', validate(cursoScheme.cursoBase), checkRole.checkRoleDocente, cursoController.crear)
@@ -17,6 +18,7 @@ router.post('/vincular-estudiante', validate(cursoScheme.vincularEstudiante), ch
 // Rutas para gestion múltiples estudiantes a un curso
 router.post('/:id/estudiante', checkRole.checkRoleDocente, cursoController.agregarEstudianteByLegajo)
 router.post('/:id/estudiantes', validate(cursoScheme.agregarEstudiantes), checkRole.checkRoleDocente, cursoController.agregarEstudiantes)
+router.post('/:id/estudiantesExcel', checkRole.checkRoleDocente,uploadExcel.single('excel'), cursoController.agregarEstudiantesExcel)
 router.delete('/:id/estudiantes', validate(cursoScheme.eliminarEstudiantes), checkRole.checkRoleDocente, cursoController.eliminarEstudiante)
 
 router.get('/:id/miembros', validate(cursoScheme.verMiembrosCurso), checkRole.checkRole('D', 'A'), cursoController.verMiembrosCurso)

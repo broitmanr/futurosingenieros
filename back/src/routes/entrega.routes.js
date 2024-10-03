@@ -6,7 +6,7 @@ const router = Router()
 
 router.post('/',
   checkRole.checkRoleEstudiante,
-  uploadPDFs.single('pdf'),
+  uploadPDFs.array('pdfs', 5), // Permitir hasta 5 archivos PDF
   entregaController.crearEntrega
 )
 

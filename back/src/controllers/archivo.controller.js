@@ -88,8 +88,8 @@ const obtenerImagenByNombre = async (req, res, next) => {
 
     // Procesar el fileStream con sharp
     const sharpStream = sharp()
-        .resize({ width: 800 }) // Ajusta el ancho según sea necesario
-        .jpeg({ quality: 20 }) // Cambia la calidad según sea necesario (0-100)
+        .resize({ width: 800 })
+        .jpeg({ quality: 30 })
 
 
     // Pipe del fileStream a sharp y luego al PassThrough
@@ -113,6 +113,33 @@ const obtenerImagenByNombre = async (req, res, next) => {
       next({ ...errors.InternalServerError, details: 'Error al obtener el archivo: ' + err.message });
     });
 
+  } catch (error) {
+    console.error('Error al obtener el archivo:', error)
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener el archivo: ' + error.message
+    })
+  }
+}
+
+const obtenerPDF = async (req, res, next) => {
+  const { id } = req.params
+  try {
+    const archivo = await models.Archivo.findOne({
+      where: { ID: id },
+      attributes: ['ID', 'nombre', 'referencia']
+    })
+
+    if (!archivo) {
+      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
+    }
+
+    const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
+     const fileStream = await googleDriveService.getFile(fileId)
+
+    res.setHeader('Content-Type', 'application/pdf')
+    res.setHeader('Content-Disposition', `inline; filename=${archivo.nombre}`)
+    fileStream.pipe(res)
   } catch (error) {
     console.error('Error al obtener el archivo:', error)
     next({

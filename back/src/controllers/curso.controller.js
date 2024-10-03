@@ -86,7 +86,23 @@ async function ver (req, res, next) {
       return next({ ...errors.NotFoundError, details: 'Curso no encontrado' })
     }
 
-    res.status(200).json(cursoVer)
+    const instancias = await models.InstanciaEvaluativa.findAll({
+      where: { curso_id: cursoVer.ID }, // Ajusta el nombre del campo según tu modelo
+      attributes: ['porcentaje_ponderacion'],
+    });
+
+    // Sumar los porcentajes de ponderación de las instancias evaluativas
+    const totalPonderacion = instancias.reduce((acc, instancia) => {
+      return acc + instancia.porcentaje_ponderacion;
+    }, 0);
+
+    // Añadir el total de ponderación al objeto de respuesta
+    const response = {
+      ...cursoVer.toJSON(),
+      totalPonderacion
+    };
+
+    res.status(200).json(response)
   } catch (error) {
     console.error(red('Error al obtener el curso:', error))
     next({
@@ -310,15 +326,45 @@ async function verMiembrosCurso (req, res, next) {
 
     const participantes = await models.PersonaXCurso.findAll({
       where: whereClause,
-      include: [{ model: models.Persona, attributes: ['nombre', 'apellido', 'legajo'] }]
+      include: [
+          {
+            model: models.Persona,
+            attributes: ['nombre', 'apellido', 'legajo'],
+            include:[
+              {
+                model: models.Usuario,
+                attributes: ['mail']
+              },
+              {
+                model: models.InasistenciasPorCurso, // Incluir la vista aquí
+                attributes: ['total_inasistencias'], // Atributos que necesitas de la vista
+                required: false, // Permitir que las personas sin inasistencias aún sean incluidas
+                where: { curso_id: id } // Filtrar por curso_id
+              }
+            ]
+          }
+      ]
     })
 
-    const formatoParticipantes = participantes.map(participante => ({
-      ID: participante.ID,
-      rol: participante.rol,
-      persona_id: participante.persona_id,
-      Persona: participante.Persona
-    }))
+    const formatoParticipantes = participantes.map(participante => {
+      const persona = participante.Persona.get({ plain: true });
+      const totalInasistencias = persona.InasistenciasPorCursos.length > 0 ?
+          persona.InasistenciasPorCursos[0].total_inasistencias : 0; // Total inasistencias o 0 si no hay
+
+      return {
+        ID: participante.ID,
+        rol: participante.rol,
+        persona_id: participante.persona_id,
+        Persona: {
+          nombre: persona.nombre,
+          apellido: persona.apellido,
+          legajo: persona.legajo,
+          mail: persona.Usuario ? persona.Usuario.mail : null, // Maneja el caso donde Usuario es null
+          total_inasistencias: totalInasistencias // Asigna el total de inasistencias
+        }
+      };
+    });
+
 
     res.status(200).json(formatoParticipantes)
   } catch (error) {

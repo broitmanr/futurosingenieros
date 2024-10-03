@@ -34,16 +34,17 @@ const uploadPDFs = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // Límite de tamaño de archivo de 10MB
   fileFilter: (req, file, cb) => {
-    if (!file) {
-      return cb(new Error('No se ha proporcionado ningún archivo')) // next
+    const filetypes = /pdf/
+    const mimetype = filetypes.test(file.mimetype)
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase())
+
+    if (mimetype && extname) {
+      return cb(null, true)
+    } else {
+      cb(new Error('Solo se permiten archivos PDF'))
     }
-    if (file.mimetype !== 'application/pdf') {
-      return cb(new Error('Solo se permiten archivos PDF')) // next
-    }
-    cb(null, true)
   }
 })
-
 
 const uploadExcel = multer({
   storage,
@@ -58,8 +59,6 @@ const uploadExcel = multer({
     cb(null, true)
   }
 })
-
-
 
 module.exports = {
   uploadImagenes,

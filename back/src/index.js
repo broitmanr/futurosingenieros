@@ -8,6 +8,7 @@ const errorHandler = require('./middlewares/error')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const { swaggerDocs } = require('./swagger/swagger')
+const manageTempFiles = require('./middlewares/archivosTemporales')
 // const { inicializarArchivosDesdeCarpeta } = require('./controllers/archivo.controller')
 const { set } = require('./mailer/mailer')
 
@@ -18,6 +19,7 @@ const configuracionApi = async (app) => {
     origin: process.env.RUTA_FRONT, // La URL del frontend
     credentials: true // Esto permite que las cookies se envíen y reciban
   }))
+  app.use(manageTempFiles) // Registrar y limpiar archivos temporales
   app.use(errorHandler)
 }
 

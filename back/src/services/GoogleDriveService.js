@@ -33,7 +33,7 @@ class GoogleDriveService {
     return google.drive({ version: 'v3', auth: authClient })
   }
 
-  async createFolder (folderName, parentFolderId) {
+  async createFolder (folderName, parentFolderId, next) {
     try {
       const drive = await this.getDriveService()
       const fileMetadata = {
@@ -48,11 +48,11 @@ class GoogleDriveService {
       return folder.data.id
     } catch (error) {
       console.error('Error al crear la carpeta en Google Drive:', error)
-      throw { ...errors.InternalServerError, details: 'Error al crear la carpeta en Google Drive' }
+      next({ ...errors.InternalServerError, details: 'Error al crear la carpeta en Google Drive - ' + error.message })
     }
   }
 
-  async uploadFile (fileStream, fileName, mimeType, folderId) {
+  async uploadFile (fileStream, fileName, mimeType, folderId, next) {
     try {
       const drive = await this.getDriveService()
       const fileMetadata = {
@@ -71,11 +71,11 @@ class GoogleDriveService {
       return file.data
     } catch (error) {
       console.error('Error al subir el archivo a Google Drive:', error)
-      throw { ...errors.InternalServerError, details: 'Error al subir el archivo a Google Drive' }
+      next({ ...errors.InternalServerError, details: 'Error al subir el archivo a Google Drive - ' + error.message })
     }
   }
 
-  async getFolderByName (parentFolderId, folderName) {
+  async getFolderByName (parentFolderId, folderName, next) {
     try {
       const drive = await this.getDriveService()
       const query = `name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder' and '${parentFolderId}' in parents and trashed = false`
@@ -86,24 +86,24 @@ class GoogleDriveService {
       return response.data.files[0]
     } catch (error) {
       console.error('Error al obtener la carpeta de Google Drive:', error)
-      throw { ...errors.InternalServerError, details: 'Error al obtener la carpeta de Google Drive' }
+      next({ ...errors.InternalServerError, details: 'Error al obtener la carpeta de Google Drive - ' + error.message })
     }
   }
 
-  async getOrCreateFolder (parentFolderId, folderName) {
+  async getOrCreateFolder (parentFolderId, folderName, next) {
     try {
-      let folder = await this.getFolderByName(parentFolderId, folderName)
+      let folder = await this.getFolderByName(parentFolderId, folderName, next)
       if (!folder) {
-        folder = await this.createFolder(folderName, parentFolderId)
+        folder = await this.createFolder(folderName, parentFolderId, next)
       }
       return folder.id
     } catch (error) {
       console.error('Error al obtener o crear la carpeta en Google Drive:', error)
-      throw { ...errors.InternalServerError, details: 'Error al obtener o crear la carpeta en Google Drive' }
+      next({ ...errors.InternalServerError, details: 'Error al obtener o crear la carpeta en Google Drive - ' + error.message })
     }
   }
 
-  async getFile (fileId) {
+  async getFile (fileId, next) {
     try {
       console.log(`Obteniendo archivo con ID: ${fileId}`)
       const drive = await this.getDriveService()
@@ -111,11 +111,10 @@ class GoogleDriveService {
         fileId,
         alt: 'media'
       }, { responseType: 'stream' })
-      console.log(`Archivo obtenido exitosamente: ${fileId}`)
       return response.data
     } catch (error) {
       console.error('Error al obtener el archivo de Google Drive:', error)
-      throw { ...errors.InternalServerError, details: 'Error al obtener el archivo de Google Drive' }
+      next({ ...errors.InternalServerError, details: 'Error al obtener el archivo de Google Drive - ' + error.message })
     }
   }
 
@@ -126,6 +125,20 @@ class GoogleDriveService {
       return match[1]
     } else {
       throw new Error('No se pudo extraer el ID del archivo del enlace')
+    }
+  }
+
+  async listFilesInFolder (folderId, next) {
+    try {
+      const drive = await this.getDriveService() // Asegúrate de obtener el servicio de Google Drive
+      const response = await drive.files.list({
+        q: `'${folderId}' in parents`, // Filtrar por folderId
+        fields: 'files(id, name, webViewLink)'
+      })
+      return response.data.files
+    } catch (error) {
+      console.error('Error al listar archivos en la carpeta:', error)
+      next({ ...errors.InternalServerError, details: 'Error al listar archivos en la carpeta' + error.message })
     }
   }
 }

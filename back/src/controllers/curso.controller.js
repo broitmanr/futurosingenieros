@@ -507,32 +507,26 @@ async function agregarEstudiantesExcel(req, res, next) {
     }
 
      // Ruta del archivo subido
-    const filePath = join(__dirname, '../../uploads/', req.file.filename);
-    console.log("uuuurrñll",filePath)
+    // const filePath = join(__dirname, '../../uploads/', req.file.filename);
+    console.log("uuuurrñll",req.file.path)
+    const filePath=req.file.path
     // Leer el archivo Excel
     const workbook = xlsx.readFile(filePath);
     const sheet = workbook.Sheets[workbook.SheetNames[0]]; // Primera hoja del Excel
     const rows = xlsx.utils.sheet_to_json(sheet); // Convertir a JSON las filas
 
-
+    let inexistentes = []
     let existentes = []
     // Procesar cada fila del Excel
     for (const row of rows) {
       const legajo = row.Legajo;
       const nombres = row.Nombres; // Este campo contiene "Apellido, Nombre"
-
+      console.log(yellow(`Excel legajo: ${legajo} -- ${nombres} `));
       // Buscar el alumno por legajo
       let alumno = await models.Persona.findOne({ where: { legajo } });
 
-      // if (!alumno) {
-      //   // Si no existe el alumno, crear la entidad Alumno
-      //   const [apellido, nombre] = nombres.split(',').map(part => part.trim());
-      //   alumno = await models.Persona.create({
-      //     legajo,
-      //     apellido,
-      //     nombre
-      //   });
-      // }
+      const [apellido, nombre] = nombres.split(',').map(part => part.trim());
+
 
       if (alumno){
         const existeEnCurso = await models.PersonaXCurso.findOne({
@@ -540,21 +534,35 @@ async function agregarEstudiantesExcel(req, res, next) {
             persona_id: alumno.ID,
             curso_id: cursoId,
             rol:'A'
-          }
+          },
+          include:[{model:models.Persona}]
         });
 
         if (!existeEnCurso) {
           await models.PersonaXCurso.create({
             persona_id: alumno.ID,
-            cursoId: cursoId,
+            curso_id: cursoId,
             rol: 'A',
             updated_by: res.locals.usuario.ID
           });
-        }else{
-          existentes.push(existeEnCurso.legajo)
-        }
-      }
 
+        }else{
+          const personaexiste = {
+            nombre:nombre,
+            apellido:apellido,
+            legajo:legajo
+          }
+          existentes.push(personaexiste)
+        }
+      }else{
+        const personaNoexiste = {
+          nombre:nombre,
+          apellido:apellido,
+          legajo:legajo
+        }
+        inexistentes.push(personaNoexiste)
+
+      }
 
     }
 
@@ -562,7 +570,7 @@ async function agregarEstudiantesExcel(req, res, next) {
     fs.unlinkSync(filePath);
 
     // Responder al cliente indicando éxito
-    res.status(200).json({ message: 'Archivo procesado correctamente y registros actualizados ',existentes:existentes});
+    res.status(200).json({ message: 'Archivo procesado correctamente y registros actualizados ',existentes:existentes,inexistentes:inexistentes});
   } catch (error) {
     console.error('Error al procesar el archivo Excel:', error);
     res.status(500).json({ message: 'Hubo un error al procesar el archivo Excel' });

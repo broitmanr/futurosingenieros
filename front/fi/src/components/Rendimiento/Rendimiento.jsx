@@ -17,6 +17,7 @@ function Rendimiento() {
     const { id } = useParams(); //Obtiene el id del curso pasado por parámetro
     const { role } = useRole()
     const [legajo, setLegajo] = useState(''); //Estado para el legajo
+    const [total_inasistencias, SetTotalInasistencias] = useState('')
     const [alumnos, setAlumnos] = useState([]); //Estado para el listado de alumnos
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -42,6 +43,22 @@ function Rendimiento() {
             console.error('Error al obtener los alumnos', err)
             setAlumnos(dataAlumnos)
             setLoading(false)
+        try{
+          const response = await axios.get(`/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
+          console.log(response.data)
+          if(response.data) {
+            const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
+            const alumnosNombreCompleto = soloAlumnos.map(alumno => ({
+              ...alumno,
+              nombreCompleto: `${alumno.Persona.apellido}, ${alumno.Persona.nombre}`,
+              inasistencias: alumno.Persona.total_inasistencias
+            }))
+            setAlumnos(alumnosNombreCompleto)
+            setLoading(false)
+          }
+        } catch (err) {
+          console.error('Error al obtener los alumnos', err)
+          setLoading(false)
         }
     }
     useEffect(() => {
@@ -137,6 +154,43 @@ function Rendimiento() {
                     </TabPanel>
                     <TabPanel className='tab-header-text' header="Grupos">
                         <RendimientoGrupo />
+                        <p className="m-0">
+                           
+                        </p>
+                    </TabPanel>
+                    { role === 'D' &&
+                    <TabPanel className='tab-header-text' header="Asistencia">
+                        <DataTable
+                            value={alumnos}
+                            paginator rows={10}
+                            dataKey="ID"
+                            filters={filters}
+                            globalFilterFields={['Persona.legajo', 'Persona.nombre', 'Persona.apellido']}
+                            header={header}
+                            loading={loading}
+                            emptyMessage="Lo siento, no se encontraron alumnos."
+                            className='custom-datatable-asistencia'
+                            editMode="cell"
+                        >
+                        <Column
+                            className='columns-data-asistencia'
+                            field="Persona.legajo"
+                            header="LEGAJO"
+                        />
+                        <Column
+                            className='columns-data-asistencia'
+                            field="nombreCompleto"
+                            header="NOMBRE"
+                            sortable
+                        />
+                        <Column
+                            className='columns-data-asistencia'
+                            field="inasistencias"
+                            header="INASISTENCIAS"
+                            body={(rowData) => rowData.inasistencias}
+                            editor={(options) => cellEditor(options)} onCellEditComplete={onCellEditComplete}
+                        />
+                        </DataTable>
                     </TabPanel>
                     {role === 'D' &&
                         <TabPanel className='tab-header-text' header="Asistencia">

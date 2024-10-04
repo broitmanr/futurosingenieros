@@ -46,3 +46,78 @@
     border: 0.2rem solid #F2F6FC;
     border-radius: 0.3rem;
 }
+
+/* Estilos de SignOut */
+.register-container{
+    min-height: 70vh;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.title-sign-up{
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.p-stepper .p-stepper-header.p-highlight .p-stepper-number {
+    background-color: #1A2035;
+}
+
+.p-stepper .p-stepper-separator{
+    background-color: #608ad1;
+}
+
+.form-control{
+    border: 0.1rem solid #608ad1 !important;
+}
+
+.form-control-rol-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* Alinea verticalmente los elementos */
+    justify-content: center; /* Espacio entre el label y los checkboxes */
+    margin-top: 1rem; /* Espacio superior para evitar que esté pegado */
+}
+
+.form-control-rol{
+    display: flex;
+    flex-direction: row;
+    margin-top: 2.4rem;
+}
+
+.radio-rol-label {
+    margin-left: 1rem;
+    margin-right: 14rem;
+}
+
+.radio-rol {
+    margin-left: 1rem;
+}
+
+.btns-sign-out{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin: 8rem;
+}
+
+.btn-cancel-sign-out{
+    background-color: #ccdcf1 !important;
+    color: #1A2035 !important;
+}
+
+.btn-confirm-sign-out{
+    background-color: #1A2035 !important;
+    color: #fff !important;
+}
+
+.second-register{
+    justify-content: center;
+    align-items: center;
+}

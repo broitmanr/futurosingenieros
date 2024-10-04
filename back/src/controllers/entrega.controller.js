@@ -8,7 +8,6 @@ const pico = require('picocolors')
 
 const googleDriveService = new GoogleDriveService()
 
-// Función para crear una entrega
 const crearEntrega = async (req, res, next) => {
   const files = req.files
   console.log(pico.blue(`Iniciando creación de entrega con ${files.length} archivos`))
@@ -54,34 +53,33 @@ const crearEntrega = async (req, res, next) => {
       grupoId = personaXgrupo.grupo_ID
     }
 
-    const verificarEntregaExistente = async (entregaPactadaId, personaId) => {
-      return await models.Entrega.findOne({
-        where: {
-          entregaPactada_ID: entregaPactadaId,
-          grupo_ID: grupoId,
-          persona_id: personaId
-        }
-      })
-    }
-
-    const entregaExistente = await verificarEntregaExistente(entregaPactadaId, res.locals.usuario.persona_id)
-    if (entregaExistente) {
-      return next({ ...errors.ConflictError, details: 'Ya existe una entrega con los mismos datos' })
-    }
-    console.log(pico.magenta('Creando nueva entrega en la base de datos'))
-    const entrega = await handleTransaction(async (transaction) => {
-      const nuevaEntrega = await models.Entrega.create({
-        fecha: Date.now(),
-        nota: null,
-        grupo_ID: grupoId ?? null,
-        persona_id: res.locals.usuario.persona_id,
+    // Verificar si ya existe una entrega
+    let entrega = await models.Entrega.findOne({
+      where: {
         entregaPactada_ID: entregaPactadaId,
-        updated_by: res.locals.usuario.ID
-      }, { transaction })
+        grupo_ID: grupoId,
+        persona_id: res.locals.usuario.persona_id
+      }
+    })
 
-      console.log(pico.green(`Nueva entrega creada: ${JSON.stringify(nuevaEntrega, null, 2)}`))
-      return nuevaEntrega
-    }, next)
+    if (entrega) {
+      console.log(pico.yellow(`Entrega ya existente encontrada con ID: ${entrega.ID}`))
+    } else {
+      console.log(pico.magenta('Creando nueva entrega en la base de datos'))
+      entrega = await handleTransaction(async (transaction) => {
+        const nuevaEntrega = await models.Entrega.create({
+          fecha: Date.now(),
+          nota: null,
+          grupo_ID: grupoId ?? null,
+          persona_id: res.locals.usuario.persona_id,
+          entregaPactada_ID: entregaPactadaId,
+          updated_by: res.locals.usuario.ID
+        }, { transaction })
+
+        console.log(pico.green(`Nueva entrega creada: ${JSON.stringify(nuevaEntrega, null, 2)}`))
+        return nuevaEntrega
+      }, next)
+    }
 
     console.log(pico.blue('Obteniendo o creando carpetas en Google Drive'))
     const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID
@@ -91,52 +89,7 @@ const crearEntrega = async (req, res, next) => {
     const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(entregasFolderId, entregaPactadaId.toString())
     console.log(pico.green(`Folder ID de EntregaPactada: ${entregaPactadaFolderId}`))
 
-    const archivos = []
-    for (const file of files) {
-      console.log(pico.magenta(`Procesando archivo: ${file.originalname}`))
-      const mimeType = file.mimetype
-      const filePath = file.path
-
-      // Leer el archivo PDF y comprimir
-      const pdfBytes = fs.readFileSync(filePath)
-      const pdfDoc = await PDFDocument.load(pdfBytes)
-      const compressedPdfBytes = await pdfDoc.save({ useObjectStreams: false })
-
-      // Guardar el archivo comprimido temporalmente
-      const compressedFilePath = `${filePath}-compressed.pdf`
-      fs.writeFileSync(compressedFilePath, compressedPdfBytes)
-
-      // Registrar el archivo comprimido temporal
-      req.tempFiles.push(compressedFilePath)
-
-      // Crear el registro del archivo en la base de datos para obtener su ID
-      const archivo = await models.Archivo.create({
-        nombre: '', // Nombre temporal, se actualizará después
-        referencia: '',
-        extension: file.mimetype.split('/')[1],
-        entrega_id: entrega.ID
-      })
-
-      // Cambiar el nombre del archivo al ID del archivo.pdf
-      const fileName = `${archivo.ID}.pdf`
-      console.log(`Nombre del archivo: ${fileName}`)
-
-      const fileStream = fs.createReadStream(compressedFilePath)
-
-      console.log(pico.blue(`Subiendo archivo a Google Drive: ${fileName}`))
-      const { file: driveFile, folder: driveFolder } = await googleDriveService.uploadFile(fileStream, fileName, mimeType, entregaPactadaFolderId)
-
-      console.log(pico.green(`Archivo subido. Drive File: ${JSON.stringify(driveFile, null, 2)}`))
-      console.log(pico.green(`Carpeta contenedora: ${JSON.stringify(driveFolder, null, 2)}`))
-
-      // Actualizar el registro del archivo con el nombre y la referencia correctos
-      await archivo.update({
-        nombre: fileName,
-        referencia: driveFile.webViewLink
-      })
-
-      archivos.push(archivo)
-    }
+    const archivos = await asociarArchivos(files, entrega, entregaPactadaFolderId, req)
 
     console.log(pico.blue(`Entrega creada exitosamente con ${archivos.length} archivos`))
     res.status(201).json({
@@ -158,9 +111,69 @@ const crearEntrega = async (req, res, next) => {
     }
   }
 }
+const asociarArchivos = async (files, entrega, entregaPactadaFolderId, req, next) => {
+  const archivos = []
+  if (!files || !files.length) {
+    console.warn(pico.yellow('Advertencia: No se encontraron archivos para subir'))
+    return next({ ...errors.BadRequestError, details: 'No se encontraron archivos para asociar' })
+  } else if (files.length >= 1) {
+    const esEntregaPactadaIdValido = await models.EntregaPactada.findByPk(entrega.entregaPactada_ID)
+    if (!esEntregaPactadaIdValido) {
+      console.warn(pico.yellow('Advertencia: El ID de la entrega pactada no es válido'))
+      return next({ ...errors.NotFoundError, details: 'El ID de la entrega pactada no es válido' })
+    } else {
+      for (const file of files) {
+        console.log(pico.magenta(`Procesando archivo: ${file.originalname}`))
+        const mimeType = file.mimetype
+        const filePath = file.path
+
+        // Leer el archivo PDF y comprimir
+        const pdfBytes = fs.readFileSync(filePath)
+        const pdfDoc = await PDFDocument.load(pdfBytes)
+        const compressedPdfBytes = await pdfDoc.save({ useObjectStreams: false })
+
+        // Guardar el archivo comprimido temporalmente
+        const compressedFilePath = `${filePath}-compressed.pdf`
+        fs.writeFileSync(compressedFilePath, compressedPdfBytes)
+
+        // Registrar el archivo comprimido temporal
+        req.tempFiles.push(compressedFilePath)
+
+        // Crear el registro del archivo en la base de datos para obtener su ID
+        const archivo = await models.Archivo.create({
+          nombre: '', // Nombre temporal, se actualizará después
+          referencia: '',
+          extension: file.mimetype.split('/')[1],
+          entrega_id: entrega.ID
+        })
+
+        // Cambiar el nombre del archivo al ID del archivo.pdf
+        const fileName = `${archivo.ID}.pdf`
+        console.log(`Nombre del archivo: ${fileName}`)
+
+        const fileStream = fs.createReadStream(compressedFilePath)
+
+        console.log(pico.blue(`Subiendo archivo a Google Drive: ${fileName}`))
+        const { file: driveFile, folder: driveFolder } = await googleDriveService.uploadFile(fileStream, fileName, mimeType, entregaPactadaFolderId)
+
+        console.log(pico.green(`Archivo subido. Drive File: ${JSON.stringify(driveFile, null, 2)}`))
+        console.log(pico.green(`Carpeta contenedora: ${JSON.stringify(driveFolder, null, 2)}`))
+
+        // Actualizar el registro del archivo con el nombre y la referencia correctos
+        await archivo.update({
+          nombre: fileName,
+          referencia: driveFile.webViewLink
+        })
+
+        archivos.push(archivo)
+      }
+      return archivos
+    }
+  }
+}
 
 // Un docente puede listar las entregas
-async function listarEntregasDocente(req, res, next) {
+async function listarEntregasDocente (req, res, next) {
   const { grupoId } = req.params
 
   try {
@@ -189,7 +202,7 @@ async function listarEntregasDocente(req, res, next) {
 }
 
 // Función para actualizar una entrega
-async function actualizar(req, res, next) {
+async function actualizar (req, res, next) {
   const { id } = req.params
   const { fecha, nota, grupoId, personaId } = req.body
 
@@ -202,7 +215,7 @@ async function actualizar(req, res, next) {
       })
 
       if (!entrega) {
-        console.warn(yellow(`Advertencia: Entrega con ID ${id} no encontrada.`))
+        console.warn(pico.yellow(`Advertencia: Entrega con ID ${id} no encontrada.`))
         await transaction.rollback()
         return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
       }
@@ -218,13 +231,13 @@ async function actualizar(req, res, next) {
       res.status(200).json(entrega)
     }, next)
   } catch (error) {
-    console.error(red('Error al actualizar la entrega:', error))
+    console.error(pico.red('Error al actualizar la entrega:', error))
     next(error) // Pasa el error al middleware de errores
   }
 }
 
 // Función para eliminar una entrega
-async function eliminar(req, res, next) {
+async function eliminar (req, res, next) {
   const { id } = req.params
 
   const entregaEliminada = await handleTransaction(async (transaction) => {
@@ -234,7 +247,7 @@ async function eliminar(req, res, next) {
     })
 
     if (!entrega) {
-      console.warn(yellow(`Advertencia: Entrega con ID ${id} no encontrada.`))
+      console.warn(pico.yellow(`Advertencia: Entrega con ID ${id} no encontrada.`))
       await transaction.rollback()
       return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
     }
@@ -281,133 +294,39 @@ const obtenerArchivo = async (req, res, next) => {
     })
   }
 }
-/* const asociarArchivoAEntrega = async (req, res, next) => {
-    const file = req.file
-    const { entregaId } = req.params
-    const { entregaPactadaId } = req.body
 
-    try {
-      let entrega = await models.Entrega.findByPk(entregaId)
+// Función para calificar una entrega
+const calificarEntrega = async (req, res, next) => {
+  const { idEntrega } = req.params
+  const { nota } = req.body
 
-      if (!entrega) {
-        console.warn(yellow(`Advertencia: Entrega con ID ${entregaId} no encontrada. Creando nueva entrega.`))
+  try {
+    const entrega = await models.Entrega.findByPk(idEntrega)
 
-        const entregaPactada = await models.EntregaPactada.findByPk(entregaPactadaId, {
-          include: [
-            {
-              model: models.InstanciaEvaluativa,
-              attributes: ['grupo', 'curso_id']
-            }
-          ]
-        })
-
-        if (!entregaPactada) {
-          return next({ ...errors.NotFoundError, details: 'EntregaPactada no encontrada' })
-        }
-
-        const entregaGrupal = entregaPactada.InstanciaEvaluativa.grupo
-        let grupoId = null
-        if (entregaGrupal) {
-          const personaXgrupo = await models.PersonaXGrupo.findOne({
-            where: {
-              persona_id: res.locals.usuario.persona_id
-            },
-            include: [
-              {
-                model: models.Grupo,
-                where: {
-                  curso_id: entregaPactada.InstanciaEvaluativa.curso_id
-                }
-              }
-            ]
-          })
-          if (!personaXgrupo) {
-            return next({ ...errors.NotFoundError, details: 'No se encontro grupo para la persona y la entrega es grupal' })
-          }
-          grupoId = personaXgrupo.grupo_ID
-        }
-
-        const entregaExistente = await models.Entrega.findOne({
-          where: {
-            entregaPactada_ID: entregaPactadaId,
-            grupo_ID: grupoId,
-            persona_id: res.locals.usuario.persona_id
-          }
-        })
-
-        if (entregaExistente) {
-          return next({ ...errors.ConflictError, details: 'Ya existe una entrega con los mismos datos' })
-        }
-
-        entrega = await handleTransaction(async (transaction) => {
-          const nuevaEntrega = await models.Entrega.create({
-            fecha: Date.now(),
-            nota: null,
-            grupo_ID: grupoId ?? null,
-            persona_id: res.locals.usuario.persona_id,
-            entregaPactada_ID: entregaPactadaId,
-            updated_by: res.locals.usuario.ID
-          }, { transaction })
-
-          return nuevaEntrega
-        }, next)
-      }
-
-      const entregaPactadaNombre = entregaPactadaId // Obtenemos el nombre de EntregaPactada
-      const usuarioId = res.locals.usuario.ID // ID del usuario
-
-      const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID // ID de la carpeta raíz
-
-      // Obtenemos la carpeta del usuario y la entrega pactada, si no existe la creamos
-      const usuarioFolderId = await googleDriveService.getOrCreateFolder(folderId, usuarioId.toString())
-      const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(usuarioFolderId, entregaPactadaNombre)
-      const mimeType = file.mimetype
-      console.log(pico.bgYellow(`Tipo de archivo: ${file.mimetype}`))
-      // Crear el registro del archivo en la base de datos para obtener su ID
-      const archivo = await models.Archivo.create({
-        nombre: '', // Nombre temporal, se actualizará después
-        referencia: '',
-        extension: file.mimetype.split('/')[1],
-        entrega_id: entrega.ID
-      })
-
-      // Cambiar el nombre del archivo al ID del archivo.pdf
-      const fileName = `${archivo.ID}.pdf`
-      console.log(`Nombre del archivo: ${fileName}`)
-
-      const fileStream = fs.createReadStream(file.path)
-      const driveFile = await googleDriveService.uploadFile(fileStream, fileName, mimeType, entregaPactadaFolderId)
-
-      // Actualizar el registro del archivo con el nombre y la referencia correctos
-      await archivo.update({
-        nombre: fileName,
-        referencia: driveFile.webViewLink
-      })
-
-      res.status(201).json({
-        message: 'Archivo asociado exitosamente',
-        entrega,
-        archivo
-      })
-    } catch (error) {
-      console.error('Error al asociar el archivo a la entrega:', error)
-      next({ ...errors.InternalServerError, details: 'No se pudo asociar el archivo -' + error.message })
-    } finally {
-      // Eliminar el archivo temporal
-      if (file && file.path) {
-        fs.unlink(file.path, (err) => {
-          if (err) {
-            console.error(red('Error al eliminar el archivo temporal:', err))
-          } else {
-            console.log(yellow(`Archivo temporal ${file.path} eliminado`))
-          }
-        })
-      }
+    if (!entrega) {
+      console.warn(pico.yellow(`Advertencia: Entrega con ID ${idEntrega} no encontrada.`))
+      return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
     }
+
+    entrega.nota = nota
+    entrega.updated_by = res.locals.usuario.ID
+
+    await entrega.save()
+
+    res.status(200).json(entrega)
+  } catch (error) {
+    console.error(pico.red('Error al calificar la entrega:', error))
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al calificar la entrega: ' + error.message
+    })
   }
-  */
+}
+
 module.exports = {
   listarEntregasDocente,
   crearEntrega,
-  obtenerArchivo
+  asociarArchivos,
+  obtenerArchivo,
+  calificarEntrega
 }

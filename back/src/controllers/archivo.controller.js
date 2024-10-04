@@ -63,10 +63,10 @@ const inicializarArchivosDesdeCarpeta = async (carpetaId) => {
 
 const obtenerImagenByNombre = async (req, res, next) => {
   const { nombre } = req.params
-  const nombrePng = nombre + '.png';
+  const nombrePng = nombre + '.png'
   try {
     const archivo = await models.Archivo.findOne({
-      where: { nombre:nombrePng },
+      where: { nombre: nombrePng },
       attributes: ['ID', 'nombre', 'referencia']
     })
 
@@ -84,35 +84,33 @@ const obtenerImagenByNombre = async (req, res, next) => {
     const fileStream = await googleDriveService.getFile(fileId)
 
     // Crear un PassThrough stream
-    const passThroughStream = new PassThrough();
+    const passThroughStream = new PassThrough()
 
     // Procesar el fileStream con sharp
     const sharpStream = sharp()
-        .resize({ width: 800 })
-        .jpeg({ quality: 30 })
-
+      .resize({ width: 800 })
+      .jpeg({ quality: 30 })
 
     // Pipe del fileStream a sharp y luego al PassThrough
-    fileStream.pipe(sharpStream).pipe(passThroughStream);
+    fileStream.pipe(sharpStream).pipe(passThroughStream)
 
     // Configurar las cabeceras de la respuesta
-    res.setHeader('Content-Type', 'image/jpeg');
-    res.setHeader('Content-Disposition', `inline; filename=${archivo.nombre}`);
+    res.setHeader('Content-Type', 'image/jpeg')
+    res.setHeader('Content-Disposition', `inline; filename=${archivo.nombre}`)
 
     // Enviar el PassThrough stream en la respuesta
-    passThroughStream.pipe(res);
+    passThroughStream.pipe(res)
 
     // Manejo de errores
     sharpStream.on('error', (err) => {
-      console.error('Error al procesar la imagen:', err);
-      next({ ...errors.InternalServerError, details: 'Error al procesar la imagen: ' + err.message });
-    });
+      console.error('Error al procesar la imagen:', err)
+      next({ ...errors.InternalServerError, details: 'Error al procesar la imagen: ' + err.message })
+    })
 
     fileStream.on('error', (err) => {
-      console.error('Error al obtener el archivo:', err);
-      next({ ...errors.InternalServerError, details: 'Error al obtener el archivo: ' + err.message });
-    });
-
+      console.error('Error al obtener el archivo:', err)
+      next({ ...errors.InternalServerError, details: 'Error al obtener el archivo: ' + err.message })
+    })
   } catch (error) {
     console.error('Error al obtener el archivo:', error)
     next({
@@ -135,7 +133,7 @@ const obtenerPDF = async (req, res, next) => {
     }
 
     const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
-     const fileStream = await googleDriveService.getFile(fileId)
+    const fileStream = await googleDriveService.getFile(fileId)
 
     res.setHeader('Content-Type', 'application/pdf')
     res.setHeader('Content-Disposition', `inline; filename=${archivo.nombre}`)

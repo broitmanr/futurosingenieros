@@ -8,6 +8,4 @@ const router = Router()
 router.get('/imagen/nombre/:nombre', archivoController.obtenerImagenByNombre)
 router.get('/imagen/:id', archivoController.obtenerImagen)
 
-
-
 module.exports = router

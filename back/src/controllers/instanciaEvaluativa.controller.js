@@ -12,16 +12,15 @@ async function crear (req, res, next) {
   // Verifico que no sea mayor a 100
   const instancias = await models.InstanciaEvaluativa.findAll({
     where: { curso_id: cursoID }, // Ajusta el nombre del campo según tu modelo
-    attributes: ['porcentaje_ponderacion'],
-  });
+    attributes: ['porcentaje_ponderacion']
+  })
 
   const totalPonderacion = instancias.reduce((acc, instancia) => {
-    return acc + instancia.porcentaje_ponderacion;
-  }, 0);
+    return acc + instancia.porcentaje_ponderacion
+  }, 0)
   if (totalPonderacion + porcentajePonderacion > 100) {
-    return next({...errors.ConflictError,details:'El porcentaje de ponderación de las instancias supera el 100%, haga los cambios e intente nuevamente'})
+    return next({ ...errors.ConflictError, details: 'El porcentaje de ponderación de las instancias supera el 100%, haga los cambios e intente nuevamente' })
   }
-
 
   try {
     const nuevaInstancia = await models.InstanciaEvaluativa.create({

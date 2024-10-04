@@ -163,7 +163,7 @@ function AlumnosCurso() {
         globalFilterFields={['Persona.legajo', 'Persona.nombre', 'Persona.apellido']}
         header={header}
         emptyMessage="Lo siento, no se encontraron alumnos."
-        className='custom-datatable'
+        className='custom-datatable-alumnos'
       >
         <Column
           className='columns-data'

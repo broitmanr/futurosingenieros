@@ -73,3 +73,7 @@
     font-size: 0.87rem;
     min-width: 12rem
 }
+
+.custom-datatable-asistencia .p-sortable-column-icon {
+    color: #1a2035;
+}

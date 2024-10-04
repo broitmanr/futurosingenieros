@@ -16,7 +16,7 @@
     margin-bottom: 0.8rem
 }
 
-.custom-datatable { 
+.custom-datatable-alumnos { 
     width: 60%; /* Tamaño de la tabla */
     border: 0.1rem solid #1A2035;
     border-radius: 0.24rem;
@@ -24,7 +24,7 @@
     margin-bottom: 0.8rem
 }
 
-.custom-datatable .p-datatable-header {
+.custom-datatable-alumnos .p-datatable-header {
     background-color: #1A2035 /* Color del encabezado */;
     margin: 0 auto;
 }
@@ -37,6 +37,14 @@
     padding: 0.5rem;
     border-radius: 1rem;
     border-bottom: #1A2035 0.1rem solid;
+}
+
+.custom-datatable-alumnos .p-datatable-table .p-sortable-column-icon {
+    color: #1a2035;
+}
+
+.custom-datatable-alumnos .p-column-filter-menu-button, .p-column-filter-clear-button{
+    color: #1a2035;
 }
 
 /* Fija el buscador general */
@@ -58,14 +66,13 @@
     text-align: center;
 }
 
-.custom-datatable .p-datatable-thead > tr > th {
+.custom-datatable-alumnos .p-datatable-table .p-datatable-thead > tr > th {
     background-color: #CCDCF1; /* Color de la fila de filtros */
     color: #1A2035;
     margin: 0 auto;
     padding: 0.5rem;
 }
-
-.custom-datatable .p-datatable-tbody > tr > td {
+.custom-datatable-alumnos .p-datatable-tbody > tr > td {
     background-color: white /* Color del cuerpo de la tabla */
 /*  border-top: #1A2035 solid; si se quiere agregar línea entre datos de la tabla */
 }

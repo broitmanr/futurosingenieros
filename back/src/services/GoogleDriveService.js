@@ -1,11 +1,11 @@
 const { google } = require('googleapis')
 const { GoogleAuth } = require('google-auth-library')
 const dotenv = require('dotenv')
-const picocolors = require('picocolors')
+const { green, blue, yellow, red, magenta } = require('picocolors')
 dotenv.config()
 
 class GoogleDriveService {
-  constructor() {
+  constructor () {
     this.credentials = {
       type: process.env.GOOGLE_TYPE,
       project_id: process.env.GOOGLE_PROJECT_ID,
@@ -24,7 +24,7 @@ class GoogleDriveService {
     this.driveClient = null
   }
 
-  async getDriveService() {
+  async getDriveService () {
     if (!this.driveClient) {
       const auth = new GoogleAuth({
         credentials: this.credentials,
@@ -36,8 +36,9 @@ class GoogleDriveService {
     return this.driveClient
   }
 
-  async createFolder(folderName, parentFolderId) {
+  async createFolder (folderName, parentFolderId) {
     try {
+      console.log(blue(`Intentando crear carpeta: ${folderName} en padre: ${parentFolderId}`))
       const drive = await this.getDriveService()
       const fileMetadata = {
         name: folderName,
@@ -46,21 +47,22 @@ class GoogleDriveService {
       }
       const folder = await drive.files.create({
         resource: fileMetadata,
-        fields: 'id'
+        fields: 'id, name, webViewLink'
       })
-      return folder.data.id
+      console.log(green(`Carpeta creada exitosamente: ${JSON.stringify(folder.data, null, 2)}`))
+      return folder.data
     } catch (error) {
-      console.error('Error al crear la carpeta en Google Drive:', error)
+      console.error(red(`Error al crear la carpeta en Google Drive: ${error.message}`))
       throw error
     }
   }
 
-  async uploadFile(fileStream, fileName, mimeType, folderId) {
+  async uploadFile (fileStream, fileName, mimeType, folderId) {
     try {
+      console.log(blue(`Iniciando carga de archivo: ${fileName} en carpeta: ${folderId}`))
       const drive = await this.getDriveService()
       const response = await drive.files.create({
-        auth: this.authClient,
-        resource: {
+        requestBody: {
           name: fileName,
           parents: [folderId]
         },
@@ -68,80 +70,82 @@ class GoogleDriveService {
           mimeType,
           body: fileStream
         },
-        fields: 'id, webViewLink'
+        fields: 'id, name, webViewLink'
       })
 
-      // Agregar permisos al archivo
+      console.log(green(`Archivo subido exitosamente: ${JSON.stringify(response.data, null, 2)}`))
+
+      console.log(yellow(`Añadiendo permisos al archivo: ${response.data.id}`))
       await drive.permissions.create({
-        auth: this.authClient,
         fileId: response.data.id,
         requestBody: {
           role: 'writer',
           type: 'user',
-          emailAddress: 'franc0tastac@gmail.com' // Reemplaza con el email correcto
+          emailAddress: 'm3gacuenta@gmail.com'
         }
       })
 
-      // Obtener información de la carpeta
+      console.log(magenta(`Obteniendo información de la carpeta: ${folderId}`))
       const folderResponse = await drive.files.get({
         fileId: folderId,
-        fields: 'id, webViewLink'
+        fields: 'id, name, webViewLink'
       })
 
-      // Agregar permisos a la carpeta
+      console.log(yellow(`Añadiendo permisos a la carpeta: ${folderId}`))
       await drive.permissions.create({
-        auth: this.authClient,
         fileId: folderId,
         requestBody: {
           role: 'writer',
           type: 'user',
-          emailAddress: 'franc0tastac@gmail.com' // Reemplaza con el email correcto
+          emailAddress: 'm3gacuenta@gmail.com'
         }
       })
 
-      // Registrar información en la consola
-      console.log('Soy el console dentro API drive Archivo subido:', JSON.stringify(response.data, null, 2))
-      console.log('Soy el console dentro API drive Carpeta contenedora:', JSON.stringify(folderResponse.data, null, 2))
-
+      console.log(green('Operación completada con éxito'))
       return {
         file: response.data,
         folder: folderResponse.data
       }
     } catch (error) {
-      console.error('Error al subir el archivo a Google Drive:', error)
+      console.error(red(`Error al subir el archivo a Google Drive: ${error.message}`))
       throw error
     }
   }
 
-  async getFolderByName(parentFolderId, folderName) {
+  async getFolderByName (parentFolderId, folderName) {
     try {
+      console.log(blue(`Buscando carpeta: ${folderName} en padre: ${parentFolderId}`))
       const drive = await this.getDriveService()
       const query = `name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder' and '${parentFolderId}' in parents and trashed = false`
       const response = await drive.files.list({
         q: query,
-        fields: 'files(id, name)'
+        fields: 'files(id, name, webViewLink)'
       })
+      console.log(green(`Resultado de la búsqueda: ${JSON.stringify(response.data.files, null, 2)}`))
       return response.data.files[0]
     } catch (error) {
-      console.error('Error al obtener la carpeta de Google Drive:', error)
+      console.error(red(`Error al obtener la carpeta de Google Drive: ${error.message}`))
       throw error
     }
   }
 
-  async getOrCreateFolder(parentFolderId, folderName) {
+  async getOrCreateFolder (parentFolderId, folderName) {
     try {
+      console.log(magenta(`Intentando obtener o crear carpeta: ${folderName} en padre: ${parentFolderId}`))
       let folder = await this.getFolderByName(parentFolderId, folderName)
       if (!folder) {
+        console.log(yellow(`Carpeta no encontrada, creando nueva: ${folderName}`))
         folder = await this.createFolder(folderName, parentFolderId)
       }
+      console.log(green(`Carpeta obtenida/creada: ${JSON.stringify(folder, null, 2)}`))
       return folder.id
     } catch (error) {
-      console.error('Error al obtener o crear la carpeta en Google Drive:', error)
+      console.error(red(`Error al obtener o crear la carpeta en Google Drive: ${error.message}`))
       throw error
     }
   }
 
-  async getFile(fileId) {
+  async getFile (fileId) {
     try {
       const drive = await this.getDriveService()
       const response = await drive.files.get({
@@ -155,7 +159,7 @@ class GoogleDriveService {
     }
   }
 
-  extractFileIdFromLink(link) {
+  extractFileIdFromLink (link) {
     const regex = /\/d\/(.*?)\//
     const match = link.match(regex)
     if (match && match[1]) {
@@ -165,7 +169,7 @@ class GoogleDriveService {
     }
   }
 
-  async listFilesInFolder(folderId) {
+  async listFilesInFolder (folderId) {
     try {
       const drive = await this.getDriveService()
       const response = await drive.files.list({

@@ -1,19 +1,21 @@
 const errors = require('../const/error')
-const { red, yellow } = require('picocolors')
 const { handleTransaction } = require('../const/transactionHelper')
 const models = require('../database/models/index')
 const GoogleDriveService = require('../services/GoogleDriveService') // Importa el servicio de Google Drive
 const fs = require('fs') // Para manejar el stream de archivos
 const { PDFDocument } = require('pdf-lib') // Importa la biblioteca pdf-lib
-const picocolors = require('picocolors')
+const pico = require('picocolors')
 
 const googleDriveService = new GoogleDriveService()
 
 // Función para crear una entrega
 const crearEntrega = async (req, res, next) => {
   const files = req.files
+  console.log(pico.blue(`Iniciando creación de entrega con ${files.length} archivos`))
   try {
     const { entregaPactadaId } = req.body
+    console.log(pico.yellow(`EntregaPactadaId: ${entregaPactadaId}`))
+
     const entregaPactada = await models.EntregaPactada.findByPk(entregaPactadaId, {
       include: [
         {
@@ -24,9 +26,11 @@ const crearEntrega = async (req, res, next) => {
     })
 
     if (!entregaPactada) {
-      console.warn(yellow('Advertencia: EntregaPactada no encontrada.'))
-      throw new Error('EntregaPactada no encontrada')
+      console.warn(pico.red('Advertencia: EntregaPactada no encontrada.'))
+      return next({ ...errors.NotFoundError, details: 'EntregaPactada no encontrada' })
     }
+
+    console.log(pico.green(`EntregaPactada encontrada: ${JSON.stringify(entregaPactada, null, 2)}`))
 
     const entregaGrupal = entregaPactada.InstanciaEvaluativa.grupo
     let grupoId = null
@@ -45,7 +49,7 @@ const crearEntrega = async (req, res, next) => {
         ]
       })
       if (!personaXgrupo) {
-        throw new Error('No se encontró grupo para la persona y la entrega es grupal')
+        return next({ ...errors.NotFoundError, details: 'No se encontró grupo para la persona y la entrega es grupal' })
       }
       grupoId = personaXgrupo.grupo_ID
     }
@@ -62,9 +66,9 @@ const crearEntrega = async (req, res, next) => {
 
     const entregaExistente = await verificarEntregaExistente(entregaPactadaId, res.locals.usuario.persona_id)
     if (entregaExistente) {
-      throw new Error('Ya existe una entrega con los mismos datos')
+      return next({ ...errors.ConflictError, details: 'Ya existe una entrega con los mismos datos' })
     }
-
+    console.log(pico.magenta('Creando nueva entrega en la base de datos'))
     const entrega = await handleTransaction(async (transaction) => {
       const nuevaEntrega = await models.Entrega.create({
         fecha: Date.now(),
@@ -75,15 +79,21 @@ const crearEntrega = async (req, res, next) => {
         updated_by: res.locals.usuario.ID
       }, { transaction })
 
+      console.log(pico.green(`Nueva entrega creada: ${JSON.stringify(nuevaEntrega, null, 2)}`))
       return nuevaEntrega
     }, next)
 
+    console.log(pico.blue('Obteniendo o creando carpetas en Google Drive'))
     const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID
+    console.log(pico.yellow(`Folder ID principal: ${folderId}`))
     const entregasFolderId = await googleDriveService.getOrCreateFolder(folderId, 'Entregas')
+    console.log(pico.green(`Folder ID de Entregas: ${entregasFolderId}`))
     const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(entregasFolderId, entregaPactadaId.toString())
+    console.log(pico.green(`Folder ID de EntregaPactada: ${entregaPactadaFolderId}`))
 
     const archivos = []
     for (const file of files) {
+      console.log(pico.magenta(`Procesando archivo: ${file.originalname}`))
       const mimeType = file.mimetype
       const filePath = file.path
 
@@ -112,7 +122,12 @@ const crearEntrega = async (req, res, next) => {
       console.log(`Nombre del archivo: ${fileName}`)
 
       const fileStream = fs.createReadStream(compressedFilePath)
+
+      console.log(pico.blue(`Subiendo archivo a Google Drive: ${fileName}`))
       const { file: driveFile, folder: driveFolder } = await googleDriveService.uploadFile(fileStream, fileName, mimeType, entregaPactadaFolderId)
+
+      console.log(pico.green(`Archivo subido. Drive File: ${JSON.stringify(driveFile, null, 2)}`))
+      console.log(pico.green(`Carpeta contenedora: ${JSON.stringify(driveFolder, null, 2)}`))
 
       // Actualizar el registro del archivo con el nombre y la referencia correctos
       await archivo.update({
@@ -121,28 +136,24 @@ const crearEntrega = async (req, res, next) => {
       })
 
       archivos.push(archivo)
-
-      // Registrar información en la consola
-      console.log(yellow('Soy Controller - Archivo subido:', driveFile))
-      console.log(yellow('Soy Controller - Carpeta contenedora:', driveFolder))
     }
 
+    console.log(pico.blue(`Entrega creada exitosamente con ${archivos.length} archivos`))
     res.status(201).json({
       entrega,
       archivos
     })
   } catch (error) {
-    console.error('Error al crear la entrega y subir los archivos:', error)
-    next(error)
+    console.error(pico.red(`Error al crear la entrega y subir los archivos: ${error.message}`))
+    console.error(pico.red(error.stack))
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al crear la entrega y subir los archivos: ' + error.message
+    })
   } finally {
     for (const file of files) {
       if (file && file.path) {
-        try {
-          fs.unlinkSync(file.path)
-          console.log(`Archivo temporal ${file.path} eliminado`)
-        } catch (err) {
-          console.error(`Error al eliminar el archivo temporal ${file.path}:`, err)
-        }
+        req.tempFiles.push(file.path)
       }
     }
   }
@@ -251,11 +262,11 @@ const obtenerArchivo = async (req, res, next) => {
       return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
     }
 
-    console.log(picocolors.bgWhite(`Archivo encontrado: ${JSON.stringify(archivo)}`))
+    console.log(pico.bgWhite(`Archivo encontrado: ${JSON.stringify(archivo)}`))
 
     // Asegúrate de que archivo.referencia contiene solo el ID del archivo
     const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
-    console.log(picocolors.bgRed(`ID del archivo en Google Drive: ${fileId}`))
+    console.log(pico.bgRed(`ID del archivo en Google Drive: ${fileId}`))
 
     const fileStream = await googleDriveService.getFile(fileId)
 
@@ -351,7 +362,7 @@ const obtenerArchivo = async (req, res, next) => {
       const usuarioFolderId = await googleDriveService.getOrCreateFolder(folderId, usuarioId.toString())
       const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(usuarioFolderId, entregaPactadaNombre)
       const mimeType = file.mimetype
-      console.log(picocolors.bgYellow(`Tipo de archivo: ${file.mimetype}`))
+      console.log(pico.bgYellow(`Tipo de archivo: ${file.mimetype}`))
       // Crear el registro del archivo en la base de datos para obtener su ID
       const archivo = await models.Archivo.create({
         nombre: '', // Nombre temporal, se actualizará después

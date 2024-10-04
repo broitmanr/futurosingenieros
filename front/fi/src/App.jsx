@@ -6,6 +6,7 @@ import Footer from './components/shared/Footer.jsx';
 import Home from './components/Home.jsx';
 import Cursos from './components/Cursos.jsx';
 import SignInSide from "./components/SignInSide.tsx";
+import SignUp from "./components/SignUp.jsx"
 import AlumnosCurso from './components/AlumnosCurso.jsx';
 import { CursosActividades } from './components/CursosActividades/CursosActividades.jsx';
 import { ActividadEntregas } from './components/ActividadEntregas/ActividadEntregas.jsx';
@@ -28,6 +29,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />}/>
               <Route path="/login" element={<SignInSide />}/>
+              <Route path="/register" element={<SignUp />}/>
               <Route path="/archivo" element={<ArchivoPrueba />}/>
               <Route
                 path="/cursos"

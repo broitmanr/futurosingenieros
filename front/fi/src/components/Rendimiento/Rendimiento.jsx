@@ -16,6 +16,7 @@ function Rendimiento() {
     const { id } = useParams(); //Obtiene el id del curso pasado por parámetro
     const { role } = useRole()
     const [legajo, setLegajo] = useState(''); //Estado para el legajo
+    const [total_inasistencias, SetTotalInasistencias] = useState('')
     const [alumnos, setAlumnos] = useState([]); //Estado para el listado de alumnos
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -28,18 +29,19 @@ function Rendimiento() {
     const fetchAlumnos = async () => {
         try{
           const response = await axios.get(`/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
+          console.log(response.data)
           if(response.data) {
             const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
             const alumnosNombreCompleto = soloAlumnos.map(alumno => ({
               ...alumno,
-              nombreCompleto: `${alumno.Persona.apellido}, ${alumno.Persona.nombre}`
+              nombreCompleto: `${alumno.Persona.apellido}, ${alumno.Persona.nombre}`,
+              inasistencias: alumno.Persona.total_inasistencias
             }))
             setAlumnos(alumnosNombreCompleto)
             setLoading(false)
           }
         } catch (err) {
           console.error('Error al obtener los alumnos', err)
-          setAlumnos(dataAlumnos)
           setLoading(false)
         }
       }
@@ -168,6 +170,7 @@ function Rendimiento() {
                             className='columns-data-asistencia'
                             field="inasistencias"
                             header="INASISTENCIAS"
+                            body={(rowData) => rowData.inasistencias}
                             editor={(options) => cellEditor(options)} onCellEditComplete={onCellEditComplete}
                         />
                         </DataTable>

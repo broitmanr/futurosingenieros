@@ -73,3 +73,16 @@
     font-size: 0.87rem;
     min-width: 12rem
 }
+
+.titulo-inasistencias{
+    font-size: 14px;
+    text-align: right;
+    color: #fff;
+    background-color: rgb(25, 59, 112);
+    padding: 10px 20px;
+    border: 2px solid rgb(74, 144, 226);
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px;
+    display: inline-block;
+    margin: 10px 0px;
+}

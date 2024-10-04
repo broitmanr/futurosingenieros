@@ -11,6 +11,7 @@ const googleDriveService = new GoogleDriveService()
 const crearEntrega = async (req, res, next) => {
   const files = req.files
   console.log(pico.blue(`Iniciando creación de entrega con ${files.length} archivos`))
+
   try {
     const { entregaPactadaId } = req.body
     console.log(pico.yellow(`EntregaPactadaId: ${entregaPactadaId}`))
@@ -23,14 +24,12 @@ const crearEntrega = async (req, res, next) => {
         }
       ]
     })
-
     if (!entregaPactada) {
       console.warn(pico.red('Advertencia: EntregaPactada no encontrada.'))
       return next({ ...errors.NotFoundError, details: 'EntregaPactada no encontrada' })
     }
-
     console.log(pico.green(`EntregaPactada encontrada: ${JSON.stringify(entregaPactada, null, 2)}`))
-
+    // Verificar si la entrega es grupal
     const entregaGrupal = entregaPactada.InstanciaEvaluativa.grupo
     let grupoId = null
     if (entregaGrupal) {
@@ -47,59 +46,53 @@ const crearEntrega = async (req, res, next) => {
           }
         ]
       })
+
       if (!personaXgrupo) {
         return next({ ...errors.NotFoundError, details: 'No se encontró grupo para la persona y la entrega es grupal' })
       }
       grupoId = personaXgrupo.grupo_ID
     }
+    await handleTransaction(async (transaction) => {
+      // Verificar si ya existe una entrega
+      let entrega = await models.Entrega.findOne({
+        where: {
+          entregaPactada_ID: entregaPactadaId,
+          grupo_ID: grupoId,
+          persona_id: res.locals.usuario.persona_id
+        },
+        transaction // Asegúrate de pasar la transacción aquí
+      })
 
-    // Verificar si ya existe una entrega
-    let entrega = await models.Entrega.findOne({
-      where: {
-        entregaPactada_ID: entregaPactadaId,
-        grupo_ID: grupoId,
-        persona_id: res.locals.usuario.persona_id
-      }
-    })
-
-    if (entrega) {
-      console.log(pico.yellow(`Entrega ya existente encontrada con ID: ${entrega.ID}`))
-    } else {
-      console.log(pico.magenta('Creando nueva entrega en la base de datos'))
-      entrega = await handleTransaction(async (transaction) => {
-        const nuevaEntrega = await models.Entrega.create({
+      if (entrega) {
+        console.log(pico.yellow(`Entrega ya existente encontrada con ID: ${entrega.ID}`))
+      } else {
+        console.log(pico.magenta('Creando nueva entrega en la base de datos'))
+        entrega = await models.Entrega.create({
           fecha: Date.now(),
           nota: null,
           grupo_ID: grupoId ?? null,
           persona_id: res.locals.usuario.persona_id,
           entregaPactada_ID: entregaPactadaId,
           updated_by: res.locals.usuario.ID
-        }, { transaction })
+        }, { transaction }) // Pasar la transacción aquí
 
-        console.log(pico.green(`Nueva entrega creada: ${JSON.stringify(nuevaEntrega, null, 2)}`))
-        return nuevaEntrega
-      }, next)
-    }
+        console.log(pico.green(`Nueva entrega creada: ${JSON.stringify(entrega, null, 2)}`))
+      }
 
-    console.log(pico.blue('Obteniendo o creando carpetas en Google Drive'))
-    const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID
-    console.log(pico.yellow(`Folder ID principal: ${folderId}`))
-    const entregasFolderId = await googleDriveService.getOrCreateFolder(folderId, 'Entregas')
-    console.log(pico.green(`Folder ID de Entregas: ${entregasFolderId}`))
-    const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(entregasFolderId, entregaPactadaId.toString())
-    console.log(pico.green(`Folder ID de EntregaPactada: ${entregaPactadaFolderId}`))
-
-    const archivos = await asociarArchivos(files, entrega, entregaPactadaFolderId, req)
-
-    console.log(pico.blue(`Entrega creada exitosamente con ${archivos.length} archivos`))
-    res.status(201).json({
-      entrega,
-      archivos
-    })
+      const archivos = await asociarArchivos(files, entrega.ID, req, transaction, next) // Pasar la transacción aquí
+      if (archivos.length === 0) {
+        return next({ ...errors.BadRequestError, details: 'No se encontraron archivos para asociar' })
+      }
+      console.log(pico.blue(`Entrega creada exitosamente con ${archivos.length} archivos`))
+      res.status(201).json({
+        entrega,
+        archivos
+      })
+    }, next) // Mantén el manejo de transacciones en el bloque handleTransaction
   } catch (error) {
     console.error(pico.red(`Error al crear la entrega y subir los archivos: ${error.message}`))
     console.error(pico.red(error.stack))
-    next({
+    return next({
       ...errors.InternalServerError,
       details: 'Error al crear la entrega y subir los archivos: ' + error.message
     })
@@ -111,18 +104,34 @@ const crearEntrega = async (req, res, next) => {
     }
   }
 }
-const asociarArchivos = async (files, entrega, entregaPactadaFolderId, req, next) => {
+
+const asociarArchivos = async (files, entregaID, req, res, transaction, next) => {
+  console.log(pico.blue(`Iniciando asociación de archivos con entrega ID: ${entregaID}`))
   const archivos = []
-  if (!files || !files.length) {
-    console.warn(pico.yellow('Advertencia: No se encontraron archivos para subir'))
-    return next({ ...errors.BadRequestError, details: 'No se encontraron archivos para asociar' })
-  } else if (files.length >= 1) {
-    const esEntregaPactadaIdValido = await models.EntregaPactada.findByPk(entrega.entregaPactada_ID)
-    if (!esEntregaPactadaIdValido) {
-      console.warn(pico.yellow('Advertencia: El ID de la entrega pactada no es válido'))
-      return next({ ...errors.NotFoundError, details: 'El ID de la entrega pactada no es válido' })
-    } else {
-      for (const file of files) {
+  const fileIds = []
+  try {
+    if (!files || !files.length) {
+      console.warn(pico.yellow('Advertencia: No se encontraron archivos para subir'))
+      return next({ ...errors.BadRequestError, details: 'No se encontraron archivos para asociar' })
+    }
+
+    // Buscar la entrega por el ID proporcionado
+    const entrega = await models.Entrega.findByPk(entregaID, { transaction }) // Usar la transacción
+    if (!entrega) {
+      console.warn(pico.yellow(`Advertencia: El ID de la entrega con valor ${entregaID} no es válido`))
+      return next({ ...errors.NotFoundError, details: `Advertencia: El ID de la entrega con valor ${entregaID} no es válido` })
+    }
+
+    // Procesar archivos si todo es válido
+    console.log(pico.red('Obteniendo o creando carpetas en Google Drive'))
+    const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID
+    console.log(pico.yellow(`Folder ID principal - recuperado en Controller: ${folderId}`))
+    const entregasFolderId = await googleDriveService.getOrCreateFolder(folderId, 'Entregas')
+    console.log(pico.green(`Folder ID de Entregas - recuperado en Controller: ${entregasFolderId}`))
+    const entregaPactadaFolderId = await googleDriveService.getOrCreateFolder(entregasFolderId, entrega.entregaPactada_ID.toString())
+    console.log(pico.green(`Folder ID de EntregaPactada - recuperado en Controller: ${entregaPactadaFolderId}`))
+    for (const file of files) {
+      try {
         console.log(pico.magenta(`Procesando archivo: ${file.originalname}`))
         const mimeType = file.mimetype
         const filePath = file.path
@@ -145,7 +154,7 @@ const asociarArchivos = async (files, entrega, entregaPactadaFolderId, req, next
           referencia: '',
           extension: file.mimetype.split('/')[1],
           entrega_id: entrega.ID
-        })
+        }, { transaction }) // Asegúrate de pasar la transacción aquí
 
         // Cambiar el nombre del archivo al ID del archivo.pdf
         const fileName = `${archivo.ID}.pdf`
@@ -155,23 +164,67 @@ const asociarArchivos = async (files, entrega, entregaPactadaFolderId, req, next
 
         console.log(pico.blue(`Subiendo archivo a Google Drive: ${fileName}`))
         const { file: driveFile, folder: driveFolder } = await googleDriveService.uploadFile(fileStream, fileName, mimeType, entregaPactadaFolderId)
+        // Almacenarnos el fileId en el arreglo
+        fileIds.push(driveFile.id)
 
-        console.log(pico.green(`Archivo subido. Drive File: ${JSON.stringify(driveFile, null, 2)}`))
+        console.log(pico.green(`Archivo subido en Drive File: ${JSON.stringify(driveFile, null, 2)}`))
         console.log(pico.green(`Carpeta contenedora: ${JSON.stringify(driveFolder, null, 2)}`))
-
         // Actualizar el registro del archivo con el nombre y la referencia correctos
+
         await archivo.update({
           nombre: fileName,
-          referencia: driveFile.webViewLink
-        })
+          referencia: driveFile.webViewLink,
+          updated_by: res.locals.usuario.ID
+        }, { transaction }) // Pasar la transacción aquí
 
         archivos.push(archivo)
+      } catch (fileError) {
+        console.error(pico.red(`Error procesando archivo ${file.originalname}: ${fileError.message}`)) // No pasamos el error, seguimos con el siguiente archivo
       }
-      return archivos
+    }
+    return archivos
+  } catch (error) {
+    console.error(pico.red(`Error al asociar archivos a la entrega: ${error.message}`))
+    // Eliminar archivos de Google Drive en caso de error
+    for (const fileId of fileIds) {
+      try {
+        await googleDriveService.deleteFile(fileId)
+        console.log(pico.yellow(`Archivo con ID ${fileId} eliminado de Google Drive debido a un error`))
+      } catch (deleteError) {
+        console.error(pico.red(`Error al eliminar archivo de Google Drive: ${deleteError}`))
+      }
+    }
+    // Pasar el error al siguiente middleware
+    return next(error)
+  } finally {
+    for (const file of files) {
+      if (file && file.path) {
+        req.tempFiles.push(file.path)
+      }
     }
   }
 }
 
+// Funcion para asociar archivos a una entrega
+const asociarArchivosConEntrega = async (req, res, next) => {
+  try {
+    const entregaId = req.body.entregaId
+    const files = req.files
+    if (!entregaId || !files) {
+      return next({ ...errors.ValidationError, details: `El valor de files es: ${files} y el valor de entregaId es ${entregaId}. Por favor, vuelva a ingresar valores correctos` })
+    }
+    console.log(pico.blue(` --- Iniciando asocacion de entrega con ${files.length} archivos ---`))
+    await handleTransaction(async (transaction) => {
+      const archivosAsociados = await asociarArchivos(files, entregaId, req, res, transaction, next)
+      if (!archivosAsociados.length) {
+        return next({ ...errors.ValidationError, details: 'No se encontraron archivos para asociar' })
+      }
+      res.status(201).json({ archivosAsociados })
+    }, next)
+  } catch (error) {
+    return next(error)
+  }
+}
 // Un docente puede listar las entregas
 async function listarEntregasDocente (req, res, next) {
   const { grupoId } = req.params
@@ -194,7 +247,7 @@ async function listarEntregasDocente (req, res, next) {
 
     res.status(200).json(entregas)
   } catch (error) {
-    next({
+    return next({
       ...errors.InternalServerError,
       details: 'Error al listar las entregas: ' + error.message
     })
@@ -232,7 +285,7 @@ async function actualizar (req, res, next) {
     }, next)
   } catch (error) {
     console.error(pico.red('Error al actualizar la entrega:', error))
-    next(error) // Pasa el error al middleware de errores
+    return next(error) // Pasa el error al middleware de errores
   }
 }
 
@@ -299,11 +352,10 @@ const obtenerArchivo = async (req, res, next) => {
 const calificarEntrega = async (req, res, next) => {
   const { idEntrega } = req.params
   const { nota } = req.body
-
+  console.log(pico.blue(`Iniciando calificación de la entrega con ID ${idEntrega} con una nota de: ${nota}`))
   try {
     const entrega = await models.Entrega.findByPk(idEntrega)
-
-    if (!entrega) {
+    if (!entrega || !nota) {
       console.warn(pico.yellow(`Advertencia: Entrega con ID ${idEntrega} no encontrada.`))
       return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
     }
@@ -326,7 +378,7 @@ const calificarEntrega = async (req, res, next) => {
 module.exports = {
   listarEntregasDocente,
   crearEntrega,
-  asociarArchivos,
   obtenerArchivo,
-  calificarEntrega
+  calificarEntrega,
+  asociarArchivosConEntrega
 }

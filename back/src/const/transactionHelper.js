@@ -14,7 +14,7 @@ async function handleTransaction (callback, next) {
     console.error(red('Error en la transacción:', error))
     next({
       ...errors.InternalServerError,
-      details: 'Error en la transacción: ' + error.message
+      details: 'Error en la transacción: ' + error
     })
   }
 }

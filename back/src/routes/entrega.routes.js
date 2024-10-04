@@ -26,7 +26,7 @@ router.post('/calificar/:idEntrega',
 router.post('/asociarArchivos',
   checkRole.checkRoleEstudiante,
   uploadPDFs.array('pdfs', 5), // Permitir hasta 5 archivos PDF
-  entregaController.asociarArchivos
+  entregaController.asociarArchivosConEntrega
 )
 
 module.exports = router

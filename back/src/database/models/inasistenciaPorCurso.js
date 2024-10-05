@@ -4,20 +4,20 @@ module.exports = (sequelize, DataTypes) => {
   const InasistenciasPorCurso = sequelize.define('InasistenciasPorCurso', {
     curso_id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
+      primaryKey: true
     },
     persona_id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
+      primaryKey: true
     },
     total_inasistencias: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-    },
+      allowNull: false
+    }
   }, {
     tableName: 'InasistenciasPorCurso',
     timestamps: false, // Normalmente las vistas no tienen timestamps
-    underscored: true, // Para seguir la convención de nombrado de Sequelize
+    underscored: true // Para seguir la convención de nombrado de Sequelize
   })
 
   InasistenciasPorCurso.associate = models => {

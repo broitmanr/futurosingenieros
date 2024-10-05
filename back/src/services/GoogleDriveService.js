@@ -131,7 +131,7 @@ class GoogleDriveService {
 
   async getOrCreateFolder (parentFolderId, folderName) {
     try {
-      console.log(magenta(`Intentando obtener o crear carpeta: ${folderName} en padre: ${parentFolderId}`))
+      console.log(magenta(`Intentando obtener o crear carpeta: ' ${folderName}' en padre: ${parentFolderId}`))
       let folder = await this.getFolderByName(parentFolderId, folderName)
       if (!folder) {
         console.log(yellow(`Carpeta no encontrada, creando nueva: ${folderName}`))
@@ -181,6 +181,13 @@ class GoogleDriveService {
       console.error('Error al listar archivos en la carpeta:', error)
       throw error
     }
+  }
+
+  async deleteFile (fileId) {
+    const drive = await this.getDriveService()
+    await drive.files.delete({
+      fileId
+    })
   }
 }
 

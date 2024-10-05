@@ -1,9 +1,6 @@
 .TituloRendimiento {
-    color:'#193B70';
-    text-shadow:
-    1px 1px 2px rgb(30, 50, 120), /* Sombra ajustada */
-    0 0 1em rgb(50, 70, 150),      /* Sombra ajustada */
-    0 0 0.2em rgb(20, 30, 80);     /* Sombra ajustada */
+    color:#193B70;
+   margin-bottom: 2rem;
   font:
     1.9em Georgia,
     "Bitstream Charter",
@@ -37,12 +34,17 @@
     
 }
 
+.contenedor-rendimiento-alumnos{
+    max-width: 85%;
+    margin: auto;
+    padding: 2.5rem;
+    box-shadow: 0px 1px 8px #00000061;
+}
 .containerFaltas{
     display: flex;
-    justify-content: flex-end; /* Alinea a la derecha */
-    margin-bottom: 15px; /* Espacio debajo del recuadro */
-    float: 'right'!important; 
-    font: 0.5em !important;           
+    align-items: flex-end;
+    justify-content: space-between; /* Alinea a la derecha */
+    margin-bottom: 15px; /* Espacio debajo del recuadro */         
 }
 
 

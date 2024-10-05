@@ -16,13 +16,16 @@ router.get('/listarEntregas/:entregaPactada_id',
 )
 
 router.get('/archivo/:id',
-  checkRole.checkRoleEstudiante,
   entregaController.obtenerArchivo
 )
-// Descomentar y actualizar si es necesario
-// router.get('/:id',
-//   validate({ params: entregaPactadaScheme.idParams }),
-//   entregaPactadaController.ver
-// );
+router.patch('/calificar/:idEntrega',
+  checkRole.checkRoleDocente,
+  entregaController.calificarEntrega
+)
+router.post('/asociarArchivos',
+  checkRole.checkRoleEstudiante,
+  uploadPDFs.array('pdfs', 5), // Permitir hasta 5 archivos PDF
+  entregaController.asociarArchivosConEntrega
+)
 
 module.exports = router

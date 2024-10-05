@@ -36,7 +36,8 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   Archivo.associate = models => {
-    Archivo.belongsTo(models.Entrega, { foreignKey: 'entrega_id', allowNull: false })
+    Archivo.belongsTo(models.Entrega, { foreignKey: 'entrega_id', allowNull: true }),
+      Archivo.belongsTo(models.Curso, { foreignKey: 'curso_id', allowNull: true })
   }
 
   return Archivo

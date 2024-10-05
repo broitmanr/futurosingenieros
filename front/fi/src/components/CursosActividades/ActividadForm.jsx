@@ -76,7 +76,7 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
 
             <Form.Group className="mb-3" controlId="grupoMateria">
               <Form.Label>Porcentaje de ponderacion</Form.Label>
-              <Form.Select name="porcentajePonderacion" style={{ marginBottom: '1rem' }} onChange={e => onChange(e)} aria-label="Floating label select example">
+              <Form.Select name="porcentajePonderacion" style={{ marginBottom: '1rem', border: '0.1rem solid #608ad1' }} onChange={e => onChange(e)} aria-label="Floating label select example">
                 <option>Seleccione el porcentaje</option>
                 <option value="5">5%</option>
                 <option value="10">10%</option>
@@ -101,7 +101,7 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
               </Form.Select>
 
               <Form.Label>Tipo de instancia</Form.Label>
-              <Form.Select name="tipoInstanciaID" style={{ marginBottom: '1rem' }} onChange={e => onChange(e)} aria-label="Floating label select example">
+              <Form.Select name="tipoInstanciaID" style={{ marginBottom: '1rem', border: '0.1rem solid #608ad1' }} onChange={e => onChange(e)} aria-label="Floating label select example">
                 <option>Seleccione el tipo</option>
                 {
                   tipoInstancias && tipoInstancias.length > 0 

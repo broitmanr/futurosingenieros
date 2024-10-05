@@ -9,8 +9,8 @@ import { useParams } from 'react-router-dom';
 import { useRole } from '../../context/RolesContext';
 import axios from 'axios';
 import './Rendimiento.css'
-import { RendimientoAlumno } from './RendimientoAlumno';
-import { RendimientoGrupo } from './RendimientoGrupo';
+import RendimientoAlumno from './RendimientoAlumno';
+import RendimientoGrupo from './RendimientoGrupo';
 
 
 function Rendimiento() {
@@ -34,7 +34,8 @@ function Rendimiento() {
                 const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
                 const alumnosNombreCompleto = soloAlumnos.map(alumno => ({
                     ...alumno,
-                    nombreCompleto: `${alumno.Persona.apellido}, ${alumno.Persona.nombre}`
+                    nombreCompleto: `${alumno.Persona.apellido}, ${alumno.Persona.nombre}`,
+                    inasistencias: alumno.Persona.total_inasistencias
                 }))
                 setAlumnos(alumnosNombreCompleto)
                 setLoading(false)
@@ -43,24 +44,9 @@ function Rendimiento() {
             console.error('Error al obtener los alumnos', err)
             setAlumnos(dataAlumnos)
             setLoading(false)
-        try{
-          const response = await axios.get(`/curso/${id}/miembros`, { withCredentials: true }) //Obteniene a todos los miembros
-          console.log(response.data)
-          if(response.data) {
-            const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
-            const alumnosNombreCompleto = soloAlumnos.map(alumno => ({
-              ...alumno,
-              nombreCompleto: `${alumno.Persona.apellido}, ${alumno.Persona.nombre}`,
-              inasistencias: alumno.Persona.total_inasistencias
-            }))
-            setAlumnos(alumnosNombreCompleto)
-            setLoading(false)
-          }
-        } catch (err) {
-          console.error('Error al obtener los alumnos', err)
-          setLoading(false)
         }
     }
+
     useEffect(() => {
         fetchAlumnos();
     }, [id])
@@ -149,14 +135,10 @@ function Rendimiento() {
             <div>
                 <TabView className="tabs-container">
                     <TabPanel className='tab-header-text' header="Alumnos">
-                        < RendimientoAlumno />
-
+                        <RendimientoAlumno />
                     </TabPanel>
                     <TabPanel className='tab-header-text' header="Grupos">
                         <RendimientoGrupo />
-                        <p className="m-0">
-                           
-                        </p>
                     </TabPanel>
                     { role === 'D' &&
                     <TabPanel className='tab-header-text' header="Asistencia">
@@ -192,39 +174,6 @@ function Rendimiento() {
                         />
                         </DataTable>
                     </TabPanel>
-                    {role === 'D' &&
-                        <TabPanel className='tab-header-text' header="Asistencia">
-                            <DataTable
-                                value={alumnos}
-                                paginator rows={10}
-                                dataKey="ID"
-                                filters={filters}
-                                globalFilterFields={['Persona.legajo', 'Persona.nombre', 'Persona.apellido']}
-                                header={header}
-                                loading={loading}
-                                emptyMessage="Lo siento, no se encontraron alumnos."
-                                className='custom-datatable-asistencia'
-                                editMode="cell"
-                            >
-                                <Column
-                                    className='columns-data-asistencia'
-                                    field="Persona.legajo"
-                                    header="LEGAJO"
-                                />
-                                <Column
-                                    className='columns-data-asistencia'
-                                    field="nombreCompleto"
-                                    header="NOMBRE"
-                                    sortable
-                                />
-                                <Column
-                                    className='columns-data-asistencia'
-                                    field="inasistencias"
-                                    header="INASISTENCIAS"
-                                    editor={(options) => cellEditor(options)} onCellEditComplete={onCellEditComplete}
-                                />
-                            </DataTable>
-                        </TabPanel>
                     }
                 </TabView>
             </div>

@@ -90,7 +90,7 @@ export default function UploadWindow() {
     };
 
     const chooseOptions = { icon: 'fa-solid fa-upload', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
-    const uploadOptions = { icon: 'fa-solid fa-check', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined', label:"subir" };
+    const uploadOptions = { icon: 'fa-solid fa-check', iconOnly: false, label:"Entregar", className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined', style: { backgroundColor: 'transparent' }  };
     const cancelOptions = { icon: 'fa-solid fa-xmark', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined' };
 
     return (

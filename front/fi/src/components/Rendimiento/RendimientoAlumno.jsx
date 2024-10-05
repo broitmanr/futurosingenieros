@@ -1,7 +1,7 @@
 import '../styles/RendimientoAlumno.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export const RendimientoAlumno = () => {
+const RendimientoAlumno = () => {
   return (
     <div className='contenedor-rendimiento-alumnos'>
       <h1 className='TituloRendimiento'>

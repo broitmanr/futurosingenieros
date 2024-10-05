@@ -16,7 +16,6 @@ router.get('/listarEntregas/:entregaPactada_id',
 )
 
 router.get('/archivo/:id',
-  checkRole.checkRoleEstudiante,
   entregaController.obtenerArchivo
 )
 router.patch('/calificar/:idEntrega',

@@ -73,7 +73,7 @@ export default function UploadWindow() {
                     </span>
                 </div>
                 <Tag value={props.formatSize} severity="warning" className="px-3 py-2" />
-                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
+                <Button type="button" icon="fa-solid fa-xmark" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
             </div>
         );
     };
@@ -83,14 +83,14 @@ export default function UploadWindow() {
             <div className="d-flex align-items-center">
                 <i className="pi pi-image mt-3 p-5 d-block" style={{width:'50px' ,height:'50px',fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
                 <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
-                    Drag and Drop Image Here
+                    Suelte sus archivos aquí
                 </span>
             </div>
         );
     };
 
     const chooseOptions = { icon: 'fa-solid fa-upload', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
-    const uploadOptions = { icon: 'fa-solid fa-check', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined' };
+    const uploadOptions = { icon: 'fa-solid fa-check', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined', label:"subir" };
     const cancelOptions = { icon: 'fa-solid fa-xmark', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined' };
 
     return (

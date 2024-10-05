@@ -8,16 +8,25 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true
     },
     comentario: {
-      type: DataTypes.STRING(500),
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    comment: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    content: {
+      type: DataTypes.JSON,
       allowNull: false
     },
-    personaXentrega_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true
+    type: {
+      type: DataTypes.STRING(50),
+      allowNull: false
     },
     fecha: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false,
+      defaultValue:DataTypes.NOW
     },
     updated_at: {
       type: DataTypes.DATE,

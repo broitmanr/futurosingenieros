@@ -147,8 +147,61 @@ const obtenerPDF = async (req, res, next) => {
   }
 }
 
+
+const hacerComentario = async (req, res, next) => {
+  const { id } = req.params
+  const {
+    comment,
+    type,
+    position,
+    content
+  } = req.body;
+  try {
+
+    const archivo = await models.Archivo.findByPk(id,{
+      include:[
+        {model:models.Entrega
+        }
+      ]
+    })
+
+    if (!archivo) {
+      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
+    }
+    if (!archivo.Entrega){
+      return next({ ...errors.NotFoundError, details: 'El archivo no tiene una entrega asociada' })
+    }
+
+    const comentario = await models.Comentario.create({
+      archivo_id:archivo.ID,
+      emisor_id:res.locals.usuario.persona_id,
+      entrega_id:archivo.Entrega.ID,
+      comentario:comment,
+      type,
+      position,
+      content,
+      updated_by:res.locals.usuario.ID
+    })
+
+    res.status(200).json(comentario)
+
+  } catch (error) {
+    console.error('Error al obtener el archivo:', error)
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener el archivo: ' + error.message
+    })
+  }
+}
+
+
+
 module.exports = {
   obtenerImagen,
   obtenerImagenByNombre,
-  inicializarArchivosDesdeCarpeta
+  inicializarArchivosDesdeCarpeta,
+  obtenerPDF,
+  hacerComentario,
 }
+
+

@@ -19,7 +19,7 @@ router.get('/archivo/:id',
   checkRole.checkRoleEstudiante,
   entregaController.obtenerArchivo
 )
-router.post('/calificar/:idEntrega',
+router.patch('/calificar/:idEntrega',
   checkRole.checkRoleDocente,
   entregaController.calificarEntrega
 )

@@ -3,7 +3,6 @@ const { handleTransaction } = require('../const/transactionHelper')
 const models = require('../database/models/index')
 const GoogleDriveService = require('../services/GoogleDriveService') // Importa el servicio de Google Drive
 const fs = require('fs') // Para manejar el stream de archivos
-const { PDFDocument } = require('pdf-lib') // Importa la biblioteca pdf-lib
 const pico = require('picocolors')
 
 const googleDriveService = new GoogleDriveService()
@@ -79,7 +78,7 @@ const crearEntrega = async (req, res, next) => {
         console.log(pico.green(`Nueva entrega creada: ${JSON.stringify(entrega, null, 2)}`))
       }
 
-      const archivos = await asociarArchivos(files, entrega.ID, req, transaction, next) // Pasar la transacción aquí
+      const archivos = await asociarArchivos(files, entrega.ID, req, res, transaction, next) // Pasar la transacción aquí
       if (archivos.length === 0) {
         return next({ ...errors.BadRequestError, details: 'No se encontraron archivos para asociar' })
       }
@@ -136,18 +135,6 @@ const asociarArchivos = async (files, entregaID, req, res, transaction, next) =>
         const mimeType = file.mimetype
         const filePath = file.path
 
-        // Leer el archivo PDF y comprimir
-        const pdfBytes = fs.readFileSync(filePath)
-        const pdfDoc = await PDFDocument.load(pdfBytes)
-        const compressedPdfBytes = await pdfDoc.save({ useObjectStreams: false })
-
-        // Guardar el archivo comprimido temporalmente
-        const compressedFilePath = `${filePath}-compressed.pdf`
-        fs.writeFileSync(compressedFilePath, compressedPdfBytes)
-
-        // Registrar el archivo comprimido temporal
-        req.tempFiles.push(compressedFilePath)
-
         // Crear el registro del archivo en la base de datos para obtener su ID
         const archivo = await models.Archivo.create({
           nombre: '', // Nombre temporal, se actualizará después
@@ -160,7 +147,7 @@ const asociarArchivos = async (files, entregaID, req, res, transaction, next) =>
         const fileName = `${archivo.ID}.pdf`
         console.log(`Nombre del archivo: ${fileName}`)
 
-        const fileStream = fs.createReadStream(compressedFilePath)
+        const fileStream = fs.createReadStream(filePath)
 
         console.log(pico.blue(`Subiendo archivo a Google Drive: ${fileName}`))
         const { file: driveFile, folder: driveFolder } = await googleDriveService.uploadFile(fileStream, fileName, mimeType, entregaPactadaFolderId)
@@ -226,7 +213,7 @@ const asociarArchivosConEntrega = async (req, res, next) => {
   }
 }
 // Un docente puede listar las entregas
-async function listarEntregasDocente (req, res, next) {
+async function listarEntregasDocente(req, res, next) {
   const { grupoId } = req.params
 
   try {
@@ -255,7 +242,7 @@ async function listarEntregasDocente (req, res, next) {
 }
 
 // Función para actualizar una entrega
-async function actualizar (req, res, next) {
+async function actualizar(req, res, next) {
   const { id } = req.params
   const { fecha, nota, grupoId, personaId } = req.body
 
@@ -290,7 +277,7 @@ async function actualizar (req, res, next) {
 }
 
 // Función para eliminar una entrega
-async function eliminar (req, res, next) {
+async function eliminar(req, res, next) {
   const { id } = req.params
 
   const entregaEliminada = await handleTransaction(async (transaction) => {
@@ -352,7 +339,6 @@ const obtenerArchivo = async (req, res, next) => {
 const calificarEntrega = async (req, res, next) => {
   const { idEntrega } = req.params
   const { nota } = req.body
-  console.log(pico.blue(`Iniciando calificación de la entrega con ID ${idEntrega} con una nota de: ${nota}`))
   try {
     const entrega = await models.Entrega.findByPk(idEntrega)
     if (!entrega || !nota) {

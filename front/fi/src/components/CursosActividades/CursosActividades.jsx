@@ -149,7 +149,7 @@ export const CursosActividades = () => {
                                             </>
                                         )}
                                         <li className='aside-item'>
-                                            <Link className='aside-link' to="#">
+                                            <Link className='aside-link' to={`/recursos/${curso.ID}`}>
                                                 <RiFileDownloadLine className='icons-aside-menu-actividades' />
                                                 Recursos
                                             </Link>

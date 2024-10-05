@@ -13,6 +13,7 @@ import { ActividadEntregas } from './components/ActividadEntregas/ActividadEntre
 import { DetalleEntrega } from './components/DetalleEntrega/DetalleEntrega.jsx';
 import ArchivoPrueba from './components/PruebaPDFViewer/App.tsx';
 import Rendimiento from './components/Rendimiento/Rendimiento.jsx'
+import Recursos from './components/Recursos/Recursos.jsx';
 import PrivateRoute from './PrivateRoutes';
 import axios from "axios";
 
@@ -79,6 +80,14 @@ function App() {
                 element={
                   <PrivateRoute allowedRoles={['D', 'A']}>
                     <Rendimiento />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/recursos/:id" 
+                element={
+                  <PrivateRoute allowedRoles={['D', 'A']}>
+                    <Recursos />
                   </PrivateRoute>
                 }
               />

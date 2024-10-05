@@ -14,7 +14,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from "axios";
 import { useState } from "react";
 import { Modal } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useRole } from '../context/RolesContext';
 
 const defaultTheme = createTheme();
@@ -181,6 +181,9 @@ export default function SignInSide() {
                             >
                                 Entrar
                             </Button>
+                            <div className='sign-out-container' style={{ textAlign: 'center', marginTop: '1.2rem' }}>
+                                <Link className='sign-out' to="/register">¿No tiene una cuenta? Regístrese</Link>
+                            </div>
                         </Box>
                     </Box>
                 </Grid>

@@ -11,6 +11,4 @@ router.get('/imagen/:id', archivoController.obtenerImagen)
 router.get('/pdf/:id', archivoController.obtenerPDF)
 router.post('/comentario/:id', archivoController.hacerComentario)
 
-
-
 module.exports = router

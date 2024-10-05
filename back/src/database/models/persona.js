@@ -49,7 +49,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'persona_id'
     })
     Persona.hasOne(models.Usuario, { foreignKey: 'persona_id' })
-
   }
   return Persona
 }

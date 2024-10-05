@@ -52,7 +52,7 @@ export const DetalleEntrega = () => {
                 <>
                     <div className="container d-flex justify-content-center">
                         <div className="container-box-entrega-detalle">
-                            <div className="col-md-6 mx-auto border- border-2 p-4 box-entrega-detalle">
+                            <div className="col-md-6 mx-auto border- border-2 box-entrega-detalle">
                                 {isLoading ? (
                                     <p className='text-danger text-center'>Cargando</p>
                                 ) : (
@@ -79,7 +79,7 @@ export const DetalleEntrega = () => {
                                
                                <UploadWindow/>
 
-                                <button onClick={handleEntregar} className="btn-entrega-detalle-entregar">Entregar</button>
+                                <button onClick={handleEntregar} className="btn-entrega-detalle-entregar d-none">Entregar</button>
                                 <Dialog className='dialog-agregar-entrega-detalle' header='¡Fantástico, usted ha hecho la entrega!'
                                     visible={visible}
                                     onHide={() => setVisible(false)}

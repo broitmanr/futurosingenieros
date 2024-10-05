@@ -2,22 +2,26 @@ import { useEffect, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import axios from "axios";
 
-export const ModalCrearGrupo = ({show, handleClose}) => {
-    const [formData, setFormData] = useState({});
-    const [isLoading, setLoading] = useState({});
-  
-    const onChange = (e) => {
-      setFormData(prevState => {
-        return { ...prevState, [e.target.name]: e.target.value }
-      })
-    
-    };
+export const ModalCrearGrupo = ({ show, handleClose }) => {
+  const [formData, setFormData] = useState({});
+  const [inputLegajos, setInputLegajos] = useState(4);
+
+
+  const [isLoading, setLoading] = useState({});
+
+  const onChange = (e) => {
+    setFormData(prevState => {
+      return { ...prevState, [e.target.name]: e.target.value }
+    })
+
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData)
     handleClose();
   }
+
 
   return (
     <>
@@ -26,7 +30,9 @@ export const ModalCrearGrupo = ({show, handleClose}) => {
           <Modal.Title>Crear Grupo</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={e => handleSubmit(e)}>
+          <Form onSubmit={e => handleSubmit(e)} id="formGrupo">
+
+           
             <Form.Group className="mb-3" controlId="legajoEstudianteCreador">
               <Form.Label>Legajo</Form.Label>
               <Form.Control name="legajoEstudiantes[]" onChange={e => onChange(e)} type="text" placeholder="Ingrese su propio legajo" />
@@ -46,6 +52,8 @@ export const ModalCrearGrupo = ({show, handleClose}) => {
               <Form.Label>Legajo integrante 4</Form.Label>
               <Form.Control name="legajoEstudiantes[]" onChange={e => onChange(e)} type="text" placeholder="Escriba un legajo" />
             </Form.Group>
+
+            <button class="btn-agregar-estudiante">Agregar estudiante</button>
 
           </Form>
         </Modal.Body>

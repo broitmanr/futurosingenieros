@@ -23,7 +23,9 @@
     align-items: center;
     text-align: center;
     border: solid #1a2035;
-    border-radius: 0.6rem
+    border-radius: 0.6rem;
+    padding: 4rem 2rem;
+    position: relative;
 }
 
 .nombre-entrega-detalle{
@@ -90,4 +92,12 @@
 
 .p-datatable .p-sortable-column-icon {
     color: #fff;
+}
+
+.custom-upload-btn{
+    position: absolute;
+    bottom: 8px;
+    z-index: 90999;
+    background: black;
+    left: 45%;
 }

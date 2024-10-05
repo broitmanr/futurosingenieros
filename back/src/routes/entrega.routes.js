@@ -18,8 +18,7 @@ router.get('/listarEntregas/:entregaPactada_id',
 router.get('/archivo/:id',
   entregaController.obtenerArchivo
 )
-
-router.post('/calificar/:idEntrega',
+router.patch('/calificar/:idEntrega',
   checkRole.checkRoleDocente,
   entregaController.calificarEntrega
 )
@@ -28,6 +27,5 @@ router.post('/asociarArchivos',
   uploadPDFs.array('pdfs', 5), // Permitir hasta 5 archivos PDF
   entregaController.asociarArchivosConEntrega
 )
-
 
 module.exports = router

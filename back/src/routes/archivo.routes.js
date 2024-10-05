@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const archivoController = require('../controllers/archivo.controller')
+const entregaController = require("../controllers/entrega.controller");
 const router = Router()
 
 // Ruta para subir imágenes
@@ -7,6 +8,8 @@ const router = Router()
 
 router.get('/imagen/nombre/:nombre', archivoController.obtenerImagenByNombre)
 router.get('/imagen/:id', archivoController.obtenerImagen)
+router.get('/pdf/:id', archivoController.obtenerPDF)
+router.post('/comentario/:id', archivoController.hacerComentario)
 
 
 

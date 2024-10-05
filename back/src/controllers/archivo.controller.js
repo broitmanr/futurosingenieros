@@ -160,7 +160,8 @@ const hacerComentario = async (req, res, next) => {
 
     const archivo = await models.Archivo.findByPk(id,{
       include:[
-        {model:models.Entrega
+        {
+          model:models.Entrega
         }
       ]
     })

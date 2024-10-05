@@ -5,6 +5,7 @@ const GoogleDriveService = require('../services/GoogleDriveService') // Importa 
 const fs = require('fs') // Para manejar el stream de archivos
 const { PDFDocument } = require('pdf-lib') // Importa la biblioteca pdf-lib
 const pico = require('picocolors')
+const path = require('path')
 
 const googleDriveService = new GoogleDriveService()
 
@@ -79,7 +80,7 @@ const crearEntrega = async (req, res, next) => {
         console.log(pico.green(`Nueva entrega creada: ${JSON.stringify(entrega, null, 2)}`))
       }
 
-      const archivos = await asociarArchivos(files, entrega.ID, req, transaction, next) // Pasar la transacción aquí
+      const archivos = await asociarArchivos(files, entrega.ID, req,res, transaction, next) // Pasar la transacción aquí
       if (archivos.length === 0) {
         return next({ ...errors.BadRequestError, details: 'No se encontraron archivos para asociar' })
       }
@@ -136,14 +137,12 @@ const asociarArchivos = async (files, entregaID, req, res, transaction, next) =>
         const mimeType = file.mimetype
         const filePath = file.path
 
-        // Leer el archivo PDF y comprimir
-        const pdfBytes = fs.readFileSync(filePath)
-        const pdfDoc = await PDFDocument.load(pdfBytes)
-        const compressedPdfBytes = await pdfDoc.save({ useObjectStreams: false })
-
+        const buffer = await compress(filePath)
+        console.log(buffer)
         // Guardar el archivo comprimido temporalmente
         const compressedFilePath = `${filePath}-compressed.pdf`
-        fs.writeFileSync(compressedFilePath, compressedPdfBytes)
+        await fs.writeFileSync(compressedFilePath, buffer)
+
 
         // Registrar el archivo comprimido temporal
         req.tempFiles.push(compressedFilePath)

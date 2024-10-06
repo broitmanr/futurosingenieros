@@ -19,7 +19,7 @@ router.patch('/calificar/:idEntrega',
   checkRole.checkRoleDocente,
   entregaController.calificarEntrega
 )
-router.post('/asociarArchivos',
+router.post('/asociarArchivos/:entregaId',
   checkRole.checkRoleEstudiante,
   uploadPDFs.array('pdfs', 5), // Permitir hasta 5 archivos PDF
   entregaController.asociarArchivosConEntrega

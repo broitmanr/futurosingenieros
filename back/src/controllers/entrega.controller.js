@@ -203,7 +203,7 @@ const asociarArchivos = async (files, entregaID, req, res, transaction, next) =>
 // Funcion para asociar archivos a una entrega
 const asociarArchivosConEntrega = async (req, res, next) => {
   try {
-    const entregaId = req.body.entregaId
+    const entregaId = req.params.entregaId
     const files = req.files
     if (!entregaId || !files) {
       return next({ ...errors.ValidationError, details: `El valor de files es: ${files} y el valor de entregaId es ${entregaId}. Por favor, vuelva a ingresar valores correctos` })

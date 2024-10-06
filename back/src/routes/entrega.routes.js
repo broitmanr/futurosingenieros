@@ -15,9 +15,6 @@ router.get('/listarEntregas/:entregaPactada_id',
   entregaController.listarEntregasDocente
 )
 
-router.get('/archivo/:id',
-  entregaController.obtenerArchivo
-)
 router.patch('/calificar/:idEntrega',
   checkRole.checkRoleDocente,
   entregaController.calificarEntrega

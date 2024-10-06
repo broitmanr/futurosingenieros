@@ -221,7 +221,7 @@ const asociarArchivosConEntrega = async (req, res, next) => {
   }
 }
 // Un docente puede listar las entregas
-async function listarEntregasDocente (req, res, next) {
+async function listarEntregasDocente(req, res, next) {
   const { grupoId } = req.params
 
   try {
@@ -250,7 +250,7 @@ async function listarEntregasDocente (req, res, next) {
 }
 
 // Función para actualizar una entrega
-async function actualizar (req, res, next) {
+async function actualizar(req, res, next) {
   const { id } = req.params
   const { fecha, nota, grupoId, personaId } = req.body
 
@@ -285,7 +285,7 @@ async function actualizar (req, res, next) {
 }
 
 // Función para eliminar una entrega
-async function eliminar (req, res, next) {
+async function eliminar(req, res, next) {
   const { id } = req.params
 
   const entregaEliminada = await handleTransaction(async (transaction) => {
@@ -309,36 +309,29 @@ async function eliminar (req, res, next) {
   }
 }
 
-// Función para obtener un archivo
-const obtenerArchivo = async (req, res, next) => {
-  const { id } = req.params
+// Función para obtener un archivo de una entrega
+const obtenerArchivosDeEntrega = async (req, res, next) => {
+  const { idEntrega } = req.params
   try {
-    const archivo = await models.Archivo.findOne({
-      where: { ID: id },
-      attributes: ['ID', 'nombre', 'referencia']
-    })
+    const entrega = await models.Entrega.findOne({ where: { ID: idEntrega } })
 
-    if (!archivo) {
-      console.warn(`Advertencia: Archivo con ID ${id} no encontrado.`)
+    if (!entrega) {
+      console.warn(`Advertencia: Archivo con ID ${idEntrega} no encontrado.`)
       return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
     }
+    console.log(pico.bgWhite(`Entrega encontrado: ${JSON.stringify(entrega)}`))
 
-    console.log(pico.bgWhite(`Archivo encontrado: ${JSON.stringify(archivo)}`))
-
-    // Asegúrate de que archivo.referencia contiene solo el ID del archivo
-    const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
-    console.log(pico.bgRed(`ID del archivo en Google Drive: ${fileId}`))
-
-    const fileStream = await googleDriveService.getFile(fileId)
-
-    res.setHeader('Content-Type', 'application/pdf')
-    res.setHeader('Content-Disposition', `inline; filename=${archivo.nombre}`)
-    fileStream.pipe(res)
+    const archivosEntrega = await models.Archivo.findAll({ where: { entrega_id: idEntrega } })
+    if (!archivosEntrega) {
+      console.warn(`Advertencia: No se encontraron archivos asociados a la entrega con ID: ${idEntrega}.`)
+      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
+    }
+    res.status(200).json(archivosEntrega)
   } catch (error) {
-    console.error('Error al obtener el archivo:', error)
+    console.error('Error al obtener los archivos de la entrega:', error)
     next({
       ...errors.InternalServerError,
-      details: 'Error al obtener el archivo: ' + error.message
+      details: 'Error al obtener los archivos asociados de la entrega: ' + error.message
     })
   }
 }
@@ -372,7 +365,7 @@ const calificarEntrega = async (req, res, next) => {
 module.exports = {
   listarEntregasDocente,
   crearEntrega,
-  obtenerArchivo,
+  obtenerArchivosDeEntrega,
   calificarEntrega,
   asociarArchivosConEntrega
 }

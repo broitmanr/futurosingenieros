@@ -8,7 +8,7 @@ const router = Router()
 
 router.get('/imagen/nombre/:nombre', archivoController.obtenerImagenByNombre)
 router.get('/imagen/:id', archivoController.obtenerImagen)
-router.get('/pdf/:id', archivoController.obtenerPDF)
+router.get('/:id', archivoController.obtenerFile)
 router.post('/comentario/:id', archivoController.hacerComentario)
 router.post('/subirMaterial/:cursoId', uploadFiles.array('files', 5), archivoController.subirMaterialCursada)
 router.get('/:cursoId/:nombre', archivoController.getMaterialCursadaByName)

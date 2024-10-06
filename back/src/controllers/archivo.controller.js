@@ -22,17 +22,12 @@ const obtenerImagen = async (req, res, next) => {
       console.warn(`Advertencia: Archivo con ID ${id} no encontrado.`)
       return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
     }
-
-    console.log(pico.bgWhite(`Archivcolorso encontrado: ${JSON.stringify(archivo)}`))
-
     // Asegúrate de que archivo.referencia contiene solo el ID del archivo
     const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
     console.log(pico.bgRed(`ID del acolorsrchivo en Google Drive: ${fileId}`))
-
-    const fileStream = await googleDriveService.getFile(fileId)
-
-    res.setHeader('Content-Type', 'image/jpeg') // Cambia esto según el tipo de imagen
-    res.setHeader('Content-Disposition', `inline; filename=${archivo.nombre}`)
+    const { data: fileStream, mimeType } = await googleDriveService.getFile(fileId)
+    res.setHeader('Content-Type', mimeType || 'image/jpeg')
+    res.setHeader('Content-Disposition', `inline; filename="${archivo.nombre}"`)
     fileStream.pipe(res)
   } catch (error) {
     console.error('Error al obtener el archivo:', error)
@@ -77,14 +72,9 @@ const obtenerImagenByNombre = async (req, res, next) => {
       console.warn(`Advertencia: Archivo con nombre ${nombre}`)
       return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
     }
-
-    console.log(pico.bgWhite(`Archivcolorso encontrado: ${JSON.stringify(archivo)}`))
-
     // Asegúrate de que archivo.referencia contiene solo el ID del archivo
     const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
-    console.log(pico.bgRed(`ID del acolorsrchivo en Google Drive: ${fileId}`))
-
-    const fileStream = await googleDriveService.getFile(fileId)
+    const { data: fileStream } = await googleDriveService.getFile(fileId)
 
     // Crear un PassThrough stream
     const passThroughStream = new PassThrough()
@@ -123,7 +113,7 @@ const obtenerImagenByNombre = async (req, res, next) => {
   }
 }
 
-const obtenerPDF = async (req, res, next) => {
+const obtenerFile = async (req, res, next) => {
   const { id } = req.params
   try {
     const archivo = await models.Archivo.findOne({
@@ -136,10 +126,9 @@ const obtenerPDF = async (req, res, next) => {
     }
 
     const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
-    const fileStream = await googleDriveService.getFile(fileId)
-
-    res.setHeader('Content-Type', 'application/pdf')
-    res.setHeader('Content-Disposition', `inline; filename=${archivo.nombre}`)
+    const { data: fileStream, mimeType } = await googleDriveService.getFile(fileId)
+    res.setHeader('Content-Type', mimeType || 'application/octet-stream')
+    res.setHeader('Content-Disposition', `inline; filename="${archivo.nombre}"`)
     fileStream.pipe(res)
   } catch (error) {
     console.error('Error al obtener el archivo:', error)
@@ -273,7 +262,7 @@ const subirMaterialCursada = async (req, res, next) => {
   }
 }
 
-// Entrega el 'archivo' solicitado por nombre de la carpeta del curso como formato documento
+// Entrega el 'archivo' por nombre de la carpeta del curso con el valor del archivo
 const getMaterialCursadaByName = async (req, res, next) => {
   const { nombre, cursoId } = req.params
   try {
@@ -357,7 +346,7 @@ module.exports = {
   obtenerImagen,
   obtenerImagenByNombre,
   inicializarArchivosDesdeCarpeta,
-  obtenerPDF,
+  obtenerFile,
   hacerComentario,
   subirMaterialCursada,
   getMaterialCursadaByName,

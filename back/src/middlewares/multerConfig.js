@@ -60,8 +60,21 @@ const uploadExcel = multer({
   }
 })
 
+// Configuracion de multer para filtrar archivos que pueda subir un profesor a su curso
+const uploadFiles = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // Límite de tamaño de archivo de 10MB
+  fileFilter: (req, file, cb) => {
+    if (!file) {
+      return cb(new Error('No se ha proporcionado ningún archivo')) // next
+    }
+    cb(null, true)
+  }
+})
+
 module.exports = {
   uploadImagenes,
   uploadPDFs,
-  uploadExcel
+  uploadExcel,
+  uploadFiles
 }

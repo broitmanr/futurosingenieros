@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     nombre: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     referencia: {
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Archivo.associate = models => {
     Archivo.belongsTo(models.Entrega, { foreignKey: 'entrega_id', allowNull: true }),
-      Archivo.belongsTo(models.Curso, { foreignKey: 'curso_id', allowNull: true })
+    Archivo.belongsTo(models.Curso, { foreignKey: 'curso_id', allowNull: true })
   }
 
   return Archivo

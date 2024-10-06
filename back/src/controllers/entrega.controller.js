@@ -4,7 +4,6 @@ const models = require('../database/models/index')
 const GoogleDriveService = require('../services/GoogleDriveService') // Importa el servicio de Google Drive
 const fs = require('fs') // Para manejar el stream de archivos
 const pico = require('picocolors')
-
 const googleDriveService = new GoogleDriveService()
 
 const crearEntrega = async (req, res, next) => {
@@ -154,10 +153,19 @@ const asociarArchivos = async (files, entregaID, req, res, transaction, next) =>
         // Almacenarnos el fileId en el arreglo
         fileIds.push(driveFile.id)
 
-        console.log(pico.green(`Archivo subido en Drive File: ${JSON.stringify(driveFile, null, 2)}`))
-        console.log(pico.green(`Carpeta contenedora: ${JSON.stringify(driveFolder, null, 2)}`))
-        // Actualizar el registro del archivo con el nombre y la referencia correctos
+        console.log(pico.cyan(`Archivo subido en Drive File: ${JSON.stringify({
+          id: driveFile.id,
+          name: driveFile.name,
+          webViewLink: driveFile.webViewLink
+        }, null, 2)}`))
 
+        console.log(pico.cyan(`Carpeta contenedora: ${JSON.stringify({
+          id: driveFolder.id,
+          name: driveFolder.name,
+          webViewLink: driveFolder.webViewLink
+        }, null, 2)}`))
+
+        // Actualizar el registro del archivo con el nombre y la referencia correctos
         await archivo.update({
           nombre: fileName,
           referencia: driveFile.webViewLink,
@@ -213,7 +221,7 @@ const asociarArchivosConEntrega = async (req, res, next) => {
   }
 }
 // Un docente puede listar las entregas
-async function listarEntregasDocente(req, res, next) {
+async function listarEntregasDocente (req, res, next) {
   const { grupoId } = req.params
 
   try {
@@ -242,7 +250,7 @@ async function listarEntregasDocente(req, res, next) {
 }
 
 // Función para actualizar una entrega
-async function actualizar(req, res, next) {
+async function actualizar (req, res, next) {
   const { id } = req.params
   const { fecha, nota, grupoId, personaId } = req.body
 
@@ -277,7 +285,7 @@ async function actualizar(req, res, next) {
 }
 
 // Función para eliminar una entrega
-async function eliminar(req, res, next) {
+async function eliminar (req, res, next) {
   const { id } = req.params
 
   const entregaEliminada = await handleTransaction(async (transaction) => {

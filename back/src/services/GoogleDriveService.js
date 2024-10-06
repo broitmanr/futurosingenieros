@@ -59,7 +59,7 @@ class GoogleDriveService {
 
   async uploadFile (fileStream, fileName, mimeType, folderId) {
     try {
-      console.log(blue(`Iniciando carga de archivo: ${fileName} en carpeta: ${folderId}`))
+      console.log(blue(`Iniciando carga de archivo DENTRO API DRIVE: ${fileName} en carpeta: ${folderId}`))
       const drive = await this.getDriveService()
       const response = await drive.files.create({
         requestBody: {
@@ -73,9 +73,9 @@ class GoogleDriveService {
         fields: 'id, name, webViewLink'
       })
 
-      console.log(green(`Archivo subido exitosamente: ${JSON.stringify(response.data, null, 2)}`))
+      console.log(green(`Archivo subido exitosamente - DENTRO DE API DRIVE : ${JSON.stringify(response.data, null, 2)}`))
 
-      console.log(yellow(`Añadiendo permisos al archivo: ${response.data.id}`))
+      /* console.log(yellow(`Añadiendo permisos al archivo: ${response.data.id}`))
       await drive.permissions.create({
         fileId: response.data.id,
         requestBody: {
@@ -84,14 +84,14 @@ class GoogleDriveService {
           emailAddress: 'm3gacuenta@gmail.com'
         }
       })
-
-      console.log(magenta(`Obteniendo información de la carpeta: ${folderId}`))
+      */
+      console.log(magenta(`Obteniendo información de la carpeta DENTRO DE API DRIVE: ${folderId}`))
       const folderResponse = await drive.files.get({
         fileId: folderId,
         fields: 'id, name, webViewLink'
       })
 
-      console.log(yellow(`Añadiendo permisos a la carpeta: ${folderId}`))
+      /* console.log(yellow(`Añadiendo permisos a la carpeta: ${folderId}`))
       await drive.permissions.create({
         fileId: folderId,
         requestBody: {
@@ -100,14 +100,14 @@ class GoogleDriveService {
           emailAddress: 'm3gacuenta@gmail.com'
         }
       })
-
+      */
       console.log(green('Operación completada con éxito'))
       return {
         file: response.data,
         folder: folderResponse.data
       }
     } catch (error) {
-      console.error(red(`Error al subir el archivo a Google Drive: ${error.message}`))
+      console.error(red(`Error dentro de Google API al subir el archivo a Google Drive: ${error.message}`))
       throw error
     }
   }
@@ -152,7 +152,13 @@ class GoogleDriveService {
         fileId,
         alt: 'media'
       }, { responseType: 'stream' })
-      return response.data
+
+      const fileMetadata = await drive.files.get({
+        fileId,
+        fields: 'mimeType'
+      })
+
+      return { data: response.data, mimeType: fileMetadata.data.mimeType }
     } catch (error) {
       console.error('Error al obtener el archivo de Google Drive:', error)
       throw error

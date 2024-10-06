@@ -1,10 +1,13 @@
 const errors = require('../const/error')
 const models = require('../database/models/index')
-const GoogleDriveService = require('../services/GoogleDriveService') // Importa el servicio de Google Drive
-const picocolors = require('picocolors')
+const GoogleDriveService = require('../services/GoogleDriveService')
+const pico = require('picocolors')
 const sharp = require('sharp')
 const { PassThrough } = require('stream')
 const googleDriveService = new GoogleDriveService()
+const { handleTransaction } = require('../const/transactionHelper')
+const fs = require('fs')
+const { normalizeFileName } = require('../const/normalizarNombre')
 
 // Función para obtener una imagen
 const obtenerImagen = async (req, res, next) => {
@@ -20,11 +23,11 @@ const obtenerImagen = async (req, res, next) => {
       return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
     }
 
-    console.log(picocolors.bgWhite(`Archivo encontrado: ${JSON.stringify(archivo)}`))
+    console.log(pico.bgWhite(`Archivcolorso encontrado: ${JSON.stringify(archivo)}`))
 
     // Asegúrate de que archivo.referencia contiene solo el ID del archivo
     const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
-    console.log(picocolors.bgRed(`ID del archivo en Google Drive: ${fileId}`))
+    console.log(pico.bgRed(`ID del acolorsrchivo en Google Drive: ${fileId}`))
 
     const fileStream = await googleDriveService.getFile(fileId)
 
@@ -54,7 +57,7 @@ const inicializarArchivosDesdeCarpeta = async (carpetaId) => {
         updated_at: new Date(),
         updated_by: 'bd'
       })
-      console.log(picocolors.bgGreen(`Archivo ${archivo.name} agregado a la base de datos.`))
+      console.log(pico.bgGreen(`Archivcolorso ${archivo.name} agregado a la base de datos.`))
     }
   } catch (error) {
     console.error('Error al inicializar archivos desde la carpeta:', error)
@@ -75,11 +78,11 @@ const obtenerImagenByNombre = async (req, res, next) => {
       return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
     }
 
-    console.log(picocolors.bgWhite(`Archivo encontrado: ${JSON.stringify(archivo)}`))
+    console.log(pico.bgWhite(`Archivcolorso encontrado: ${JSON.stringify(archivo)}`))
 
     // Asegúrate de que archivo.referencia contiene solo el ID del archivo
     const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
-    console.log(picocolors.bgRed(`ID del archivo en Google Drive: ${fileId}`))
+    console.log(pico.bgRed(`ID del acolorsrchivo en Google Drive: ${fileId}`))
 
     const fileStream = await googleDriveService.getFile(fileId)
 
@@ -147,7 +150,6 @@ const obtenerPDF = async (req, res, next) => {
   }
 }
 
-
 const hacerComentario = async (req, res, next) => {
   const { id } = req.params
   const {
@@ -155,36 +157,33 @@ const hacerComentario = async (req, res, next) => {
     type,
     position,
     content
-  } = req.body;
+  } = req.body
   try {
-
-    const archivo = await models.Archivo.findByPk(id,{
-      include:[
-        {model:models.Entrega
-        }
+    const archivo = await models.Archivo.findByPk(id, {
+      include: [
+        { model: models.Entrega }
       ]
     })
 
     if (!archivo) {
       return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
     }
-    if (!archivo.Entrega){
+    if (!archivo.Entrega) {
       return next({ ...errors.NotFoundError, details: 'El archivo no tiene una entrega asociada' })
     }
 
     const comentario = await models.Comentario.create({
-      archivo_id:archivo.ID,
-      emisor_id:res.locals.usuario.persona_id,
-      entrega_id:archivo.Entrega.ID,
-      comentario:comment,
+      archivo_id: archivo.ID,
+      emisor_id: res.locals.usuario.persona_id,
+      entrega_id: archivo.Entrega.ID,
+      comentario: comment,
       type,
       position,
       content,
-      updated_by:res.locals.usuario.ID
+      updated_by: res.locals.usuario.ID
     })
 
     res.status(200).json(comentario)
-
   } catch (error) {
     console.error('Error al obtener el archivo:', error)
     next({
@@ -194,14 +193,171 @@ const hacerComentario = async (req, res, next) => {
   }
 }
 
+const subirMaterialCursada = async (req, res, next) => {
+  const { cursoId } = req.params
+  const files = req.files
+  const archivos = []
+  const fileIds = []
 
+  try {
+    const curso = await models.Curso.findByPk(cursoId)
+    if (!curso) {
+      return next({ ...errors.NotFoundError, details: 'Curso con ID no encontrado: ' + cursoId })
+    }
+    // Obtener la carpeta raiz del drive, generar la estructura de carpeta y subir los archivos
+    console.log(pico.red('Obteniendo o creando carpetas en Google Drive'))
+    const folderId = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID
+    const archivosCarpetaId = await googleDriveService.getOrCreateFolder(folderId, 'Archivos')
+    const cursadaCarpetaId = await googleDriveService.getOrCreateFolder(archivosCarpetaId, cursoId.toString())
+    try {
+      for (const file of files) {
+        const fileStream = fs.createReadStream(file.path)
+        const nameCorrecto = await normalizeFileName(file.originalname, next)
+        const { file: driveFile, folder: driveFolder } = await googleDriveService.uploadFile(fileStream, nameCorrecto, file.mimetype, cursadaCarpetaId)
+        if (!driveFile) {
+          return next({ ...errors.InternalServerError, details: 'Error al subir el archivo a Google Drive antes de la creacion del archivo' })
+        }
+        console.log(pico.cyan(`CONTROLLER CHECK - Archivo subido en Drive File: ${JSON.stringify({
+          id: driveFile.id,
+          name: driveFile.name,
+          webViewLink: driveFile.webViewLink
+        }, null, 2)}`))
 
+        console.log(pico.cyan(`CONTROLLER CHECK - Carpeta contenedora del archivo: ${JSON.stringify({
+          id: driveFolder.id,
+          name: driveFolder.name,
+          webViewLink: driveFolder.webViewLink
+        }, null, 2)}`))
+        fileIds.push(driveFile.id)
+        const nuevoArchivo = await handleTransaction(async (transaction) => {
+          return await models.Archivo.create({
+            nombre: nameCorrecto,
+            extension: file.mimetype.split('/')[1],
+            referencia: driveFile.webViewLink,
+            updated_by: res.locals.usuario.ID,
+            curso_id: cursoId
+          }, { transaction })
+        }, next)
+        archivos.push(nuevoArchivo)
+      }
+    } catch (errorFile) {
+      console.error(pico.red('Error al subir el archivo a Google Drive dentro de la iteracion del FOR'), errorFile)
+      return next({ ...errors.InternalServerError, details: 'Error al subir el archivo a Google Drive dentro de la iteracion del FOR' + errorFile })
+    }
+    if (archivos.length === 0) {
+      return next({ ...errors.InternalServerError, details: 'No se subieron archivos a Google Drive, el array de archivos creados fue nula' })
+    }
+    res.status(201).json({ message: 'Material de cursada subido exitosamente', data: archivos })
+  } catch (error) {
+    console.error('Error al subir el material de cursada en el catch principal:', error)
+    for (const fileId of fileIds) {
+      try {
+        await googleDriveService.deleteFile(fileId)
+        console.log(pico.yellow(`Archivo con ID ${fileId} eliminado de Google Drive debido a un error`))
+      } catch (deleteError) {
+        console.error(pico.red(`Error al eliminar archivo de Google Drive: ${deleteError}`))
+      }
+    }
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al subir el material de cursada: ' + error.message
+    })
+  } finally {
+    for (const file of files) {
+      if (file && file.path) {
+        req.tempFiles.push(file.path)
+      }
+    }
+  }
+}
+
+// Entrega el 'archivo' solicitado por nombre de la carpeta del curso como formato documento
+const getMaterialCursadaByName = async (req, res, next) => {
+  const { nombre, cursoId } = req.params
+  try {
+    const archivo = await models.Archivo.findOne({
+      where: { nombre, curso_id: cursoId }, // Buscar por el nombre original
+      attributes: ['ID', 'nombre', 'referencia']
+    })
+
+    if (!archivo) {
+      console.warn(`Advertencia: Archivo con nombre ${nombre} no encontrado.`)
+      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
+    }
+    const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
+    const { data: fileStream, mimeType } = await googleDriveService.getFile(fileId)
+    res.setHeader('Content-Type', mimeType || 'application/octet-stream')
+    res.setHeader('Content-Disposition', `inline; filename="${archivo.nombre}"`)
+    fileStream.pipe(res)
+  } catch (error) {
+    console.error('Error al obtener el archivo:', error)
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener el archivo: ' + error.message
+    })
+  }
+}
+
+const getListaMaterialCursada = async (req, res, next) => {
+  const { cursoId } = req.params
+  try {
+    // Consultar la base de datos para obtener los archivos correspondientes al curso
+    const archivosDB = await models.Archivo.findAll({
+      where: { curso_id: cursoId }
+    })
+
+    if (archivosDB && archivosDB.length > 0) {
+      // Si se encuentran archivos en la base de datos, devolverlos
+      return res.status(200).json(archivosDB)
+    }
+
+    // Si no se encuentran archivos en la base de datos, intentamos obtenerlos desde Google Drive
+    console.warn(pico.yellow(`Advertencia: No se encontraron archivos en la base de datos para el curso con ID ${cursoId}. Intentando obtener desde Google Drive.`))
+
+    const folderName = cursoId.toString()
+    console.log(pico.red('Obteniendo carpetas en Google Drive'))
+    const folderRaiz = process.env.GOOGLE_DRIVE_MAIN_FOLDER_ID
+    const archivosCarpetaId = await googleDriveService.getOrCreateFolder(folderRaiz, 'Archivos')
+    const carpetaIdCurso = await googleDriveService.getFolderByName(archivosCarpetaId, folderName)
+
+    if (!carpetaIdCurso) {
+      console.warn(`Advertencia: No se encontró la carpeta para el curso con ID ${cursoId}.`)
+      return next({ ...errors.NotFoundError, details: 'No se encontró la carpeta para el curso' })
+    }
+
+    // Obtener la lista de archivos en la carpeta
+    const archivosDrive = await googleDriveService.listFilesInFolder(carpetaIdCurso.id)
+
+    if (!archivosDrive || archivosDrive.length === 0) {
+      console.warn(`Advertencia: No se encontraron archivos en la carpeta para el curso con ID ${cursoId}.`)
+      return next({ ...errors.NotFoundError, details: 'No se encontraron archivos en la carpeta para el curso' })
+    }
+
+    // Mapear los archivos de Google Drive a la estructura de la base de datos
+    const archivos = archivosDrive.map(file => ({
+      id: file.id,
+      nombre: file.name,
+      referencia: file.webViewLink,
+      extension: file.name.split('.').pop(),
+      curso_id: cursoId
+    }))
+
+    res.status(200).json(archivos)
+  } catch (error) {
+    console.error('Error al obtener la lista de archivos:', error)
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener la lista de archivos: ' + error.message
+    })
+  }
+}
 module.exports = {
   obtenerImagen,
   obtenerImagenByNombre,
   inicializarArchivosDesdeCarpeta,
   obtenerPDF,
   hacerComentario,
+  subirMaterialCursada,
+  getMaterialCursadaByName,
+  getListaMaterialCursada
 }
-
-

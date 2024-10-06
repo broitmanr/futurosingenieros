@@ -28,13 +28,6 @@ const configuracionRouter = async (app) => {
   app.use('/api/', rutasInit())
   app.use('/', rutasAuth())
   app.use(errorHandler)
-  /* setTimeout(() => {
-    // Definir el ID de la carpeta y llamar a la función
-    const carpetaId = '1m0G7726_malY8pAMFtMKhMXRIzW2GvMx'; // Usar solo el ID de la carpeta
-    console.log('Llamando a inicializarArchivosDesdeCarpeta...');
-    inicializarArchivosDesdeCarpeta(carpetaId); // Llamar a la función para inicializar archivos
-    console.log('Función inicializarArchivosDesdeCarpeta ejecutada.')
-  }, 5000) */
 }
 
 const init = async () => {

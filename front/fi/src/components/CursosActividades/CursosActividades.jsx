@@ -17,6 +17,7 @@ export const CursosActividades = () => {
     const { role } = useRole()
     const [show, setShow] = useState(false);
     const [showGrupo, setShowGrupo] = useState(false);
+    const [grupo, setGrupo] = useState(false);
     const [instancias, setInstancias] = useState({});
 
     const [curso, setCurso] = useState({});
@@ -32,6 +33,19 @@ export const CursosActividades = () => {
         console.log("Información de la actividad:", actividad);
         // Logica para mostrar la informacion de la actividad
       };
+
+    const fetchGrupoAlumno = async () => {
+        try {
+            const response = await axios.get(`/grupo/verGrupoAlumnoCurso/${params.id}`, { withCredentials: true });
+            if (response.data) {
+                console.log(response.data);
+                setGrupo(response.data); // Guardar el grupo en el estado
+            }
+        } catch (err) {
+            console.log(err);
+            // Manejar errores
+        }
+    }
 
     // useEffect para hacer la petición con axios
     useEffect(() => {
@@ -76,6 +90,12 @@ export const CursosActividades = () => {
         }
     }, [shouldFetchInstancia])
 
+    useEffect(() => {
+       if (role === 'A'){
+          fetchGrupoAlumno();
+       }
+    }, []);
+
     const handleInstanciaAgregada = (nuevaInstancia) => {
         console.log('agregada', nuevaInstancia)
         setInstancias(prevInstancia => [...prevInstancia, nuevaInstancia])
@@ -99,6 +119,9 @@ export const CursosActividades = () => {
                                     <>
                                         <h2 className="nombre-materia">{curso.Materium.nombre}</h2>
                                         <p><span className="nombre-comision">{curso.Comision.nombre}</span> - <span className="anio-comision">Año {curso.cicloLectivo}</span></p>
+                                        {grupo && (
+                                            <p><strong>Grupo:</strong> {grupo.numero} - {grupo.nombre}</p>
+                                        )}
                                     </>
                             }
 
@@ -144,7 +167,7 @@ export const CursosActividades = () => {
                                                     <PiUsersThreeBold className='icons-aside-menu-actividades' />
                                                     Grupo
                                                 </Link>
-                                                <ModalCrearGrupo show={showGrupo} handleClose={handleCloseGrupo}/>
+                                                <ModalCrearGrupo show={showGrupo} handleClose={handleCloseGrupo} grupoExistente={grupo}/>
                                             </li>
                                             </>
                                         )}

@@ -111,6 +111,7 @@ const Cursos = () => {
                                             {item.materia}
                                         </Card.Text>
                                     </Card.Body>
+                                    <img src={item.image} />
                                 </Card>
                             </Link>
                         </Col>

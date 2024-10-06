@@ -4,25 +4,31 @@ const { red, yellow } = require('picocolors')
 
 // Función para crear una entrega
 async function crear (req, res, next) {
-  const { cursoID, nombre } = req.body
+  const { cursoID, nombre, legajos } = req.body
 
+  // Validación del curso
   const curso = await models.Curso.findByPk(cursoID)
   if (!curso) {
     return next(errors.NotFoundError)
   }
 
-  if (res.locals.usuario.persona_id == null) { return next(errors.UsuarioNoPersona) }
+  if (res.locals.usuario.persona_id == null) {
+    return next(errors.UsuarioNoPersona)
+  }
+
+  // Verificar si el usuario ya tiene un grupo en este curso
   const grupoPersona = await models.PersonaXGrupo.findOne({
     include: [{
       model: models.Grupo,
-      where: { curso_id: cursoID }, // Condición de que el grupo pertenezca al curso
-      attributes: [] // No necesitamos atributos de Grupo, solo la relación
+      where: { curso_id: cursoID }, // Verificar si el grupo pertenece al curso
+      attributes: [] // No necesitamos los atributos del grupo
     }],
     where: {
       persona_ID: res.locals.usuario.persona_id
     }
   })
 
+  // Verificar si el usuario es un alumno en el curso
   const alumno = await models.PersonaXCurso.findOne({
     where: { persona_id: res.locals.usuario.persona_id, curso_id: cursoID, rol: 'A' }
   })
@@ -30,16 +36,38 @@ async function crear (req, res, next) {
     return next({ ...errors.CredencialesInvalidas, details: 'No tienes acceso a este curso' })
   }
 
+  // Si el usuario ya tiene un grupo asociado
   if (grupoPersona) {
     return next({ ...errors.ConflictError, details: 'El usuario ya tiene un grupo asociado a este curso' })
+  }
+
+  // Filtrar el legajo del creador si está en el array de legajos
+  const legajosFiltrados = legajos.filter(legajo => legajo !== res.locals.usuario.persona_id)
+
+  // Validar que ningún legajo filtrado esté asociado a un grupo en este curso
+  const legajosExistentes = await models.PersonaXGrupo.findAll({
+    include: [{
+      model: models.Grupo,
+      where: { curso_id: cursoID }, // Buscar grupos en el mismo curso
+      attributes: []
+    }],
+    where: {
+      persona_ID: legajosFiltrados // Verificamos los legajos filtrados
+    }
+  })
+
+  if (legajosExistentes.length > 0) {
+    return next({ ...errors.ConflictError, details: 'Algunos de los legajos ya están en un grupo en este curso' })
   }
 
   const cantidadGrupos = await models.Grupo.count({ where: { curso_id: cursoID } })
   const nuevoNumero = cantidadGrupos + 1
 
+  // Iniciar una transacción
   const transaction = await models.sequelize.transaction()
 
   try {
+    // Crear el nuevo grupo
     const grupo = await models.Grupo.create({
       curso_id: cursoID,
       nombre,
@@ -47,18 +75,31 @@ async function crear (req, res, next) {
       updated_by: res.locals.usuario.ID
     }, { transaction })
 
+    // Asociar al creador del grupo con `PersonaXGrupo`
     await models.PersonaXGrupo.create({
       persona_ID: res.locals.usuario.persona_id,
       grupo_ID: grupo.ID,
       updated_by: res.locals.usuario.ID
     }, { transaction })
 
+    // Asociar los legajos restantes al grupo
+    const personaXGrupos = legajosFiltrados.map(legajo => ({
+      persona_ID: legajo,
+      grupo_ID: grupo.ID,
+      updated_by: res.locals.usuario.ID
+    }))
+
+    await models.PersonaXGrupo.bulkCreate(personaXGrupos, { transaction })
+
+    // Confirmar la transacción
     await transaction.commit()
-    // Responder con el curso creado
+
+    // Responder con el grupo creado
     res.status(201).json(grupo)
   } catch (error) {
+    // Deshacer la transacción en caso de error
     await transaction.rollback()
-    console.error(red(`Error al crear el grupo:${error}`))
+    console.error(`Error al crear el grupo: ${error}`)
     return next(errors.FaltanCampos)
   }
 }
@@ -214,23 +255,115 @@ async function listar (req, res, next) {
   }
 }
 
-// async function listarTiposInstancias (req, res, next) {
-//   try {
-//     // Agregar validar que sea los q el es docente
-//     const tiposinstancias = await models.TipoInstancia.findAll({
-//       attributes: ['ID', 'nombre', 'descripcion']
-//     })
-//
-//     res.status(200).json(tiposinstancias)
-//   } catch (error) {
-//     console.error(red('Error al listar los tipos de instancias', error))
-//     next({
-//       ...errors.InternalServerError,
-//       details: 'Error al listar los tipos de instancias' + error.message
-//     })
-//   }
-// }
+// Modificar el endpoint de obtención de grupos
+const verGrupoPorAlumno = async (req, res, next) => {
+  const { curso_id } = req.params;
+  const personaId = res.locals.usuario.persona_id;
+
+  try {
+    // Buscar el grupo del alumno en ese curso
+    const grupoID = await models.Grupo.findOne({
+      where: {
+        curso_id,
+      },
+      include: [
+        {
+          model: models.Persona,
+          attributes: ['ID', 'rol', 'dni', 'legajo', 'apellido', 'nombre'],
+          where: { ID: personaId }, // Filtrar por la persona
+        }
+        ],
+        attributes:["ID"]
+
+    });
+    console.log(grupoID)
+    if (!grupoID) {
+      return res.status(404).json({ message: 'Grupo no encontrado para este alumno en este curso' });
+    }
+
+    const grupo = await models.Grupo.findByPk(grupoID.ID,{
+      include:[
+        {
+          model:models.Persona,
+          attributes:['ID','rol','dni','legajo','apellido','nombre']
+        }
+      ],
+      attributes:['ID','numero','nombre','curso_id']
+    })
+
+    res.status(200).json(grupo); // Devolver los detalles del grupo
+  } catch (error) {
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener el grupo: ' + error.message
+    });
+  }
+};
+
+const actualizarGrupo = async (req, res, next) => {
+    const { id } = req.params; // Obtiene el ID del grupo desde los parámetros
+    const { nombreGrupo, legajos } = req.body; // Desestructura los datos del cuerpo de la solicitud
+
+    try {
+      // Validar que se envíen datos
+      if (!nombreGrupo || !Array.isArray(legajos)) {
+        return next({ ...errors.CredencialesInvalidas, details: '\'El nombre del grupo y los legajos son obligatorios.' })
+      }
+      // Busca el grupo existente por ID
+      const grupoExistente = await models.Grupo.findByPk(id, { include: [{ model: models.Persona }] });
+      if (!grupoExistente) {
+        return next({ ...errors.NotFoundError, details: 'Grupo no encontrado' })
+      }
+
+
+      // Actualiza el nombre del grupo
+      grupoExistente.nombre = nombreGrupo;
+
+
+      // Encuentra los legajos actuales en el grupo
+      const legajosActuales = grupoExistente.Personas.map(persona => persona.ID);
+
+
+      // Encuentra los legajos que se han agregado
+      const legajosNuevos = legajos.filter(id => !legajosActuales.includes(id));
+
+      // Encuentra los legajos que se han eliminado
+      const legajosEliminados = legajosActuales.filter(id => !legajos.includes(id));
+
+
+      // Agregar los nuevos legajos
+      for (const idPersona of legajosNuevos) {
+        const persona = await models.Persona.findByPk(idPersona);
+        if (persona) {
+          await grupoExistente.addPersona(persona); // Agrega la persona al grupo
+        }
+      }
+
+      // Eliminar los legajos que ya no están
+      for (const idPersona of legajosEliminados) {
+        const persona = await models.Persona.findByPk(idPersona);
+        if (persona) {
+          if (persona.ID === res.locals.usuario.persona_id){
+            return next({...errors.ConflictError,details:'No te puedes eliminar de tu propio grupo'})
+          }
+
+          await grupoExistente.removePersona(persona); // Elimina la persona del grupo
+        }
+      }
+
+      // Guarda los cambios en la base de datos
+      await grupoExistente.save();
+
+      // Responde con el grupo actualizado
+      return res.status(200).json({ message: 'Grupo actualizado exitosamente.', grupo: grupoExistente });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Error al actualizar el grupo.' });
+    }
+  };
+
+
 
 module.exports = {
-  crear, addToGroup, ver, listar
+  crear, addToGroup, ver, listar, verGrupoPorAlumno,actualizarGrupo
 }

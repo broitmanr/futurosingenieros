@@ -11,6 +11,7 @@ const grupoRoutes = require('./grupo.routes.js')
 const entregaRoutes = require('./entrega.routes.js')
 const inasistenciaRoutes = require('./inasistencia.routes.js')
 const archivoRoutes = require('./archivo.routes.js')
+const personaRoutes = require('./persona.routes.js')
 
 const rutasInit = () => {
   const router = Router()
@@ -25,6 +26,7 @@ const rutasInit = () => {
   router.use('/entrega', decodeJWT, entregaRoutes)
   router.use('/inasistencia', decodeJWT, inasistenciaRoutes)
   router.use('/archivo', decodeJWT, archivoRoutes)
+  router.use('/persona', decodeJWT, personaRoutes)
   return router
 }
 

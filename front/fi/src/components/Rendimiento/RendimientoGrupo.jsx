@@ -5,7 +5,7 @@ import { IoAlertCircle } from "react-icons/io5";
 
 
 
-export const RendimientoGrupo = () => {
+const RendimientoGrupo = () => {
 
     return (
         <div className='contenedor-rendimiento-alumnos'>
@@ -106,3 +106,5 @@ export const RendimientoGrupo = () => {
         </div>
     );
 }
+
+export default RendimientoGrupo

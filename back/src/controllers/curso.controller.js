@@ -55,10 +55,7 @@ async function ver (req, res, next) {
   const { id } = req.params
 
   try {
-    const cursoVer = await models.Curso.findOne({
-      where: {
-        id
-      },
+    const cursoVer = await models.CursoConDetalle.findByPk(id,{
       include: [
         {
           model: models.Materia
@@ -86,23 +83,23 @@ async function ver (req, res, next) {
       return next({ ...errors.NotFoundError, details: 'Curso no encontrado' })
     }
 
-    const instancias = await models.InstanciaEvaluativa.findAll({
-      where: { curso_id: cursoVer.ID }, // Ajusta el nombre del campo según tu modelo
-      attributes: ['porcentaje_ponderacion']
-    })
-
-    // Sumar los porcentajes de ponderación de las instancias evaluativas
-    const totalPonderacion = instancias.reduce((acc, instancia) => {
-      return acc + instancia.porcentaje_ponderacion
-    }, 0)
+    // const instancias = await models.InstanciaEvaluativa.findAll({
+    //   where: { curso_id: cursoVer.ID }, // Ajusta el nombre del campo según tu modelo
+    //   attributes: ['porcentaje_ponderacion']
+    // })
+    //
+    // // Sumar los porcentajes de ponderación de las instancias evaluativas
+    // const totalPonderacion = instancias.reduce((acc, instancia) => {
+    //   return acc + instancia.porcentaje_ponderacion
+    // }, 0)
 
     // Añadir el total de ponderación al objeto de respuesta
-    const response = {
-      ...cursoVer.toJSON(),
-      totalPonderacion
-    }
+    // const response = {
+    //   ...cursoVer.toJSON(),
+    //   totalPonderacion
+    // }
 
-    res.status(200).json(response)
+    res.status(200).json(cursoVer)
   } catch (error) {
     console.error(red('Error al obtener el curso:', error))
     next({

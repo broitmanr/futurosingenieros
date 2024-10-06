@@ -121,10 +121,10 @@ export const CursosActividades = () => {
                                                     <FaRegPlusSquare className='icons-aside-menu-actividades' />
                                                     Crear instancia
                                                 </Link>
-                                                <Actividad show={show} handleClose={handleClose} cursoID={curso.ID} setInstancias={setInstancias} handleInstanciaAgregada={handleInstanciaAgregada} />
+                                                <Actividad show={show} handleClose={handleClose} cursoID={curso.id} setInstancias={setInstancias} handleInstanciaAgregada={handleInstanciaAgregada} />
                                             </li>
                                             <li className='aside-item'>
-                                                <Link className='aside-link' to={`/alumnos/${curso.ID}`}>
+                                                <Link className='aside-link' to={`/alumnos/${curso.id}`}>
                                                     <PiUsersThreeBold className='icons-aside-menu-actividades' />
                                                     Alumnos
                                                 </Link>
@@ -132,7 +132,7 @@ export const CursosActividades = () => {
                                             </>
                                         )}
                                         <li className='aside-item'>
-                                            <Link className='aside-link' to={`/rendimiento/${curso.ID}`}>
+                                            <Link className='aside-link' to={`/rendimiento/${curso.id}`}>
                                                 <RiBarChartBoxLine className='icons-aside-menu-actividades' />
                                                 Rendimiento
                                             </Link>
@@ -149,7 +149,7 @@ export const CursosActividades = () => {
                                             </>
                                         )}
                                         <li className='aside-item'>
-                                            <Link className='aside-link' to="#">
+                                            <Link className='aside-link' to={`/recursos/${curso.id}`}>
                                                 <RiFileDownloadLine className='icons-aside-menu-actividades' />
                                                 Recursos
                                             </Link>

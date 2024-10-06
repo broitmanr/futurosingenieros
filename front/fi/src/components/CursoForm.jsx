@@ -108,7 +108,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
               </Form.Group>
               <Form.Group className="mb-3 d-flex flex-column" controlId="grupoComision">
                 <Form.Label>Comisión</Form.Label>
-                <Dropdown className="w-full" style={{ height: '2rem', fontSize: '0.9rem' }} 
+                <Dropdown className="w-full" style={{ height: '2.5rem', fontSize: '0.9rem', border: '0.1rem solid #608ad1' }} 
                   value={selectedComision} 
                   onChange={(e) => setSelectedComision(e.value)} 
                   options={comisionOptions} optionLabel="label" 
@@ -123,6 +123,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
               <Form.Group className="mb-3" controlId="grupoMateria">
                 <Form.Label>Materia</Form.Label>
                 <Form.Select aria-label="Floating label select example"
+                  style={{ border: '0.1rem solid #608ad1' }}
                   value={selectedMateria} onChange={(e) => setSelectedMateria(e.target.value)}>
                   <option value="">Seleccione una materia</option>
                   {materias.map(materia => (<option key={materia.ID} value={materia.ID}>{materia.nombre}</option>))}

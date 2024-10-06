@@ -39,6 +39,10 @@
     border-bottom: #1A2035 0.1rem solid;
 }
 
+.table-header-agregar-alumno-icon{
+    margin-right: 1rem;
+}
+
 .custom-datatable-alumnos .p-datatable-table .p-sortable-column-icon {
     color: #1a2035;
 }

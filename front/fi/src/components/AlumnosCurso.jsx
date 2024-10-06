@@ -15,6 +15,8 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import './styles/AlumnosCurso.css' //Se importan los estilos
 import { useParams } from 'react-router-dom';
 import { PiUserCirclePlusBold } from "react-icons/pi";
+import { FaRegFileExcel } from "react-icons/fa";
+import { FileUpload } from 'primereact/fileupload';
 import { PiCopyBold } from "react-icons/pi";
 import axios from 'axios';
 
@@ -60,6 +62,37 @@ function AlumnosCurso() {
       setLoading(false)
     }
   }
+
+  /*const handleCargarAlumnosExcel = async (e) => { //Cargar alumnos desde un archivo excel
+    const file = e.target.files[0];
+    if (!file) {
+      console.log('No se seleccionó un archivo')
+      //alert('Por favor, selecciona un archivo.');
+      return;
+    }
+    //e.preventDefault();
+    const formData = new FormData();
+    formData.append('excel', file);
+    console.log ('info form data', file)
+    
+    const allowedExtensions = /(\.xls|\.xlsx)$/;
+    if (!allowedExtensions.exec(file.name)) {
+        console.log('Archivo inválido')
+        //alert('Por favor, selecciona un archivo válido (.xls o .xlsx).');
+        return;
+    }
+
+    try {
+      const response = await axios.post(`/curso/${id}/estudiantesExcel`, formData, { withCredentials: true });
+      console.log('info de response', response.data)
+      if (response.status === 201) {
+        fetchAlumnos(); // Actualiza lista de estudiantes
+      }
+    }catch (err) {
+      console.error('Error al agregar alumnos', err);
+    }
+  }*/
+
   useEffect(() => {
     fetchAlumnos();
   }, [id])
@@ -129,12 +162,30 @@ function AlumnosCurso() {
     return (
       <div className="table-header">
         {/* Icono que desplaza hacia abajo y su descripción */}
-        <OverlayTrigger overlay={
-          <Tooltip id="tooltip-agregar-alumno" className='tooltip-agregar-alumno'>Agregar alumno</Tooltip>}>
-          <span className="d-inline-block" >
-            <PiUserCirclePlusBold data-tip='Agregar alumno' onClick={handleScroll} color='#fff' size={38}/>
-          </span>
-        </OverlayTrigger>
+        <div>
+          <OverlayTrigger overlay={
+            <Tooltip id="tooltip-agregar-alumno" className='tooltip-agregar-alumno'>Agregar alumno</Tooltip>}>
+            <span className="d-inline-block">
+              <PiUserCirclePlusBold className='table-header-agregar-alumno-icon' data-tip='Agregar alumno' onClick={handleScroll} color='#e2ebf7' size={38}/>
+            </span>
+          </OverlayTrigger>
+          <OverlayTrigger overlay={
+            <Tooltip id="tooltip-cargar-alumnos" className='tooltip-cargar-alumnos'>Cargar alumnos</Tooltip>}>
+            <span className="d-inline-block">
+              <label htmlFor="file-upload" className="custom-file-upload">
+                <FaRegFileExcel data-tip='Cargar alumnos' color='#e2ebf7' size={30} />
+              </label>
+              <input 
+                  id="file-upload"
+                  name='excel'
+                  type="file" 
+                  accept=".xlsx, .xls" 
+                  style={{ display: 'none' }} 
+                  //onChange={handleCargarAlumnosExcel} 
+              />
+            </span>
+          </OverlayTrigger>
+        </div>
         <IconField >
           <InputText
             className='search-input'

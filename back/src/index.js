@@ -11,6 +11,8 @@ const { swaggerDocs } = require('./swagger/swagger')
 const manageTempFiles = require('./middlewares/archivosTemporales')
 // const { inicializarArchivosDesdeCarpeta } = require('./controllers/archivo.controller')
 const { set } = require('./mailer/mailer')
+const cron = require('node-cron')
+const { verificarPenalidadesBackground } = require('./controllers/penalidad.controller')
 
 const configuracionApi = async (app) => {
   app.use(express.json())
@@ -45,6 +47,11 @@ const init = async () => {
   }
   await configuracionApi(app)
   await configuracionRouter(app)
+  // Ejecutar la verificación de penalidades cada día a las 00:00
+  cron.schedule('0 0 * * *', () => {
+    console.log('Ejecutando verificación de penalidades...')
+    verificarPenalidadesBackground()
+  })
 }
 
 init()

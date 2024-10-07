@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-    comment: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
     content: {
+      type: DataTypes.JSON,
+      allowNull: false
+    },
+    position: {
       type: DataTypes.JSON,
       allowNull: false
     },

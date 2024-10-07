@@ -16,8 +16,8 @@ const ContextMenu = ({
 }: ContextMenuProps) => {
   return (
     <div className="context-menu" style={{ top: yPos + 2, left: xPos + 2 }}>
-      <button onClick={editComment}>Edit Comment</button>
-      <button onClick={deleteHighlight}>Delete</button>
+      <button onClick={editComment}>Editar</button>
+      <button onClick={deleteHighlight}>Borrar</button>
     </div>
   );
 };

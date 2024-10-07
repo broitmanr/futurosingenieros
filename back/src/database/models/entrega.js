@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     Entrega.belongsTo(models.Grupo, { foreignKey: 'grupo_ID', allowNull: false })
     Entrega.belongsTo(models.EntregaPactada, { foreignKey: 'entregaPactada_ID', allowNull: false })
     Entrega.belongsTo(models.Persona, { foreignKey: 'persona_id', allowNull: true })
+    Entrega.hasMany(models.Archivo,{foreignKey:'entrega_id'})
   }
 
   return Entrega

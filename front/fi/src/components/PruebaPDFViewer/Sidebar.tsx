@@ -2,6 +2,7 @@ import React from "react";
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
 import { CommentedHighlight } from "./types";
+import moment from "moment/moment";
 
 interface SidebarProps {
   highlights: Array<CommentedHighlight>;
@@ -15,19 +16,30 @@ const updateHash = (highlight: Highlight) => {
 };
 
 
+// @ts-ignore
 const Sidebar = ({
   highlights,
   toggleDocument,
-  resetHighlights,
+  resetHighlights, isLoading,entrega
 }: SidebarProps) => {
   return (
     <div className="sidebar" style={{ width: "25vw", maxWidth: "500px" }}>
       {/* Description section */}
       <div className="description" style={{ padding: "1rem" }}>
-        <h2 style={{ marginBottom: "1rem" }}>
-          nombre de la entrega v1.pdf
-        </h2>
-        <b>Fecha de entrega: 10/02/24</b>
+
+        {!isLoading && entrega ? (
+            <>
+              <h2 style={{ marginBottom: "1rem" }}>
+                {entrega.nombre}
+              </h2>
+              <h5 className={'text-muted'} style={{fontStyle:"italic"}}>{entrega.descripcion}</h5>
+
+
+              <b>Fecha de entrega: {moment(entrega.fecha).format('DD/MM/YY')}</b>
+            </>
+
+        ) :(<h3>Cargando entrega...</h3>)}
+
 
         <p className={'mt-2'}>
           <small>

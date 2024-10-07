@@ -25,7 +25,7 @@ const rutasInit = () => {
   router.use('/grupo', decodeJWT, grupoRoutes)
   router.use('/entrega', decodeJWT, entregaRoutes)
   router.use('/inasistencia', decodeJWT, inasistenciaRoutes)
-  router.use('/archivo', decodeJWT, archivoRoutes)
+  router.use('/archivo',decodeJWT, archivoRoutes)
   router.use('/persona', decodeJWT, personaRoutes)
   return router
 }

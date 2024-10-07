@@ -25,4 +25,10 @@ router.post('/asociarArchivos/:entregaId',
   entregaController.asociarArchivosConEntrega
 )
 
+router.get('/:id',
+    checkRole.checkRole('A','D'),
+    entregaController.ver
+)
+
+
 module.exports = router

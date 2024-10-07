@@ -230,7 +230,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
       },
       comment: "una tristeza",
       id: "29668244118038056",
-      user:"Román Broitman",
+      user:"Juan Carlo",
       date:"10/04/24"
     },
   ],

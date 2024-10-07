@@ -184,6 +184,108 @@ const hacerComentario = async (req, res, next) => {
   }
 }
 
+
+const getComentarios = async (req, res, next) => {
+  const { id } = req.params
+
+  try {
+    const archivo = await models.Archivo.findByPk(id, {
+      include: [
+        {
+          model: models.Entrega
+        }
+      ]
+    })
+
+    if (!archivo) {
+      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
+    }
+    if (!archivo.Entrega) {
+      return next({ ...errors.NotFoundError, details: 'El archivo no tiene una entrega asociada' })
+    }
+
+    const comentarios = await models.Comentario.findAll({
+      where:{
+        archivo_id:archivo.ID
+      },
+      include:[
+          {
+            model:models.Persona,
+            attributes:['nombre','apellido']
+          }
+
+      ]
+    })
+
+// Mapea los resultados para devolverlos en el formato deseado
+    const result = comentarios.map(comment => ({
+      ID: comment.ID,
+      comentario: comment.comentario,
+      content: comment.content,
+      position: comment.position,
+      type: comment.type,
+      fecha: comment.fecha,
+      usuario: `${comment.Persona.nombre} ${comment.Persona.apellido}` // Incluye los datos de la persona
+    }));
+
+    res.status(200).json(result)
+  } catch (error) {
+    console.error('Error al obtener comentarios:', error)
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener comentarios: ' + error.message
+    })
+  }
+}
+const editComentario = async (req, res, next) => {
+  const { id } = req.params; // ID del comentario
+  const { type, content, position, comment } = req.body; // Datos a actualizar
+
+  try {
+    const comentario = await models.Comentario.findByPk(id); // Encuentra el comentario por ID
+
+    if (!comentario) {
+      next({...errors.NotFoundError})
+    }
+
+    // Actualiza el comentario
+    comentario.type = type;
+    comentario.content = content; // Asegúrate de que el formato sea el adecuado
+    comentario.position = position; // Actualiza la posición si es necesario
+    comentario.comentario = comment; // Actualiza el texto del comentario
+    await comentario.save(); // Guarda los cambios
+
+    return res.status(200).json({ message: 'Comentario actualizado correctamente' });
+  } catch (error) {
+    console.error('Error al editar el comentario:', error);
+    return next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener el archivo: ' + error.message
+    })
+  }
+};
+
+const deleteComentario = async (req, res, next) => {
+  const { id } = req.params; // ID del comentario a eliminar
+
+  try {
+    const comentario = await models.Comentario.findByPk(id); // Encuentra el comentario por ID
+
+    if (!comentario) {
+      next({...errors.NotFoundError})
+    }
+
+    await comentario.destroy(); // Elimina el comentario de la base de datos
+    return res.status(200).json({ message: 'Comentario eliminado correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar el comentario:', error);
+    return next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener el archivo: ' + error.message
+    })
+  }
+};
+
 const subirMaterialCursada = async (req, res, next) => {
   const { cursoId } = req.params
   const files = req.files
@@ -350,5 +452,8 @@ module.exports = {
   hacerComentario,
   subirMaterialCursada,
   getMaterialCursadaByName,
-  getListaMaterialCursada
+  getListaMaterialCursada,
+  getComentarios,
+  editComentario,
+  deleteComentario,
 }

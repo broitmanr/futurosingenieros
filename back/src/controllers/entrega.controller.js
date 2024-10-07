@@ -362,10 +362,55 @@ const calificarEntrega = async (req, res, next) => {
   }
 }
 
+const ver = async (req, res, next) => {
+  const { id } = req.params
+  try {
+    const entrega = await models.Entrega.findOne({ where: { ID: id },
+      include:[
+        {model:models.Archivo,
+          attributes:["id"]
+        },
+        {
+          model:models.EntregaPactada,
+          attributes:["nombre","descripcion"]
+        }
+      ],
+      attributes:["ID","fecha","nota"]
+    })
+
+    if (!entrega) {
+
+      return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
+    }
+
+    const archivosIds = entrega.Archivos ? entrega.Archivos.map(archivo => archivo.get('id')) : [];
+    console.log(archivosIds)
+    // Formatear la respuesta
+    const entregaConArchivos = {
+      ID: entrega.ID,
+      fecha: entrega.fecha,
+      nota: entrega.nota,
+      archivos: archivosIds,
+      nombre: entrega.EntregaPactada.nombre,
+      descripcion:entrega.EntregaPactada.descripcion
+    };
+
+
+    res.status(200).json(entregaConArchivos)
+  } catch (error) {
+    console.error('Error al obtener los archivos de la entrega:', error)
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener los archivos asociados de la entrega: ' + error.message
+    })
+  }
+}
+
 module.exports = {
   listarEntregasDocente,
   crearEntrega,
   obtenerArchivosDeEntrega,
   calificarEntrega,
-  asociarArchivosConEntrega
+  asociarArchivosConEntrega,
+  ver
 }

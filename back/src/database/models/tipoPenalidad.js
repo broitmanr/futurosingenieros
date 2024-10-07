@@ -7,8 +7,12 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true
     },
+    nombre: {
+      type: DataTypes.STRING(45),
+      allowNull: false
+    },
     descripcion: {
-      type: DataTypes.STRING(300),
+      type: DataTypes.TEXT,
       allowNull: false
     },
     updated_at: {

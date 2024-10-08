@@ -123,7 +123,7 @@ async function listar (req, res, next) {
             attributes: ['nombre']
           }, {
             model: models.Materia,
-            attributes: ['nombre']
+            attributes: ['nombre','imagen']
           }, {
             model: models.PersonaXCurso,
             where: { persona_id: docenteId },
@@ -152,13 +152,12 @@ async function listar (req, res, next) {
       next({ ...errors.UsuarioNoAutorizado, details: 'No tiene permiso para listar los cursos.' })
     }
 
-    const fileId = '18q1oU58wOUHBI5UGzJkevZdQ-p9qK5cV'
     const cursosIDsComplete = cursos.map(curso => ({
       id: curso.ID,
       anio: curso.cicloLectivo,
       comision: curso.Comision.nombre,
       materia: curso.Materium.nombre,
-      image: `${req.protocol}://${req.get('host')}/api/archivo/imagen/nombre/${curso.Materium.imagen}`
+      image: `${req.protocol}://${req.get('host')}/api/archivo/imagen/nombre/${curso.Materium.imagen ?? 'generica'}`
     }))
 
     res.status(200).json(cursosIDsComplete)

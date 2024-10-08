@@ -95,7 +95,12 @@ const Cursos = () => {
                         <Col key={idx}>
                             <Link style={{textDecoration:'none', color:'#000'}} to={`/cursos/${item.id}/actividades`}>
                                 <Card style={{ border: '0.1rem solid #7fa7db' }}>
-                                    <Card variant="top" style={{backgroundColor: '#7fa7db', height: '10rem'}}></Card>
+                                    <Card.Img
+                                        variant="top"
+                                        src={item.image}
+                                        style={{ height: '10rem', objectFit: 'cover',backgroundImage:'url(/generica.png)', backgroundSize: 'cover',
+                                            backgroundPosition: 'center',backgroundColor: '#7fa7db'}}
+                                    />
                                     <Card.Body>
                                         <Card.Title>
                                             <Row>
@@ -111,7 +116,7 @@ const Cursos = () => {
                                             {item.materia}
                                         </Card.Text>
                                     </Card.Body>
-                                    <img src={item.image} />
+
                                 </Card>
                             </Link>
                         </Col>

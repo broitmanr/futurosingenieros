@@ -6,7 +6,7 @@ import './SharedStyles.css'
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 //import { ButtonGroup } from 'react-bootstrap';
-        
+import axios from 'axios';
 
 const Header = () => {
     const { role, setRole } = useRole()
@@ -24,11 +24,18 @@ const Header = () => {
         setDropdownUserVisible(!dropdownUserVisible)
     }
 
-    const handleLogOut = () => {
-        setDropdownUserVisible(false)
-        setRole('')
-        localStorage.removeItem('role')
-        navigate('/login')
+    const handleLogOut = async () => {
+        try {
+            const response = await axios.post('http://localhost:5000/auth/sign-out', { withCredentials: true })
+            if(response){
+                setDropdownUserVisible(false)
+                setRole('')
+                localStorage.removeItem('role')
+                navigate('/login')
+            }
+        }catch(err){
+            console.log('No se logró cerrar sesión:', err)
+        }
     }
 
     const handleClickOpen = (e) => {

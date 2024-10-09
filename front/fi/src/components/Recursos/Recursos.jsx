@@ -21,6 +21,7 @@ import { TfiFiles } from "react-icons/tfi";
 import { SlCloudUpload } from "react-icons/sl";
 import { RxCross2 } from "react-icons/rx";
 import { IoMdCloudCircle } from "react-icons/io";
+import {CircularProgress} from "@mui/material";
 
 
 export default function Recursos() {
@@ -31,6 +32,8 @@ export default function Recursos() {
     const fileUploadRef = useRef(null)
     const [visible, setVisible] = useState(false)
     const [totalSize, setTotalSize] = useState(0)
+    const [loading, setLoading] = useState(false); // Estado para manejar el estado de carga
+
     const handleCloseUpload = () => setVisible(false);
     const handleShowUpload = () => setVisible(true);
 
@@ -52,12 +55,15 @@ export default function Recursos() {
         });
 
         try{
+            setLoading(true)
             const response = await axios.post(`/archivo/subirMaterial/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true})
             if(response.data){
                 console.log('Agregado con éxito', response.data)
+                setLoading(false)
                 handleCloseUpload()
             }
         }catch(err){
+            setLoading(false)
             console.log('No se ha logrado subir el recurso:', err)
         }
     }
@@ -99,7 +105,7 @@ export default function Recursos() {
     const emptyModal = () => (
         <div className="flex align-items-center flex-column">
             <i className="mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
-            <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">Drag and Drop Files Here</span>
+            <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">Arrastrá tus archivos acá</span>
         </div>
     );
 
@@ -164,20 +170,28 @@ export default function Recursos() {
                     <Modal.Header closeButton>
                     </Modal.Header>
                     <Modal.Body>
-                        <FileUpload
-                        ref={fileUploadRef}
-                        name="files"
-                        multiple
-                        accept="*/*"
-                        maxFileSize={10000000}
-                        onSelect={handleFileChange}
-                        onClear={onModalClear}
-                        headerTemplate={headerModal}
-                        itemTemplate={itemModal}
-                        emptyTemplate={emptyModal}
-                        chooseOptions={chooseOptions}
-                        cancelOptions={cancelOptions}
-                        onError={(e) => console.error('Error al subir el archivo', e)} />
+                        {!loading ?
+                            (<FileUpload
+                                ref={fileUploadRef}
+                                name="files"
+                                multiple
+                                accept="*/*"
+                                maxFileSize={10000000}
+                                onSelect={handleFileChange}
+                                onClear={onModalClear}
+                                headerTemplate={headerModal}
+                                itemTemplate={itemModal}
+                                emptyTemplate={emptyModal}
+                                chooseOptions={chooseOptions}
+                                cancelOptions={cancelOptions}
+                                onError={(e) => console.error('Error al subir el archivo', e)} />)
+                            : (<>
+                                <CircularProgress className={'m-2'} size="3rem" /><small className={'ml-2'}>Subiendo archivos</small>
+                            </>)
+
+
+                        }
+
                     </Modal.Body>
                 </Modal>
                 </>

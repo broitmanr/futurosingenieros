@@ -1,5 +1,6 @@
 import '../styles/RendimientoAlumno.css';
 import "bootstrap/dist/css/bootstrap.min.css";
+import { PieChart } from '@mui/x-charts';
 
 const RendimientoAlumno = () => {
   return (
@@ -8,15 +9,35 @@ const RendimientoAlumno = () => {
         Rendimiento del alumno
       </h1>
 
+
+
       <div className='containerFaltas'>
         <h3 className='catedraProyecto'
           style={{
-            fontSize:"16px",
+            fontSize: "16px",
             textAlign: 'left',    // Alineado a la izquierda
             color: 'black',       // Color de texto negro
             marginTop: '10px'
           }}>
           Catedra: Proyecto Final</h3>
+
+        <div className="penalidades text-center">
+          <h4>Penalidades: 0/3</h4>
+          <PieChart className='mx-auto'
+            series={[
+              {
+                data: [
+                  { id: 0, value: 30, label: 'series A' },
+                  { id: 1, value: 30, label: 'series B' },
+                  { id: 2, value: 40, label: 'series C' },
+                ],
+              },
+            ]}
+            width={200}
+            height={100}
+          />
+        </div>
+
         <h3 className='titulo-inasistencias'>
           Cantidad de Inasistencias: 9</h3>
       </div>

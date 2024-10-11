@@ -11,11 +11,15 @@ import axios from 'axios';
 import './Rendimiento.css'
 import RendimientoAlumno from './RendimientoAlumno';
 import RendimientoGrupo from './RendimientoGrupo';
+import { RendimientoGrupoProfe } from './RendimientoGrupoProfe';
+import { RendimientoAlumnoProfe } from './RendimientoAlumnoProfe';
+
 
 
 function Rendimiento() {
     const { id } = useParams(); //Obtiene el id del curso pasado por parámetro
     const { role } = useRole()
+    console.log('El rol del usuario logeado es: ' + role);
     const [legajo, setLegajo] = useState(''); //Estado para el legajo
     const [total_inasistencias, SetTotalInasistencias] = useState('')
     const [alumnos, setAlumnos] = useState([]); //Estado para el listado de alumnos
@@ -131,49 +135,66 @@ function Rendimiento() {
     const header = renderHeader();
 
     return (
+
+
+
         <div className='rendimiento-container'>
             <div>
                 <TabView className="tabs-container">
                     <TabPanel className='tab-header-text' header="Alumnos">
-                        <RendimientoAlumno />
+                        {
+                            role === 'D'
+                                ?
+                                <RendimientoAlumnoProfe />
+                                :
+                                <RendimientoAlumno />
+                        }
+
                     </TabPanel>
                     <TabPanel className='tab-header-text' header="Grupos">
-                        <RendimientoGrupo />
+                        {
+                            role === 'D'
+                                ?
+                                <RendimientoGrupoProfe />
+                                :
+                                <RendimientoGrupo />
+                        }
+
                     </TabPanel>
-                    { role === 'D' &&
-                    <TabPanel className='tab-header-text' header="Asistencia">
-                        <DataTable
-                            value={alumnos}
-                            paginator rows={10}
-                            dataKey="ID"
-                            filters={filters}
-                            globalFilterFields={['Persona.legajo', 'Persona.nombre', 'Persona.apellido']}
-                            header={header}
-                            loading={loading}
-                            emptyMessage="Lo siento, no se encontraron alumnos."
-                            className='custom-datatable-asistencia'
-                            editMode="cell"
-                        >
-                        <Column
-                            className='columns-data-asistencia'
-                            field="Persona.legajo"
-                            header="LEGAJO"
-                        />
-                        <Column
-                            className='columns-data-asistencia'
-                            field="nombreCompleto"
-                            header="NOMBRE"
-                            sortable
-                        />
-                        <Column
-                            className='columns-data-asistencia'
-                            field="inasistencias"
-                            header="INASISTENCIAS"
-                            body={(rowData) => rowData.inasistencias}
-                            editor={(options) => cellEditor(options)} onCellEditComplete={onCellEditComplete}
-                        />
-                        </DataTable>
-                    </TabPanel>
+                    {role === 'D' &&
+                        <TabPanel className='tab-header-text' header="Asistencia">
+                            <DataTable
+                                value={alumnos}
+                                paginator rows={10}
+                                dataKey="ID"
+                                filters={filters}
+                                globalFilterFields={['Persona.legajo', 'Persona.nombre', 'Persona.apellido']}
+                                header={header}
+                                loading={loading}
+                                emptyMessage="Lo siento, no se encontraron alumnos."
+                                className='custom-datatable-asistencia'
+                                editMode="cell"
+                            >
+                                <Column
+                                    className='columns-data-asistencia'
+                                    field="Persona.legajo"
+                                    header="LEGAJO"
+                                />
+                                <Column
+                                    className='columns-data-asistencia'
+                                    field="nombreCompleto"
+                                    header="NOMBRE"
+                                    sortable
+                                />
+                                <Column
+                                    className='columns-data-asistencia'
+                                    field="inasistencias"
+                                    header="INASISTENCIAS"
+                                    body={(rowData) => rowData.inasistencias}
+                                    editor={(options) => cellEditor(options)} onCellEditComplete={onCellEditComplete}
+                                />
+                            </DataTable>
+                        </TabPanel>
                     }
                 </TabView>
             </div>

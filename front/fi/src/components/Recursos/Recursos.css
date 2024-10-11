@@ -6,6 +6,42 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.header-modal-recursos-container{
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+}
+
+.btn-header-modal-recursos{
+    border-radius: 50%;
+    padding: 0.8em 0.9em;
+    background-color: transparent;
+    margin: 0.2rem
+}
+
+.progress-bar-recursos{
+    width: 10rem; 
+    height: 1rem
+}
+
+.btn-item-modal-recursos{
+    border-radius: 50%;
+    padding: 0.2em 0.10em;
+    margin: 0.2rem
+}
+
+.modal-recursos-container-drop{
+    font-size: 5em;
+    border-radius: '50%';
+    background-color: var(--surface-b);
+    color: var(--surface-d)
+}
+
+.modal-recursos-drop{
+    font-size: 1.2em;
+    color: var(--text-color-secondary)
+}
+
 .grid {
     display: flex;
     flex-direction: column;

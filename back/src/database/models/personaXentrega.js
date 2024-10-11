@@ -2,8 +2,13 @@
 
 module.exports = (sequelize, DataTypes) => {
   const PersonaXEntrega = sequelize.define('PersonaXEntrega', {
-    pocentaje_participacion: {
-      type: DataTypes.DECIMAL(3, 2),
+    ID: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    porcentaje_participacion:{
+      type: DataTypes.FLOAT,
       allowNull: false
     },
     created_at: {

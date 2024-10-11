@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/ActividadEntrega.css';
-import {Button, Card, Col, Row} from 'react-bootstrap';
+import {Button, Card, Col, Row,Badge} from 'react-bootstrap';
 import { EntregaForm } from './EntregaForm';
 import { Link, useParams } from 'react-router-dom';
 import { useRole } from '../../context/RolesContext';
@@ -150,7 +150,9 @@ export const ActividadEntregas = () => {
                                         <h4 className="entrega-titulo">{item.nombre} <span>{item.numero}</span></h4>
                                         <Link className='estilo-detalle' to={`/entrega/${item.ID}`}>Ver detalle</Link>
                                         {/*TODO:Poner el estado real, todavia no lo tenemos, habria que joinear con entrega*/}
-                                        <span className="entrega-estado"></span> {/* Para que no rompa el estilo */}
+                                        {/* Para que no rompa el estilo */}
+                                        <Badge gap={2} bg={item.nota ? item.nota >= 6 ? "success" : "danger" : null}>{item.nota ? "Nota: "+item.nota : null } - {item.estado}</Badge>
+                                        <Badge bg="info">{item.fechaEntrega ? `Entregado el: ${moment(item.fechaEntrega).format('DD/MM/YY')}`: ''}</Badge>
                                         <p className="entrega-fecha"><span></span></p> {/* Para que no rompa el estilo */}
                                         <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('DD/MM/YY')}</span></p>
                                         { item.fechavto2 &&

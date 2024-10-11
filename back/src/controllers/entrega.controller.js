@@ -13,7 +13,7 @@ const crearEntrega = async (req, res, next) => {
   try {
     const { entregaPactadaId } = req.body
     console.log(pico.yellow(`EntregaPactadaId: ${entregaPactadaId}`))
-
+    console.log(entregaPactadaId)
     const entregaPactada = await models.EntregaPactada.findByPk(entregaPactadaId, {
       include: [
         {
@@ -44,6 +44,7 @@ const crearEntrega = async (req, res, next) => {
           }
         ]
       })
+      console.log("----------------",personaXgrupo)
 
       if (!personaXgrupo) {
         return next({ ...errors.NotFoundError, details: 'No se encontró grupo para la persona y la entrega es grupal' })
@@ -56,7 +57,7 @@ const crearEntrega = async (req, res, next) => {
         where: {
           entregaPactada_ID: entregaPactadaId,
           grupo_ID: grupoId,
-          persona_id: res.locals.usuario.persona_id
+          persona_ID: res.locals.usuario.persona_id
         },
         transaction // Asegúrate de pasar la transacción aquí
       })
@@ -72,9 +73,33 @@ const crearEntrega = async (req, res, next) => {
           persona_id: res.locals.usuario.persona_id,
           entregaPactada_ID: entregaPactadaId,
           updated_by: res.locals.usuario.ID
-        }, { transaction }) // Pasar la transacción aquí
+        }, { transaction })
 
-        console.log(pico.green(`Nueva entrega creada: ${JSON.stringify(entrega, null, 2)}`))
+      //   Si la entrega se crea hay que crear las persona x entrega
+        if (grupoId){
+          const grupo = await models.Grupo.findByPk(grupoId,{
+            include:[{
+              model:models.Persona,
+              attributes:['ID']
+            }]
+          })
+
+          const porcentaje = parseFloat((100 / parseInt(grupo.Personas.length)).toFixed(2))
+          for (const persona of grupo.Personas){
+            const personaXEntrega = await models.PersonaXEntrega.create({
+              porcentaje_participacion:porcentaje,
+              persona_id:persona.ID,
+              entrega_id:entrega.ID
+            }, { transaction })
+          }
+        }else{
+          personaXEntrega = await models.PersonaXEntrega.create({
+            porcentaje_participacion:100,
+            persona_id:persona.ID,
+            entrega_id:entrega.ID
+          }, { transaction })
+        }
+
       }
 
       const archivos = await asociarArchivos(files, entrega.ID, req, res, transaction, next) // Pasar la transacción aquí

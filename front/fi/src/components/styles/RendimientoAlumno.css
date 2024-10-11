@@ -1,3 +1,11 @@
+.containerFaltas {
+        display: flex;                /* Hace que el contenido esté en un cuadro horizontal (layout en fila) */
+        flex-direction: row;           /* Asegura que los elementos se alineen horizontalmente */
+        border: 2px solid rgb(150, 144, 144);       /* Borde de 2px de grosor para el contenedor completo */
+        padding: 20px;                /* Añade espacio interno dentro del contenedor */
+        margin: 20px 0;  
+}
+
 .TituloRendimiento {
     color: #193B70;
     margin-bottom: 2rem;
@@ -24,8 +32,6 @@
     /* Borde del recuadro en color azul */
     padding: 20px;
     /* Espacio interno del recuadro */
-    border-radius: 15px;
-    /* Esquinas redondeadas */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     /* Sombra suave */
     background-color: #f9f9f9;

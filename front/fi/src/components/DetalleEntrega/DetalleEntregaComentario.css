@@ -1,0 +1,49 @@
+.fila-comentarios{
+    margin: 2rem 0;
+    border: 1px solid #ccc;
+}
+
+.columna-pdf{
+    border-right: 1px solid #ccc;
+    padding: 0;
+}
+.titulo-pdf{
+    font-size: 26px;
+    border-bottom: 1px solid #ccc;
+}
+
+.titulo-comentario{
+    margin-bottom: 2rem;
+}
+.comentario{
+    margin-bottom: .5rem;
+}
+
+.comentario-texto{
+    background-color: #f1f1f1;
+    padding: .5rem;
+    border-radius: 10px;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.comentario-autor{
+    display: block;
+    text-align: right;
+    font-size: 12px;
+}
+
+.btn-guardar-comentario{
+    background-color: #344474;
+    color: #fff;
+    display: block;
+    margin: 1rem 0;
+    font-size: 14px;
+    border: 0;
+    border-radius: 10px;
+    padding: .3rem 1rem;
+    transition: all .3s ease;
+}
+.btn-guardar-comentario:hover{
+    opacity: .6;
+}

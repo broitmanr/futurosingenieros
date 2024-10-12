@@ -36,22 +36,7 @@ const RendimientoGrupo = () => {
                     <p>Camila Sevilla (303132)</p>
                 </div>
 
-                <div className="penalidades">
-                    <h4>Penalidades: 0/3</h4>
-                    <PieChart
-                        series={[
-                            {
-                                data: [
-                                    { id: 0, value: 30, label: 'series A' },
-                                    { id: 1, value: 30, label: 'series B' },
-                                    { id: 2, value: 40, label: 'series C' },
-                                ],
-                            },
-                        ]}
-                        width={200}
-                        height={100}
-                    />
-                </div>
+               
 
             </div>
 

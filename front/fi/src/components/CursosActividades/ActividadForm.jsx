@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import axios from "axios";
-function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAgregada }) {
 
+function Actividad({ show, handleClose, cursoID, setInstancias, handleInstanciaAgregada }) {
   const [formData, setFormData] = useState({})
-  const [tipoInstancias, setTipoInstancias] = useState([]);
+  const [tipoInstancias, setTipoInstancias] = useState([])
   const [isGrupal, setIsGrupal] = useState(false)
-  const [isLoading, setLoading] = useState({});
+  const [aplicaPenalidad, setAplicaPenalidad] = useState(false)
+  const [isLoading, setLoading] = useState({})
 
   const onChange = (e) => {
     setFormData(prevState => {
       return { ...prevState, [e.target.name]: e.target.value }
     })
-  };
+  }
 
   const handleSwitchChange = () => {
     setIsGrupal(!isGrupal)
@@ -22,44 +23,47 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
     }))
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handlePenalidadChange = () => {
+    setAplicaPenalidad(!aplicaPenalidad)
+    setFormData(prevState => ({
+      ...prevState,
+      penalidad_aplicable: !aplicaPenalidad
+    }))
+  }
 
-    formData.cursoID = cursoID;
-    console.log(formData);
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    formData.cursoID = cursoID
+    console.log(formData)
 
     // PASAR LA DATA EN REQ BODY.
-     axios.post(`/instanciaEvaluativa`,formData, { withCredentials: true }) // Ajusta la URL de la API según corresponda
-             .then(response => {
-                 console.log('actividad creada',response.data);
-                 setFormData({})
-                 /*setInstancias(prevState => {
-                    return [...prevState, response.data]
-                 })*/
-                 handleInstanciaAgregada(response.data)
-             })
-             .catch(err => {
-                 alert('Error: '+ err.response.data.error.message)
-                 // setError('Error al crear la actividad');
-               
-             });
+    axios.post(`/instanciaEvaluativa`, formData, { withCredentials: true }) // Ajusta la URL de la API según corresponda
+      .then(response => {
+        console.log('actividad creada', response.data);
+        setFormData({})
+        handleInstanciaAgregada(response.data);
+      })
+      .catch(err => {
+        alert('Error: ' + err.response.data.error.message);
+      })
     handleClose();
     setIsGrupal(false)
+    setAplicaPenalidad(false)
   }
 
   useEffect(() => {
     // LISTAR EL TIPO DE INSTANCIAS DISPONIBLES PARA EL SELECT
     axios.get(`/instanciaEvaluativa/tiposInstancias`, { withCredentials: true }) // Ajusta la URL de la API según corresponda
       .then(response => {
-        console.log(response.data);
+        console.log(response.data)
         setTipoInstancias(response.data)
-      
       })
       .catch(err => {
         console.log(err)
         // setError('Error al obtener los cursos');
-        setLoading(false);
-      });
+        setLoading(false)
+      })
   }, [])
   return (
     <>
@@ -104,17 +108,17 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
               <Form.Select name="tipoInstanciaID" style={{ marginBottom: '1rem', border: '0.1rem solid #608ad1' }} onChange={e => onChange(e)} aria-label="Floating label select example">
                 <option>Seleccione el tipo</option>
                 {
-                  tipoInstancias && tipoInstancias.length > 0 
-                  ?
-                    tipoInstancias.map((tipo,index) => {
+                  tipoInstancias && tipoInstancias.length > 0
+                    ?
+                    tipoInstancias.map((tipo, index) => {
                       return (
                         <option key={index} value={tipo.ID}>{tipo.nombre}</option>
                       )
                     })
-                  :
-                  <option value="0">Cargando..</option>
+                    :
+                    <option value="0">Cargando..</option>
                 }
-              
+
               </Form.Select>
 
               <Form.Group className="mb-3" controlId="grupoInstancia">
@@ -131,6 +135,18 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
                 label={isGrupal ? "Sí, es en grupo" : "No, es individual"}
                 checked={isGrupal}
                 onChange={handleSwitchChange}
+                className='float-end'
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="aplicaPenalidad">
+              <Form.Label>¿Aplica penalidad?</Form.Label>
+              <Form.Check
+                inline
+                type="switch"
+                id="custom-aplicaPenalidad"
+                label={aplicaPenalidad ? "Sí, aplica penalidad" : "No, no aplica penalidad"}
+                checked={aplicaPenalidad}
+                onChange={handlePenalidadChange}
                 className='float-end'
               />
             </Form.Group>
@@ -154,7 +170,7 @@ function Actividad({ show, handleClose, cursoID,setInstancias, handleInstanciaAg
         </Modal.Footer>
       </Modal>
     </>
-  );
+  )
 }
 
-export default Actividad;
+export default Actividad

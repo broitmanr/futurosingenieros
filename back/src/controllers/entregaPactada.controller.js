@@ -75,16 +75,54 @@ async function ver (req, res, next) {
 async function listarEntregasInstancia (req, res, next) {
   const { instanciaID } = req.params
   // Se podria verificar que pertenezca el curso a la persona
-  console.log('Valor que llega del id en el params', instanciaID)
-  try {
-    const entregasPactadas = await models.EntregaPactada.findAll({
-      attributes: ['ID', 'nombre', 'numero', 'descripcion', 'fechavto1', 'fechavto2'],
-      where: {
-        instanciaEvaluativa_id: instanciaID
-      }
-    })
 
+  try {
+    let entregasPactadas
+    if (res.locals.usuario.rol === 'A'){
+      entregasPactadas = await models.EntregaPactada.findAll({
+        attributes: ['ID', 'nombre', 'numero', 'descripcion', 'fechavto1', 'fechavto2'],
+        where: {
+          instanciaEvaluativa_id: instanciaID
+        },
+        include:[
+          {
+            model:models.Entrega,
+            required:false,
+            include:[
+              {model:models.Persona,
+                required:false,
+                where:{ ID: res.locals.usuario.persona_id }
+              }
+            ]
+          }
+        ]
+      })
+
+
+      const entregasMapeadas = entregasPactadas.map(entrega => ({
+        ID:entrega.ID,
+        nombre:entrega.nombre,
+        numero:entrega.numero,
+        descripcion:entrega.descripcion,
+        fechavto1:entrega.fechavto1,
+        fechavto2:entrega.fechavto2,
+        nota:entrega.Entregas ? entrega.Entregas[0].nota : null,
+        estado: entrega.Entregas ? (entrega.Entregas[0].nota ? (entrega.Entregas[0].nota >= 6 ? 'Promocionado' : 'Desaprobado') : 'Sin corregir') : 'Sin entregar',
+        fechaEntrega:entrega.Entregas ? entrega.Entregas[0].fecha : null
+      }))
+
+      res.status(200).json(entregasMapeadas)
+
+    } else{
+      entregasPactadas = await models.EntregaPactada.findAll({
+        attributes: ['ID', 'nombre', 'numero', 'descripcion', 'fechavto1', 'fechavto2'],
+        where: {
+          instanciaEvaluativa_id: instanciaID
+        }
+      })
+    }
     res.status(200).json(entregasPactadas)
+
   } catch (error) {
     next({
       ...errors.InternalServerError,

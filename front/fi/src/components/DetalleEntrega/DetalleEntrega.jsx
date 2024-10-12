@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react"
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import moment from "moment";
 import { useRole } from "../../context/RolesContext";
@@ -50,9 +50,9 @@ export const DetalleEntrega = () => {
         <div className="entrega-detalle-container">
             {role === 'A' &&
                 <>
-                    <div className="container d-flex justify-content-center">
-                        <div className="container-box-entrega-detalle">
-                            <div className="col-md-6 mx-auto border- border-2 box-entrega-detalle">
+                    <div className="container d-flex justify-content-center " >
+                        <div className="container-box-entrega-detalle flex-column">
+                            <div className="col-md-6 mx-auto border- border-2 box-entrega-detalle mb-3 ">
                                 {isLoading ? (
                                     <p className='text-danger text-center'>Cargando</p>
                                 ) : (
@@ -86,6 +86,19 @@ export const DetalleEntrega = () => {
                                     breakpoints={{ '960px': '75vw', '641px': '100vw' }}
                                 >
                                 </Dialog>
+                            </div>
+
+                            <div className="col-md-6 mx-auto border-2 box-entrega-detalle">
+                                    <h3>Felicidades, grupo 8, han realizado la entrega de
+                                    Planificación de gestión del cronograma</h3>
+                                    <h5>Descripción:</h5>
+                                    <div className="contenedor-fechas-entrega ">
+                                        <p className="m-0">Fecha de entrega: 10/08</p>
+                                        <p className="m-0">Fecha de vencimiento: 17/08</p>
+                                    </div>
+                                   
+                                    <Link to={`/entrega/${params.id}/comentarios`}>Entrega</Link>
+                                    <p>Estado: <span className="fw-bold">Modificar</span></p>
                             </div>
                         </div>
                     </div>

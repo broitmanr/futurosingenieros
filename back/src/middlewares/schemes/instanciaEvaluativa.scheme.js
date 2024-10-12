@@ -20,6 +20,9 @@ const instanciaBase = Joi.object({
   }),
   grupo: Joi.boolean().required().messages({
     'any.required': 'El valor de grupo es obligatorio y debe ser un booleano.'
+  }),
+  penalidad_aplicable: Joi.boolean().required().messages({
+    'any.required': 'El valor de penalidad_aplicable es obligatorio y debe ser un booleano.'
   })
 })
 

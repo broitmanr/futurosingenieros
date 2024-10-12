@@ -3,8 +3,8 @@ const models = require('../database/models/index')
 const { red, yellow } = require('picocolors')
 
 // Función para crear una entrega
-async function crear (req, res, next) {
-  const { porcentajePonderacion, cursoID, nombre, tipoInstanciaID, descripcion, grupo } = req.body
+async function crear(req, res, next) {
+  const { porcentajePonderacion, cursoID, nombre, tipoInstanciaID, descripcion, grupo, penalidad_aplicable } = req.body
   const transaction = await models.sequelize.transaction()
   // Si el usuario no tiene persona asociada entonces no puede crear el curso
   if (res.locals.usuario.persona_id == null) { return next(errors.UsuarioNoPersona) }
@@ -30,7 +30,8 @@ async function crear (req, res, next) {
       descripcion,
       grupo,
       tipoInstancia_id: tipoInstanciaID,
-      updated_by: res.locals.usuario.ID
+      updated_by: res.locals.usuario.ID,
+      penalidad_aplicable
     }, { transaction })
 
     // await models.PersonaXCurso.create({
@@ -50,7 +51,7 @@ async function crear (req, res, next) {
   }
 }
 
-async function ver (req, res, next) {
+async function ver(req, res, next) {
   const { id } = req.params
 
   try {
@@ -81,7 +82,7 @@ async function ver (req, res, next) {
   }
 }
 
-async function listar (req, res, next) {
+async function listar(req, res, next) {
   try {
     if (req.params == null) { return next(errors.CredencialesInvalidas) }
     const curso = req.params.cursoID
@@ -113,7 +114,7 @@ async function listar (req, res, next) {
   }
 }
 
-async function listarTiposInstancias (req, res, next) {
+async function listarTiposInstancias(req, res, next) {
   try {
     // Agregar validar que sea los q el es docente
     const tiposinstancias = await models.TipoInstancia.findAll({

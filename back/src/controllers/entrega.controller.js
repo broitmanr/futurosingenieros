@@ -431,11 +431,50 @@ const ver = async (req, res, next) => {
   }
 }
 
+
+async function getEstado(entrega){
+  // 0 sin entregar, 1 promocionado , 2 aprobado, 3 desaprobado, 4 con comentarios  5 sin corregir
+  let estado = {
+    id:null,
+    descripcion:null,
+  }
+  if (!entrega){
+    estado.id = 0
+    estado.descripcion = 'Sin entregar'
+  }else{
+    if(entrega.nota){
+      estado.id = entrega.nota >= 6 ? 1 : entrega.nota >= 4 ? 2 : 3
+      estado.descripcion = entrega.nota >= 6 ? 'Promocionado' : entrega.nota >= 4 ? 'Aprobado' : 'Desaprobado'
+    }else{
+      const comentarios = await models.Comentario.count({
+        where:{
+          entrega_id:entrega.ID,
+        }
+      })
+      if (comentarios > 0){
+        estado.id=4
+        estado.descripcion = 'Con Comentarios'
+      }else{
+        estado.id=5
+        estado.descripcion= 'Sin corregir'
+      }
+    }
+
+  }
+  console.log(estado)
+  return estado
+
+
+
+
+}
+
 module.exports = {
   listarEntregasDocente,
   crearEntrega,
   obtenerArchivosDeEntrega,
   calificarEntrega,
   asociarArchivosConEntrega,
-  ver
+  ver,
+  getEstado
 }

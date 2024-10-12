@@ -16,9 +16,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: DataTypes.NOW
     },
-    updated_by: {
-      type: DataTypes.STRING,
-      allowNull: true
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW
     }
   }, {
     tableName: 'PersonaXEntrega',

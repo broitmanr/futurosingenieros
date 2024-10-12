@@ -48,7 +48,9 @@ module.exports = (sequelize, DataTypes) => {
     Persona.hasMany(models.InasistenciasPorCurso, {
       foreignKey: 'persona_id'
     })
-    Persona.hasOne(models.Usuario, { foreignKey: 'persona_id' })
+    // Persona.hasOne(models.Usuario, { foreignKey: 'persona_id' })
+    Persona.belongsToMany(models.Entrega, { through: 'PersonaXEntrega', foreignKey: 'persona_id', otherKey: 'entrega_id' })
+
   }
   return Persona
 }

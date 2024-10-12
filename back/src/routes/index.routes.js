@@ -13,6 +13,7 @@ const inasistenciaRoutes = require('./inasistencia.routes.js')
 const archivoRoutes = require('./archivo.routes.js')
 const personaRoutes = require('./persona.routes.js')
 const penalidadRoutes = require('./penalidad.routes.js')
+const rendimientoRoutes = require('./rendimiento.routes.js')
 
 const rutasInit = () => {
   const router = Router()
@@ -29,6 +30,7 @@ const rutasInit = () => {
   router.use('/archivo',decodeJWT, archivoRoutes)
   router.use('/persona', decodeJWT, personaRoutes)
   router.use('/penalidad', decodeJWT, penalidadRoutes)
+  router.use('/rendimiento', decodeJWT, rendimientoRoutes)
   return router
 }
 

@@ -5,7 +5,7 @@ const checkRole = function (...allowedRoles) {
     if (res.locals.usuario && allowedRoles.includes(res.locals.usuario.rol)) {
       next()
     } else {
-      return next(errors.UsuarioNoAutorizado)
+      return next({ ...errors.UsuarioNoAutorizado, details: 'No tiene permisos para realizar esta acción con su rol' })
     }
   }
 }

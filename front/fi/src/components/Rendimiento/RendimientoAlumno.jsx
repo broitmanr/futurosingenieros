@@ -5,18 +5,27 @@ import React,{useEffect, useState} from "react";
 import axios from "axios";
 import {useParams} from "react-router-dom";
 import moment from "moment";
+import {useRole} from "../../context/RolesContext.jsx";
 
 const RendimientoAlumno = () => {
     const [entregas,setEntregas]=useState([])
     const [loading,setLoading]=useState(true)
     const [error,setError]=useState(null)
-    const {id} = useParams();
+    const {id,idAlumno} = useParams();
+    const { role } = useRole()
 
 
     useEffect(() => {
         const fetchInstancias = async () => {
             try {
-                const response = await axios.get(`/rendimiento/alumno/${id}`,{ withCredentials: true });
+                let response
+                if (role === 'A' ){
+                    response = await axios.get(`/rendimiento/alumno/${id}`,{ withCredentials: true });
+                }else {
+                    response = await axios.get(`/rendimiento/alumno/${id}/${idAlumno}`,{ withCredentials: true });
+
+                }
+
                 setEntregas(response.data);
                 setLoading(false);
             } catch (err) {

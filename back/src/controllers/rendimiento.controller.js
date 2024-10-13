@@ -6,33 +6,26 @@ const { getEstado } = require('./entrega.controller')
 // Función para tener el rendimiento de un alumno
 async function alumno(req, res, next) {
   const { cursoId } = req.params;
+  const alumnoID = res.locals.usuario.rol === 'D' ? req.params.alumnoId : res.locals.usuario.persona_id;
 
-  const alumnoID = res.locals.usuario.rol === 'D' ? req.params.alumnoId : res.locals.usuario.persona_id
+  if (!alumnoID) {
+    return next({ ...errors.FaltanParametros });
+  }
 
-  const notaParcial = await calcularNotaParcialAlumno(cursoId,alumnoID)
-  console.log(notaParcial)
+  const notaParcial = await calcularNotaParcialAlumno(cursoId, alumnoID);
+  console.log(notaParcial);
 
-  if (!alumnoID){return next({...errors.FaltanParametros})}
-  const rendimiento = await models.EntregaPactada.findAll({
+  // Consulta las entregas que el alumno ha realizado
+  const entregasRealizadas = await models.EntregaPactada.findAll({
     include: [
       {
         model: models.Entrega,
-        required: false, // LEFT JOIN para incluir todas las EntregaPactada
+        required: true, // Asegúrate de que haya una entrega
         include: [
           {
-            model: models.Persona,
-            required: false, // LEFT JOIN con Persona
-            where: {
-              [models.Sequelize.Op.or]: [
-                { ID: alumnoID },
-                { ID: null }
-              ]
-            }
-          },
-          {
-            model: models.PersonaXEntrega, // Incluir la tabla intermedia manualmente
-            required: false, // LEFT JOIN con PersonaXEntrega
-            attributes: ['porcentaje_participacion'], // Campos que quieres de la tabla intermedia
+            model: models.PersonaXEntrega,
+            required: true,
+            attributes: ['porcentaje_participacion'],
             where: {
               persona_id: alumnoID // Filtrar por el `persona_id`
             }
@@ -46,13 +39,27 @@ async function alumno(req, res, next) {
     ]
   });
 
+  // Consulta todas las entregas pactadas para el curso
+  const entregasPactadas = await models.EntregaPactada.findAll({
+    include: [
+      {
+        model: models.InstanciaEvaluativa,
+        where: { curso_id: cursoId }
+      }
+    ]
+  });
+
   // Proceso para mapear los resultados
-  const entregaPactadaPromises = rendimiento.map(async (entregaPactada) => {
+  const entregaPactadaPromises = entregasPactadas.map(async (entregaPactada) => {
     const instancia = entregaPactada.InstanciaEvaluativa;
     const instanciaId = instancia.ID;
 
-    const entrega = entregaPactada.Entregas[0];
+    // Busca la entrega realizada por el alumno que corresponde a la entrega pactada
+    const entregaRealizada = entregasRealizadas.find(ep => ep.ID === entregaPactada.ID);
+
+    const entrega = entregaRealizada ? entregaRealizada.Entregas[0] : null;
     const estado = await getEstado(entrega ?? null);
+
     return {
       id: instanciaId,
       nombre: instancia.nombre,
@@ -66,7 +73,7 @@ async function alumno(req, res, next) {
         id: entrega.ID,
         fecha: entrega.fecha ?? null,
         nota: entrega.nota ?? null,
-        porcentaje_participacion: entrega?.PersonaXEntregas?.[0]?.porcentaje_participacion ?? null // Obtener el porcentaje de la tabla intermedia
+        porcentaje_participacion: entrega.PersonaXEntregas[0]?.porcentaje_participacion ?? null // Obtener el porcentaje de la tabla intermedia
       } : null,
       estado
     };
@@ -99,8 +106,10 @@ async function alumno(req, res, next) {
   }, {});
 
   // Devolver los datos agrupados
-  res.status(200).json(Object.values(groupedData)); // Convertir a array si se desea
+  res.status(200).json(Object.values(groupedData));
 }
+
+
 
 
 async function listarAlumnosDelCurso(req, res, next) {
@@ -147,7 +156,6 @@ async function listarAlumnosDelCurso(req, res, next) {
     return res.status(500).json({ error: 'Error al obtener el listado de alumnos.' });
   }
 }
-
 async function calcularNotaParcialAlumno(cursoId, personaId) {
   const instanciasEvaluativas = await models.InstanciaEvaluativa.findAll({
     where: { curso_id: cursoId },
@@ -174,6 +182,7 @@ async function calcularNotaParcialAlumno(cursoId, personaId) {
 
   let notaParcialCursoPonderada = 0;
   let notaParcialCursoEquiponderada = 0;
+  let totalEntregas = 0; // Contador de entregas
   const porcentajePonderacionEquiponderada = (100 / instanciasEvaluativas.length).toFixed(2);
 
   for (const instancia of instanciasEvaluativas) {
@@ -210,26 +219,32 @@ async function calcularNotaParcialAlumno(cursoId, personaId) {
             const coeficienteExtra = (exceso / 100) * 0.3; // Ajuste moderado
             coeficiente = 1 + coeficienteExtra;
           }
-
+          coeficiente=coeficiente.toFixed(2)
           // Calcular la nota final basada en el coeficiente ajustado
           let notaFinal = coeficiente * notaEntrega;
           notaFinal = Math.min(notaFinal, 10); // Limitar la nota máxima a 10
-
+          console.log(notaFinal)
           notaPonderadaInstancia += notaFinal;
           notaEquiponderadaInstancia += notaFinal;
+
+          totalEntregas++; // Contar la entrega
         }
       }
     }
 
-    notaParcialCursoPonderada += (notaPonderadaInstancia * porcentajePonderacion) / 100;
-    notaParcialCursoEquiponderada += (notaEquiponderadaInstancia * porcentajePonderacionEquiponderada) / 100;
+
+    if (totalEntregas > 0) {
+      notaParcialCursoPonderada += (notaPonderadaInstancia/ totalEntregas) * (porcentajePonderacion/100) ;
+      notaParcialCursoEquiponderada += (notaEquiponderadaInstancia / totalEntregas) * (porcentajePonderacionEquiponderada/100) ;
+    }
   }
 
   return {
-    notaParcialPonderada: notaParcialCursoPonderada.toFixed(2),
-    notaParcialEquiponderada: notaParcialCursoEquiponderada.toFixed(2)
+    notaParcialPonderada: parseFloat(notaParcialCursoPonderada.toFixed(2)),
+    notaParcialEquiponderada: parseFloat(notaParcialCursoEquiponderada.toFixed(2))
   };
 }
+
 
 // Función auxiliar para calcular las penalidades
 async function calcularPenalidades(personaXcursoID) {

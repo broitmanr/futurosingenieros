@@ -107,11 +107,11 @@ const RendimientoAlumno = () => {
                                     )}
                                     <td>{entregaInfo.entregaPactada.nombre}</td>
                                     <td>{moment(entregaInfo.entregaPactada.fechavto1).format('DD/MM/YY')}</td>
-                                    <td>{entregaInfo.entregaPactada.fechavto2 ?moment(entregaInfo.entregaPactada.fechavto1).format('DD/MM/YY') : '-' }</td>
+                                    <td>{entregaInfo.entregaPactada.fechavto2 ?moment(entregaInfo.entregaPactada.fechavto2).format('DD/MM/YY') : '-' }</td>
                                     <td>{entregaInfo.entrega ? moment(entregaInfo.entrega.fecha).format('DD/MM/YY') : 'No entregado'}</td>
                                     <td>{entregaInfo.estado.descripcion}</td>
                                     <td>{entregaInfo.entrega?.nota ?? '-'}</td>
-                                    <td>{entregaInfo.entrega?.porcentaje_participacion ?? 'N/A'}%</td>
+                                    <td>{entregaInfo.entrega?.porcentaje_participacion ?? 'No registra'}%</td>
                                 </tr>
                             ))}
                         </React.Fragment>

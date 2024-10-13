@@ -461,7 +461,6 @@ async function getEstado(entrega){
     }
 
   }
-  console.log(estado)
   return estado
 
 

@@ -47,6 +47,7 @@ module.exports = (sequelize, DataTypes) => {
   InstanciaEvaluativa.associate = models => {
     InstanciaEvaluativa.belongsTo(models.Curso, { foreignKey: 'curso_id', allowNull: false })
     InstanciaEvaluativa.belongsTo(models.TipoInstancia, { foreignKey: 'tipoInstancia_id', allowNull: false })
+    InstanciaEvaluativa.hasMany(models.EntregaPactada, { foreignKey: 'instanciaEvaluativa_id', allowNull: false })
   }
 
   return InstanciaEvaluativa

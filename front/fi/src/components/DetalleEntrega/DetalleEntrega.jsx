@@ -30,6 +30,7 @@ export const DetalleEntrega = () => {
             try {
                 const response = await axios.get(`/entregaPactada/${params.id}`, { withCredentials: true })
                 console.log('actividad creada', response.data);
+                console.log()
                 setEntregaDetalle(response.data)
                 setLoading(false);
             } catch (err) {

@@ -12,8 +12,6 @@ async function alumno(req, res, next) {
     return next({ ...errors.FaltanParametros });
   }
 
-  const notaParcial = await calcularNotaParcialAlumno(cursoId, alumnoID);
-  console.log(notaParcial);
 
   // Consulta las entregas que el alumno ha realizado
   const entregasRealizadas = await models.EntregaPactada.findAll({
@@ -49,7 +47,7 @@ async function alumno(req, res, next) {
     ]
   });
 
-  // Proceso para mapear los resultados
+
   const entregaPactadaPromises = entregasPactadas.map(async (entregaPactada) => {
     const instancia = entregaPactada.InstanciaEvaluativa;
     const instanciaId = instancia.ID;
@@ -79,6 +77,38 @@ async function alumno(req, res, next) {
     };
   });
 
+  const penalidadesCount = await models.Penalidad.count({
+    include:[
+      {
+        model:models.PersonaXCurso,
+        where:{persona_id:alumnoID,curso_id:cursoId}
+      }
+    ]
+  });
+
+
+  const inasistenciasCount = await models.Inasistencia.count({
+    where: { persona_id: alumnoID, curso_id: cursoId }
+  });
+
+
+  const alumno = await models.Persona.findOne({
+    where: { ID: alumnoID },
+    attributes: ['nombre', 'legajo','apellido'],
+    include: [
+      {
+        model: models.Grupo,
+        where:{curso_id:cursoId},
+        attributes: ['nombre', 'numero'],
+        through: {
+          attributes: [] // Si tienes una tabla intermedia, puedes omitirla aquí
+        }
+      }
+    ]
+  });
+
+
+
   // Esperar a que todas las promesas se resuelvan
   const entregasAgrupadas = await Promise.all(entregaPactadaPromises);
 
@@ -105,8 +135,45 @@ async function alumno(req, res, next) {
     return acc;
   }, {});
 
+
+  const curso = await models.Curso.findByPk(cursoId,{
+    include: [
+      {
+        model: models.Materia,
+        attributes: ['ID', 'nombre'] // Ajusta los atributos según tus necesidades
+      },
+      {
+        model: models.Comision,
+        attributes: ['ID', 'nombre'] // Ajusta los atributos según tus necesidades
+      },
+
+    ]
+  })
+
+
+  const response = {
+    alumno: {
+      nombre: alumno.nombre,
+      apellido: alumno.apellido,
+      legajo: alumno.legajo,
+      grupo: {
+        nombre: alumno.Grupos[0]?.nombre || 'Sin grupo',
+        numero: alumno.Grupos[0]?.numero || 'N/A'
+      }
+    },
+    curso:{
+      materia:curso.Materium?.nombre ?? 'Sin información',
+      comision:curso.Comision?.nombre ?? 'Sin información'
+    },
+    penalidades: penalidadesCount,
+    inasistencias: inasistenciasCount,
+    entregasAgrupadas: Object.values(groupedData)
+  };
+
+
+
   // Devolver los datos agrupados
-  res.status(200).json(Object.values(groupedData));
+  res.status(200).json(response);
 }
 
 

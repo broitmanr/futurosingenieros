@@ -351,10 +351,10 @@ const calificarEntrega = async (req, res, next) => {
 }
 
 const ver = async (req, res, next) => {
-  const { idEntrega } = req.params
+  const { id } = req.params
   try {
     const entrega = await models.Entrega.findOne({
-      where: { ID: idEntrega },
+      where: { ID: id },
       include: [
         {
           model: models.Archivo,
@@ -379,8 +379,9 @@ const ver = async (req, res, next) => {
       fecha: entrega.fecha,
       nota: entrega.nota,
       archivosIDs: archivosIds,
-      'nombre de entregaPactada asociada': entrega.EntregaPactada.nombre,
-      'descripcion de entregaPactada asociada': entrega.EntregaPactada.descripcion
+      archivos: archivosIds,
+      nombre: entrega.EntregaPactada.nombre,
+      descripcion: entrega.EntregaPactada.descripcion
     }
 
     res.status(200).json(entregaConArchivos)

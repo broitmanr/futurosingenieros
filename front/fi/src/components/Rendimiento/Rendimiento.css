@@ -37,7 +37,7 @@
 }
 
 .custom-datatable-asistencia { 
-    width: 80%; /* Tamaño de la tabla */
+    width: 100%; /* Tamaño de la tabla */
     border: 0.1rem solid #1A2035;
     border-radius: 0.24rem;
     margin: 0 auto;

@@ -94,20 +94,20 @@ export const ActividadEntregas = () => {
                 <div className="container">
                     <div className="row">
                         <div className="col-md-6 mx-auto recuadro-estilizado">
-                            {/*{ isLoadingInstancia ?*/}
-                            {/*    <p className='text-danger text-center'>Cargando</p>*/}
-                            {/*    :*/}
-                            {/*        instancia.nombre &&*/}
-                            {/*        <>*/}
-                            {/*            <h2 className="nombre-instancia">{instancia.nombre}</h2>*/}
-                            {/*            <div className="texto-informativo d-grid justify-content-center">*/}
-                            {/*                <span>Porc. Ponderación: {instancia.porcentaje_ponderacion}</span>*/}
-                            {/*                <span>{instancia.TipoInstancium.nombre}</span>*/}
-                            {/*                <span>{instancia.descripcion}</span>*/}
-                            {/*                <span>{instancia.grupo ? 'Grupal' : 'Individual'}</span>*/}
-                            {/*            </div>*/}
-                            {/*        </>*/}
-                            {/*}*/}
+                            { isLoadingInstancia ?
+                                <p className='text-danger text-center'>Cargando</p>
+                                :
+                                    instancia.nombre &&
+                                    <>
+                                        <h2 className="nombre-instancia">{instancia.nombre}</h2>
+                                        <div className="texto-informativo d-grid justify-content-center">
+                                            <span>Porc. Ponderación: {instancia.porcentaje_ponderacion}</span>
+                                            <span>{instancia.TipoInstancium.nombre}</span>
+                                            <span>{instancia.descripcion}</span>
+                                            <span>{instancia.grupo ? 'Grupal' : 'Individual'}</span>
+                                        </div>
+                                    </>
+                            }
                         </div>
                     </div>
                 </div>

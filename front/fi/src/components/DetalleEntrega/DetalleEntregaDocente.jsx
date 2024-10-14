@@ -10,40 +10,33 @@ import { IoOpenOutline } from "react-icons/io5";
 import axios from 'axios';
 
 export default function DetallaEntregaIndividual({entrega}) {
-    console.log('entrega', entrega)
     const { id } = useParams(); //Id de la instancia
     const [entregasHechas, setEntregasHechas] = useState([])
-    console.log('entregas', entregasHechas)
     const [isLoading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [nota, setNota] = useState('');
 
-    // useEffect(() => {
-    //     const fetchEntregasRealizadas = async () => {
-    //         try {
-    //             const response = await axios.get(`/entregaPactada/instancia/${id}`, { withCredentials: true });
-    //             if (response.data) {
-    //                 console.log(response.data); // Verifica la estructura de datos
-    //                 setEntregasHechas(response.data);
-    //             }
-    //         } catch (err) {
-    //             console.log(err);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
+    const handleEntregasHechas = async () => {
+        setLoading(true);
+        setErrorMessage("");
+        setEntregasHechas([]);
 
-    //     fetchEntregasRealizadas();
-    // }, [id]);
+        try {
+            const response = await axios.get(`/entrega/listarEntregasHechas/${entrega.ID}`, { withCredentials: true });
+            if (response.data && response.data.length > 0) {
+                setEntregasHechas(response.data);
+            }
+        } catch (err) {
+            console.log(err);
+            setErrorMessage('No se encontraron entregas');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    const pruebaDatos = [
-        { legajo: 303132, nombre: 'Camila', estado: 'Modificar', calificacion: 1 },
-        { legajo: 313230, nombre: 'Sonia', estado: 'Aprobado', calificacion: 6 },
-        { legajo: 323031, nombre: 'Lorenzo', estado: 'Modificar', calificacion: 5 }
-    ]
-
-    const columns = [
-        { field: 'estado', header: 'Estado' },
-        { field: 'calificacion', header: 'Calificación' }
-    ];
+    useEffect(() => {
+        handleEntregasHechas();
+    }, [entrega.ID]);
 
     const isPositiveInteger = (val) => {
         let str = String(val);
@@ -62,45 +55,27 @@ export default function DetallaEntregaIndividual({entrega}) {
 
     const onCellEditComplete = async (e) => {
         let { rowData, newValue, field, originalEvent: event } = e;
-
-        if (field === 'nota' && isPositiveInteger(newValue)){
-            rowData[field] = newValue;
-            /*try{
-                const response = await axios.patch(`/entrega/calificar/${entrega.ID}`, { nota }, { withCredentials: true })
-                console.log('Calificación', response.data)
-                handleVerEntregas()
-            }catch(err){
-                console.log('Error al modificar la nota:', err)
-            }*/
-        }else{
-            event.preventDefault()
+        switch (field) {
+            case 'nota': 
+            if (isPositiveInteger(newValue)){
+                rowData[field] = newValue;
+                console.log('rowData', rowData);
+                /*try{
+                    const response = await axios.patch(`/entrega/calificar/${entrega.ID}`, { nota: newValue }, { withCredentials: true })
+                    console.log('Calificación', response.data)
+                    handleEntregasHechas()
+                }catch(err){
+                    console.log('Error al modificar la nota:', err)
+                }*/
+            }else{
+                event.preventDefault();
+                //alert('Inválido: La calificación debe ser un número positivo')
+            } 
+            break;
+            default:
+                event.preventDefault();
+                break;
         }
-        // switch (field) {
-        //     case 'estado':
-        //         if (isNaN.test(newValue)){
-        //             rowData[field] = newValue;
-        //         }else{
-        //             event.preventDefault();
-        //             //alert('Inválido: La retroalimentación solo permite texto')
-        //         }
-        //         break;
-        //     case 'nota':
-        //         if (isPositiveInteger(newValue)){
-        //             rowData[field] = newValue;
-        //             try{
-        //                 const response = await axios.post 
-        //             }catch(err){
-        //                 console.log('Error al modificar la nota:', err)
-        //             }
-        //         }else{
-        //             event.preventDefault();
-        //             //alert('Inválido: La calificación debe ser un número positivo')
-        //         } 
-        //         break;
-        //     default:
-        //         event.preventDefault();
-        //         break;
-        // }
     };
 
     const cellEditor = (options) => {
@@ -155,21 +130,23 @@ export default function DetallaEntregaIndividual({entrega}) {
     return (
         <div className="card p-fluid">
             <DataTable className='detalle-entrega-docente' 
-            value={pruebaDatos} 
+            dataKey="ID"
+            value={entregasHechas} 
             editMode="cell" 
             header={header} 
-            onCellEditComplete={onCellEditComplete} 
             reorderableColumns
-            emptyMessage="Oops...no se hay entregas para mostrar"
+            emptyMessage={errorMessage || "Oops...no se hay entregas para mostrar"}
             >
                 <Column
                     className='columns-data-entrega-docente'
                     field="legajo"
+                    key="legajo"
                     header="LEGAJO"
                 />
                 <Column
                     className='columns-data-entrega-docente'
                     field="nombre"
+                    key="nombre"
                     header="NOMBRE"
                     body={(rowData) => `${rowData.apellido}, ${rowData.nombre}`}
                     sortable
@@ -178,13 +155,17 @@ export default function DetallaEntregaIndividual({entrega}) {
                 <Column
                     className='columns-data-entrega-docente'
                     field='estado'
+                    key='estado'
                     header="ESTADO"
                 /> 
                 <Column
                     className='columns-data-entrega-docente'
                     field="nota"
+                    key="nota"
                     header="CALIFICACIÓN"
+                    body={(rowData) => rowData.nota}
                     editor={(options) => cellEditor(options)}
+                    onCellEditComplete={onCellEditComplete} 
                 />
                 {/* {columns.map(({ field, header }) => {
                     return <Column key={field} field={field} header={header} className='columns-data-entrega-docente'

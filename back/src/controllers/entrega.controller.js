@@ -250,21 +250,37 @@ const asociarArchivosConEntrega = async (req, res, next) => {
 }
 // Un docente puede listar las entregas
 async function listarEntregasParaElDocente(req, res, next) {
-  const { idEntregaPactada } = req.params
-  console.log('Entregas ID q llega del params', idEntregaPactada)
+  const { idEntregaPactada } = req.params;
+  console.log('Entregas ID que llega del params', idEntregaPactada);
   try {
     const entregas = await models.Entrega.findAll({
-      where: { entregaPactada_ID: idEntregaPactada }
-    })
+      where: { entregaPactada_ID: idEntregaPactada },
+      include: [
+        {
+          model: models.Persona,
+          attributes: ['legajo', 'nombre', 'apellido'],
+        },
+      ],
+    });
+
     if (!entregas.length) {
-      return next({ ...errors.NotFoundError, details: 'No se encontraron entregas de alumnos para esa entregaPactadaID' })
+      return next({ ...errors.NotFoundError, details: 'No se encontraron entregas de alumnos para esa entregaPactadaID' });
     }
-    res.status(200).json(entregas)
+    
+    const entregasMapeadas = entregas.map(entrega => ({
+      legajo: entrega.Persona.legajo,
+      nombre: entrega.Persona.nombre,
+      apellido: entrega.Persona.apellido,
+      nota: entrega.nota,
+      estado: entrega.estado,
+    }));
+
+    res.status(200).json(entregasMapeadas);
   } catch (error) {
     return next({
       ...errors.InternalServerError,
-      details: 'Error al listar las entregas: ' + error.message
-    })
+      details: 'Error al listar las entregas: ' + error.message,
+    });
   }
 }
 

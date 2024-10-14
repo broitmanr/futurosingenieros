@@ -29,19 +29,47 @@ function AlumnosCurso() {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     'Persona.legajo': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    /*'Persona.nombre': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    'Persona.apellido': { value: null, matchMode: FilterMatchMode.STARTS_WITH },*/
     'nombreCompleto': { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
   const [loading, setLoading] = useState(true); //Maneja estado de la solicitud
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [visible, setVisible] = useState(false); //Manejo del Dialog
-
   const handleScroll = () => { //Manejo del desplazo a la sección Agregar Alumnos
     document.getElementById('agregarAlumnos').scrollIntoView({ behavior: 'smooth'})
   };
 
   const [error, setError] = useState('');
+
+  const handleCargarAlumnosExcel = async (e) => { //Cargar alumnos desde un archivo excel
+    const file = e.target.files[0];
+    if (!file) {
+      console.log('No se seleccionó un archivo')
+      //alert('Por favor, selecciona un archivo.');
+      return;
+    }
+    const formData = new FormData();
+    formData.append('excel', file);
+    console.log ('info form data', file)
+    
+    const allowedExtensions = /(\.xls|\.xlsx)$/;
+    if (!allowedExtensions.exec(file.name)) {
+        console.log('Archivo inválido')
+        //alert('Por favor, selecciona un archivo válido (.xls o .xlsx).');
+        return;
+    }
+
+    try {
+      const response = await axios.post(`/curso/${id}/estudiantesExcel`, formData, { withCredentials: true });
+      if (response.status === 201) {
+        console.log('Estudiantes agregados con éxito', response.data)
+        fetchAlumnos()
+        setLoading(false)
+      }
+    }catch (err) {
+      console.error('Error al agregar alumnos', err);
+      setLoading(false)
+    }
+  }
 
   const fetchAlumnos = async () => {
     try{
@@ -62,36 +90,6 @@ function AlumnosCurso() {
       setLoading(false)
     }
   }
-
-  /*const handleCargarAlumnosExcel = async (e) => { //Cargar alumnos desde un archivo excel
-    const file = e.target.files[0];
-    if (!file) {
-      console.log('No se seleccionó un archivo')
-      //alert('Por favor, selecciona un archivo.');
-      return;
-    }
-    //e.preventDefault();
-    const formData = new FormData();
-    formData.append('excel', file);
-    console.log ('info form data', file)
-    
-    const allowedExtensions = /(\.xls|\.xlsx)$/;
-    if (!allowedExtensions.exec(file.name)) {
-        console.log('Archivo inválido')
-        //alert('Por favor, selecciona un archivo válido (.xls o .xlsx).');
-        return;
-    }
-
-    try {
-      const response = await axios.post(`/curso/${id}/estudiantesExcel`, formData, { withCredentials: true });
-      console.log('info de response', response.data)
-      if (response.status === 201) {
-        fetchAlumnos(); // Actualiza lista de estudiantes
-      }
-    }catch (err) {
-      console.error('Error al agregar alumnos', err);
-    }
-  }*/
 
   useEffect(() => {
     fetchAlumnos();
@@ -181,7 +179,7 @@ function AlumnosCurso() {
                   type="file" 
                   accept=".xlsx, .xls" 
                   style={{ display: 'none' }} 
-                  //onChange={handleCargarAlumnosExcel} 
+                  onChange={handleCargarAlumnosExcel} 
               />
             </span>
           </OverlayTrigger>

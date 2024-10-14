@@ -312,6 +312,181 @@ async function calcularNotaParcialAlumno(cursoId, personaId) {
   };
 }
 
+async function grupo(req, res, next) {
+  const { cursoId } = req.params;
+  let grupo;
+
+  if (res.locals.usuario.rol === 'D') {
+    const { grupoId } = req.params;
+    if (!grupoId) return next({ ...errors.FaltanParametros });
+
+    // Obtener datos del grupo, curso, y alumnos
+    grupo = await models.Grupo.findOne({
+      where: { ID: grupoId },
+      attributes: ['ID', 'nombre', 'numero'],
+      include: [
+        {
+          model: models.Curso,
+          where: { ID: cursoId },
+          attributes: ['ID'],
+          include: [
+            { model: models.Materia, attributes: ['ID', 'nombre'] },
+            { model: models.Comision, attributes: ['ID', 'nombre'] },
+          ],
+        },
+        {
+          model: models.Persona,
+          attributes: ['ID', 'nombre','apellido', 'legajo'],
+          through: { attributes: [] },
+        },
+      ],
+    });
+  } else {
+    const grupoID = await models.Grupo.findOne({
+      attributes: ['ID'],
+      include: [
+        {
+          model: models.Curso,
+          where: { ID: cursoId },
+          attributes: [],
+        },
+        {
+          model: models.Persona,
+          attributes: [],
+          where: { id: res.locals.usuario.persona_id },
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    grupo = await models.Grupo.findByPk(grupoID.ID, {
+      attributes: ['ID', 'nombre', 'numero'],
+      include: [
+        {
+          model: models.Curso,
+          include: [
+            { model: models.Materia, attributes: ['ID', 'nombre'] },
+            { model: models.Comision, attributes: ['ID', 'nombre'] },
+          ],
+          attributes: ['ID'],
+        },
+        {
+          model: models.Persona,
+          attributes: ['ID', 'nombre','apellido', 'legajo'],
+          through: { attributes: [] },
+        },
+      ],
+    });
+  }
+
+  if (!grupo) return next({ ...errors.NotFoundError, details: 'Grupo no encontrado' });
+
+  const alumnosIds = grupo.Personas.map(persona => persona.ID);
+
+  // Consulta las entregas realizadas por los alumnos del grupo en instancias evaluativas grupales
+  const entregasRealizadas = await models.EntregaPactada.findAll({
+    include: [
+      {
+        model: models.Entrega,
+        required: true,
+        include: [
+          {
+            model: models.PersonaXEntrega,
+            required: true,
+            attributes: ['persona_id', 'porcentaje_participacion'],
+            where: { persona_id: alumnosIds },
+          },
+        ],
+      },
+      {
+        model: models.InstanciaEvaluativa,
+        where: { curso_id: cursoId, grupo: true }, // Filtrar solo instancias grupales
+      },
+    ],
+  });
+
+  // Consulta todas las entregas pactadas grupales para el curso
+  const entregasPactadas = await models.EntregaPactada.findAll({
+    include: [
+      {
+        model: models.InstanciaEvaluativa,
+        where: { curso_id: cursoId, grupo: true }, // Solo instancias grupales
+      },
+    ],
+  });
+
+  const entregaPactadaPromises = entregasPactadas.map(async (entregaPactada) => {
+    const instancia = entregaPactada.InstanciaEvaluativa;
+    const instanciaId = instancia.ID;
+
+    // Filtrar las entregas realizadas por los miembros del grupo
+    const entregasGrupo = entregasRealizadas.filter(ep => ep.ID === entregaPactada.ID);
+
+    const entregasDetalle = entregasGrupo.map(ep => {
+      const entrega = ep.Entregas[0];
+      return {
+        entregaId: entrega.ID,
+        fecha: entrega.fecha ?? null,
+        nota: entrega.nota ?? null,
+      };
+    });
+
+    const estado = await getEstado(entregasDetalle.length > 0 ? entregasDetalle[0] : null);
+
+    return {
+      id: instanciaId,
+      nombre: instancia.nombre,
+      entregaPactada: {
+        id: entregaPactada.ID,
+        nombre: entregaPactada.nombre,
+        fechavto1: entregaPactada.fechavto1,
+        fechavto2: entregaPactada.fechavto2,
+      },
+      entregas: entregasDetalle,
+      estado,
+    };
+  });
+
+  const entregasAgrupadas = await Promise.all(entregaPactadaPromises);
+
+  // Calcular la participación promedio por alumno
+  const participacionPorAlumno = alumnosIds.map(alumnoId => {
+    const participaciones = entregasRealizadas.flatMap(ep =>
+        ep.Entregas.flatMap(e => e.PersonaXEntregas)
+    ).filter(px => px.persona_id === alumnoId);
+
+    const totalParticipacion = participaciones.reduce((acc, px) => acc + px.porcentaje_participacion, 0);
+    const promedioParticipacion = participaciones.length > 0 ? totalParticipacion / participaciones.length : 0;
+
+    return { alumnoId, promedioParticipacion };
+  });
+
+  // Agrupar la información del grupo con los resultados
+  const response = {
+    curso: {
+      id: grupo.Curso.id,
+      materia: grupo.Curso.Materium?.nombre ?? '',
+      comision: grupo.Curso.Comision?.nombre ?? '',
+    },
+    grupo: {
+      nombre: grupo.nombre,
+      numero: grupo.numero,
+    },
+    alumnos: grupo.Personas.map(persona => ({
+      id: persona.ID,
+      nombre: persona.nombre,
+      apellido: persona.apellido,
+      legajo: persona.legajo,
+      promedioParticipacion: participacionPorAlumno.find(p => p.alumnoId === persona.ID)?.promedioParticipacion ?? 0,
+    })),
+    entregasAgrupadas,
+  };
+
+  res.status(200).json(response);
+}
+
+
+
 
 // Función auxiliar para calcular las penalidades
 async function calcularPenalidades(personaXcursoID) {
@@ -325,5 +500,5 @@ async function calcularPenalidades(personaXcursoID) {
 
 
 module.exports = {
-  alumno,listarAlumnosDelCurso
+  alumno,listarAlumnosDelCurso,grupo
 }

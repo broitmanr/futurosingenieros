@@ -8,5 +8,7 @@ const router = Router()
 router.get('/alumno/:cursoId',checkRole.checkRole('A'),Rendimiento.alumno )
 router.get('/alumno/:cursoId/:alumnoId',checkRole.checkRole('D'),Rendimiento.alumno )
 router.get('/alumnos/:cursoId',checkRole.checkRole('D'),Rendimiento.listarAlumnosDelCurso )
+router.get('/grupo/:cursoId/:grupoId',checkRole.checkRole('D'),Rendimiento.grupo )
+router.get('/grupo/:cursoId',checkRole.checkRole('A'),Rendimiento.grupo )
 
 module.exports = router

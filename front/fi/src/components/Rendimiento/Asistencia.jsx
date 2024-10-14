@@ -35,7 +35,6 @@ const Asistencia = () => {
                     ...alumno,
                     nombreCompleto: `${alumno.Persona.apellido}, ${alumno.Persona.nombre}`,
                     inasistencias: alumno.Persona.total_inasistencias,
-                    mail:alumno.Persona.mail ?? 'No registrado'
                 }))
                 setAlumnos(alumnosNombreCompleto)
                 setLoading(false)
@@ -149,12 +148,6 @@ const Asistencia = () => {
                     className='columns-data-asistencia'
                     field="Persona.legajo"
                     header="LEGAJO"
-                />
-                <Column
-                    className='columns-data-asistencia'
-                    field="mail"
-                    header="MAIL"
-                    sortable
                 />
                 <Column
                     className='columns-data-asistencia'

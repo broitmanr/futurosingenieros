@@ -50,7 +50,8 @@ function AlumnosCurso() {
         const soloAlumnos = response.data.filter(participante => participante.rol === 'A'); //Filtra alumnos
         const alumnosNombreCompleto = soloAlumnos.map(alumno => ({
           ...alumno,
-          nombreCompleto: `${alumno.Persona.apellido}, ${alumno.Persona.nombre}`
+          nombreCompleto: `${alumno.Persona.apellido}, ${alumno.Persona.nombre}`,
+          mail: alumno.Persona.mail ?? 'No registrado'
         }))
         setAlumnos(alumnosNombreCompleto)
         setLoading(false)
@@ -85,7 +86,7 @@ function AlumnosCurso() {
     try {
       const response = await axios.post(`/curso/${id}/estudiantesExcel`, formData, { withCredentials: true });
       console.log('info de response', response.data)
-      if (response.status === 201) {
+      if (response.status === 200) {
         fetchAlumnos(); // Actualiza lista de estudiantes
       }
     }catch (err) {
@@ -248,6 +249,21 @@ function AlumnosCurso() {
             />
           }
           sortable
+        />
+        <Column
+            className='columns-data'
+            field="mail"
+            header="MAIL"
+            filter
+            filterPlaceholder="Buscar por mail"
+            filterElement={
+              <input
+                  className='inputsFilters'
+                  type='text'
+                  inputMode='text'
+              />
+            }
+            sortable
         />
       </DataTable>
       <h5 className="text-title">Agregar alumno</h5>

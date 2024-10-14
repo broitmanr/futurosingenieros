@@ -21,7 +21,7 @@ export const ActividadEntregas = () => {
     const params = useParams();
     const handleClose = () => setShow(false);
     const [isLoading, setLoading] = useState(true);
-    const [isLoadingInstancia, setLoadingInstancia] = useState(true);
+
 
     useEffect(()=> {
         const idActividad = params.id;
@@ -39,13 +39,13 @@ export const ActividadEntregas = () => {
             } catch (err) {
                 console.log(err)
             } finally {
-                setLoadingInstancia(false);
+                setLoading(false);
             }
         }
 
 
         if(idActividad){
-            setLoadingInstancia(true)
+            setLoading(true)
             fetchInstancia()
         }
 
@@ -94,20 +94,20 @@ export const ActividadEntregas = () => {
                 <div className="container">
                     <div className="row">
                         <div className="col-md-6 mx-auto recuadro-estilizado">
-                            {/*{ isLoadingInstancia ?*/}
-                            {/*    <p className='text-danger text-center'>Cargando</p>*/}
-                            {/*    :*/}
-                            {/*        instancia.nombre &&*/}
-                            {/*        <>*/}
-                            {/*            <h2 className="nombre-instancia">{instancia.nombre}</h2>*/}
-                            {/*            <div className="texto-informativo d-grid justify-content-center">*/}
-                            {/*                <span>Porc. Ponderación: {instancia.porcentaje_ponderacion}</span>*/}
-                            {/*                <span>{instancia.TipoInstancium.nombre}</span>*/}
-                            {/*                <span>{instancia.descripcion}</span>*/}
-                            {/*                <span>{instancia.grupo ? 'Grupal' : 'Individual'}</span>*/}
-                            {/*            </div>*/}
-                            {/*        </>*/}
-                            {/*}*/}
+                            { isLoading ?
+                                <p className='text-danger text-center'>Cargando</p>
+                                :
+                                    instancia.nombre &&
+                                    <>
+                                        <h2 className="nombre-instancia">{instancia.nombre}</h2>
+                                        <div className="texto-informativo d-grid justify-content-center">
+                                            <span>Porc. Ponderación: {instancia.porcentaje_ponderacion}</span>
+                                            <span>{instancia.TipoInstancium.nombre}</span>
+                                            <span>{instancia.descripcion}</span>
+                                            <span>{instancia.grupo ? 'Grupal' : 'Individual'}</span>
+                                        </div>
+                                    </>
+                            }
                         </div>
                     </div>
                 </div>

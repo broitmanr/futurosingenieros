@@ -18,8 +18,8 @@ async function crear (req, res, next) {
     const cursoExistente = await models.Curso.findOne({
       where: {
         cicloLectivo,
-        materiaID,
-        comisionID
+        materia_id:materiaID,
+        comision_id:comisionID
       }
     })
     if (cursoExistente) {
@@ -46,7 +46,7 @@ async function crear (req, res, next) {
     res.status(201).json(nuevoCurso)
   } catch (error) {
     await transaction.rollback()
-    console.error(red('Error al crear el curso:', error))
+    console.error('Error al crear el curso:', error.message)
     return next(errors.FaltanCampos)
   }
 }

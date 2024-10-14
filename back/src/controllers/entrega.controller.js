@@ -56,8 +56,10 @@ const crearEntrega = async (req, res, next) => {
       let entrega = await models.Entrega.findOne({
         where: {
           entregaPactada_ID: entregaPactadaId,
-          grupo_ID: grupoId,
-          persona_ID: res.locals.usuario.persona_id
+          [models.Sequelize.Op.or]: [
+            { grupo_ID: grupoId },
+            { persona_ID: res.locals.usuario.persona_id }
+          ]
         },
         transaction // Asegúrate de pasar la transacción aquí
       })
@@ -105,6 +107,8 @@ const crearEntrega = async (req, res, next) => {
       if (archivos.length === 0) {
         return next({ ...errors.BadRequestError, details: 'No se encontraron archivos para asociar' })
       }
+      entrega.fecha = new Date()
+      entrega.save()
       console.log(pico.blue(`Entrega creada exitosamente con ${archivos.length} archivos`))
       res.status(201).json({
         entrega,
@@ -358,7 +362,7 @@ const ver = async (req, res, next) => {
       include: [
         {
           model: models.Archivo,
-          attributes: ['ID']
+          attributes: ['ID', 'updated_at']
         },
         {
           model: models.EntregaPactada,
@@ -373,6 +377,7 @@ const ver = async (req, res, next) => {
     }
 
     const archivosIds = entrega.Archivos ? entrega.Archivos.map(archivo => archivo.get('ID')) : []
+    // const archivosFecha = entrega.Archivos ? entrega.Archivos.map(archivo => archivo.get('updated_at')) : []
     // Formatear la respuesta
     const entregaConArchivos = {
       ID: entrega.ID,
@@ -380,6 +385,7 @@ const ver = async (req, res, next) => {
       nota: entrega.nota,
       archivosIDs: archivosIds,
       archivos: archivosIds,
+      // archivosFecha,
       nombre: entrega.EntregaPactada.nombre,
       descripcion: entrega.EntregaPactada.descripcion
     }
@@ -425,11 +431,68 @@ async function getEstado(entrega) {
   return estado
 }
 
+const obtenerEntregaComoAlumno = async (req, res, next) => {
+  const { idEntregaPactada } = req.params
+  const personaId = res.locals.usuario.persona_id // Obtener ID de la persona logueada
+
+  try {
+    // Obtener los grupos a los que pertenece el alumno
+    const personaXGrupos = await models.PersonaXGrupo.findAll({
+      where: { persona_id: personaId },
+      include: [
+        {
+          model: models.Grupo,
+          attributes: ['ID', 'Nombre', 'curso_id']
+        }
+      ]
+    })
+
+    // Obtener IDs de los grupos del alumno
+    const grupoIds = personaXGrupos.map(personaXGrupo => personaXGrupo.Grupo.ID)
+
+    // Obtener la entrega asociada al persona_id del alumno
+    let entrega = await models.Entrega.findOne({
+      where: {
+        entregaPactada_ID: idEntregaPactada,
+        persona_id: personaId
+      }
+    })
+
+    // Si no se encuentra una entrega individual, buscar una entrega grupal
+    if (!entrega) {
+      entrega = await models.Entrega.findOne({
+        where: {
+          entregaPactada_ID: idEntregaPactada,
+          grupo_id: grupoIds // Sequelize detecta que esto es un array y realiza la comparación correctamente
+        }
+      })
+    }
+
+    // Si no se encuentra ninguna entrega, devolver un error
+    if (!entrega) {
+      console.log(pico.yellow('Advertencia: No se encontró ninguna entrega para el alumno'))
+    }
+
+    // Entregas encontradas:
+    res.status(200).json({
+      success: true,
+      entrega
+    })
+  } catch (error) {
+    console.error('Error al obtener las entregas del alumno:', error)
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener las entregas del alumno: ' + error.message
+    })
+  }
+}
+
 module.exports = {
   listarEntregasParaElDocente,
   crearEntrega,
   calificarEntrega,
   asociarArchivosConEntrega,
   ver,
-  getEstado
+  getEstado,
+  obtenerEntregaComoAlumno
 }

@@ -3,10 +3,10 @@ const { red, yellow } = require('picocolors')
 const { handleTransaction } = require('../const/transactionHelper')
 const models = require('../database/models/index')
 const { validarDocenteInstanciaEvaluativa } = require('../middlewares/validarDocente')
-const {getEstado} = require("./entrega.controller");
+const { getEstado } = require('./entrega.controller')
 
 // Función para crear una entrega pactada
-async function crear (req, res, next) {
+async function crear(req, res, next) {
   const { nombre, numero, descripcion, fechavto1, fechavto2, instanciaEvaluativaID } = req.body
   const nuevaEntregaPactada = await handleTransaction(async (transaction) => {
     return await models.EntregaPactada.create({
@@ -26,7 +26,7 @@ async function crear (req, res, next) {
 }
 
 // Función para ver una entrega pactada
-async function ver (req, res, next) {
+async function ver(req, res, next) {
   const { id } = req.params
 
   try {
@@ -36,7 +36,7 @@ async function ver (req, res, next) {
       include: [
         {
           model: models.InstanciaEvaluativa,
-          attributes: ['ID', 'nombre', 'descripcion', 'curso_id'],
+          attributes: ['ID', 'nombre', 'descripcion', 'curso_id', 'grupo'],
           include: [
             {
               model: models.Curso,
@@ -61,7 +61,7 @@ async function ver (req, res, next) {
       console.warn(`Advertencia: Entrega pactada con ID ${id} no encontrada.`)
       return next({ ...errors.NotFoundError, details: 'Entrega pactada no encontrada' })
     }
-
+    console.log('Entrega pactada encontrada:', JSON.stringify(entregaPactada, null, 2))
     res.status(200).json(entregaPactada)
   } catch (error) {
     console.error('Error al obtener la entrega pactada:', error)
@@ -73,36 +73,36 @@ async function ver (req, res, next) {
 }
 
 // Función para listar todas las entregas pactadas de una instancia evaluativa
-async function listarEntregasInstancia (req, res, next) {
+async function listarEntregasInstancia(req, res, next) {
   const { instanciaID } = req.params
   // Se podria verificar que pertenezca el curso a la persona
 
   try {
     let entregasPactadas
-    if (res.locals.usuario.rol === 'A'){
+    if (res.locals.usuario.rol === 'A') {
       entregasPactadas = await models.EntregaPactada.findAll({
         attributes: ['ID', 'nombre', 'numero', 'descripcion', 'fechavto1', 'fechavto2'],
         where: {
           instanciaEvaluativa_id: instanciaID
         },
-        include:[
+        include: [
           {
-            model:models.Entrega,
-            required:false,
-            include:[
-              {model:models.Persona,
-                required:false,
-                where:{ ID: res.locals.usuario.persona_id }
+            model: models.Entrega,
+            required: false,
+            include: [
+              {
+                model: models.Persona,
+                required: false,
+                where: { ID: res.locals.usuario.persona_id }
               }
             ]
           }
         ]
       })
 
+      const estadosEntrega = []
 
-      let estadosEntrega=[]
-
-      for (entrega of entregasPactadas){
+      for (entrega of entregasPactadas) {
         estadosEntrega[entrega.ID] = await getEstado(entrega?.Entregas[0] ?? null)
       }
 
@@ -115,12 +115,11 @@ async function listarEntregasInstancia (req, res, next) {
         fechavto2: entrega.fechavto2,
         nota: entrega?.Entregas[0]?.nota ?? null,
         estado: estadosEntrega[entrega.ID],
-        fechaEntrega:entrega?.Entregas[0]?.fecha ?? null
+        fechaEntrega: entrega?.Entregas[0]?.fecha ?? null
       }))
 
       res.status(200).json(entregasMapeadas)
-
-    } else{
+    } else {
       entregasPactadas = await models.EntregaPactada.findAll({
         attributes: ['ID', 'nombre', 'numero', 'descripcion', 'fechavto1', 'fechavto2'],
         where: {
@@ -129,8 +128,6 @@ async function listarEntregasInstancia (req, res, next) {
       })
       res.status(200).json(entregasPactadas)
     }
-
-
   } catch (error) {
     next({
       ...errors.InternalServerError,
@@ -140,7 +137,7 @@ async function listarEntregasInstancia (req, res, next) {
 }
 
 // Función para actualizar una entrega pactada
-async function actualizar (req, res, next) {
+async function actualizar(req, res, next) {
   const { id } = req.params
   const { nombre, numero, descripcion, fechavto1, fechavto2, instanciaEvaluativaID } = req.body
 
@@ -185,7 +182,7 @@ async function actualizar (req, res, next) {
 }
 
 // Función para eliminar una entrega pactada
-async function eliminar (req, res, next) {
+async function eliminar(req, res, next) {
   const { id } = req.params
 
   const entregaPactadaEliminada = await handleTransaction(async (transaction) => {

@@ -25,11 +25,21 @@
 .custom-choose-btn {
     color: #007bff;
     border-color: #007bff;
+    transition: transform 0.2s ease-in-out;
+}
+
+.custom-choose-btn:hover {
+    transform: translateY(-3px);
 }
 
 .custom-cancel-btn {
     color: #dc3545;
     border-color: #dc3545;
+    transition: transform 0.2s ease-in-out;
+}
+
+.custom-cancel-btn:hover {
+    transform: translateY(-3px);
 }
 
 .p-fileupload-row {
@@ -61,4 +71,9 @@
 
 .p-fileupload-row .p-button {
     margin-left: auto;
+    transition: transform 0.2s ease-in-out;
+}
+
+.p-fileupload-row .p-button:hover {
+    transform: translateY(-3px);
 }

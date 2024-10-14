@@ -14,6 +14,8 @@ import {FilterMatchMode} from "primereact/api";
 export const RendimientoAlumnoProfe = () => {
     const [alumnos, setAlumnos] = useState([]);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [curso,setCurso] = useState(null)
+    const [loading, setLoading] = useState(true);
     const dt = useRef(null);
     const navigate = useNavigate();
     const {id} = useParams()
@@ -32,9 +34,13 @@ export const RendimientoAlumnoProfe = () => {
                     throw new Error('Network response was not ok');
                 }
                 const data = response.data
-                setAlumnos(data.alumnos);
+                setAlumnos(data.alumnos)
+                setCurso(data.curso)
+                setLoading(false)
             } catch (error) {
                 console.error('Error fetching alumnos:', error);
+                setLoading(false)
+
             }
         };
 
@@ -46,9 +52,10 @@ export const RendimientoAlumnoProfe = () => {
             <h1 className='TituloRendimiento'>Rendimiento del alumno</h1>
 
             <div className='containerFaltas'>
-                <h3 className='catedraProyecto' style={{ fontSize: "16px", textAlign: 'left', color: 'black', marginTop: '10px' }}>
-                    Catedra: Proyecto Final
-                </h3>
+
+                {!loading ? (<h3 className='catedraProyecto' style={{ fontSize: "16px", textAlign: 'left', color: 'black', marginTop: '10px' }}>
+                    {curso.materia} {curso.comision}
+                </h3>): '' }
                 <span className="p-input-icon-left">
                     <FaSearch/>
                     <InputText

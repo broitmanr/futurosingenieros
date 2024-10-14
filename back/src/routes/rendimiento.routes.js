@@ -10,5 +10,7 @@ router.get('/alumno/:cursoId/:alumnoId',checkRole.checkRole('D'),Rendimiento.alu
 router.get('/alumnos/:cursoId',checkRole.checkRole('D'),Rendimiento.listarAlumnosDelCurso )
 router.get('/grupo/:cursoId/:grupoId',checkRole.checkRole('D'),Rendimiento.grupo )
 router.get('/grupo/:cursoId',checkRole.checkRole('A'),Rendimiento.grupo )
+router.get('/grupos/:cursoId',checkRole.checkRole('D'),Rendimiento.listarGruposDelCurso )
+
 
 module.exports = router

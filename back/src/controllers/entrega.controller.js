@@ -44,7 +44,7 @@ const crearEntrega = async (req, res, next) => {
           }
         ]
       })
-      console.log("----------------",personaXgrupo)
+      console.log('----------------', personaXgrupo)
 
       if (!personaXgrupo) {
         return next({ ...errors.NotFoundError, details: 'No se encontró grupo para la persona y la entrega es grupal' })
@@ -75,31 +75,30 @@ const crearEntrega = async (req, res, next) => {
           updated_by: res.locals.usuario.ID
         }, { transaction })
 
-      //   Si la entrega se crea hay que crear las persona x entrega
-        if (grupoId){
-          const grupo = await models.Grupo.findByPk(grupoId,{
-            include:[{
-              model:models.Persona,
-              attributes:['ID']
+        //   Si la entrega se crea hay que crear las persona x entrega
+        if (grupoId) {
+          const grupo = await models.Grupo.findByPk(grupoId, {
+            include: [{
+              model: models.Persona,
+              attributes: ['ID']
             }]
           })
 
           const porcentaje = parseFloat((100 / parseInt(grupo.Personas.length)).toFixed(2))
-          for (const persona of grupo.Personas){
+          for (const persona of grupo.Personas) {
             const personaXEntrega = await models.PersonaXEntrega.create({
-              porcentaje_participacion:porcentaje,
-              persona_id:persona.ID,
-              entrega_id:entrega.ID
+              porcentaje_participacion: porcentaje,
+              persona_id: persona.ID,
+              entrega_id: entrega.ID
             }, { transaction })
           }
-        }else{
+        } else {
           personaXEntrega = await models.PersonaXEntrega.create({
-            porcentaje_participacion:100,
-            persona_id:persona.ID,
-            entrega_id:entrega.ID
+            porcentaje_participacion: 100,
+            persona_id: persona.ID,
+            entrega_id: entrega.ID
           }, { transaction })
         }
-
       }
 
       const archivos = await asociarArchivos(files, entrega.ID, req, res, transaction, next) // Pasar la transacción aquí
@@ -237,7 +236,7 @@ const asociarArchivosConEntrega = async (req, res, next) => {
     await handleTransaction(async (transaction) => {
       const archivosAsociados = await asociarArchivos(files, entregaId, req, res, transaction, next)
       if (!archivosAsociados.length) {
-        return next({ ...errors.ValidationError, details: 'No se encontraron archivos para asociar' })
+        return next({ ...errors.NotFoundError, details: 'No se encontraron archivos para asociar' })
       }
       res.status(201).json({ archivosAsociados })
     }, next)
@@ -246,25 +245,16 @@ const asociarArchivosConEntrega = async (req, res, next) => {
   }
 }
 // Un docente puede listar las entregas
-async function listarEntregasDocente(req, res, next) {
-  const { grupoId } = req.params
-
+async function listarEntregasParaElDocente(req, res, next) {
+  const { idEntregaPactada } = req.params
+  console.log('Entregas ID q llega del params', idEntregaPactada)
   try {
     const entregas = await models.Entrega.findAll({
-      where: { grupo_ID: grupoId },
-      attributes: ['ID', 'fecha', 'nota'],
-      include: [
-        {
-          model: models.Persona,
-          attributes: ['ID', 'rol', 'dni', 'legajo', 'apellido', 'nombre']
-        }
-      ]
+      where: { entregaPactada_ID: idEntregaPactada }
     })
-
     if (!entregas.length) {
-      return next({ ...errors.NotFoundError, details: 'No se encontraron entregas para el grupo' })
+      return next({ ...errors.NotFoundError, details: 'No se encontraron entregas de alumnos para esa entregaPactadaID' })
     }
-
     res.status(200).json(entregas)
   } catch (error) {
     return next({
@@ -276,19 +266,19 @@ async function listarEntregasDocente(req, res, next) {
 
 // Función para actualizar una entrega
 async function actualizar(req, res, next) {
-  const { id } = req.params
+  const { idEntrega } = req.params
   const { fecha, nota, grupoId, personaId } = req.body
 
   try {
     await handleTransaction(async (transaction) => {
       const entrega = await models.Entrega.findOne({
-        where: { ID: id },
+        where: { ID: idEntrega },
         attributes: ['ID'],
         transaction
       })
 
       if (!entrega) {
-        console.warn(pico.yellow(`Advertencia: Entrega con ID ${id} no encontrada.`))
+        console.warn(pico.yellow(`Advertencia: Entrega con ID ${idEntrega} no encontrada.`))
         await transaction.rollback()
         return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
       }
@@ -297,7 +287,7 @@ async function actualizar(req, res, next) {
         fecha,
         nota,
         grupo_ID: grupoId,
-        persona_id: personaId,
+        persona_idEntrega: personaId,
         updated_by: res.locals.usuario.ID
       }, { transaction })
 
@@ -305,22 +295,22 @@ async function actualizar(req, res, next) {
     }, next)
   } catch (error) {
     console.error(pico.red('Error al actualizar la entrega:', error))
-    return next(error) // Pasa el error al middleware de errores
+    return next(error) // Pasa el error al midEntregadleware de errores
   }
 }
 
 // Función para eliminar una entrega
 async function eliminar(req, res, next) {
-  const { id } = req.params
+  const { idEntrega } = req.params
 
   const entregaEliminada = await handleTransaction(async (transaction) => {
-    const entrega = await models.Entrega.findByPk(id, {
+    const entrega = await models.Entrega.findByPk(idEntrega, {
       attributes: ['ID'],
       transaction
     })
 
     if (!entrega) {
-      console.warn(pico.yellow(`Advertencia: Entrega con ID ${id} no encontrada.`))
+      console.warn(pico.yellow(`Advertencia: Entrega con ID ${idEntrega} no encontrada.`))
       await transaction.rollback()
       return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
     }
@@ -331,33 +321,6 @@ async function eliminar(req, res, next) {
 
   if (entregaEliminada) {
     res.status(200).json({ message: 'Entrega eliminada exitosamente' })
-  }
-}
-
-// Función para obtener un archivo de una entrega
-const obtenerArchivosDeEntrega = async (req, res, next) => {
-  const { idEntrega } = req.params
-  try {
-    const entrega = await models.Entrega.findOne({ where: { ID: idEntrega } })
-
-    if (!entrega) {
-      console.warn(`Advertencia: Archivo con ID ${idEntrega} no encontrado.`)
-      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
-    }
-    console.log(pico.bgWhite(`Entrega encontrado: ${JSON.stringify(entrega)}`))
-
-    const archivosEntrega = await models.Archivo.findAll({ where: { entrega_id: idEntrega } })
-    if (!archivosEntrega) {
-      console.warn(`Advertencia: No se encontraron archivos asociados a la entrega con ID: ${idEntrega}.`)
-      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
-    }
-    res.status(200).json(archivosEntrega)
-  } catch (error) {
-    console.error('Error al obtener los archivos de la entrega:', error)
-    next({
-      ...errors.InternalServerError,
-      details: 'Error al obtener los archivos asociados de la entrega: ' + error.message
-    })
   }
 }
 
@@ -388,38 +351,37 @@ const calificarEntrega = async (req, res, next) => {
 }
 
 const ver = async (req, res, next) => {
-  const { id } = req.params
+  const { idEntrega } = req.params
   try {
-    const entrega = await models.Entrega.findOne({ where: { ID: id },
-      include:[
-        {model:models.Archivo,
-          attributes:["id"]
+    const entrega = await models.Entrega.findOne({
+      where: { ID: idEntrega },
+      include: [
+        {
+          model: models.Archivo,
+          attributes: ['ID']
         },
         {
-          model:models.EntregaPactada,
-          attributes:["nombre","descripcion"]
+          model: models.EntregaPactada,
+          attributes: ['nombre', 'descripcion']
         }
       ],
-      attributes:["ID","fecha","nota"]
+      attributes: ['ID', 'fecha', 'nota']
     })
 
     if (!entrega) {
-
       return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
     }
 
-    const archivosIds = entrega.Archivos ? entrega.Archivos.map(archivo => archivo.get('id')) : [];
-    console.log(archivosIds)
+    const archivosIds = entrega.Archivos ? entrega.Archivos.map(archivo => archivo.get('ID')) : []
     // Formatear la respuesta
     const entregaConArchivos = {
       ID: entrega.ID,
       fecha: entrega.fecha,
       nota: entrega.nota,
-      archivos: archivosIds,
-      nombre: entrega.EntregaPactada.nombre,
-      descripcion:entrega.EntregaPactada.descripcion
-    };
-
+      archivosIDs: archivosIds,
+      'nombre de entregaPactada asociada': entrega.EntregaPactada.nombre,
+      'descripcion de entregaPactada asociada': entrega.EntregaPactada.descripcion
+    }
 
     res.status(200).json(entregaConArchivos)
   } catch (error) {
@@ -432,9 +394,8 @@ const ver = async (req, res, next) => {
 }
 
 module.exports = {
-  listarEntregasDocente,
+  listarEntregasParaElDocente,
   crearEntrega,
-  obtenerArchivosDeEntrega,
   calificarEntrega,
   asociarArchivosConEntrega,
   ver

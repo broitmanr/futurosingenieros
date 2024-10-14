@@ -17,6 +17,8 @@ import Recursos from './components/Recursos/Recursos.jsx';
 import PrivateRoute from './PrivateRoutes';
 import axios from "axios";
 import { DetalleEntregaComentarios } from './components/DetalleEntrega/DetalleEntregaComentarios.jsx';
+import RendimientoAlumno from "./components/Rendimiento/RendimientoAlumno.jsx";
+import RendimientoGrupo from "./components/Rendimiento/RendimientoGrupo.jsx";
 
 axios.defaults.baseURL = 'http://localhost:5000/api'
 
@@ -92,6 +94,22 @@ function App() {
                   <PrivateRoute allowedRoles={['D', 'A']}>
                     <Rendimiento />
                   </PrivateRoute>
+                }
+              />
+              <Route
+                    path="/rendimiento/alumno/:id/:idAlumno"
+                    element={
+                        <PrivateRoute allowedRoles={['D']}>
+                            <RendimientoAlumno  />
+                        </PrivateRoute>
+                    }
+              />
+              <Route
+                path="/rendimiento/grupo/:id/:idGrupo"
+                element={
+                    <PrivateRoute allowedRoles={['D']}>
+                        <RendimientoGrupo  />
+                    </PrivateRoute>
                 }
               />
               <Route 

@@ -3,6 +3,7 @@ const { red, yellow } = require('picocolors')
 const { handleTransaction } = require('../const/transactionHelper')
 const models = require('../database/models/index')
 const { validarDocenteInstanciaEvaluativa } = require('../middlewares/validarDocente')
+const {getEstado} = require("./entrega.controller");
 
 // Función para crear una entrega pactada
 async function crear (req, res, next) {
@@ -99,16 +100,22 @@ async function listarEntregasInstancia (req, res, next) {
       })
 
 
+      let estadosEntrega=[]
+
+      for (entrega of entregasPactadas){
+        estadosEntrega[entrega.ID] = await getEstado(entrega?.Entregas[0] ?? null)
+      }
+
       const entregasMapeadas = entregasPactadas.map(entrega => ({
-        ID:entrega.ID,
-        nombre:entrega.nombre,
-        numero:entrega.numero,
-        descripcion:entrega.descripcion,
-        fechavto1:entrega.fechavto1,
-        fechavto2:entrega.fechavto2,
-        nota:entrega.Entregas ? entrega.Entregas[0].nota : null,
-        estado: entrega.Entregas ? (entrega.Entregas[0].nota ? (entrega.Entregas[0].nota >= 6 ? 'Promocionado' : 'Desaprobado') : 'Sin corregir') : 'Sin entregar',
-        fechaEntrega:entrega.Entregas ? entrega.Entregas[0].fecha : null
+        ID: entrega.ID,
+        nombre: entrega.nombre,
+        numero: entrega.numero,
+        descripcion: entrega.descripcion,
+        fechavto1: entrega.fechavto1,
+        fechavto2: entrega.fechavto2,
+        nota: entrega?.Entregas[0]?.nota ?? null,
+        estado: estadosEntrega[entrega.ID],
+        fechaEntrega:entrega?.Entregas[0]?.fecha ?? null
       }))
 
       res.status(200).json(entregasMapeadas)
@@ -120,8 +127,9 @@ async function listarEntregasInstancia (req, res, next) {
           instanciaEvaluativa_id: instanciaID
         }
       })
+      res.status(200).json(entregasPactadas)
     }
-    res.status(200).json(entregasPactadas)
+
 
   } catch (error) {
     next({

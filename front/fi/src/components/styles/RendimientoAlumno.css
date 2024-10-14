@@ -1,6 +1,4 @@
 .containerFaltas {
-        display: flex;                /* Hace que el contenido esté en un cuadro horizontal (layout en fila) */
-        flex-direction: row;           /* Asegura que los elementos se alineen horizontalmente */
         border: 2px solid rgb(150, 144, 144);       /* Borde de 2px de grosor para el contenedor completo */
         padding: 20px;                /* Añade espacio interno dentro del contenedor */
         margin: 20px 0;  

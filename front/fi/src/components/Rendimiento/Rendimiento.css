@@ -90,3 +90,27 @@
 .custom-datatable-asistencia .p-sortable-column-icon {
     color: #1a2035;
 }
+
+.table-rendimiento-alumno__container {
+    overflow-x: auto;
+}
+.table-rendimiento-alumno {
+    width: 100%;
+    border-collapse: collapse;
+}
+.table-rendimiento-alumno th, .table-rendimiento-alumno td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+.table-rendimiento-alumno thead {
+    background-color: #f2f2f2;
+}
+.table-rendimiento-alumno tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.table-rendimiento-alumno .instancia {
+    vertical-align: middle;
+    text-align: center;
+    background-color: #e6f3ff;
+}

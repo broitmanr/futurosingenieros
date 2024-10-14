@@ -22,6 +22,7 @@ import { SlCloudUpload } from "react-icons/sl";
 import { RxCross2 } from "react-icons/rx";
 import { IoMdCloudCircle } from "react-icons/io";
 import {CircularProgress} from "@mui/material";
+import { IoEyeSharp } from "react-icons/io5";
 
 
 export default function Recursos() {
@@ -33,7 +34,7 @@ export default function Recursos() {
     const [visible, setVisible] = useState(false)
     const [totalSize, setTotalSize] = useState(0)
     const [loading, setLoading] = useState(false); // Estado para manejar el estado de carga
-
+    const [archivos, setArchivos] = useState([])
     const handleCloseUpload = () => setVisible(false);
     const handleShowUpload = () => setVisible(true);
 
@@ -60,6 +61,8 @@ export default function Recursos() {
             if(response.data){
                 console.log('Agregado con éxito', response.data)
                 setLoading(false)
+                handleVerRecursos()
+                onModalClear()
                 handleCloseUpload()
             }
         }catch(err){
@@ -83,13 +86,13 @@ export default function Recursos() {
     const headerModal = (options) => {
         const { chooseButton, cancelButton } = options;
         return(
-            <div style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
+            <div className='header-modal-recursos-container'>
                 {chooseButton}
-                <Button icon={<SlCloudUpload />} onClick={handleSubirRecurso} className="p-button-success" />
+                <Button icon={<SlCloudUpload color='#155724' />} onClick={handleSubirRecurso} className="p-button-success btn-header-modal-recursos" />
                 {cancelButton}
                 <div className="flex align-items-center gap-3 ml-auto">
                     <span>{fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B'} / 10 MB</span>
-                    <ProgressBar value={totalSize / 10000000} showValue={false} style={{ width: '10rem', height: '12px' }} />
+                    <ProgressBar value={totalSize / 10000000} showValue={false} className='progress-bar-recursos' />
                 </div>
             </div>
         )
@@ -98,67 +101,65 @@ export default function Recursos() {
     const itemModal = (file, props) => (
         <div className="flex align-items-center flex-wrap">
             <span className="flex flex-column text-left ml-3">{file.name}</span>
-            <Button type="button" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => handleRemoveFile(file, props)}><RxCross2 /></Button>
+            <Button type="button" className="p-button-outlined p-button-danger ml-auto btn-item-modal-recursos" onClick={() => handleRemoveFile(file, props)}><RxCross2 /></Button>
         </div>
     );
 
     const emptyModal = () => (
         <div className="flex align-items-center flex-column">
-            <i className="mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
-            <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">Arrastrá tus archivos acá</span>
+            <i className="mt-3 p-5 modal-recursos-container-drop"></i>
+            <span className="my-5 modal-recursos-drop">Arrastrá tus archivos acá</span>
         </div>
     );
 
-    const chooseOptions = { iconOnly: true, className: 'recurso-choose-btn p-button-rounded p-button-outlined', icon: <TfiFiles /> };
-    const cancelOptions = { iconOnly: true, className: 'recurso-cancel-btn p-button-rounded p-button-danger p-button-outlined', icon: <RxCross2 /> };
+    const chooseOptions = { iconOnly: true, className: 'recurso-choose-btn p-button-rounded p-button-outlined btn-header-modal-recursos', icon: <TfiFiles /> };
+    const cancelOptions = { iconOnly: true, className: 'recurso-cancel-btn p-button-danger p-button-outlined btn-header-modal-recursos', icon: <RxCross2 /> };
 
-    const recursos = [
-        {
-            id: 1,
-            nombre: 'Plantilla Informe 1',
-            extension: 'DOCX',
-            estado: 'SIN DESCARGAR',
-            enlace: 'https://frlp.cvg.utn.edu.ar'
-        },
-        {
-            id: 2,
-            nombre: 'Guía de TP',
-            extension: 'PDF',
-            estado: 'SIN DESCARGAR',
-            enlace: 'https://frlp.cvg.utn.edu.ar'
-        },
-        {
-            id: 3,
-            nombre: 'roject.iso',
-            extension: 'ISO',
-            estado: 'DESCARGADO',
-            enlace: 'https://microsoft.com'
+    const handleVerRecursos = async () => {
+        try {
+            console.log(id)
+            const response = await axios.get(`/archivo/curso/${id}`, {withCredentials: true})
+            if(response.data){
+                setArchivos(response.data)
+            }
+        } catch (err) {
+            console.log('No se ha logrado obtener los recursos:', err)
         }
-    ];
+    }
 
-    const getSeverity = (recurso) => {
-        switch (recurso.estado) {
-            case 'SIN DESCARGAR':
-                return 'success';
+    useEffect(() =>{
+        handleVerRecursos()
+    }, [id])
 
-            case 'DESCARGADO':
-                return 'danger';
-
-            default:
-                return null;
-        }
-    };
-
-    const handleSelectItem = (recursoId) => {
+    const handleSelectItem = (fileId) => {
         setSelectedItems((prevSelected) => {
-            if (prevSelected.includes(recursoId)) {
-                return prevSelected.filter((id) => id !== recursoId); // Deseleccionar
+            if (prevSelected.includes(fileId)) {
+                return prevSelected.filter((id) => id !== fileId); // Deseleccionar
             } else {
-                return [...prevSelected, recursoId]; // Seleccionar
+                return [...prevSelected, fileId]; // Seleccionar
             }
         });
     };
 
+    const handleViewFile = (url) => {
+        window.open(url, '_blank'); // Abre el archivo en una nueva pestaña
+    };
+/*
+    const handleDownload = async (url, archivoNombre) => {
+        try {
+            const response = await axios.get(url, { responseType: 'blob' }); // Asegúrate de especificar 'blob' como responseType
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', archivoNombre); // Puedes especificar el nombre del archivo
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Error al descargar el archivo:', error);
+        }
+    };
+*/
     const header = () => {
         return(
             <div className="flex flex-wrap justify-content-end gap-2">
@@ -166,7 +167,7 @@ export default function Recursos() {
                 <>
                 <Button className='btn-gestionar-recurso' icon={<FaTrashAlt size={24} />} label="Eliminar recurso" text />
                 <Button className='btn-gestionar-recurso' icon={<FaPlus size={24} />} label="Subir recurso" text onClick={handleShowUpload} />
-                <Modal show={visible} onHide={handleCloseUpload} style={{width: '100%'}}>
+                <Modal show={visible} onHide={handleCloseUpload} >
                     <Modal.Header closeButton>
                     </Modal.Header>
                     <Modal.Body>
@@ -200,44 +201,44 @@ export default function Recursos() {
         )
     };
 
-    const itemTemplate = (recurso, index) => {
+    const itemTemplate = (archivo, index) => {
         return (
-            <div className="col-12" key={recurso.id}>
+            <div className="col-12" key={archivo.ID}>
                 <div className="recurso-item flex align-items-center">
                     <Checkbox 
-                        checked={selectedItems.includes(recurso.id)} 
-                        onChange={() => handleSelectItem(recurso.id)} 
+                        checked={selectedItems.includes(archivo.ID)} 
+                        onChange={() => handleSelectItem(archivo.ID)} 
                         className='checkbox-recurso'
                     />
                     <div className="flex flex-column flex-grow-1 ml-8">
-                        <div className="text-2xl font-bold text-900">{recurso.nombre}</div>
+                        <div className="text-2xl font-bold text-900">{archivo.nombre} <span> </span> 
+                            <IoEyeSharp onClick={() => handleViewFile(archivo.referencia)} />
+                        </div>
                         <div className="flex align-items-center gap-2 mt-2">
-                            <span className="font-semibold">{recurso.extension}</span>
-                            <Tag value={recurso.estado} severity={getSeverity(recurso)}></Tag>
+                            <span className="font-semibold">{archivo.extension}</span>
                         </div>
                     </div>
                     <div className="flex flex-column align-items-end ml-2">
-                        <Button icon={<IoDownloadOutline size={24} />} className="p-button-rounded btn-descargar-recurso"></Button>
-                        {/*<span className="text-2xl font-semibold mt-2">{recurso.enlace}</span>*/}
+                        <Button icon={<IoDownloadOutline size={24} /*onClick={() => handleDownload(archivo.referencia, archivo.nombre)}*/ />} className="p-button-rounded btn-descargar-recurso"></Button>
                     </div>
                 </div>
             </div>
         );
     };
     
-    const listTemplate = (items) => {
-        if (!items || items.length === 0) return null;
+    const listTemplate = (archivos) => {
+        if (!archivos || archivos.length === 0) return null;
     
         return (
             <div className="grid">
-                {items.map(itemTemplate)}
+                {archivos.map(itemTemplate)}
             </div>
         );
     };
     
     return (
         <div className="card recursos-cards">
-            <DataView value={recursos} listTemplate={listTemplate} header={header()} />
+            <DataView value={archivos} listTemplate={listTemplate} header={header()} />
         </div>
     );
 

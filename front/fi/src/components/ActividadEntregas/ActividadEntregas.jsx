@@ -141,8 +141,8 @@ export const ActividadEntregas = () => {
                     )}
                     {role === 'A' &&
                     <>
-                    {isLoading && <p>Cargando cursos...</p>}
-                    {!isLoading ?  (
+                    {isLoading && <p>Cargando entregas...</p>}
+                    {!isLoading && (
                             entregas.map((item, idx) => (
                                 <Row key={idx}>
                                     <Col className={'col-12 entrega estilo-entrega'}>
@@ -160,7 +160,7 @@ export const ActividadEntregas = () => {
                                     </Col>
                                 </Row>
                             ))
-                    ) : (<div>Cargando</div>)}
+                    )}
                     </>
                     }
                 </div>

@@ -18,7 +18,8 @@ async function crear(req, res, next) {
   const totalPonderacion = instancias.reduce((acc, instancia) => {
     return acc + instancia.porcentaje_ponderacion
   }, 0)
-  if (totalPonderacion + porcentajePonderacion > 100) {
+
+  if (totalPonderacion + parseInt(porcentajePonderacion) > 100) {
     return next({ ...errors.ConflictError, details: 'El porcentaje de ponderación de las instancias supera el 100%, haga los cambios e intente nuevamente' })
   }
 

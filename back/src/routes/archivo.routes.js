@@ -5,7 +5,7 @@ const router = Router()
 
 // Ruta para subir imágenes
 // router.post('/subir-imagen', uploadImagenes.single('imagen'), archivoController.subirImagen);
-
+router.get('/curso/:cursoId', archivoController.getListaMaterialCursada)
 router.get('/imagen/nombre/:nombre', archivoController.obtenerImagenByNombre)
 router.get('/imagen/:id', archivoController.obtenerImagen)
 router.get('/:id', archivoController.obtenerFile)
@@ -15,5 +15,4 @@ router.put('/comentario/:id', archivoController.editComentario)
 router.delete('/comentario/:id', archivoController.deleteComentario)
 router.post('/subirMaterial/:cursoId', uploadFiles.array('files', 5), archivoController.subirMaterialCursada)
 router.get('/:cursoId/:nombre', archivoController.getMaterialCursadaByName)
-router.get('/:cursoId', archivoController.getListaMaterialCursada)
 module.exports = router

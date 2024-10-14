@@ -10,6 +10,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import './styles/Home.css'
+import axios from 'axios'
 
 export default function SignOut() {
     const [password, setPassword] = useState('');
@@ -19,6 +20,7 @@ export default function SignOut() {
     const [selectedRole, setSelectedRole] = useState(null);
     const [validatedFirst, setValidatedFirst] = useState(false);
     const [validatedSecond, setValidatedSecond] = useState(false);
+    const [userData, setUserData] = useState({})
     const stepperRef = useRef(null);
     const navigate = useNavigate();
 
@@ -26,24 +28,51 @@ export default function SignOut() {
         setSelectedRole(role);
     };
 
-    const handleSubmit = (event) => {
-        const form = event.currentTarget;
+    /*const handleSubmit = (e) => {
+        const form = e.currentTarget;
         if (form.checkValidity() === false || selectedRole === null || password !== confirmPassword || email !== confirmEmail) {
-        event.preventDefault();
-        event.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
         setValidatedFirst(true)
         }else{
             setValidatedFirst(false);
             stepperRef.current.nextCallback()
         }
-        
+    };*/
+
+    const handleSubmitPrueba = async (e) => {
+        e.preventDefault()
+        const form = e.currentTarget;
+        console.log('userData:', userData);
+    console.log('password:', password);
+    console.log('confirmPassword:', confirmPassword);
+    console.log('email:', email);
+    console.log('confirmEmail:', confirmEmail);
+        if (form.checkValidity() === false || selectedRole === null || password !== confirmPassword || email !== confirmEmail) {
+            e.stopPropagation();
+            setValidatedFirst(true)
+        }else{
+            setValidatedFirst(false);
+            try{
+                const response = await axios.post('http://localhost:5000/auth/sign-up', userData, { withCredentials: true })
+                if(response.data.success){
+                    alert('Registro exitoso. Redirigiendo al login...')
+                    navigate('/login')
+                }else{
+                    alert('Oops...no hemos logrado encontrarte. Por favor, completá el siguiente formulario')
+                    stepperRef.current.nextCallback()
+                }
+            }catch(err){
+                console.log('No se ha logrado registrar al usuario', err)
+            }
+        }
     };
 
-    const handleSecondSubmit = (event) => {
-        const form = event.currentTarget;
+    const handleSecondSubmit = (e) => {
+        const form = e.currentTarget;
         if (form.checkValidity() === false) {
-        event.preventDefault();
-        event.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
         setValidatedSecond(true)
         }else{
             setValidatedSecond(false);
@@ -51,81 +80,61 @@ export default function SignOut() {
         }
     };
 
+    const handleChange = (e) => {
+        const {name, value} = e.target
+        setUserData((prevState) => ({
+            ...prevState,
+            [name]: value
+        }))
+        if(name === 'email'){
+            setEmail(value)
+        }else if (name === 'password'){
+            setPassword(value)
+        }
+    }
+
     return(
         <div className="register-container">
             <h5 className='title-sign-up'>Registrarme</h5>
             <Stepper ref={stepperRef} style={{ flexBasis: '50rem' }}>
             <StepperPanel header="Información de usuario">
                 <div className="flex flex-column h-12rem">
-                    <Form noValidate validated={validatedFirst} onSubmit={handleSubmit}>
+                    <Form noValidate validated={validatedFirst} onSubmit={handleSubmitPrueba}>
                         <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridEmail">
                             <Form.Label>Email</Form.Label>
-                            <Form.Control required type="email" placeholder="Ingrese su email" value={email} 
-                                onChange={(e) => setEmail(e.target.value)} />
+                            <Form.Control required type="email" name='email' placeholder="Ingrese su email" value={email} onChange={handleChange} />
                             <Form.Control.Feedback type='invalid'>Debe ingresar su email</Form.Control.Feedback>
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="formGridConfirmEmail">
                             <Form.Label>Confirmar Email</Form.Label>
                             <Form.Control required type="email" placeholder="Ingrese nuevamente su email" value={confirmEmail} 
-                                onChange={(e) => setConfirmEmail(e.target.value)} isInvalid={validatedFirst && email !== confirmEmail} />
+                                onChange={(e) => setConfirmEmail(e.target.value)} isInvalid={validatedFirst && userData.email !== confirmEmail} />
                             <Form.Control.Feedback type='invalid'>
-                                {validatedFirst && email !== confirmEmail ? "Los correos no coinciden" : "Por favor, confirme su email"}
+                                {validatedFirst && userData.email !== confirmEmail ? "Los correos no coinciden" : "Por favor, confirme su email"}
                             </Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                         <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridPassword">
                             <Form.Label>Contraseña</Form.Label>
-                            <Form.Control required type="password" placeholder="Ingrese su contraseña" value={password} 
-                                onChange={(e) => setPassword(e.target.value)}  />
+                            <Form.Control required type="password" name='password' placeholder="Ingrese su contraseña" value={password} onChange={handleChange}  />
                             <Form.Control.Feedback type='invalid'>Debe ingresar su contraseña</Form.Control.Feedback>
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="formGridConfirmPassword">
                             <Form.Label>Confirmar contraseña</Form.Label>
                             <Form.Control required type="password" placeholder="Ingrese nuevamente su contraseña" value={confirmPassword} 
-                                onChange={(e) => setConfirmPassword(e.target.value)} isInvalid={validatedFirst && password !== confirmPassword} />
+                                onChange={(e) => setConfirmPassword(e.target.value)} isInvalid={validatedFirst && userData.password !== confirmPassword} />
                             <Form.Control.Feedback type='invalid'>
-                                {validatedFirst && password !== confirmPassword ? "Las contraseñas no coinciden" : "Por favor, confirme su contraseña"}
+                                {validatedFirst && userData.password !== confirmPassword ? "Las contraseñas no coinciden" : "Por favor, confirme su contraseña"}
                             </Form.Control.Feedback>
                             </Form.Group>
-                        </Row>
-                        <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridLegajo">
                             <Form.Label>Legajo o DNI</Form.Label>
-                            <Form.Control required type="number" placeholder="Ingrese su legajo o DNI" />
+                            <Form.Control required type="number" name='legajo' placeholder="Ingrese su legajo o DNI" onChange={handleChange} />
                             <Form.Control.Feedback type='invalid'>Debe ingresar su legajo o DNI</Form.Control.Feedback>
-                            </Form.Group>
-
-                            <Form.Group as={Col} className='form-control-rol-container' controlId="formGridRol">
-                            <div key='inline-radio' className="mb-3 form-control-rol">
-                                <Form.Label className='radio-rol-label'>Rol</Form.Label>
-                                <div>
-                                <Form.Check
-                                    inline
-                                    required
-                                    type="radio"
-                                    id='inline-radio-1'
-                                    label="Estudiante"
-                                    className='radio-rol'
-                                    checked={selectedRole === 'Estudiante'}
-                                    onChange={() => handleRoleChange('Estudiante')}
-                                />
-                                <Form.Check
-                                    inline
-                                    required
-                                    type="radio"
-                                    id='inline-radio-2'
-                                    label="Docente"
-                                    className='radio-rol'
-                                    checked={selectedRole === 'Docente'}
-                                    onChange={() => handleRoleChange('Docente')}
-                                />
-                                </div>
-                            </div>
-                            <Form.Control.Feedback type='invalid'>Debe elegir una de las opciones</Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                         <Col xs="auto" className="my-1 btns-sign-out">

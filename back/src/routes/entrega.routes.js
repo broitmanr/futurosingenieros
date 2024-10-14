@@ -30,4 +30,5 @@ router.get('/:id',
   entregaController.ver
 )
 
+router.get('/miEntregaAlumno/:idEntregaPactada', entregaController.obtenerEntregaComoAlumno)
 module.exports = router

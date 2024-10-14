@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     extension: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.STRING(100),
       allowNull: true
     },
     updated_at: {

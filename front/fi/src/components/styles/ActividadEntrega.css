@@ -1,4 +1,7 @@
 .actividad-entregas-container{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
     min-height: 100vh;
     background-color: #f2f6fc;
 }

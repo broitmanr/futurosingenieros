@@ -142,7 +142,7 @@ export const ActividadEntregas = () => {
                     )}
                     {role === 'A' &&
                     <>
-                    {isLoading && <p>Cargando cursos...</p>}
+                    {isLoading && <p>Cargando entregas...</p>}
                     {!isLoading && (
                             entregas.map((item, idx) => (
                                 <Row key={idx}>
@@ -151,7 +151,9 @@ export const ActividadEntregas = () => {
                                         <Link className='estilo-detalle' to={`/entrega/${item.ID}`}>Ver detalle</Link>
                                         {/*TODO:Poner el estado real, todavia no lo tenemos, habria que joinear con entrega*/}
                                         {/* Para que no rompa el estilo */}
-                                        <Badge gap={2} bg={item.nota ? item.nota >= 6 ? "success" : "danger" : null}>{item.nota ? "Nota: "+item.nota : null } - {item.estado}</Badge>
+                                        { item.nota && (
+                                            <Badge gap={2} bg={item.nota ? item.nota >= 6 ? "success" : "danger" : null}>{item.nota ? "Nota: " + item.nota : null } - {item.estado}</Badge>
+                                        )}    
                                         <Badge bg="info">{item.fechaEntrega ? `Entregado el: ${moment(item.fechaEntrega).format('DD/MM/YY')}`: ''}</Badge>
                                         <p className="entrega-fecha"><span></span></p> {/* Para que no rompa el estilo */}
                                         <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('DD/MM/YY')}</span></p>

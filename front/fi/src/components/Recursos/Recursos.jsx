@@ -22,6 +22,7 @@ import { SlCloudUpload } from "react-icons/sl";
 import { RxCross2 } from "react-icons/rx";
 import { IoMdCloudCircle } from "react-icons/io";
 import {CircularProgress} from "@mui/material";
+import { IoEyeSharp } from "react-icons/io5";
 
 
 export default function Recursos() {
@@ -114,31 +115,10 @@ export default function Recursos() {
     const chooseOptions = { iconOnly: true, className: 'recurso-choose-btn p-button-rounded p-button-outlined btn-header-modal-recursos', icon: <TfiFiles /> };
     const cancelOptions = { iconOnly: true, className: 'recurso-cancel-btn p-button-danger p-button-outlined btn-header-modal-recursos', icon: <RxCross2 /> };
 
-    /*const recursos = [
-        {
-            id: 1,
-            nombre: 'Plantilla Informe 1',
-            extension: 'DOCX',
-            enlace: 'https://frlp.cvg.utn.edu.ar'
-        },
-        {
-            id: 2,
-            nombre: 'Guía de TP',
-            extension: 'PDF',
-            enlace: 'https://frlp.cvg.utn.edu.ar'
-        },
-        {
-            id: 3,
-            nombre: 'roject.iso',
-            extension: 'ISO',
-            enlace: 'https://microsoft.com'
-        }
-    ];*/
-
     const handleVerRecursos = async () => {
         try {
             console.log(id)
-            const response = await axios.get(`/archivo/${id}`, {withCredentials: true})
+            const response = await axios.get(`/archivo/curso/${id}`, {withCredentials: true})
             if(response.data){
                 setArchivos(response.data)
             }
@@ -161,6 +141,25 @@ export default function Recursos() {
         });
     };
 
+    const handleViewFile = (url) => {
+        window.open(url, '_blank'); // Abre el archivo en una nueva pestaña
+    };
+/*
+    const handleDownload = async (url, archivoNombre) => {
+        try {
+            const response = await axios.get(url, { responseType: 'blob' }); // Asegúrate de especificar 'blob' como responseType
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', archivoNombre); // Puedes especificar el nombre del archivo
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Error al descargar el archivo:', error);
+        }
+    };
+*/
     const header = () => {
         return(
             <div className="flex flex-wrap justify-content-end gap-2">
@@ -204,22 +203,23 @@ export default function Recursos() {
 
     const itemTemplate = (archivo, index) => {
         return (
-            <div className="col-12" key={archivo.id}>
+            <div className="col-12" key={archivo.ID}>
                 <div className="recurso-item flex align-items-center">
                     <Checkbox 
-                        checked={selectedItems.includes(archivo.id)} 
-                        onChange={() => handleSelectItem(archivo.id)} 
+                        checked={selectedItems.includes(archivo.ID)} 
+                        onChange={() => handleSelectItem(archivo.ID)} 
                         className='checkbox-recurso'
                     />
                     <div className="flex flex-column flex-grow-1 ml-8">
-                        <div className="text-2xl font-bold text-900">{archivo.nombre}</div>
+                        <div className="text-2xl font-bold text-900">{archivo.nombre} <span> </span> 
+                            <IoEyeSharp onClick={() => handleViewFile(archivo.referencia)} />
+                        </div>
                         <div className="flex align-items-center gap-2 mt-2">
                             <span className="font-semibold">{archivo.extension}</span>
                         </div>
                     </div>
                     <div className="flex flex-column align-items-end ml-2">
-                        <Button icon={<IoDownloadOutline size={24} />} className="p-button-rounded btn-descargar-recurso"></Button>
-                        {/*<span className="text-2xl font-semibold mt-2">{recurso.enlace}</span>*/}
+                        <Button icon={<IoDownloadOutline size={24} /*onClick={() => handleDownload(archivo.referencia, archivo.nombre)}*/ />} className="p-button-rounded btn-descargar-recurso"></Button>
                     </div>
                 </div>
             </div>

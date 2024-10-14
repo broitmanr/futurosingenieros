@@ -1,8 +1,12 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
 import { CommentedHighlight } from "./types";
 import moment from "moment/moment";
+import { FloatLabel } from "primereact/floatlabel";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import axios from "axios";
 
 interface SidebarProps {
   highlights: Array<CommentedHighlight>;
@@ -20,10 +24,27 @@ const updateHash = (highlight: Highlight) => {
 const Sidebar = ({
   highlights,
   toggleDocument,
-  resetHighlights, isLoading,entrega
+  resetHighlights, 
+  isLoading, 
+  entrega
 }: SidebarProps) => {
+  const [nota, setNota] = useState('');
+
+  const handleCalificar = async () => {
+    try{
+      const response = await axios.patch(`/entrega/calificar/${entrega.ID}`, { nota }, { withCredentials: true })
+      console.log('Calificado', response.data)
+    }catch(err){
+      console.log('Error al calificar la entrega:', err)
+    }
+  }
+
+  useEffect(() => {
+    handleCalificar()
+  }, [])
+
   return (
-    <div className="sidebar" style={{ width: "25vw", maxWidth: "500px" }}>
+    <div className="sidebar" style={{ width: "30vw", maxWidth: "500px" }}>
       {/* Description section */}
       <div className="description" style={{ padding: "1rem" }}>
 
@@ -33,9 +54,31 @@ const Sidebar = ({
                 {entrega.nombre}
               </h2>
               <h5 className={'text-muted'} style={{fontStyle:"italic"}}>{entrega.descripcion}</h5>
-
-
               <b>Fecha de entrega: {moment(entrega.fecha).format('DD/MM/YY')}</b>
+              {!entrega.nota ? (
+                <>
+                <div className="entrega-sincalificar-container" style={{display: 'flex', flexDirection: 'row'}}>
+                  <FloatLabel style={{marginLeft: 0, marginTop: '1.5rem', margin: '1rem'}}>
+                    <InputText id="nota" value={nota} onChange={(e) => setNota(e.target.value)} />
+                    <label htmlFor="nota">Calificar</label>
+                  </FloatLabel>
+                  <Button label='Calificar' onClick={handleCalificar} style={{ marginTop: '1rem', height: '50%', backgroundColor: '#1a2035', borderRadius: '0.2rem' }} />
+                </div>
+                </>
+              ):(
+                <>
+                <div className="entrega-calificada-container" style={{marginTop: '1rem', display: 'flex', flexDirection: 'column'}}>
+                  <label htmlFor="nota">Calificación</label>
+                  <InputText id="nota" readOnly value={entrega.nota} />
+                </div>
+                </>
+              // )
+              // {entrega.nota && (
+              //   <>
+              //   <label htmlFor="nota">Calificación</label>
+              //   <InputText id="nota" readOnly value={entrega.nota} onChange={(e) => setNota(e.target.value)} />
+              //   </>
+              )}
             </>
 
         ) :(<h3>Cargando entrega...</h3>)}

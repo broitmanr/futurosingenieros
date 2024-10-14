@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     descripcion: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     nombre: {
@@ -34,7 +34,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'DiasEspeciales',
-    timestamps: false
+    timestamps: false,
+    indexes: [
+      {
+        unique: true,
+        fields: ['fecha', 'descripcion', 'nombre', 'cuentaAsistencia']
+      }
+    ]
   })
   return DiasEspeciales
 }

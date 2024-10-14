@@ -10,9 +10,9 @@ router.post('/',
   entregaController.crearEntrega
 )
 
-router.get('/listarEntregas/:entregaPactada_id',
+router.get('/listarEntregasHechas/:idEntregaPactada',
   checkRole.checkRoleDocente,
-  entregaController.listarEntregasDocente
+  entregaController.listarEntregasParaElDocente
 )
 
 router.patch('/calificar/:idEntrega',
@@ -26,9 +26,8 @@ router.post('/asociarArchivos/:entregaId',
 )
 
 router.get('/:id',
-    checkRole.checkRole('A','D'),
-    entregaController.ver
+  checkRole.checkRole('A', 'D'),
+  entregaController.ver
 )
-
 
 module.exports = router

@@ -78,7 +78,7 @@ export const DetalleEntrega = () => {
                                 }
 
                                
-                               <UploadWindow/>
+                                <UploadWindow entregaPactadaId={entregaDetalle.ID} />   
 
                                 <button onClick={handleEntregar} className="btn-entrega-detalle-entregar d-none">Entregar</button>
                                 <Dialog className='dialog-agregar-entrega-detalle' header='¡Fantástico, usted ha hecho la entrega!'
@@ -98,7 +98,6 @@ export const DetalleEntrega = () => {
                                         <p className="m-0">Fecha de vencimiento: 17/08</p>
                                     </div>
                                    
-                                    <Link to={`/entrega/${params.id}/comentarios`}>Entrega</Link>
                                     <p>Estado: <span className="fw-bold">Modificar</span></p>
                             </div>
                         </div>

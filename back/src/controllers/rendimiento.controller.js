@@ -181,6 +181,16 @@ async function alumno(req, res, next) {
 
 async function listarAlumnosDelCurso(req, res, next) {
   const { cursoId } = req.params;
+  if (!cursoId){return next({...errors.FaltanParametros})}
+
+  const curso = await models.Curso.findByPk(cursoId,{
+    attributes: ['ID'],
+    include: [
+      { model: models.Materia, attributes: ['ID', 'nombre'] },
+      { model: models.Comision, attributes: ['ID', 'nombre'] },
+    ],
+  })
+  if (!curso){return next({...errors.NotFoundError})}
   try {
     // Obtener todos los alumnos del curso
     const alumnos = await models.PersonaXCurso.findAll({
@@ -217,12 +227,113 @@ async function listarAlumnosDelCurso(req, res, next) {
       });
     }
 
-    return res.status(200).json({ alumnos: resultado });
+    return res.status(200).json({curso: {
+        id: curso.ID,
+        materia: curso.Materium?.nombre ?? '',
+        comision: curso.Comision?.nombre ?? '',
+      }, alumnos: resultado });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Error al obtener el listado de alumnos.' });
   }
 }
+
+async function listarGruposDelCurso(req, res, next) {
+  const { cursoId } = req.params
+  if (!cursoId){return next({...errors.FaltanParametros})}
+
+  const curso = await models.Curso.findByPk(cursoId,{
+    attributes: ['ID'],
+    include: [
+      { model: models.Materia, attributes: ['ID', 'nombre'] },
+      { model: models.Comision, attributes: ['ID', 'nombre'] },
+    ],
+  })
+  if (!curso){return next({...errors.NotFoundError})}
+  try {
+    // Obtener todos los grupos del curso junto con sus integrantes
+    const grupos = await models.Grupo.findAll({
+      where: { curso_id: cursoId },
+      attributes: ['ID', 'nombre','numero'],
+      include: [
+        {
+          model: models.Persona, // Información de los integrantes
+          attributes: ['ID', 'nombre', 'apellido', 'legajo'],
+          through: { attributes: [] }, // Omitir los atributos de la tabla intermedia
+        }
+      ]
+    });
+
+    const resultado = [];
+
+    // Recorrer cada grupo para calcular los datos solicitados
+    for (const grupo of grupos) {
+      const { ID: grupoID, nombre: grupoNombre, numero:grupoNumero} = grupo;
+
+      // Calcular las entregas realizadas por el grupo
+      const entregasRealizadas = await models.Entrega.count({
+        where: { grupo_id: grupoID },
+        include: [
+          {
+            model: models.EntregaPactada,
+            include: [
+              {
+                model: models.InstanciaEvaluativa,
+                where: { curso_id: cursoId, grupo: true }, // Solo instancias grupales
+              },
+            ],
+          },
+        ],
+      });
+
+      // Calcular el total de entregas pactadas grupales para el curso
+      const entregasPactadas = await models.EntregaPactada.count({
+        include: [
+          {
+            model: models.InstanciaEvaluativa,
+            where: { curso_id: cursoId, grupo: true }, // Solo instancias grupales
+          },
+        ],
+      });
+
+      // Calcular las notas ponderadas y equiponderadas del grupo
+      const { notaPonderada, promedioEquiponderado } = await calcularNotaGrupo(cursoId, grupoID);
+
+      const integrantes = grupo.Personas.map(persona => {
+        const { ID, nombre, apellido, legajo } = persona;
+        const nombreAbreviado = `${apellido}, ${nombre.charAt(0)}`;
+        return {
+          ID,
+          legajo,
+          nombreAbreviado,
+        };
+      });
+
+      // Añadir el grupo al resultado
+      resultado.push({
+        grupoID,
+        grupoNumero,
+        grupoNombre,
+        integrantes,
+        cantidadEntregas: `${entregasRealizadas}/${entregasPactadas}`,
+        promedioPonderado: parseFloat(notaPonderada),
+        promedioEquiponderado: parseFloat(promedioEquiponderado),
+      });
+    }
+
+    return res.status(200).json({  curso: {
+        id: curso.ID,
+        materia: curso.Materium?.nombre ?? '',
+        comision: curso.Comision?.nombre ?? '',
+      }, grupos: resultado });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error al obtener el listado de grupos.' });
+  }
+}
+
+
+
 async function calcularNotaParcialAlumno(cursoId, personaId) {
   const instanciasEvaluativas = await models.InstanciaEvaluativa.findAll({
     where: { curso_id: cursoId },
@@ -485,6 +596,90 @@ async function grupo(req, res, next) {
   res.status(200).json(response);
 }
 
+async function calcularNotaGrupo(cursoId, grupoId) {
+  try {
+    // Obtener todas las entregas del grupo
+    const entregas = await models.Entrega.findAll({
+      where: { grupo_id: grupoId },
+      include: [
+        {
+          model: models.EntregaPactada,
+          include: [
+            {
+              model: models.InstanciaEvaluativa,
+              attributes: ['porcentaje_ponderacion']  // Obtener el porcentaje de ponderación de la instancia
+            }
+          ]
+        }
+      ]
+    });
+
+    let totalNotaPonderada = 0;
+    let sumaNotasEquiponderadas = 0;
+    let totalEntregasConNota = 0;
+
+    // Agrupar las entregas por instancia evaluativa
+    const instanciasEvaluativasMap = {};
+
+    entregas.forEach(entrega => {
+      const entregaPactada = entrega.EntregaPactada;
+      const instanciaEvaluativa = entregaPactada.InstanciaEvaluativa;
+      const porcentajePonderacion = instanciaEvaluativa.porcentaje_ponderacion;
+
+      if (!instanciasEvaluativasMap[instanciaEvaluativa.ID]) {
+        instanciasEvaluativasMap[instanciaEvaluativa.ID] = {
+          porcentajePonderacion,
+          notas: []
+        };
+      }
+
+      // Si la entrega tiene una nota, agregarla al array de notas de esa instancia evaluativa
+      if (entrega.nota !== null) {
+        instanciasEvaluativasMap[instanciaEvaluativa.ID].notas.push(entrega.nota);
+
+        // Para el cálculo del promedio equiponderado, sumamos la nota
+        sumaNotasEquiponderadas += entrega.nota;
+        totalEntregasConNota += 1;  // Contamos esta entrega que tiene nota
+      }
+    });
+
+    // Calcular la nota ponderada para cada instancia evaluativa
+    for (const instanciaId in instanciasEvaluativasMap) {
+      const { porcentajePonderacion, notas } = instanciasEvaluativasMap[instanciaId];
+
+      if (notas.length > 0) {
+
+        // Calcular el promedio de las notas de las entregas de esta instancia evaluativa
+        const sumaNotas = notas.reduce((acc, nota) => acc + nota, 0);
+        const promedioNotas = sumaNotas / notas.length;
+
+        // Aportación de esta instancia a la nota final ponderada
+        const aporteNotaPonderada = promedioNotas * (porcentajePonderacion / 100);
+
+        // Sumar al total de la nota ponderada
+        totalNotaPonderada += aporteNotaPonderada;
+      }
+    }
+
+    // Calcular el promedio equiponderado
+    let promedioEquiponderado = 0;
+    if (totalEntregasConNota > 0) {
+
+      promedioEquiponderado = sumaNotasEquiponderadas / totalEntregasConNota;
+    }
+
+    // Devolver la nota ponderada y el promedio equiponderado
+
+    return {
+      notaPonderada: totalNotaPonderada.toFixed(2),
+      promedioEquiponderado: promedioEquiponderado.toFixed(2)
+    };
+  } catch (error) {
+    console.error('Error al calcular la nota del grupo:', error);
+    throw error;
+  }
+}
+
 
 
 
@@ -499,6 +694,10 @@ async function calcularPenalidades(personaXcursoID) {
 }
 
 
+
+
+
+
 module.exports = {
-  alumno,listarAlumnosDelCurso,grupo
+  alumno,listarAlumnosDelCurso,grupo,listarGruposDelCurso
 }

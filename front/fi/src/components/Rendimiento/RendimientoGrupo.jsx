@@ -104,14 +104,14 @@ const RendimientoGrupo = () => {
                                     series={[{
                                         data: participacionData,
                                         highlightScope: { faded: 'global', highlighted: 'item' },
-                                        faded: { innerRadius: 30, additionalRadius: -30 },
+                                        faded: { innerRadius: 50, additionalRadius: -20 },
                                         arcLabel: (item) => `${item.value}%`,
-                                        outerRadius: 100,
+                                        outerRadius: 80,
                                         cornerRadius:10,
                                         innerRadius:5
                                     }]}
 
-                                    height={200}
+                                    height={160}
                                     width={500}
                                     margin={{ top: 20, bottom: 20, left: 200, right: 300 }}
 

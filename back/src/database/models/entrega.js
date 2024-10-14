@@ -33,8 +33,8 @@ module.exports = (sequelize, DataTypes) => {
     Entrega.belongsTo(models.Grupo, { foreignKey: 'grupo_ID', allowNull: true })
     Entrega.belongsTo(models.EntregaPactada, { foreignKey: 'entregaPactada_ID', allowNull: false })
     Entrega.belongsTo(models.Persona, { foreignKey: 'persona_id', allowNull: true })
-    Entrega.hasMany(models.Archivo,{foreignKey:'entrega_id'})
-    Entrega.hasMany(models.PersonaXEntrega,{foreignKey:'entrega_id'})
+    Entrega.hasMany(models.Archivo, { foreignKey: 'entrega_id' })
+    Entrega.hasMany(models.PersonaXEntrega, { foreignKey: 'entrega_id' })
   }
 
   return Entrega

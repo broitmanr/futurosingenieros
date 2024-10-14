@@ -21,10 +21,10 @@ export const ActividadEntregas = () => {
     const params = useParams();
     const handleClose = () => setShow(false);
     const [isLoading, setLoading] = useState(true);
+    const [isLoadingInstancia, setLoadingInstancia] = useState(true);
 
     useEffect(()=> {
         const idActividad = params.id;
-        console.log(idActividad)
         setIdActividad(idActividad)
     },[params.id])
 
@@ -34,19 +34,18 @@ export const ActividadEntregas = () => {
                 const response = await axios.get(`/instanciaEvaluativa/${idActividad}`, { withCredentials: true })
                 console.log(response.data)
                 if(response.data){
-                    console.log(response.data);
                     setInstancia(response.data)
                 }
             } catch (err) {
                 console.log(err)
             } finally {
-                setLoading(false);
+                setLoadingInstancia(false);
             }
         }
 
 
         if(idActividad){
-            setLoading(true)
+            setLoadingInstancia(true)
             fetchInstancia()
         }
 
@@ -95,20 +94,20 @@ export const ActividadEntregas = () => {
                 <div className="container">
                     <div className="row">
                         <div className="col-md-6 mx-auto recuadro-estilizado">
-                            { isLoading ?
-                                <p className='text-danger text-center'>Cargando</p>
-                                :
-                                    instancia.nombre &&
-                                    <>
-                                        <h2 className="nombre-instancia">{instancia.nombre}</h2>
-                                        <div className="texto-informativo d-grid justify-content-center">
-                                            <span>Porc. Ponderación: {instancia.porcentaje_ponderacion}</span>
-                                            <span>{instancia.TipoInstancium.nombre}</span>
-                                            <span>{instancia.descripcion}</span>
-                                            <span>{instancia.grupo ? 'Grupal' : 'Individual'}</span>
-                                        </div>
-                                    </>
-                            }
+                            {/*{ isLoadingInstancia ?*/}
+                            {/*    <p className='text-danger text-center'>Cargando</p>*/}
+                            {/*    :*/}
+                            {/*        instancia.nombre &&*/}
+                            {/*        <>*/}
+                            {/*            <h2 className="nombre-instancia">{instancia.nombre}</h2>*/}
+                            {/*            <div className="texto-informativo d-grid justify-content-center">*/}
+                            {/*                <span>Porc. Ponderación: {instancia.porcentaje_ponderacion}</span>*/}
+                            {/*                <span>{instancia.TipoInstancium.nombre}</span>*/}
+                            {/*                <span>{instancia.descripcion}</span>*/}
+                            {/*                <span>{instancia.grupo ? 'Grupal' : 'Individual'}</span>*/}
+                            {/*            </div>*/}
+                            {/*        </>*/}
+                            {/*}*/}
                         </div>
                     </div>
                 </div>
@@ -151,9 +150,7 @@ export const ActividadEntregas = () => {
                                         <Link className='estilo-detalle' to={`/entrega/${item.ID}`}>Ver detalle</Link>
                                         {/*TODO:Poner el estado real, todavia no lo tenemos, habria que joinear con entrega*/}
                                         {/* Para que no rompa el estilo */}
-                                        { item.nota && (
-                                            <Badge gap={2} bg={item.nota ? item.nota >= 6 ? "success" : "danger" : null}>{item.nota ? "Nota: " + item.nota : null } - {item.estado}</Badge>
-                                        )}    
+                                        <Badge gap={2} bg={item.nota ? item.nota >= 6 ? "success" : "danger" : null}>{item.nota ? "Nota: "+item.nota : null } - {item.estado.descripcion}</Badge>
                                         <Badge bg="info">{item.fechaEntrega ? `Entregado el: ${moment(item.fechaEntrega).format('DD/MM/YY')}`: ''}</Badge>
                                         <p className="entrega-fecha"><span></span></p> {/* Para que no rompa el estilo */}
                                         <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('DD/MM/YY')}</span></p>

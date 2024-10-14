@@ -393,41 +393,35 @@ const ver = async (req, res, next) => {
   }
 }
 
-
-async function getEstado(entrega){
+async function getEstado(entrega) {
   // 0 sin entregar, 1 promocionado , 2 aprobado, 3 desaprobado, 4 con comentarios  5 sin corregir
-  let estado = {
-    id:null,
-    descripcion:null,
+  const estado = {
+    id: null,
+    descripcion: null
   }
-  if (!entrega){
+  if (!entrega) {
     estado.id = 0
     estado.descripcion = 'Sin entregar'
-  }else{
-    if(entrega.nota){
+  } else {
+    if (entrega.nota) {
       estado.id = entrega.nota >= 6 ? 1 : entrega.nota >= 4 ? 2 : 3
       estado.descripcion = entrega.nota >= 6 ? 'Promocionado' : entrega.nota >= 4 ? 'Aprobado' : 'Desaprobado'
-    }else{
+    } else {
       const comentarios = await models.Comentario.count({
-        where:{
-          entrega_id:entrega.ID,
+        where: {
+          entrega_id: entrega.ID
         }
       })
-      if (comentarios > 0){
-        estado.id=4
+      if (comentarios > 0) {
+        estado.id = 4
         estado.descripcion = 'Con Comentarios'
-      }else{
-        estado.id=5
-        estado.descripcion= 'Sin corregir'
+      } else {
+        estado.id = 5
+        estado.descripcion = 'Sin corregir'
       }
     }
-
   }
   return estado
-
-
-
-
 }
 
 module.exports = {

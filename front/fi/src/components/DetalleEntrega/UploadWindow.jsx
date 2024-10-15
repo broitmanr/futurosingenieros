@@ -6,6 +6,9 @@ import { Tag } from 'primereact/tag';
 import { Toast } from 'primereact/toast';
 import axios from 'axios';
 import './UploadWindow.css';  // Importar el archivo CSS correspondiente
+import { SlCloudUpload } from 'react-icons/sl';
+import { RxCross2 } from 'react-icons/rx';
+import { TfiFiles } from 'react-icons/tfi';
 
 const uploadIconUrl = '/Upload-FI.png';  // Asegúrate de que la ruta sea correcta
 
@@ -87,11 +90,11 @@ export default function UploadWindow({ entregaPactadaId, onUploadSuccess }) {
         return (
             <div className="upload-header">
                 {chooseButton}
-                <Button icon="fa-solid fa-check" onClick={handleSubirRecurso} className="p-button-success btn-entrega-detalle-alumno" />
+                <Button icon={<SlCloudUpload color='#155724' />} onClick={handleSubirRecurso} className="p-button-success btn-header-modal-recursos" />
                 {cancelButton}
                 <div className="flex align-items-center gap-3 ml-auto">
                     <span>{fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B'} / 10 MB</span>
-                    <ProgressBar value={totalSize / 10000000} showValue={false} style={{ width: '10rem', height: '12px' }} />
+                    <ProgressBar value={totalSize / 10000000} showValue={false} className='progress-bar-recursos' />
                 </div>
             </div>
         );
@@ -107,7 +110,7 @@ export default function UploadWindow({ entregaPactadaId, onUploadSuccess }) {
                 </span>
             </div>
             <Tag value={props.formatSize} severity="warning" className="px-3 py-2 file-size" />
-            <Button type="button" icon="fa-solid fa-xmark" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => handleRemoveFile(file, props)} />
+            <Button type="button" icon={<RxCross2 />} className="p-button-outlined p-button-rounded p-button-danger ml-auto btn-item-modal-recursos" onClick={() => handleRemoveFile(file, props)} />
         </div>
     );
 
@@ -119,8 +122,8 @@ export default function UploadWindow({ entregaPactadaId, onUploadSuccess }) {
         </div>
     );
 
-    const chooseOptions = { icon: 'fa-solid fa-upload', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined' };
-    const cancelOptions = { icon: 'fa-solid fa-xmark', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined' };
+    const chooseOptions = { iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined', icon: <TfiFiles /> };
+    const cancelOptions = { iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined', icon: <RxCross2 /> };
 
     return (
         <div>

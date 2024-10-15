@@ -83,9 +83,11 @@ export const DetalleEntrega = () => {
                                             <div>
                                                 <p className="m-0">Ultima fecha de entrega: {moment(entregaAsociada.fecha).format('DD/MM/YY')}</p>
                                                 <p>Estado: <span className="fw-bold">Entregado</span></p>
-                                                <Button label="Ver Comentarios" onClick={() => navigate(`/archivo/${entregaAsociada.ID}`)} />
-                                                <Button icon="pi pi-plus" className="p-button-secondary" label="Subir otra versión de entrega" 
-                                                    onClick={() => setEntregaAsociada(null)} />
+                                                <div className="button-group">
+                                                    <Button label="Ver Comentarios" className="btn-ver-comentarios" onClick={() => navigate(`/archivo/${entregaAsociada.ID}`)} />
+                                                    <Button icon="pi pi-plus" className="btn-subir-version" label="Subir otra versión de entrega" 
+                                                        onClick={() => setEntregaAsociada(null)} />
+                                                </div>
                                             </div>
                                         </div>
                                     ) : (

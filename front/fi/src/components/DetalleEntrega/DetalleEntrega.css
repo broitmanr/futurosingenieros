@@ -1,22 +1,19 @@
-.entrega-detalle-container{
-    /*background-color: #f2f6fc;*/
-    min-height: 100vh; 
+.entrega-detalle-container {
+    min-height: 70vh; 
     display: flex;
     justify-content: center;
-    /*align-items: center*/
     overflow: hidden;
 }
 
-.container-box-entrega-detalle{
+.container-box-entrega-detalle {
     display: flex;
     flex-direction: row;
     width: 100%; 
-
     margin-top: 1rem;
-    margin-bottom: 1rem
+    margin-bottom: 1rem;
 }
 
-.box-entrega-detalle{
+.box-entrega-detalle {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -28,76 +25,107 @@
     position: relative;
 }
 
-.nombre-entrega-detalle{
-    color: #344474;
-    font-size: 1.8rem
+.nombre-entrega-detalle {
+    color: #1A2035; /* Color del header */
+    font-size: 1.8rem;
 }
 
-.descripcion-entrega-detalle{
-    font-size: 1.2rem
+.descripcion-entrega-detalle {
+    font-size: 1.2rem;
+    color: #193B70; /* Color de algunos subtítulos */
 }
 
-.fechas-entrega-detalle{
+.fechas-entrega-detalle {
     font-size: 1.09rem;
-    justify-self: flex-end
+    justify-self: flex-end;
 }
 
-.fechas-entrega{
+.fechas-entrega {
     font-weight: bold;
-    color: #344474
+    color: #193B70; /* Color de algunos subtítulos */
 }
 
-.btn-entrega-detalle-entregar{
+.btn-entrega-detalle-entregar {
     background-color: #1A2035;
     color: #fff;
     width: 6.9rem;
     height: 3.1rem;
     font-size: 1.4rem;
     border: 0.2rem solid #F2F6FC;
-    border-radius: 0.5rem
+    border-radius: 0.5rem;
 }
 
-.dialog-agregar-entrega-detalle .p-dialog-header{
+.dialog-agregar-entrega-detalle .p-dialog-header {
     justify-self: center;
-    text-align: center
+    text-align: center;
 }
 
 /* Estilos para la entrega detalle docente */
-.table-header-entrega-docente{
+.table-header-entrega-docente {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
 }
 
-.fechas-entrega-docente-container{
+.fechas-entrega-docente-container {
     display: flex;
     justify-content: space-between;
     font-size: 1.09rem;
 }
 
-.fecha2-entrega-docente{
+.fecha2-entrega-docente {
     margin-left: 2rem;
 }
 
-.detalle-entrega-docente{
+.detalle-entrega-docente {
     width: 100%;
     margin: 0 auto;
 }
 
 .p-datatable-table .p-datatable-thead > tr > th {
     background-color: #344474; /* Color de la fila de filtros */
-    color: #fff
+    color: #fff;
 }
 
 .p-datatable .p-sortable-column-icon {
     color: #fff;
 }
 
-.custom-upload-btn{
+.custom-upload-btn {
     position: absolute;
     bottom: 8px;
     z-index: 90999;
     background: black;
     left: 45%;
+}
+
+.btn-ver-comentarios {
+    background-color: #1A2035 !important;
+    color: #fff !important;
+    border: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-ver-comentarios:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+.btn-subir-version {
+    background-color: #ccdcf1 !important;
+    color: #1A2035 !important;
+    border: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-subir-version:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Espacio entre los botones */
 }

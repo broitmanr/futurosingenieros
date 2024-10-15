@@ -203,11 +203,13 @@ export default function Recursos() {
         return (
             <div className="col-12" key={archivo.ID}>
                 <div className="recurso-item flex align-items-center">
+                    { role === 'D' &&
                     <Checkbox 
                         checked={selectedItems.includes(archivo.ID)} 
                         onChange={() => handleSelectItem(archivo.ID)} 
                         className='checkbox-recurso'
                     />
+                    }
                     <div className="flex flex-column flex-grow-1 ml-8">
                         <div className="text-2xl font-bold text-900">{archivo.nombre} <span> </span> 
                             <IoEyeSharp onClick={() => handleViewFile(archivo.referencia)} />

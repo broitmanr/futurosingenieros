@@ -10,6 +10,7 @@ import { PiUsersThreeBold } from "react-icons/pi";
 import { RiBarChartBoxLine } from "react-icons/ri";
 import { useRole } from '../../context/RolesContext';
 import { ModalCrearGrupo } from './ModalCrearGrupo';
+import { Badge } from 'primereact/badge';
 
 
 export const CursosActividades = () => {
@@ -120,7 +121,7 @@ export const CursosActividades = () => {
                                         <h2 className="nombre-materia">{curso.Materium.nombre}</h2>
                                         <p><span className="nombre-comision">{curso.Comision.nombre}</span> - <span className="anio-comision">Año {curso.cicloLectivo}</span></p>
                                         {grupo && (
-                                            <p><strong>Grupo:</strong> {grupo.numero} - {grupo.nombre}</p>
+                                            <Badge value={`Grupo: ${grupo.numero} - ${grupo.nombre}`} severity="info"></Badge>
                                         )}
                                     </>
                             }

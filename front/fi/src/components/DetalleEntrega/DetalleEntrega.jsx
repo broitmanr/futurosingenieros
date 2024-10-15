@@ -65,27 +65,37 @@ export const DetalleEntrega = () => {
                                 <p className='text-danger text-center'>Cargando...</p>
                             ) : (
                                 <>
-                                    <div>
-                                        <h2 className="nombre-entrega-detalle">{entregaDetalle.nombre}</h2>
+                                    {!entregaAsociada && (
+                                        <>
+                                        <h3 style={{ marginBottom: '1rem', color: '#1a2035' }}>{entregaDetalle.nombre}</h3>
                                         <p className='descripcion-entrega-detalle'>{entregaDetalle.descripcion}</p>
                                         <p className="fechas-entrega-detalle">
-                                            <span className="fechas-entrega">Fecha de vencimiento:</span> {moment(entregaDetalle.fechavto1).format('DD/MM/YY')}
+                                            <span className="fechas-entrega">Fecha de vencimiento 1:</span> {moment(entregaDetalle.fechavto1).format('DD/MM/YY')}
                                         </p>
                                         {entregaDetalle.fechavto2 && <p className="fechas-entrega-detalle">
-                                            <span className="fechas-entrega">Fecha de vencimiento 2:</span> {moment(entregaDetalle.fechavto2).format('DD/MM/YY')}
+                                             <span className="fechas-entrega">Fecha de vencimiento 2:</span> {moment(entregaDetalle.fechavto2).format('DD/MM/YY')}
                                         </p>}
-                                    </div>
-
+                                        </>
+                                    )}
                                     {entregaAsociada ? (
                                         // Mostrar detalles de la entrega si ya se hizo
                                         <div className='dialog-agregar-entrega-detalle'>
-                                            <h3>Ya has realizado una entrega de: {entregaDetalle.nombre}</h3>
+                                            <h3 style={{ marginBottom: '2rem' }}>Ya has realizado una entrega de: {entregaDetalle.nombre}</h3>
+                                            <p className='descripcion-entrega-detalle'>{entregaDetalle.descripcion}</p>
+                                            <p className="fechas-entrega-detalle">
+                                                <span className="fechas-entrega">Fecha de vencimiento 1:</span> {moment(entregaDetalle.fechavto1).format('DD/MM/YY')}
+                                            </p>
+                                            {entregaDetalle.fechavto2 && <p className="fechas-entrega-detalle">
+                                                <span className="fechas-entrega">Fecha de vencimiento 2:</span> {moment(entregaDetalle.fechavto2).format('DD/MM/YY')}
+                                            </p>}
                                             <div>
                                                 <p className="m-0">Ultima fecha de entrega: {moment(entregaAsociada.fecha).format('DD/MM/YY')}</p>
                                                 <p>Estado: <span className="fw-bold">Entregado</span></p>
-                                                <Button label="Ver Comentarios" onClick={() => navigate(`/archivo/${entregaAsociada.ID}`)} />
-                                                <Button icon="pi pi-plus" className="p-button-secondary" label="Subir otra versión de entrega" 
-                                                    onClick={() => setEntregaAsociada(null)} />
+                                                <div style={{ marginTop: '2rem' }}>
+                                                    <Button icon="pi pi-plus" className="p-button-secondary" style={{ borderRadius: '0.4rem' }} label="Agregar versión" 
+                                                        onClick={() => setEntregaAsociada(null)} />
+                                                    <Button label="Ver Comentarios"  style={{marginLeft: '1rem', backgroundColor: '#1a2035', borderRadius: '0.4rem'}} onClick={() => navigate(`/archivo/${entregaAsociada.ID}`)} />
+                                                </div>
                                             </div>
                                         </div>
                                     ) : (

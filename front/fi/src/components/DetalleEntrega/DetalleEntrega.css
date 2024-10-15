@@ -1,6 +1,7 @@
 .entrega-detalle-container{
-    /*background-color: #f2f6fc;*/
-    min-height: 100vh; 
+    background: rgb(127, 167, 219);
+    background: linear-gradient(313deg, rgba(127, 167, 219, 1) 0%, rgba(26, 32, 53, 1) 100%);
+    min-height: 70vh; 
     display: flex;
     justify-content: center;
     /*align-items: center*/
@@ -9,9 +10,8 @@
 
 .container-box-entrega-detalle{
     display: flex;
-    flex-direction: row;
-    width: 100%; 
-
+    flex-direction: column;
+    width: 100rem;
     margin-top: 1rem;
     margin-bottom: 1rem
 }
@@ -25,6 +25,8 @@
     border: solid #1a2035;
     border-radius: 0.6rem;
     padding: 4rem 2rem;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.1);
     position: relative;
 }
 

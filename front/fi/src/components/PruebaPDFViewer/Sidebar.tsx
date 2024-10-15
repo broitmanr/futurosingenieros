@@ -7,6 +7,7 @@ import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import axios from "axios";
+import { useRole } from "../../context/RolesContext";
 
 interface SidebarProps {
   highlights: Array<CommentedHighlight>;
@@ -30,6 +31,7 @@ const Sidebar = ({
 }: SidebarProps) => {
   const [nota, setNota] = useState('');
   const hasNextEntrega = entrega && entrega.nextEntrega; 
+  const { role } = useRole()
 
   const handleCalificar = async () => {
     try{
@@ -56,7 +58,7 @@ const Sidebar = ({
               </h2>
               <h5 className={'text-muted'} style={{fontStyle:"italic"}}>{entrega.descripcion}</h5>
               <b>Fecha de entrega: {moment(entrega.fecha).format('DD/MM/YY')}</b>
-              {!entrega.nota ? (
+              {role === 'D' && !entrega.nota ? (
                 <>
                 <div className="entrega-sincalificar-container" style={{display: 'flex', flexDirection: 'row'}}>
                   <FloatLabel style={{marginLeft: 0, marginTop: '1.5rem', margin: '1rem'}}>
@@ -66,7 +68,7 @@ const Sidebar = ({
                   <Button label='Calificar' onClick={handleCalificar} style={{ marginTop: '1rem', height: '50%', backgroundColor: '#1a2035', borderRadius: '0.2rem' }} />
                 </div>
                 </>
-              ):(
+              ): role === 'D' && (
                 <>
                 <div className="entrega-calificada-container" style={{marginTop: '1rem', display: 'flex', flexDirection: 'column'}}>
                   <label htmlFor="nota">Calificación</label>

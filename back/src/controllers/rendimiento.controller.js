@@ -99,6 +99,7 @@ async function alumno(req, res, next) {
       {
         model: models.Grupo,
         where:{curso_id:cursoId},
+        required:false,
         attributes: ['nombre', 'numero'],
         through: {
           attributes: [] // Si tienes una tabla intermedia, puedes omitirla aquí
@@ -150,12 +151,12 @@ async function alumno(req, res, next) {
     ]
   })
 
-
+  console.log(alumno)
   const response = {
     alumno: {
-      nombre: alumno.nombre,
-      apellido: alumno.apellido,
-      legajo: alumno.legajo,
+      nombre: alumno?.nombre ?? null,
+      apellido: alumno?.apellido?? null,
+      legajo: alumno?.legajo?? null,
       grupo: {
         nombre: alumno.Grupos[0]?.nombre || 'Sin grupo',
         numero: alumno.Grupos[0]?.numero || 'N/A'

@@ -24,7 +24,6 @@ import { IoMdCloudCircle } from "react-icons/io";
 import {CircularProgress} from "@mui/material";
 import { IoEyeSharp } from "react-icons/io5";
 
-
 export default function Recursos() {
     const { id } = useParams()
     const { role } = useRole()
@@ -227,7 +226,26 @@ export default function Recursos() {
     };
     
     const listTemplate = (archivos) => {
-        if (!archivos || archivos.length === 0) return null;
+        if (!archivos || archivos.length === 0) {
+            return (
+                <div className="no-recursos" style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    height: '50vh'
+                }}>
+                    <img 
+                        src="../../../public/NoEncontrado.png" 
+                        alt="No recursos" 
+                        style={{ width: '12rem', height: 'auto', marginBottom: '1rem' }}
+                    />
+                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#333' }}>
+                        No se encontraron recursos
+                    </span>
+                </div>
+            );
+        }
     
         return (
             <div className="grid">

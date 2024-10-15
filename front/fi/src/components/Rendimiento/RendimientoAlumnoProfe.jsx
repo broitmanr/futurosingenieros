@@ -49,12 +49,30 @@ export const RendimientoAlumnoProfe = () => {
 
     const header = (
         <>
-            <h1 className='TituloRendimiento'>Rendimiento del alumno</h1>
+            <h1 className='TituloRendimiento' style={{ fontSize: '2.2rem', textAlign: 'center', marginBottom: '20px', color: '#344474' }}>Rendimiento del alumno</h1>
 
-            <div className='containerFaltas'>
+            <div className='containerFaltas' 
+                style={{ 
+                    backgroundColor: '#ccdcf1', 
+                    display: 'flex', 
+                    width: '100%', 
+                    border: 'transparent', 
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', 
+                    padding: '20px', 
+                    borderRadius: '8px'
+                }}>
 
-                {!loading ? (<h3 className='catedraProyecto' style={{ fontSize: "16px", textAlign: 'left', color: 'black', marginTop: '10px' }}>
-                    {curso.materia} {curso.comision}
+                {!loading ? (<h3 className='catedraProyecto' 
+                style={{ 
+                    fontSize: "18px", 
+                    textAlign: 'left', 
+                    color: '#333', 
+                    marginTop: '10px',
+                    fontWeight: 'bold', 
+                    alignSelf: 'center'
+                }}>
+                    <div>{curso.materia}</div>
+                    <div>{curso.comision}</div>
                 </h3>): '' }
                 <span className="p-input-icon-left">
                     <FaSearch/>

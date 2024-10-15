@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button, Form, Modal, InputGroup, Alert } from 'react-bootstrap';
 import axios from "axios";
 import { useParams } from 'react-router-dom'; // Importar useParams
+import { LiaPlusSolid } from "react-icons/lia";
 
 export const ModalCrearGrupo = ({ show, handleClose, grupoExistente }) => {
   const { id } = useParams(); // Obtener el cursoID de los parámetros de la URL
@@ -207,24 +208,45 @@ export const ModalCrearGrupo = ({ show, handleClose, grupoExistente }) => {
                     )}
                   </div>
               ))}
-
+              <div style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end', // Alinea el contenido a la derecha
+                  padding: '1rem' // Espaciado opcional
+              }}>
               {/* Botón para agregar legajo */}
-              <Button
-                  variant="outline-primary"
-                  onClick={handleAgregarLegajo}
-                  disabled={guardarDeshabilitado} // Deshabilitar si ya se guardó
-              >
-                Agregar Legajo
-              </Button>
-
+                <Button
+                    variant="outline-primary"
+                    onClick={handleAgregarLegajo}
+                    disabled={guardarDeshabilitado} // Deshabilitar si ya se guardó
+                    style= {{ 
+                      backgroundColor: '#344474', 
+                      border: '0.1rem solid #344474', 
+                      borderRadius: '100%', 
+                      height: 'auto', 
+                      width: '10%', 
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center' 
+                  }}
+                >
+                  {/* Agregar Legajo */}
+                  <LiaPlusSolid size={28} style={{ color: '#fff' }}/>
+                </Button>
+              </div>
               {/* Espacio para separación visual */}
               <div className="mt-3" />
 
               <div className="d-flex justify-content-between">
-                <Button variant="secondary" onClick={handleClose} disabled={guardarDeshabilitado}>
+                <Button variant="secondary" onClick={handleClose} disabled={guardarDeshabilitado} 
+                  style={{ 
+                    backgroundColor: '#CCDCF1', 
+                    color: '#1A2035', 
+                    fontWeight: 'bold', 
+                    borderBlockColor: '#1A2035'
+                  }}>
                   Cancelar
                 </Button>
-                <Button type="submit" variant="primary" disabled={guardarDeshabilitado || isLoading}>
+                <Button type="submit" disabled={guardarDeshabilitado || isLoading} style={{ backgroundColor: '#1A2035' }}>
                   {isLoading ? 'Guardando...' : (grupoExistente ? 'Guardar Cambios' : 'Guardar Grupo')}
                 </Button>
               </div>

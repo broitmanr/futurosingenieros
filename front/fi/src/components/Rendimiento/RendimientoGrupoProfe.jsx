@@ -75,6 +75,11 @@ export const RendimientoGrupoProfe = () => {
 
     return (
         <div className='contenedor-rendimiento-alumnos'>
+            {loading ? (
+                <span className='badge badge-info'>Cargando...</span>
+            ) : grupos.length === 0 ? (
+                <span>No se encontraron grupos disponibles.</span>
+            ) : (
             <DataTable
                 ref={dt}
                 value={grupos}
@@ -95,6 +100,7 @@ export const RendimientoGrupoProfe = () => {
                 <Column field="promedioPonderado" header="Promedio Ponderado" sortable />
                 <Column field="promedioEquiponderado" header="Promedio Equiponderado" sortable />
             </DataTable>
+            )}
         </div>
     );
 };

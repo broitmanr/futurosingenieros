@@ -60,13 +60,13 @@ export default function DetallaEntregaIndividual({entrega}) {
             if (isPositiveInteger(newValue)){
                 rowData[field] = newValue;
                 console.log('rowData', rowData);
-                /*try{
-                    const response = await axios.patch(`/entrega/calificar/${entrega.ID}`, { nota: newValue }, { withCredentials: true })
+                try{
+                    const response = await axios.patch(`/entrega/calificar/${rowData.id}`, { nota: newValue }, { withCredentials: true })
                     console.log('Calificación', response.data)
                     handleEntregasHechas()
                 }catch(err){
                     console.log('Error al modificar la nota:', err)
-                }*/
+                }
             }else{
                 event.preventDefault();
                 //alert('Inválido: La calificación debe ser un número positivo')
@@ -167,12 +167,6 @@ export default function DetallaEntregaIndividual({entrega}) {
                     editor={(options) => cellEditor(options)}
                     onCellEditComplete={onCellEditComplete} 
                 />
-                {/* {columns.map(({ field, header }) => {
-                    return <Column key={field} field={field} header={header} className='columns-data-entrega-docente'
-                        editor={(options) => cellEditor(options)}
-                        onCellEditComplete={onCellEditComplete}
-                    />;
-                })} */}
                 <Column
                     className='columns-data-entrega-docente'
                     header="VER"

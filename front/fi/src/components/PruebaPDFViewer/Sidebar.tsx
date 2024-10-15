@@ -29,6 +29,7 @@ const Sidebar = ({
   entrega
 }: SidebarProps) => {
   const [nota, setNota] = useState('');
+  const hasNextEntrega = entrega && entrega.nextEntrega; 
 
   const handleCalificar = async () => {
     try{
@@ -72,12 +73,6 @@ const Sidebar = ({
                   <InputText id="nota" readOnly value={entrega.nota} />
                 </div>
                 </>
-              // )
-              // {entrega.nota && (
-              //   <>
-              //   <label htmlFor="nota">Calificación</label>
-              //   <InputText id="nota" readOnly value={entrega.nota} onChange={(e) => setNota(e.target.value)} />
-              //   </>
               )}
             </>
 
@@ -90,11 +85,13 @@ const Sidebar = ({
           </small>
         </p>
       </div>
-      <div style={{ padding: "0.5rem" }}>
-        <button onClick={toggleDocument} className="sidebar__toggle">
-          Siguiente Entrega
-        </button>
-      </div>
+      {!isLoading && hasNextEntrega && (
+        <div style={{ padding: "0.5rem" }}>
+          <button onClick={toggleDocument} className="sidebar__toggle">
+            Siguiente Entrega
+          </button>
+        </div>
+      )}
 
       {/* Highlights list */}
       {highlights && (

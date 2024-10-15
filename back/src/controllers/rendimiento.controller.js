@@ -544,6 +544,7 @@ async function grupo(req, res, next) {
       };
     });
 
+
     const estado = await getEstado(entregasDetalle.length > 0 ? entregasDetalle[0] : null);
 
     return {

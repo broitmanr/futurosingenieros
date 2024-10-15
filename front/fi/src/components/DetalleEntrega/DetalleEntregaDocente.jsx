@@ -178,7 +178,7 @@ export default function DetallaEntregaIndividual({entrega}) {
                     header="VER"
                     body={(rowData) => (
                         <IoOpenOutline
-                            onClick={() => handleVerArchivo(`/archivo/${id}`)}
+                            onClick={() => handleVerArchivo(`/archivo/${rowData.id}`)}
                             style={{ cursor: 'pointer', color: '#007bff' }}
                             title="Ver archivo"
                         />

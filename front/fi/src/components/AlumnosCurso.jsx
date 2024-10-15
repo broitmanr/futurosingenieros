@@ -60,7 +60,7 @@ function AlumnosCurso() {
 
     try {
       const response = await axios.post(`/curso/${id}/estudiantesExcel`, formData, { withCredentials: true });
-      if (response.status === 201) {
+      if (response.status === 200) {
         console.log('Estudiantes agregados con éxito', response.data)
         fetchAlumnos()
         setLoading(false)

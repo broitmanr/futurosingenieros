@@ -44,7 +44,7 @@ const crearEntrega = async (req, res, next) => {
           }
         ]
       })
-      console.log('----------------', personaXgrupo)
+
 
       if (!personaXgrupo) {
         return next({ ...errors.NotFoundError, details: 'No se encontró grupo para la persona y la entrega es grupal' })
@@ -97,7 +97,7 @@ const crearEntrega = async (req, res, next) => {
         } else {
           personaXEntrega = await models.PersonaXEntrega.create({
             porcentaje_participacion: 100,
-            persona_id: persona.ID,
+            persona_id: res.locals.usuario.persona_id,
             entrega_id: entrega.ID
           }, { transaction })
         }
@@ -266,13 +266,18 @@ async function listarEntregasParaElDocente(req, res, next) {
     if (!entregas.length) {
       return next({ ...errors.NotFoundError, details: 'No se encontraron entregas de alumnos para esa entregaPactadaID' });
     }
-    
+    let estadosEntregas = []
+    for (const entrega of entregas){
+      estadosEntregas[entrega.ID] = await getEstado(entrega)
+    }
+
     const entregasMapeadas = entregas.map(entrega => ({
+      id: entrega.ID,
       legajo: entrega.Persona.legajo,
       nombre: entrega.Persona.nombre,
       apellido: entrega.Persona.apellido,
       nota: entrega.nota,
-      estado: entrega.estado,
+      estado: estadosEntregas[entrega.ID].descripcion,
     }));
 
     res.status(200).json(entregasMapeadas);

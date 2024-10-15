@@ -87,7 +87,7 @@ export default function UploadWindow({ entregaPactadaId, onUploadSuccess }) {
         return (
             <div className="upload-header">
                 {chooseButton}
-                <Button icon="fa-solid fa-check" onClick={handleSubirRecurso} className="p-button-success" />
+                <Button icon="fa-solid fa-check" onClick={handleSubirRecurso} className="p-button-success btn-entrega-detalle-alumno" />
                 {cancelButton}
                 <div className="flex align-items-center gap-3 ml-auto">
                     <span>{fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B'} / 10 MB</span>

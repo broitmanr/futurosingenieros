@@ -105,8 +105,7 @@ export default function Recursos() {
     );
 
     const emptyModal = () => (
-        <div className="flex align-items-center flex-column">
-            <i className="mt-3 p-5 modal-recursos-container-drop"></i>
+        <div className="flex align-items-center flex-column recursos-drop">
             <span className="my-5 modal-recursos-drop">Arrastrá tus archivos acá</span>
         </div>
     );

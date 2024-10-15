@@ -210,8 +210,8 @@ export const ModalCrearGrupo = ({ show, handleClose, grupoExistente }) => {
               ))}
               <div style={{
                   display: 'flex',
-                  justifyContent: 'flex-end', // Alinea el contenido a la derecha
-                  padding: '1rem' // Espaciado opcional
+                  justifyContent: 'flex-end',
+                  padding: '1rem'
               }}>
               {/* Botón para agregar legajo */}
                 <Button

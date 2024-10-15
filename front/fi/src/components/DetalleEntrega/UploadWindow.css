@@ -77,3 +77,8 @@
 .p-fileupload-row .p-button:hover {
     transform: translateY(-3px);
 }
+
+.btn-entrega-detalle-alumno{
+    background-color: transparent;
+    color: forestgreen
+}

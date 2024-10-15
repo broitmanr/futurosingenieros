@@ -37,9 +37,16 @@
     color: var(--surface-d)
 }
 
-.modal-recursos-drop{
+.recursos-drop{
     font-size: 1.2em;
     color: var(--text-color-secondary)
+}
+
+.recursos-drop:hover {
+    background-color: #e0f7fa;
+    border-color: #00acc1;
+    transform: scale(1.02);
+    box-shadow: 0px 0px 15px rgba(0, 172, 193, 0.5);
 }
 
 .grid {

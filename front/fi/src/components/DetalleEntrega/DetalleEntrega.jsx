@@ -81,7 +81,7 @@ export const DetalleEntrega = () => {
                                         <div className='dialog-agregar-entrega-detalle'>
                                             <h3>Ya has realizado una entrega de: {entregaDetalle.nombre}</h3>
                                             <div>
-                                                <p className="m-0">Ultima echa de entrega: {moment(entregaAsociada.fecha).format('DD/MM/YY')}</p>
+                                                <p className="m-0">Ultima fecha de entrega: {moment(entregaAsociada.fecha).format('DD/MM/YY')}</p>
                                                 <p>Estado: <span className="fw-bold">Entregado</span></p>
                                                 <Button label="Ver Comentarios" onClick={() => navigate(`/archivo/${entregaAsociada.ID}`)} />
                                                 <Button icon="pi pi-plus" className="p-button-secondary" label="Subir otra versión de entrega" 

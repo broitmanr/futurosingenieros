@@ -114,9 +114,9 @@ const Asistencia = () => {
 
     const renderHeader = () => {
         return (
-
-            <div className="table-header-asistencia">
-                <IconField >
+            <div className="table-header-asistencia" style={{ display: "flex", justifyContent: 'space-between'}}>
+                <h1 className='TituloRendimiento' style={{ fontSize: '2.2rem', marginBottom: '20px', color: '#fff', marginTop: '1rem' }}>Asistencia</h1>
+                <IconField>
                     <InputText
                         className='search-input-asistencia'
                         value={globalFilterValue}

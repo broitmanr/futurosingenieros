@@ -422,15 +422,21 @@ const ver = async (req, res, next) => {
 }
 
 async function getEstado(entrega) {
+
+
   // 0 sin entregar, 1 promocionado , 2 aprobado, 3 desaprobado, 4 con comentarios  5 sin corregir
   const estado = {
     id: null,
     descripcion: null
   }
-  if (!entrega) {
+  if (entrega == null ) {
     estado.id = 0
     estado.descripcion = 'Sin entregar'
   } else {
+    // tODO: MODIFICAR ESTO, ES MUY CROTO PARA SAFAR
+    if (entrega.ID === undefined){
+      entrega.ID = entrega.entregaId
+    }
     if (entrega.nota) {
       estado.id = entrega.nota >= 6 ? 1 : entrega.nota >= 4 ? 2 : 3
       estado.descripcion = entrega.nota >= 6 ? 'Promocionado' : entrega.nota >= 4 ? 'Aprobado' : 'Desaprobado'
@@ -440,6 +446,7 @@ async function getEstado(entrega) {
           entrega_id: entrega.ID
         }
       })
+      console.log("problema 2")
       if (comentarios > 0) {
         estado.id = 4
         estado.descripcion = 'Con Comentarios'

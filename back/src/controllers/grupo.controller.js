@@ -4,7 +4,7 @@ const { red, yellow } = require('picocolors')
 
 // Función para crear una entrega
 async function crear (req, res, next) {
-  const { cursoID, nombre, legajos } = req.body
+  const { cursoID, nombreGrupo:nombre, legajos } = req.body
 
   // Validación del curso
   const curso = await models.Curso.findByPk(cursoID)

@@ -361,6 +361,7 @@ async function calcularNotaParcialAlumno(cursoId, personaId) {
   let notaParcialCursoPonderada = 0;
   let notaParcialCursoEquiponderada = 0;
   let totalEntregas = 0; // Contador de entregas
+  let sumaTotalEntregas = 0;
   const porcentajePonderacionEquiponderada = (100 / instanciasEvaluativas.length).toFixed(2);
 
   for (const instancia of instanciasEvaluativas) {
@@ -374,8 +375,8 @@ async function calcularNotaParcialAlumno(cursoId, personaId) {
 
         if (personaXEntrega) {
           const porcentajeParticipacion = personaXEntrega.porcentaje_participacion;
-          const notaEntrega = entrega.nota;
-
+          const notaEntrega = entrega.nota
+          sumaTotalEntregas += entrega.nota
           let totalIntegrantes = 1;
 
           if (entrega.grupo_ID) {
@@ -401,7 +402,6 @@ async function calcularNotaParcialAlumno(cursoId, personaId) {
           // Calcular la nota final basada en el coeficiente ajustado
           let notaFinal = coeficiente * notaEntrega;
           notaFinal = Math.min(notaFinal, 10); // Limitar la nota máxima a 10
-          console.log(notaFinal)
           notaPonderadaInstancia += notaFinal;
           notaEquiponderadaInstancia += notaFinal;
 
@@ -419,7 +419,8 @@ async function calcularNotaParcialAlumno(cursoId, personaId) {
 
   return {
     notaParcialPonderada: parseFloat(notaParcialCursoPonderada.toFixed(2)),
-    notaParcialEquiponderada: parseFloat(notaParcialCursoEquiponderada.toFixed(2))
+    // notaParcialEquiponderada: parseFloat(notaParcialCursoEquiponderada.toFixed(2))
+    notaParcialEquiponderada: parseFloat((sumaTotalEntregas/totalEntregas).toFixed(2))
   };
 }
 

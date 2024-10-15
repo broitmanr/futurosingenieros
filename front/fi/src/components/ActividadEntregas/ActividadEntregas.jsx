@@ -21,7 +21,7 @@ export const ActividadEntregas = () => {
     const params = useParams();
     const handleClose = () => setShow(false);
     const [isLoading, setLoading] = useState(true);
-
+    const badges = ['dark', 'success', 'info', 'danger', 'warning', 'light']
 
     useEffect(()=> {
         const idActividad = params.id;
@@ -90,7 +90,7 @@ export const ActividadEntregas = () => {
     return (
         <div className='actividad-entregas-container'>
         <>
-            <section className="seccionBanner py-5">
+            <section className="seccionBanner py-4 banner-instancias">
                 <div className="container">
                     <div className="row">
                         <div className="col-md-6 mx-auto recuadro-estilizado">
@@ -144,20 +144,38 @@ export const ActividadEntregas = () => {
                     {isLoading && <p>Cargando entregas...</p>}
                     {!isLoading && (
                             entregas.map((item, idx) => (
-                                <Row key={idx}>
+                                <Row key={idx} className="entrega-card-alumno">
                                     <Col className={'col-12 entrega estilo-entrega'}>
+                                    <Row>
                                         <h4 className="entrega-titulo">{item.nombre} <span>{item.numero}</span></h4>
-                                        <Link className='estilo-detalle' to={`/entrega/${item.ID}`}>Ver detalle</Link>
-                                        {/*TODO:Poner el estado real, todavia no lo tenemos, habria que joinear con entrega*/}
-                                        {/* Para que no rompa el estilo */}
-                                        <Badge gap={2} bg={item.nota ? item.nota >= 6 ? "success" : "danger" : null}>{item.nota ? "Nota: "+item.nota : null } - {item.estado.descripcion}</Badge>
-                                        <Badge bg="info">{item.fechaEntrega ? `Entregado el: ${moment(item.fechaEntrega).format('DD/MM/YY')}`: ''}</Badge>
-                                        <p className="entrega-fecha"><span></span></p> {/* Para que no rompa el estilo */}
-                                        <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('DD/MM/YY')}</span></p>
-                                        { item.fechavto2 &&
-                                            <p className="entrega-vencimiento">2° vencimiento: <span>{moment(item.fechavto2).format('DD/MM/YY')}</span></p>
-                                        }
+                                        <div className="entrega-fechas">
+                                            <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('DD/MM/YY')}</span></p>
+                                            { item.fechavto2 &&
+                                                <p className="entrega-vencimiento">2° vencimiento: <span>{moment(item.fechavto2).format('DD/MM/YY')}</span></p>
+                                            }
+                                        </div>
+                                    </Row>
+                                    
+                                        {/* <h4 className="entrega-titulo">{item.nombre} <span>{item.numero}</span></h4> */}
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                            <Link className='estilo-detalle' to={`/entrega/${item.ID}`}>Ver detalle</Link>
+                                            {/*TODO:Poner el estado real, todavia no lo tenemos, habria que joinear con entrega*/}
+                                            <div className='nota-estado-entrega-alumno'>
+                                                <Badge gap={2} bg={badges[item.estado.id]} className={badges[item.estado.id] === 'light' ? 'badge-light' : 'badge-default'}>{item.nota ? "Nota: "+ item.nota : null } - {item.estado.descripcion }</Badge>
+                                                <Badge bg="info" style={{ marginTop: '1rem' }}>{item.fechaEntrega ? `Entregado el: ${moment(item.fechaEntrega).format('DD/MM/YY')}`: ''}</Badge>
+                                            </div>
+                                        </div>
                                     </Col>
+                                    {/* <Col>
+                                    <Row>
+                                        <div>
+                                            <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('DD/MM/YY')}</span></p>
+                                            { item.fechavto2 &&
+                                                <p className="entrega-vencimiento">2° vencimiento: <span>{moment(item.fechavto2).format('DD/MM/YY')}</span></p>
+                                            }
+                                        </div>
+                                    </Row>
+                                    </Col> */}
                                 </Row>
                             ))
                     )}

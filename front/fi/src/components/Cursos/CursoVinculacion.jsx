@@ -3,7 +3,7 @@ import { Form, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import { InputOtp } from 'primereact/inputotp';
 import { Button } from 'primereact/button';
-import './styles/CodigoVinculacion.css'
+import './CodigoVinculacion.css'
 
 function CursoVinculacion({ showVincular, handleCloseVincular, handleCursoAgregado }) {
   const [vinculo, setVinculo] = useState('');

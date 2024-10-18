@@ -1,0 +1,513 @@
+.seccionBanner {
+    background: rgb(127, 167, 219);
+    background: linear-gradient(313deg, rgba(127, 167, 219, 1) 0%, rgba(26, 32, 53, 1) 100%);
+    padding: 50px 0; /* Espaciado vertical */
+    text-align: center;
+}
+
+.instancia-container{
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.banner-box {
+    border: 3px solid #0056b3; /* Borde azul oscuro */
+    border-radius: 10px; /* Esquinas redondeadas */
+    background-color: #ffffff; /* Fondo blanco */
+    padding: 25px; /* Espaciado interno */
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+    text-align: center; /* Alineación centrada del texto */
+    transform: translateY(-5px); /* Efecto de elevación */
+}
+
+.nombre-materia {
+    font-size: 2.2rem; /* Tamaño de fuente más grande */
+    font-weight: bold; /* Negrita */
+    color: #0056b3; /* Color azul oscuro */
+    margin-bottom: 15px; /* Espacio inferior */
+}
+
+/* Asegura que la lista ocupe el ancho completo del contenedor */
+.aside-nav {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    list-style-type: none; /* Eliminar los puntos de la lista */
+    padding: 0;
+    margin: 0;
+}
+
+/* Estilo para el enlace */
+.aside-link {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Asegura que el enlace ocupe todo el ancho del contenedor */
+    padding: 10px; /* Ajusta el relleno según sea necesario */
+    text-decoration: none; /* Elimina el subrayado del enlace */
+    color: #000; /* Ajusta el color del texto */
+    background-color: #1a2034; /* Ajusta el color de fondo según sea necesario */
+    border: 1px solid #131313; /* Añade un borde si es necesario */
+    border-radius: 4px; /* Opcional: redondea las esquinas del botón */
+}
+
+/* Alineación y margen para el ícono dentro del enlace */
+.aside-link i {
+    margin-right: 8px; /* Espacio entre el ícono y el texto */
+}
+
+.contenedor-info-curso{
+    border-radius: 10px;
+    border: 2px solid #fff !important;
+}
+
+.nombre-materia {
+    font-size: 2rem; /* Tamaño de fuente más grande para el título */
+    font-weight: bold; /* Negrita para darle más énfasis */
+    color: #fff; /* Color oscuro del texto */
+    margin-bottom: 20px; /* Espacio adicional debajo del título */
+    font-family: 'Roboto', sans-serif; /* Fuente personalizada */
+    letter-spacing: 1px; /* Espaciado entre letras para mayor elegancia */
+}
+
+.nombre-comision, .anio-comision {
+    font-size: 1.5rem; /* Tamaño de fuente menor */
+    font-weight: 500; /* Fuente semi-negrita */
+    color: #fff; /* Color gris */
+}
+
+.curso-instancias-eval{
+    background-color: #f2f6fc;
+}
+
+.aside-item {
+    margin-bottom: 1rem; /* Espacio entre los elementos */
+}
+
+.aside-link {
+    display: block;
+    padding: 8px 16px;
+    background-color: #1A2035; /* Color de fondo del rectángulo */
+    border: 2px outset #393636; /* Borde del rectángulo */
+    border-radius: 5px; /* Bordes redondeados */
+    font-family: 'oPoppins', sans-serif; /* Cambia el tipo de fuente */
+    text-decoration: none; /* Eliminar subrayado del enlace */
+    font-size: 20px; /* Aumenta el tamaño del texto */
+    color: #ffffff; /* Color del texto */
+    transition: background-color 0.3s ease; /* Transición suave para el hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para el efecto 3D */
+}
+
+.aside-link:hover {
+    background-color: #324a76; /* Cambio de color al pasar el cursor */
+}
+
+.aside-menu {
+    margin-left: -55px; /* Ajusta el valor según sea necesario */
+}
+
+.aside-link {
+    display: inline-block; /* Necesario para que funcione el efecto de escala */
+    transition: transform 0.3s ease;
+}
+
+.aside-link:hover {
+    transform: scale(1.1); /* Aumenta el tamaño al 110% */
+}
+
+.aside-link {
+    display: flex;
+    align-items: center;
+}
+
+.aside-link i {
+    margin-right: 8px; /* Ajusta el valor según el espacio deseado */
+}
+
+.icons-aside-menu-instancias-eval{
+    margin-right: 0.5rem;
+}
+
+/*Estilos del boton crear instancia*/
+
+/* Estilo base para el botón */
+.btn-primary {
+    background-color: #007bff; /* Color azul para el fondo */
+    border-color: #007bff; /* Color del borde */
+    color: #756e6e; /* Color del texto */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espaciado interno */
+    text-align: center; /* Alineación centrada del texto */
+    font-size: 1rem; /* Tamaño de fuente */
+    font-weight: bold; /* Negrita */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra suave para efecto 3D */
+    transition: all 0.3s ease; /* Transición suave para efectos */
+}
+
+/* Estilo para el botón en estado hover */
+/* Estilo base para el botón */
+.btn-primary {
+    background-color: #007bff; /* Color azul para el fondo */
+    border-color: #007bff; /* Color del borde */
+    color: #ffffff; /* Color del texto */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espaciado interno */
+    text-align: center; /* Alineación centrada del texto */
+    font-size: 1rem; /* Tamaño de fuente */
+    font-weight: bold; /* Negrita */
+    transition: all 0.3s ease; /* Transición suave para efectos */
+}
+
+/* Estilo para el botón en estado hover */
+.btn-primary:hover {
+    background-color: #0056b3; /* Azul más oscuro en hover */
+    border-color: #0056b3; /* Color del borde en hover */
+    color: #0c0c0c; /* Color del texto en hover */
+    transform: scale(1.10); /* Aumenta el tamaño del botón */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave para resaltar */
+}
+
+/* Estilo para el encabezado del modal */
+.modal-header {
+    background-color: #7fa7db; /* Color de fondo */
+    color: #1A2035; /* Color del texto */
+    font-weight: bold; /* Texto en negrita */
+}
+
+/* Estilo para el cuerpo del modal */
+.modal-body {
+    font-weight: bold; /* Texto en negrita */
+}
+
+/* Estilo para las etiquetas del formulario en el cuerpo del modal */
+.modal-body .form-label {
+    font-weight: bold; /* Texto en negrita para las etiquetas */
+}
+
+/* Estilo para los botones del modal */
+.modal-footer .btn-secondary {
+    background-color: #CCDCF1; /* Color de fondo */
+    color: #1A2035; /* Color del texto */
+    font-weight: bold; /* Texto en negrita */
+    border: 1px solid #1A2035; /* Color del borde */
+}
+
+.modal-footer .btn-primary {
+    background-color: #1A2035; /* Color de fondo */
+    color: #ffffff; /* Color del texto */
+    font-weight: bold; /* Texto en negrita */
+    border: 1px solid #1A2035; /* Color del borde */
+}
+
+.instancias-eval-boton {
+    display: block;
+    background-color: #CCDCF1; /* Color de fondo */
+    color: rgb(7, 7, 7); /* Color del texto */
+    border: 0.1rem solid #080808; /* Borde del botón */
+    padding: 10px 20px; /* Espaciado interno del botón */
+    margin: 5px 0; /* Espaciado externo del botón */
+    font-size: 16px; /* Tamaño de fuente */
+    cursor: pointer; /* Cambia el cursor al pasar por el botón */
+    border-radius: 4px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Transición para el efecto hover */
+    width: 100%; /* Hace que el botón ocupe el 100% del ancho del contenedor */
+  }
+  
+.instancias-eval-boton:hover {
+    background-color: #7fa7db; /* Color de fondo al pasar el ratón */
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+.instancias-eval-nombre {
+    font-size: 1.03rem;
+    color: #1A2035;
+}
+
+/* ESTILOS DE ALUMNOS CURSO*/
+.alumnos-container { /* Estilos del contenedor */
+    min-height: 100vh; 
+    align-items: center;
+    padding: 1rem;
+    border-radius: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between
+}
+
+.text-title-alumnos {
+    color: #1A2035; 
+    font-weight: bold; 
+    font-size: 1.5rem; 
+    margin-top: 1rem;
+    margin-bottom: 0.8rem
+}
+
+.custom-datatable-alumnos { 
+    width: 90%; /* Tamaño de la tabla */
+    border: 0.1rem solid #1A2035;
+    border-radius: 0.24rem;
+    margin-top: 1rem;
+    margin-bottom: 0.8rem
+}
+
+.custom-datatable-alumnos .p-datatable-header {
+    background-color: #1A2035 /* Color del encabezado */;
+    margin: 0 auto;
+}
+
+.table-header-alumnos {
+    display: flex;
+    justify-content: space-between; /* Alinea el ícono a la iquierda y el buscador general a la derecha*/
+    align-items: 'center';
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    border-bottom: #1A2035 0.1rem solid;
+}
+
+.table-header-agregar-alumno-icon{
+    margin-right: 1rem;
+}
+
+.custom-datatable-alumnos .p-datatable-table .p-sortable-column-icon {
+    color: #1a2035;
+}
+
+.custom-datatable-alumnos .p-column-filter-menu-button, .p-column-filter-clear-button{
+    color: #1a2035;
+}
+
+/* Fija el buscador general */
+.search-input-alumnos {
+    width: 100%;
+    max-width: 18.75rem
+}
+
+@media (max-width: 48rem) {
+    .search-input-alumnos {
+        width: 100%
+    }
+}
+
+.inputs-filters-alumnos{ /* Inputs de filtros individuales */
+    border: 0.1rem solid #1A2035;
+    border-radius: 0.24rem;
+    height: 2.4rem;
+    text-align: center;
+}
+
+.custom-datatable-alumnos .p-datatable-table .p-datatable-thead > tr > th {
+    background-color: #CCDCF1; /* Color de la fila de filtros */
+    color: #1A2035;
+    margin: 0 auto;
+    padding: 0.5rem;
+}
+.custom-datatable-alumnos .p-datatable-tbody > tr > td {
+    background-color: white /* Color del cuerpo de la tabla */
+/*  border-top: #1A2035 solid; si se quiere agregar línea entre datos de la tabla */
+}
+
+.columns-data-alumnos {
+    font-size: 0.9rem;
+    min-width: 12rem
+}
+
+.agregar-alumnos-container{
+    display: flex; 
+    flex-direction: row; 
+    align-items: center
+}
+
+.card-agregar-alumnos-container {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 2rem;
+    margin-bottom: 3rem;
+    border: solid #1A2035;
+    border-radius: 0.24rem;
+    background-color: #CCDCF1;
+    margin: 2rem;
+    width: 20rem;
+    height: 16rem
+}
+
+.input-agregar-alumnos {
+    margin-right: 1.4rem;
+    margin: 1.4rem
+}
+
+.input-item-alumnos { /* Estilos para los inputs para agregar alumno*/
+    border: #1A2035 0.1rem solid;
+}
+
+.text-input-item {
+    font-size: 14;
+    color: #1A2035
+}
+
+.btn-agregar-alumno {
+    border-radius: 0.24rem;
+    background-color: #1A2035
+}
+
+.dialog-agregar-alumno{
+    width: 50vw
+}
+
+.generar-codigo-container{
+    height: 10rem;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.btn-generar-codigo {
+    border-radius: 0.24rem;
+    background-color: #1A2035;
+    align-self: flex-end;
+    align-self: center;
+    margin-bottom: 0.8rem;
+    height: 4rem
+}
+
+.clipboard-codigo-generado{
+    margin-left: 0.6rem
+}
+
+/* ESTILOS DE RECURSOS */
+
+.recursos-cards {
+    min-height: 70vh;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-modal-recursos-container{
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+}
+
+.btn-header-modal-recursos{
+    border-radius: 50%;
+    padding: 0.8em 0.9em;
+    background-color: transparent;
+    margin: 0.2rem
+}
+
+.progress-bar-recursos{
+    width: 10rem; 
+    height: 1rem
+}
+
+.btn-item-modal-recursos{
+    border-radius: 50%;
+    padding: 0.2em 0.10em;
+    margin: 0.2rem
+}
+
+.modal-recursos-container-drop{
+    font-size: 5em;
+    border-radius: '50%';
+    background-color: var(--surface-b);
+    color: var(--surface-d)
+}
+
+.recursos-drop{
+    font-size: 1.2em;
+    color: var(--text-color-secondary)
+}
+
+.recursos-drop:hover {
+    background-color: #e0f7fa;
+    border-color: #00acc1;
+    transform: scale(1.02);
+    box-shadow: 0px 0px 15px rgba(0, 172, 193, 0.5);
+}
+
+.recursos-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.column-data-recursos {
+    width: 100%;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.p-4 {
+    padding: 1rem;
+}
+
+.recurso-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.checkbox-recurso{
+    margin-right: 3rem;
+}
+
+.text-2xl {
+    font-size: 1.25rem;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.font-semibold {
+    font-weight: 600; /* Semi-negrita para la categoría */
+}
+
+.text-900 {
+    color: #333;
+}
+
+/* Estilos para el Tag */
+.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.btn-descargar-recurso {
+    border-radius: 50%;
+    padding: 0.5rem;
+    background-color: #1a2035;
+}
+
+.btn-gestionar-recurso{
+    color: #425fb3;
+}

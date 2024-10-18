@@ -4,16 +4,16 @@ import Header from './components/shared/Header.jsx';
 import Subheader from './components/shared/Subheader.jsx';
 import Footer from './components/shared/Footer.jsx';
 import Home from './components/Home.jsx';
-import Cursos from './components/Cursos.jsx';
+import Cursos from './components/Cursos/Cursos.jsx';
 import SignInSide from "./components/SignInSide.tsx";
 import SignUp from "./components/SignUp.jsx"
-import AlumnosCurso from './components/AlumnosCurso.jsx';
-import { CursosActividades } from './components/CursosActividades/CursosActividades.jsx';
-import { ActividadEntregas } from './components/ActividadEntregas/ActividadEntregas.jsx';
+import AlumnosCurso from './components/CursoInstanciasEval/AlumnosCurso.jsx';
+import { CursoInstanciasEval } from './components/CursoInstanciasEval/CursoInstanciasEval.jsx';
+import { InstanciaEvalEntregas } from './components/InstanciaEvalEntregas/InstanciaEvalEntregas.jsx';
 import { DetalleEntrega } from './components/DetalleEntrega/DetalleEntrega.jsx';
 import ArchivoPrueba from './components/PruebaPDFViewer/App.tsx';
 import Rendimiento from './components/Rendimiento/Rendimiento.jsx';
-import Recursos from './components/Recursos/Recursos.jsx';
+import Recursos from './components/CursoInstanciasEval/Recursos.jsx';
 import PrivateRoute from './PrivateRoutes';
 import axios from "axios";
 import { DetalleEntregaComentarios } from './components/DetalleEntrega/DetalleEntregaComentarios.jsx';
@@ -56,18 +56,18 @@ function App() {
                 // CONSIDERAR QUE NECESITAMOS PASAR EL ID DEL CURSO PARA VISUALIZAR Y ACTUAR SOBRE LAS ACTIVIDADES DE ESTE.
                 }
               <Route
-                path="/cursos/:id/actividades"
+                path="/curso/:id"
                 element={
                   <PrivateRoute allowedRoles={['D', 'A']}>
-                    <CursosActividades />
+                    <CursoInstanciasEval />
                   </PrivateRoute>
                 }
               />
               <Route 
-                path="/actividad/:id/entregas" 
+                path="/instancia-eval/:id/entregas" 
                 element={
                   <PrivateRoute allowedRoles={['D', 'A']}>
-                    <ActividadEntregas />
+                    <InstanciaEvalEntregas />
                   </PrivateRoute>
                 }
               />

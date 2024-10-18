@@ -11,7 +11,7 @@ import { IoDownloadOutline } from "react-icons/io5";
 import { Checkbox } from 'primereact/checkbox';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { FileUpload } from 'primereact/fileupload';
-import './Recursos.css'
+import './CursoInstanciasEval.css'; //Se importan los estilos
 import { useRole } from '../../context/RolesContext';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -201,7 +201,7 @@ export default function Recursos() {
 
     const itemTemplate = (archivo, index) => {
         return (
-            <div className="col-12" key={archivo.ID}>
+            <div className="col-12 column-data-recursos" key={archivo.ID}>
                 <div className="recurso-item flex align-items-center">
                     { role === 'D' &&
                     <Checkbox 
@@ -249,7 +249,7 @@ export default function Recursos() {
         }
     
         return (
-            <div className="grid">
+            <div className="grid recursos-grid">
                 {archivos.map(itemTemplate)}
             </div>
         );

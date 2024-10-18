@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
-import data from './shared/data';
+import data from '../shared/data';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import Curso from './CursoForm';
 import CursoVinculacion from './CursoVinculacion'
 import axios from "axios";
-import { useRole } from "../context/RolesContext";
+import { useRole } from "../../context/RolesContext";
 import { Link } from "react-router-dom";
 
 const Cursos = () => {
@@ -93,7 +93,7 @@ const Cursos = () => {
                 <Row xs={1} md={3} className="g-4" style={{padding: '5rem'}}>
                     {cursos.map((item, idx) => (
                         <Col key={idx}>
-                            <Link style={{textDecoration:'none', color:'#000'}} to={`/cursos/${item.id}/actividades`}>
+                            <Link style={{textDecoration:'none', color:'#000'}} to={`/curso/${item.id}`}>
                                 <Card style={{ border: '0.1rem solid #7fa7db' }}>
                                     <Card.Img
                                         variant="top"

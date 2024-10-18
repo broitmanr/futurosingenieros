@@ -9,10 +9,10 @@ import { Button } from 'primereact/button';
 import { InputOtp } from 'primereact/inputotp';
 import { Dialog } from 'primereact/dialog';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { AlumnosDatos } from './shared/dataAlumnos'; //Se importan los datos de prueba
+import { AlumnosDatos } from '../shared/dataAlumnos'; //Se importan los datos de prueba
 import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
-import './styles/AlumnosCurso.css' //Se importan los estilos
+import './CursoInstanciasEval.css'; //Se importan los estilos
 import { useParams } from 'react-router-dom';
 import { PiUserCirclePlusBold } from "react-icons/pi";
 import { FaRegFileExcel } from "react-icons/fa";
@@ -159,7 +159,7 @@ function AlumnosCurso() {
 
   const renderHeader = () => {
     return (
-      <div className="table-header">
+      <div className="table-header-alumnos">
         {/* Icono que desplaza hacia abajo y su descripción */}
         <div>
           <OverlayTrigger overlay={
@@ -187,7 +187,7 @@ function AlumnosCurso() {
         </div>
         <IconField >
           <InputText
-            className='search-input'
+            className='search-input-alumnos'
             value={globalFilterValue}
             onChange={onGlobalFilterChange}
             placeholder="Buscador general"
@@ -201,7 +201,7 @@ function AlumnosCurso() {
 
   return (
     <div className="alumnos-container">
-      <h5 className="text-title">Listado de alumnos</h5>
+      <h5 className="text-title-alumnos">Listado de alumnos</h5>
       {error && <p>{error}</p>}
       <DataTable
         value={alumnos}
@@ -216,14 +216,14 @@ function AlumnosCurso() {
         className='custom-datatable-alumnos'
       >
         <Column
-          className='columns-data'
+          className='columns-data-alumnos'
           field="Persona.legajo"
           header="LEGAJO"
           filter
           filterPlaceholder="Buscar por Legajo"
           filterElement={
             <input
-              className='inputsFilters'
+              className='inputs-filters-alumnos'
               type='text' 
               onKeyPress={handleKeyPressLegajo} 
               inputMode='numeric' 
@@ -232,14 +232,14 @@ function AlumnosCurso() {
           }
         />
         <Column
-          className='columns-data'
+          className='columns-data-alumnos'
           field="nombreCompleto"
           header="NOMBRE COMPLETO"
           filter
           filterPlaceholder="Buscar por Nombre completo"
           filterElement={
             <input
-              className='inputsFilters'
+              className='inputs-filters-alumnos'
               type='text' 
               onKeyPress={handleKeyNombreApellido} 
               inputMode='text'
@@ -249,14 +249,14 @@ function AlumnosCurso() {
           sortable
         />
         <Column
-            className='columns-data'
+            className='columns-data-alumnos'
             field="mail"
             header="MAIL"
             filter
             filterPlaceholder="Buscar por mail"
             filterElement={
               <input
-                  className='inputsFilters'
+                  className='inputs-filters-alumnos'
                   type='text'
                   inputMode='text'
               />
@@ -264,13 +264,13 @@ function AlumnosCurso() {
             sortable
         />
       </DataTable>
-      <h5 className="text-title">Agregar alumno</h5>
+      <h5 className="text-title-alumnos">Agregar alumno</h5>
       <div className='agregar-alumnos-container' id='agregarAlumnos'>
         <div className="card-agregar-alumnos-container">
           {/* Agregar alumno manualmente */}
           <h5 className='text-description-agregar-alumno'>Con Legajo</h5>
           <FloatLabel className="input-agregar-alumnos">
-            <InputText className="input-item" id="legajo" value={legajo} onKeyPress={handleKeyPressLegajo} onChange={(e) => setLegajo(e.target.value)} />
+            <InputText className="input-item-alumnos" id="legajo" value={legajo} onKeyPress={handleKeyPressLegajo} onChange={(e) => setLegajo(e.target.value)} />
             <label className="text-input-item" htmlFor="legajo">Legajo</label>
           </FloatLabel>
           <Button className="btn-agregar-alumno" onClick={handleAgregarAlumnoConLegajo} label="Agregar" />
@@ -285,10 +285,10 @@ function AlumnosCurso() {
           {/* Generar código de vinculación */}
           <h5 className="text-description-agregar-alumno">Con código de vinculación</h5>
           <div className='generar-codigo-container'>
-            { !codigoVinculacion && <InputOtp className="input-item" disabled /> }
+            { !codigoVinculacion && <InputOtp className="input-item-alumnos" disabled /> }
             { codigoVinculacion && 
               <>
-                <InputOtp className="input-item" readOnly value={codigoVinculacion} />
+                <InputOtp className="input-item-alumnos" readOnly value={codigoVinculacion} />
                 <PiCopyBold className='clipboard-codigo-generado' onClick={copiarCodigo} size={24} />
               </>
             }

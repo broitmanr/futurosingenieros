@@ -12,7 +12,7 @@ import axios from 'axios';
 export const InstanciaEvalEntregas = () => {
     const { role } = useRole()
     const [show, setShow] = useState(false);
-    const [idActividad, setIdActividad] = useState(null)
+    const [idInstanciaEval, setIdInstanciaEval] = useState(null)
     const [instancia, setInstancia] = useState({})
     const [entregas, setEntregas] = useState([]);
     const [shouldFetchEntregas, setShouldFetchEntregas] = useState(false); //Estados para manejar la actualización de la instancia
@@ -24,14 +24,14 @@ export const InstanciaEvalEntregas = () => {
     const badges = ['dark', 'success', 'info', 'danger', 'warning', 'light']
 
     useEffect(()=> {
-        const idActividad = params.id;
-        setIdActividad(idActividad)
+        const idInstanciaEval = params.id;
+        setIdInstanciaEval(idInstanciaEval)
     },[params.id])
 
     useEffect(() => {
         const fetchInstancia = async () => {
             try {
-                const response = await axios.get(`/instanciaEvaluativa/${idActividad}`, { withCredentials: true })
+                const response = await axios.get(`/instanciaEvaluativa/${idInstanciaEval}`, { withCredentials: true })
                 console.log(response.data)
                 if(response.data){
                     setInstancia(response.data)
@@ -44,12 +44,12 @@ export const InstanciaEvalEntregas = () => {
         }
 
 
-        if(idActividad){
+        if(idInstanciaEval){
             setLoading(true)
             fetchInstancia()
         }
 
-    }, [idActividad]);
+    }, [idInstanciaEval]);
 
     const fetchEntregaInstancia = async () => {
         try {
@@ -129,7 +129,7 @@ export const InstanciaEvalEntregas = () => {
                         
                     </div>
                     {
-                        idActividad ? <EntregaForm show={show} handleClose={handleClose} idActividad={idActividad} handleEntregaAgregada={handleEntregaAgregada} /> : null
+                        idInstanciaEval ? <EntregaForm show={show} handleClose={handleClose} idInstanciaEval={idInstanciaEval} handleEntregaAgregada={handleEntregaAgregada} /> : null
                     }
                     <div className='p-grid'>
                         <div className='p-col-3'>

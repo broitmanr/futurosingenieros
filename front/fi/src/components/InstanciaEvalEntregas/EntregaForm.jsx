@@ -3,7 +3,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import axios from "axios";
 
 
-export const EntregaForm = ({ show, handleClose, idActividad, handleEntregaAgregada }) => {
+export const EntregaForm = ({ show, handleClose, idInstanciaEval, handleEntregaAgregada }) => {
     const [formData, setFormData] = useState({})
 
     const onChange = (e) => {
@@ -18,13 +18,13 @@ export const EntregaForm = ({ show, handleClose, idActividad, handleEntregaAgreg
         e.preventDefault();
         console.log('prueba')
 
-        formData.instanciaEvaluativaID = parseInt(idActividad);
+        formData.instanciaEvaluativaID = parseInt(idInstanciaEval);
         formData.numero = parseInt(formData.numero)
         console.log(formData);
         // PASAR LA DATA EN REQ BODY.
         axios.post(`/entregaPactada`, formData, { withCredentials: true }) // Ajusta la URL de la API según corresponda
             .then(response => {
-                console.log('actividad creada', response.data);
+                console.log('Instancia evaluativa creada', response.data);
                 setFormData({})
                 handleEntregaAgregada(response.data)
                 /*setInstancias(prevState => {
@@ -34,7 +34,7 @@ export const EntregaForm = ({ show, handleClose, idActividad, handleEntregaAgreg
             .catch(err => {
                 console.log(err.response.data.error)
                 alert('Error: ' + err.response.data.error.message)
-                // setError('Error al crear la actividad');
+                // setError('Error al crear la instancia evaluativa');
 
             });
 

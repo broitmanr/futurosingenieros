@@ -6,6 +6,8 @@ import CursoVinculacion from './CursoVinculacion'
 import axios from "axios";
 import { useRole } from "../../context/RolesContext";
 import { Link } from "react-router-dom";
+import { ProgressBar } from 'primereact/progressbar';
+import './CodigoVinculacion.css'
 
 const Cursos = () => {
     
@@ -14,6 +16,7 @@ const Cursos = () => {
     const [showVincular, setShowVincular] = useState(false)
     const [cursos, setCursos] = useState([]); // Estado para almacenar los cursos
     const [loading, setLoading] = useState(true); // Estado para manejar el estado de carga
+    const [imageLoading, setImageLoading] = useState(true) 
     const [error, setError] = useState(''); // Estado para manejar errores
 
     const handleClose = () => setShow(false);
@@ -100,7 +103,13 @@ const Cursos = () => {
                                         src={item.image}
                                         style={{ height: '10rem', objectFit: 'cover',backgroundImage:'url(/generica.png)', backgroundSize: 'cover',
                                             backgroundPosition: 'center',backgroundColor: '#7fa7db'}}
+                                        onLoad={() => setImageLoading(false)}
                                     />
+                                    {imageLoading && (
+                                        <div style={{ textAlign: 'center' }}>
+                                            <ProgressBar className="progress-bar-image" mode="indeterminate" style={{ height: '6px' }}></ProgressBar>
+                                        </div>
+                                    )}
                                     <Card.Body>
                                         <Card.Title>
                                             <Row>

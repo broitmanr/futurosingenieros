@@ -55,7 +55,7 @@
     flex-direction: column;
 }
 
-.nota-estado-entrega-alumno .badge-light {
+.nota-estado-entrega-alumno .badge-light, .bg-warning, .bg-info {
     color: black !important;
 }
 

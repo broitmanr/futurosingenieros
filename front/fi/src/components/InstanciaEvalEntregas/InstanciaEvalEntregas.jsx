@@ -143,6 +143,7 @@ export const InstanciaEvalEntregas = () => {
                     <>
                     {isLoading && <p>Cargando entregas...</p>}
                     {!isLoading && (
+                        entregas.length > 0 ? (
                             entregas.map((item, idx) => (
                                 <Row key={idx} className="entrega-card-alumno">
                                     <Col className={'col-12 entrega estilo-entrega'}>
@@ -178,6 +179,23 @@ export const InstanciaEvalEntregas = () => {
                                     </Col> */}
                                 </Row>
                             ))
+                        ):(
+                            <div className="no-entregas" style={{ 
+                                display: 'flex', 
+                                flexDirection: 'column', 
+                                justifyContent: 'center', 
+                                alignItems: 'center', 
+                                height: '50vh'
+                            }}>
+                                
+                                <img 
+                                    src="../../../public/NoEncontrado.png" 
+                                    alt="No entregas" 
+                                    style={{ width: '12rem', height: 'auto' }}
+                                />
+                                <p className='text-danger'>Esta instancia evaluativa no posee entregas disponibles</p>
+                            </div>
+                        )
                     )}
                     </>
                     }

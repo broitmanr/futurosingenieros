@@ -7,7 +7,7 @@ import axios from "axios";
 import { useRole } from "../../context/RolesContext";
 import { Link } from "react-router-dom";
 import { ProgressBar } from 'primereact/progressbar';
-import './CodigoVinculacion.css'
+import './Cursos.css'
 
 const Cursos = () => {
     
@@ -60,16 +60,10 @@ const Cursos = () => {
     };
 
     return ( 
-        <div className="cursos-container" style={{ minHeight: '100vh', position: 'relative', padding: '2rem', backgroundColor: '#f2f6fc' }}>
+        <div className="cursos-container">
             { role === 'D' && (
                 <>
-                    <Button variant="primary" onClick={() => setShow (true)} 
-                        style={{ 
-                            position: 'absolute', 
-                            right: '6.6rem', 
-                            margin: 5,
-                            background: '#1A2035'
-                        }}>
+                    <Button className='cursos-btns' onClick={() => setShow (true)}>
                         Agregar curso
                     </Button>
                     <Curso loading={loading} show={show} handleClose={handleClose} handleCursoAgregado={handleCursoAgregado} />
@@ -77,13 +71,7 @@ const Cursos = () => {
             )}
             { role === 'A' && (
                 <>
-                    <Button variant="primary" onClick={() => setShowVincular (true) } 
-                        style={{ 
-                            position: 'absolute', 
-                            right: '6.6rem', 
-                            margin: 5,
-                            background: '#1A2035'
-                        }}>
+                    <Button className='cursos-btns' onClick={() => setShowVincular (true) }>
                         Vincular curso
                     </Button>
                     <CursoVinculacion showVincular={showVincular} handleCloseVincular={handleCloseVincular} handleCursoAgregado={handleCursoAgregado} />
@@ -93,21 +81,20 @@ const Cursos = () => {
             {error && <p>{error}</p>}
             {/* Mostrar los cursos si se han cargado correctamente */}
             {!loading && !error && (
-                <Row xs={1} md={3} className="g-4" style={{padding: '5rem'}}>
+                <Row xs={1} md={3} className="g-4 cursos-row">
                     {cursos.map((item, idx) => (
                         <Col key={idx}>
-                            <Link style={{textDecoration:'none', color:'#000'}} to={`/curso/${item.id}`}>
-                                <Card style={{ border: '0.1rem solid #7fa7db' }}>
+                            <Link className="cursos-link" to={`/curso/${item.id}`}>
+                                <Card className="cursos-card-container">
                                     <Card.Img
                                         variant="top"
                                         src={item.image}
-                                        style={{ height: '10rem', objectFit: 'cover',backgroundImage:'url(/generica.png)', backgroundSize: 'cover',
-                                            backgroundPosition: 'center',backgroundColor: '#7fa7db'}}
+                                        className="cursos-img"
                                         onLoad={() => setImageLoading(false)}
                                     />
                                     {imageLoading && (
-                                        <div style={{ textAlign: 'center' }}>
-                                            <ProgressBar className="progress-bar-image" mode="indeterminate" style={{ height: '6px' }}></ProgressBar>
+                                        <div className="cursos-img-progress">
+                                            <ProgressBar className="cursos-img-progress-bar" mode="indeterminate"></ProgressBar>
                                         </div>
                                     )}
                                     <Card.Body>

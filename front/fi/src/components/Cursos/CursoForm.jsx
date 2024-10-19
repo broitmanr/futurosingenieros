@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap'; 
 import axios from 'axios';
 import { Dropdown } from 'primereact/dropdown';
+import './Cursos.css'
 
 function Curso({ show, handleClose, handleCursoAgregado }) {
   const currentYear = new Date().getFullYear(); //Constante para obtener el año actual
@@ -92,7 +93,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
     <>
       <Modal show={show} onHide={handleClose}>
         <Form onSubmit={handleConfirmar}>
-          <Modal.Header closeButton style={{ backgroundColor: '#7fa7db', color: '#1A2035', fontWeight: 'bold' }}>
+          <Modal.Header className='modal-header-agregar-curso' closeButton>
             <Modal.Title>Agregar curso</Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -108,7 +109,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
               </Form.Group>
               <Form.Group className="mb-3 d-flex flex-column" controlId="grupoComision">
                 <Form.Label>Comisión</Form.Label>
-                <Dropdown className="w-full" style={{ height: '2.5rem', fontSize: '0.9rem', border: '0.1rem solid #608ad1' }} 
+                <Dropdown className="w-full modal-dropdown-comision" 
                   value={selectedComision} 
                   onChange={(e) => setSelectedComision(e.value)} 
                   options={comisionOptions} optionLabel="label" 
@@ -122,8 +123,9 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
               </Form.Group>
               <Form.Group className="mb-3" controlId="grupoMateria">
                 <Form.Label>Materia</Form.Label>
-                <Form.Select aria-label="Floating label select example"
-                  style={{ border: '0.1rem solid #608ad1' }}
+                <Form.Select 
+                  className='modal-select-materia'
+                  aria-label="Floating label select example"
                   value={selectedMateria} onChange={(e) => setSelectedMateria(e.target.value)}>
                   <option value="">Seleccione una materia</option>
                   {materias.map(materia => (<option key={materia.ID} value={materia.ID}>{materia.nombre}</option>))}
@@ -132,16 +134,10 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
           </Modal.Body>
           <Modal.Footer>
             <div className="d-flex justify-content-between w-100">
-              <Button variant="secondary" onClick={handleCancelar} 
-                style={{ 
-                  backgroundColor: '#CCDCF1', 
-                  color: '#1A2035', 
-                  fontWeight: 'bold', 
-                  borderBlockColor: '#1A2035',
-                  }}>
+              <Button className='btn-agregar-curso-cancelar' onClick={handleCancelar}>
                 Cancelar
               </Button>
-              <Button variant="primary" type="submit" style={{ backgroundColor: '#1A2035' }} disabled={isSubmitting}>
+              <Button className='btn-agregar-curso' type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Confirmando...' : 'Confirmar'}
               </Button>
             </div>

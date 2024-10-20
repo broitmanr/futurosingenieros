@@ -87,13 +87,13 @@ const Sidebar = ({
           </small>
         </p>
       </div>
-      {/* {!isLoading && hasNextEntrega && ( */}
+      {!isLoading && hasNextEntrega && (
         <div className="siguiente-entrega-container">
           <button onClick={toggleDocument} className="sidebar__toggle">
             Siguiente Entrega
           </button>
         </div>
-      {/* )} */}
+      )}
 
       {/* Highlights list */}
       {highlights && (

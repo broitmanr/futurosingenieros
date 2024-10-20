@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useRole } from '../../context/RolesContext';
 import { FaUserCircle } from "react-icons/fa";
 import './SharedStyles.css'
@@ -7,12 +7,14 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 //import { ButtonGroup } from 'react-bootstrap';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
     const { role, setRole } = useRole()
     const navigate = useNavigate()
     const [ dropdownUserVisible, setDropdownUserVisible ] = useState(false)
     const dropdownUserRef = useRef(null)
+    const { isLoggedIn, setIsLoggedIn } = useAuth()
 
     useEffect(() => { //Redirección logo
         if(role && location.pathname === '/') {
@@ -30,6 +32,7 @@ const Header = () => {
             if(response){
                 setDropdownUserVisible(false)
                 setRole('')
+                setIsLoggedIn(false)
                 localStorage.removeItem('role')
                 navigate('/login')
             }
@@ -56,10 +59,10 @@ const Header = () => {
             <nav className="navbar-header-container navbar-expand-lg" data-bs-theme="dark" >
                 <div className="container-fluid d-flex justify-content-between align-items-center">
                     {/*Cambié href*/}
-                    <a className="navbar-brand" href={role ? '/cursos' : '/' }>
+                    <Link className="navbar-brand" to={role ? '/cursos' : '/' }>
                         {/*Ajusta tamaño de imagen según altura */}
                         <img className='navbar-logo' src="/logoFrlp.png" alt="Logo" />
-                    </a>
+                    </Link>
                     <div className="navbar-brand-text-container position-absolute d-none d-lg-block">
                         FUTUROS INGENIEROS
                     </div>

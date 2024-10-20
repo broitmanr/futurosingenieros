@@ -18,104 +18,113 @@ import PrivateRoute from './PrivateRoutes';
 import axios from "axios";
 import RendimientoAlumno from "./components/Rendimiento/RendimientoAlumno.jsx";
 import RendimientoGrupo from "./components/Rendimiento/RendimientoGrupo.jsx";
+import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 
 axios.defaults.baseURL = 'http://localhost:5000/api'
 
-function App() {
-
-  
-  
+const AppContent = () => {
+  const { isLoggedIn } = useAuth()
   return (
-    <div className="App">
-        <BrowserRouter>
-            <Header />
-            <Subheader />
-            <Routes>
-              <Route path="/" element={<Home />}/>
-              <Route path="/login" element={<SignInSide />}/>
-              <Route path="/register" element={<SignUp />}/>
-              <Route path="/archivo/:id" element={<ArchivoPrueba />}/>
-              <Route
-                path="/cursos"
-                element={
-                  <PrivateRoute allowedRoles={['D', 'A']}>
-                    <Cursos />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/alumnos/:id"
-                element={
-                  <PrivateRoute allowedRoles={['D']}>
-                    <AlumnosCurso />
-                  </PrivateRoute>
-                }
-              />
-                {
-                // CONSIDERAR QUE NECESITAMOS PASAR EL ID DEL CURSO PARA VISUALIZAR Y ACTUAR SOBRE LAS ACTIVIDADES DE ESTE.
-                }
-              <Route
-                path="/curso/:id"
-                element={
-                  <PrivateRoute allowedRoles={['D', 'A']}>
-                    <CursoInstanciasEval />
-                  </PrivateRoute>
-                }
-              />
-              <Route 
-                path="/instancia-eval/:id/entregas" 
-                element={
-                  <PrivateRoute allowedRoles={['D', 'A']}>
-                    <InstanciaEvalEntregas />
-                  </PrivateRoute>
-                }
-              />
-              
-              <Route 
-                path="/entrega/:id" 
-                element={
-                  <PrivateRoute allowedRoles={['D', 'A']}>
-                    <DetalleEntrega />
-                  </PrivateRoute>
-                }
-              />
-              <Route 
-                path="/rendimiento/:id" 
-                element={
-                  <PrivateRoute allowedRoles={['D', 'A']}>
-                    <Rendimiento />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                    path="/rendimiento/alumno/:id/:idAlumno"
-                    element={
-                        <PrivateRoute allowedRoles={['D']}>
-                            <RendimientoAlumno  />
-                        </PrivateRoute>
-                    }
-              />
-              <Route
-                path="/rendimiento/grupo/:id/:idGrupo"
-                element={
-                    <PrivateRoute allowedRoles={['D']}>
-                        <RendimientoGrupo  />
-                    </PrivateRoute>
-                }
-              />
-              <Route 
-                path="/recursos/:id" 
-                element={
-                  <PrivateRoute allowedRoles={['D', 'A']}>
-                    <Recursos />
-                  </PrivateRoute>
-                }
-              />
-            </Routes>
-            <Footer />
-        </BrowserRouter>
-    </div>
+    //<div className="App">
+      // <AuthProvider>
+      //   <BrowserRouter>
+    <>
+      <Header />
+      {!isLoggedIn && <Subheader />}
+      <Routes>
+        <Route path="/" element={<Home />}/>
+        <Route path="/login" element={<SignInSide />}/>
+        <Route path="/register" element={<SignUp />}/>
+        <Route path="/archivo/:id" element={<ArchivoPrueba />}/>
+        <Route
+          path="/cursos"
+          element={
+            <PrivateRoute allowedRoles={['D', 'A']}>
+              <Cursos />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/alumnos/:id"
+          element={
+            <PrivateRoute allowedRoles={['D']}>
+              <AlumnosCurso />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/curso/:id"
+          element={
+            <PrivateRoute allowedRoles={['D', 'A']}>
+              <CursoInstanciasEval />
+            </PrivateRoute>
+          }
+        />
+        <Route 
+          path="/instancia-eval/:id/entregas" 
+          element={
+            <PrivateRoute allowedRoles={['D', 'A']}>
+              <InstanciaEvalEntregas />
+            </PrivateRoute>
+          }
+        />
+        <Route 
+          path="/entrega/:id" 
+          element={
+            <PrivateRoute allowedRoles={['D', 'A']}>
+              <DetalleEntrega />
+            </PrivateRoute>
+          }
+        />
+        <Route 
+          path="/rendimiento/:id" 
+          element={
+            <PrivateRoute allowedRoles={['D', 'A']}>
+              <Rendimiento />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/rendimiento/alumno/:id/:idAlumno"
+          element={
+            <PrivateRoute allowedRoles={['D']}>
+              <RendimientoAlumno  />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/rendimiento/grupo/:id/:idGrupo"
+          element={
+            <PrivateRoute allowedRoles={['D']}>
+              <RendimientoGrupo  />
+            </PrivateRoute>
+          }
+        />
+        <Route 
+          path="/recursos/:id" 
+          element={
+            <PrivateRoute allowedRoles={['D', 'A']}>
+              <Recursos />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+      <Footer />
+    </>
+      //   </BrowserRouter>
+      // </AuthProvider>
+    //</div>
   );
+}
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </AuthProvider>
+  )
 }
 
 export default App

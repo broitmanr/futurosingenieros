@@ -48,30 +48,29 @@ const Sidebar = ({
   }, [])
 
   return (
-    <div className="sidebar" style={{ width: "30vw", maxWidth: "500px" }}>
+    <div className="sidebar">
       {/* Description section */}
-      <div className="description" style={{ padding: "1rem" }}>
-
+      <div className="sidebar-descripcion">
         {!isLoading && entrega ? (
             <>
-              <h2 style={{ marginBottom: "1rem" }}>
+              <h2 className="sidebar-entrega-nombre">
                 {entrega.nombre}
               </h2>
-              <h5 className={'text-muted'} style={{fontStyle:"italic"}}>{entrega.descripcion}</h5>
+              <h5 className='sidebar-entrega-descripcion'>{entrega.descripcion}</h5>
               <b>Fecha de entrega: {moment(entrega.fecha).format('DD/MM/YY')}</b>
               {role === 'D' && !entrega.nota ? (
                 <>
-                <div className="entrega-sincalificar-container" style={{display: 'flex', flexDirection: 'row'}}>
-                  <FloatLabel style={{marginLeft: 0, marginTop: '1.5rem', margin: '1rem'}}>
+                <div className="entrega-sincalificar-container">
+                  <FloatLabel className='entrega-sin-calificar-floatlabel'>
                     <InputText id="nota" value={nota} onChange={(e) => setNota(e.target.value)} />
                     <label htmlFor="nota">Calificar</label>
                   </FloatLabel>
-                  <Button label='Calificar' onClick={handleCalificar} style={{ marginTop: '1rem', height: '50%', backgroundColor: '#1a2035', borderRadius: '0.2rem' }} />
+                  <Button className="entrega-sin-calificar-btn" label='Calificar' onClick={handleCalificar} />
                 </div>
                 </>
               ): role === 'D' && (
                 <>
-                <div className="entrega-calificada-container" style={{marginTop: '1rem', display: 'flex', flexDirection: 'column'}}>
+                <div className="entrega-calificada-container">
                   <label htmlFor="nota">Calificación</label>
                   <InputText id="nota" readOnly value={entrega.nota} />
                 </div>
@@ -84,17 +83,17 @@ const Sidebar = ({
 
         <p className={'mt-2'}>
           <small>
-            Para marcar un area especifica mantené apretado alt y selecciona dicha area
+            Para marcar un área en específico mantené apretado alt y seleccioná dicha área
           </small>
         </p>
       </div>
-      {!isLoading && hasNextEntrega && (
-        <div style={{ padding: "0.5rem" }}>
+      {/* {!isLoading && hasNextEntrega && ( */}
+        <div className="siguiente-entrega-container">
           <button onClick={toggleDocument} className="sidebar__toggle">
             Siguiente Entrega
           </button>
         </div>
-      )}
+      {/* )} */}
 
       {/* Highlights list */}
       {highlights && (

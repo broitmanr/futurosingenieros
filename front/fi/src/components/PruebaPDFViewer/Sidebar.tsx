@@ -104,7 +104,7 @@ const Sidebar = ({
                   className="sidebar__highlight comment-bubble-container"
                   onClick={() => updateHash(highlight)}
               >
-                <div className="comment-bubble">
+                <div className={`comment-bubble ${highlight.mine ? 'mine' : 'not-mine'}`}>
                   <div className="comment-header">
                     <Avatar className="user-avatar" style={{width:'1.3em',height:'1.3em'}}>
                     </Avatar>

@@ -16,7 +16,6 @@ import Rendimiento from './components/Rendimiento/Rendimiento.jsx';
 import Recursos from './components/CursoInstanciasEval/Recursos.jsx';
 import PrivateRoute from './PrivateRoutes';
 import axios from "axios";
-import { DetalleEntregaComentarios } from './components/DetalleEntrega/DetalleEntregaComentarios.jsx';
 import RendimientoAlumno from "./components/Rendimiento/RendimientoAlumno.jsx";
 import RendimientoGrupo from "./components/Rendimiento/RendimientoGrupo.jsx";
 
@@ -77,14 +76,6 @@ function App() {
                 element={
                   <PrivateRoute allowedRoles={['D', 'A']}>
                     <DetalleEntrega />
-                  </PrivateRoute>
-                }
-              />
-                 <Route 
-                path="/entrega/:id/comentarios" 
-                element={
-                  <PrivateRoute allowedRoles={['D', 'A']}>
-                    <DetalleEntregaComentarios />
                   </PrivateRoute>
                 }
               />

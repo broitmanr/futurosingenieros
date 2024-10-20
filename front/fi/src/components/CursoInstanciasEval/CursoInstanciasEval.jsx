@@ -100,10 +100,10 @@ export const CursoInstanciasEval = () => {
 
     return (
         <>
-            <section className="seccionBanner py-5">
+            <section className="seccionBanner py-4">
                 <div className="instancia-container">
                     <div className="row">
-                        <div className="col-md-5 mx-auto contenedor-info-curso p-3">
+                        <div className="col-md-9 mx-auto contenedor-info-curso p-4">
                             {
                                 isLoading
                                     ?

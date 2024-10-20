@@ -67,20 +67,20 @@ export const DetalleEntrega = () => {
                                 <>
                                     {!entregaAsociada && (
                                         <>
-                                        <h3 style={{ marginBottom: '1rem', color: '#1a2035' }}>{entregaDetalle.nombre}</h3>
+                                        <h3 className="descripcion-entrega-nombre">{entregaDetalle.nombre}</h3>
                                         <p className='descripcion-entrega-detalle'>{entregaDetalle.descripcion}</p>
                                         <p className="fechas-entrega-detalle">
                                             <span className="fechas-entrega">Fecha de vencimiento 1:</span> {moment(entregaDetalle.fechavto1).format('DD/MM/YY')}
                                         </p>
                                         {entregaDetalle.fechavto2 && <p className="fechas-entrega-detalle">
-                                             <span className="fechas-entrega">Fecha de vencimiento 2:</span> {moment(entregaDetalle.fechavto2).format('DD/MM/YY')}
+                                            <span className="fechas-entrega">Fecha de vencimiento 2:</span> {moment(entregaDetalle.fechavto2).format('DD/MM/YY')}
                                         </p>}
                                         </>
                                     )}
                                     {entregaAsociada ? (
                                         // Mostrar detalles de la entrega si ya se hizo
                                         <div className='dialog-agregar-entrega-detalle'>
-                                            <h3 style={{ marginBottom: '2rem' }}>Ya has realizado una entrega de: {entregaDetalle.nombre}</h3>
+                                            <h3 className="entrega-asociada-nombre">Ya has realizado una entrega de: {entregaDetalle.nombre}</h3>
                                             <p className='descripcion-entrega-detalle'>{entregaDetalle.descripcion}</p>
                                             <p className="fechas-entrega-detalle">
                                                 <span className="fechas-entrega">Fecha de vencimiento 1:</span> {moment(entregaDetalle.fechavto1).format('DD/MM/YY')}
@@ -93,7 +93,7 @@ export const DetalleEntrega = () => {
                                                 <p>Estado: <span className="fw-bold">Entregado</span></p>
                                                 <div className="button-group">
                                                     <Button label="Ver Comentarios" className="btn-ver-comentarios" onClick={() => navigate(`/archivo/${entregaAsociada.ID}`)} />
-                                                    <Button icon="pi pi-plus" className="btn-subir-version" label="Subir otra versión de entrega" 
+                                                    <Button icon="pi pi-plus" className="btn-subir-version" label="Subir otra entrega" 
                                                         onClick={() => setEntregaAsociada(null)} />
                                                 </div>
                                             </div>

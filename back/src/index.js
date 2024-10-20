@@ -9,11 +9,10 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const { swaggerDocs } = require('./swagger/swagger')
 const manageTempFiles = require('./middlewares/archivosTemporales')
-// const { inicializarArchivosDesdeCarpeta } = require('./controllers/archivo.controller')
 const { set } = require('./mailer/mailer')
 const cron = require('node-cron')
 const { verificarPenalidadesBackground } = require('./controllers/penalidad.controller')
-
+// const { inicializarArchivosDesdeCarpeta } = require('./controllers/archivo.controller')
 const configuracionApi = async (app) => {
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
@@ -52,6 +51,11 @@ const init = async () => {
     console.log('Ejecutando verificación de penalidades...')
     verificarPenalidadesBackground()
   })
+  /* Usamos un timeout de unos 5 segundos para que asegurarnos que todo la bd se sincronice e iniciamos inicializarArchivosDesdeCarpeta
+  setTimeout(() => {
+    const imgFolder = '1m0G7726_malY8pAMFtMKhMXRIzW2GvMx'
+    inicializarArchivosDesdeCarpeta(imgFolder)
+  }, 10000) */
 }
 
 init()

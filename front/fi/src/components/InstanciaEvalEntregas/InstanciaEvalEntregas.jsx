@@ -55,7 +55,7 @@ export const InstanciaEvalEntregas = () => {
         try {
             const response = await axios.get(`/entregaPactada/instancia/${params.id}`, { withCredentials: true })
             if(response.data){
-                console.log(response.data);
+                console.log(response.data)
                 setEntregas(response.data);
                 setLoading(false);
             }
@@ -67,7 +67,6 @@ export const InstanciaEvalEntregas = () => {
 
     useEffect(() => {
         fetchEntregaInstancia()
-        
     }, [params.id])
 
     const panelItems = entregas.map(entrega => ({
@@ -133,7 +132,19 @@ export const InstanciaEvalEntregas = () => {
                     }
                     <div className='p-grid'>
                         <div className='p-col-3'>
-                            <PanelMenu className="md:w-18rem float-start panel-individual-entregas" model={panelItems} />
+                            {entregas.length > 0 ? (
+                                <PanelMenu className="md:w-18rem float-start panel-individual-entregas" model={panelItems} />
+                            ):(
+                                <div className="no-entregas" >
+                                <img 
+                                    src="/NoEncontrado.png" 
+                                    alt="No entregas" 
+                                    className='img-no-entregas'
+                                />
+                                <p className='text-danger'>Esta instancia evaluativa no posee entregas disponibles</p>
+                                </div>   
+                            )}
+                            
                         </div>
                         {selectedEntrega && <DetalleEntregaDocente entrega={selectedEntrega} />}
                     </div>
@@ -156,8 +167,6 @@ export const InstanciaEvalEntregas = () => {
                                             }
                                         </div>
                                     </Row>
-                                    
-                                        {/* <h4 className="entrega-titulo">{item.nombre} <span>{item.numero}</span></h4> */}
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                                             <Link className='estilo-detalle' to={`/entrega/${item.ID}`}>Ver detalle</Link>
                                             {/*TODO:Poner el estado real, todavia no lo tenemos, habria que joinear con entrega*/}
@@ -167,31 +176,14 @@ export const InstanciaEvalEntregas = () => {
                                             </div>
                                         </div>
                                     </Col>
-                                    {/* <Col>
-                                    <Row>
-                                        <div>
-                                            <p className="entrega-vencimiento">1° vencimiento: <span>{moment(item.fechavto1).format('DD/MM/YY')}</span></p>
-                                            { item.fechavto2 &&
-                                                <p className="entrega-vencimiento">2° vencimiento: <span>{moment(item.fechavto2).format('DD/MM/YY')}</span></p>
-                                            }
-                                        </div>
-                                    </Row>
-                                    </Col> */}
                                 </Row>
                             ))
                         ):(
-                            <div className="no-entregas" style={{ 
-                                display: 'flex', 
-                                flexDirection: 'column', 
-                                justifyContent: 'center', 
-                                alignItems: 'center', 
-                                height: '50vh'
-                            }}>
-                                
+                            <div className="no-entregas" >
                                 <img 
-                                    src="../../../public/NoEncontrado.png" 
+                                    src="/NoEncontrado.png" 
                                     alt="No entregas" 
-                                    style={{ width: '12rem', height: 'auto' }}
+                                    className='img-no-entregas'
                                 />
                                 <p className='text-danger'>Esta instancia evaluativa no posee entregas disponibles</p>
                             </div>

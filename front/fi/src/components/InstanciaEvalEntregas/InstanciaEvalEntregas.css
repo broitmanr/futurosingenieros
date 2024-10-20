@@ -48,6 +48,25 @@
     transform: translateX(39%);
 }
 
+.estilo-detalle{
+    background-color: #1A2035;
+    color: white;
+    padding: 0.04rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9em;
+    position: absolute; /* Posiciona el botón de manera absoluta dentro del contenedor .entrega */
+    bottom: 0; /* Alinea el botón con la parte inferior del contenedor */
+    /*right: 0;  Alinea el botón con la parte derecha del contenedor */
+    left: 0;
+    width: 100%;
+    text-align: center;
+    transition: transform 0.2s ease;
+    transform: scale(1.05);
+    display: block;
+    box-sizing: border-box;
+}
+
 .nota-estado-entrega-alumno{
     display: flex;
     justify-content: flex-end;
@@ -99,24 +118,7 @@
     border: 3px solid black;
     background-color: #A9B6CC;
 }
-.estilo-detalle{
-    background-color: #1A2035;
-    color: white;
-    padding: 0.04rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.9em;
-    position: absolute; /* Posiciona el botón de manera absoluta dentro del contenedor .entrega */
-    bottom: 0; /* Alinea el botón con la parte inferior del contenedor */
-    /*right: 0;  Alinea el botón con la parte derecha del contenedor */
-    left: 0;
-    width: 100%;
-    text-align: center;
-    transition: transform 0.2s ease;
-    transform: scale(1.05);
-    display: block;
-    box-sizing: border-box;
-}
+
 .entrega-subtitulo {
     font-size: 1.2em;
     font-weight: bold;
@@ -152,4 +154,39 @@
     background-color: #1A2035;;
     color: #fff;
     border-radius: 0.4rem;
+}
+
+.no-entregas{
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    height: 50vh
+}
+
+.img-no-entregas{
+    width: 12rem;
+    height: auto
+}
+
+/* ESTILOS CREAR ENTREGA */
+.modal-footer .btn-entrega-cancelar {
+    background-color: #CCDCF1;
+    color: #1A2035;
+    font-weight: bold;
+    border: 1px solid #1A2035
+}
+
+.modal-footer .btn-entrega-cancelar:hover {
+    transform: scale(1.1);
+    background-color: #80a7da;
+    color: #1a2035
+}
+
+.modal-footer .btn-entrega-agregar {
+    background-color: #1A2035;
+}
+.modal-footer .btn-entrega-agregar:hover {
+    transform: scale(1.1);
+    background-color: #324a76
 }

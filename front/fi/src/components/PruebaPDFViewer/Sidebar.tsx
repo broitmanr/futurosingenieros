@@ -8,6 +8,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import axios from "axios";
 import { useRole } from "../../context/RolesContext";
+import Avatar from "@mui/material/Avatar";
 
 interface SidebarProps {
   highlights: Array<CommentedHighlight>;
@@ -99,49 +100,43 @@ const Sidebar = ({
       {highlights && (
         <ul className="sidebar__highlights">
           {highlights.map((highlight, index) => (
-            <li
-              key={index}
-              className="sidebar__highlight"
-              onClick={() => {
-                updateHash(highlight);
-              }}
-            >
-              <div>
-                {/* Highlight comment and text */}
-                <strong>{highlight.comment}</strong>
-                {highlight.content.text && (
-                  <blockquote style={{ marginTop: "0.5rem" }}>
-                    {`${highlight.content.text.slice(0, 90).trim()}…`}
-                  </blockquote>
-                )}
-
-                {/* Highlight image */}
-                {highlight.content.image && (
-                  <div
-                    className="highlight__image__container"
-                    style={{ marginTop: "0.5rem" }}
-                  >
-                    <img
-                      src={highlight.content.image}
-                      alt={"Screenshot"}
-                      className="highlight__image"
-                    />
+              <li
+                  className="sidebar__highlight comment-bubble-container"
+                  onClick={() => updateHash(highlight)}
+              >
+                <div className={`comment-bubble ${highlight.mine ? 'mine' : 'not-mine'}`}>
+                  <div className="comment-header">
+                    <Avatar className="user-avatar" style={{width:'1.3em',height:'1.3em'}}>
+                    </Avatar>
+                    <span className="user-name">{highlight.user}</span>
                   </div>
-                )}
-              </div>
+                  <div className="comment-content">
+                    <strong>{highlight.comment}</strong>
+                    {highlight.content.text && (
+                        <blockquote>
+                          {`${highlight.content.text.slice(0, 90).trim()}…`}
+                        </blockquote>
+                    )}
 
-              <div className="container d-flex justify-content-between">
-                <div className="highlight__user">
-                  - {highlight.user}
+                    {highlight.content.image && (
+                        <div className="highlight__image__container">
+                          <img
+                              src={highlight.content.image}
+                              alt="Screenshot"
+                              className="highlight__image"
+                          />
+                        </div>
+                    )}
+                  </div>
+
+                  <div className="comment-footer">
+                    <div className="highlight__date">{highlight.date}</div>
+                    <div className="highlight__location">
+                      Page {highlight.position.boundingRect.pageNumber}
+                    </div>
+                  </div>
                 </div>
-                <div className="highlight__date">
-                  {highlight.date}
-                </div>
-              </div>
-              <div className="highlight__location">
-                Page {highlight.position.boundingRect.pageNumber}
-              </div>
-            </li>
+              </li>
           ))}
         </ul>
       )}

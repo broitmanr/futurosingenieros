@@ -42,6 +42,9 @@
 .cursos-img-progress-bar{
     height: 0.4rem
 }
+.p-progressbar-value{
+    background: #2f3856;
+}
 
 /* ESTILOS PARA CREAR UN CURSO */
 .modal-header-agregar-curso{

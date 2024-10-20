@@ -91,9 +91,8 @@ async function listarEntregasInstancia(req, res, next) {
             required: false,
             include: [
               {
-                model: models.Persona,
-                required: false,
-                where: { ID: res.locals.usuario.persona_id }
+                model: models.PersonaXEntrega,
+                where: { persona_id: res.locals.usuario.persona_id }
               }
             ]
           }

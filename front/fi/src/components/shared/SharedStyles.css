@@ -49,25 +49,52 @@
 }
 
 .user-items-container{
-    margin-right: 2rem;
+    margin-left: 0.4rem;
+    margin-right: 4rem;
     position: relative;
+    display: flex;
+    flex-direction: row
 }
 
 .dropdown-toogle-user{
     color: #fff;
-    cursor: pointer
+    cursor: pointer;
+    margin-left: 1.2rem
 }
 
 .dropdown-menu-user{
     position: absolute;
-    right: 0
+    right: 0;
+    width: auto;
 }
 
-.dropdown-item-user:focus, .dropdown-item-user:active, .dropdown-item-user:hover{
+.dropdown-item-user:hover{
     background-color: transparent !important;
-    color: inherit !important;
-    outline: none !important;
-    box-shadow: none !important;
+    color: #9ec6f4 !important;
+    overflow-x: hidden !important;
+    transform: scale(1.1)
+}
+
+@media (max-width: 768px) {
+    .navbar-header-container {
+        padding: 0.4rem 1rem;
+    }
+
+    .navbar-logo {
+        height: 8vh;
+    }
+
+    .navbar-brand-text-container {
+        font-size: 3.5vw;
+    }
+
+    .navbar-brand-text {
+        font-size: 1rem;
+    }
+
+    .user-items-container {
+        margin-right: 1rem;
+    }
 }
 
 /* Estilos del subheader */

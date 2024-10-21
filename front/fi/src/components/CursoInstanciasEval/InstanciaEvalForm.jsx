@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import axios from "axios";
+import './CursoInstanciasEval.css';
 
 function Actividad({ show, handleClose, cursoID, setInstancias, handleInstanciaAgregada }) {
   const [formData, setFormData] = useState({})
@@ -68,7 +69,7 @@ function Actividad({ show, handleClose, cursoID, setInstancias, handleInstanciaA
   return (
     <>
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton style={{ backgroundColor: '#7fa7db', color: '#1A2035', fontWeight: 'bold' }}>
+        <Modal.Header closeButton>
           <Modal.Title>Crear instancia evaluativa</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -80,7 +81,7 @@ function Actividad({ show, handleClose, cursoID, setInstancias, handleInstanciaA
 
             <Form.Group className="mb-3" controlId="grupoMateria">
               <Form.Label>Porcentaje de ponderacion</Form.Label>
-              <Form.Select name="porcentajePonderacion" style={{ marginBottom: '1rem', border: '0.1rem solid #608ad1' }} onChange={e => onChange(e)} aria-label="Floating label select example">
+              <Form.Select className='agregar-instancia-eval-select' name="porcentajePonderacion" onChange={e => onChange(e)} aria-label="Floating label select example">
                 <option>Seleccione el porcentaje</option>
                 <option value="5">5%</option>
                 <option value="10">10%</option>
@@ -105,7 +106,7 @@ function Actividad({ show, handleClose, cursoID, setInstancias, handleInstanciaA
               </Form.Select>
 
               <Form.Label>Tipo de instancia</Form.Label>
-              <Form.Select name="tipoInstanciaID" style={{ marginBottom: '1rem', border: '0.1rem solid #608ad1' }} onChange={e => onChange(e)} aria-label="Floating label select example">
+              <Form.Select className='agregar-instancia-eval-select' name="tipoInstanciaID" onChange={e => onChange(e)} aria-label="Floating label select example">
                 <option>Seleccione el tipo</option>
                 {
                   tipoInstancias && tipoInstancias.length > 0
@@ -154,16 +155,10 @@ function Actividad({ show, handleClose, cursoID, setInstancias, handleInstanciaA
         </Modal.Body>
         <Modal.Footer>
           <div className="d-flex justify-content-between w-100">
-            <Button variant="secondary" onClick={handleClose}
-              style={{
-                backgroundColor: '#CCDCF1',
-                color: '#1A2035',
-                fontWeight: 'bold',
-                borderBlockColor: '#1A2035',
-              }}>
+            <Button className='btn-curso-cancelar' onClick={handleClose}>
               Cancelar
             </Button>
-            <Button variant="primary" onClick={handleSubmit} style={{ backgroundColor: '#1A2035' }}>
+            <Button className='btn-curso-agregar' onClick={handleSubmit}>
               Confirmar
             </Button>
           </div>

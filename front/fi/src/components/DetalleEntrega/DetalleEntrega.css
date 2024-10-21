@@ -35,6 +35,15 @@
     font-size: 1.8rem;
 }
 
+.entrega-asociada-nombre{
+    margin-bottom: 2rem
+}
+
+.descripcion-entrega-nombre{
+    margin-bottom: 1rem;
+    color: #1a2035
+}
+
 .descripcion-entrega-detalle {
     font-size: 1.2rem;
     color: #193B70; /* Color de algunos subtítulos */
@@ -42,7 +51,6 @@
 
 .fechas-entrega-detalle {
     font-size: 1.09rem;
-    justify-self: flex-end;
 }
 
 .fechas-entrega {
@@ -65,7 +73,7 @@
     text-align: center;
 }
 
-/* Estilos para la entrega detalle docente */
+/* ESTILOS ENTREGA DETALLE DOCENTE */
 .table-header-entrega-docente {
     display: flex;
     flex-direction: column;
@@ -133,4 +141,9 @@
     display: flex;
     justify-content: center;
     gap: 15px; /* Espacio entre los botones */
+}
+
+.icon-ver-archivo{
+    cursor: pointer;
+    color: #007bff'
 }

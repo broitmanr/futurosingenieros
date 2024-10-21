@@ -1,8 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
-import './CursosActividades.css';
+import './CursoInstanciasEval.css';
 import { Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import Actividad from '../CursosActividades/ActividadForm'
+import InstanciaEval from './InstanciaEvalForm'
 import axios from "axios";
 import { FaRegPlusSquare } from "react-icons/fa";
 import { RiFileDownloadLine } from "react-icons/ri";
@@ -13,7 +13,7 @@ import { ModalCrearGrupo } from './ModalCrearGrupo';
 import { Badge } from 'primereact/badge';
 
 
-export const CursosActividades = () => {
+export const CursoInstanciasEval = () => {
     
     const { role } = useRole()
     const [show, setShow] = useState(false);
@@ -29,11 +29,6 @@ export const CursosActividades = () => {
     const handleCloseGrupo = () => setShowGrupo(false);
 
     const [shouldFetchInstancia, setShouldFetchInstancia] = useState(false); //Estados para manejar la actualización de la instancia
-
-    const mostrarInfoActividad = (actividad) => {
-        console.log("Información de la actividad:", actividad);
-        // Logica para mostrar la informacion de la actividad
-      };
 
     const fetchGrupoAlumno = async () => {
         try {
@@ -105,10 +100,10 @@ export const CursosActividades = () => {
 
     return (
         <>
-            <section className="seccionBanner py-5">
+            <section className="seccionBanner py-4">
                 <div className="instancia-container">
                     <div className="row">
-                        <div className="col-md-6 mx-auto contenedor-info-curso p-4">
+                        <div className="col-md-9 mx-auto contenedor-info-curso p-4">
                             {
                                 isLoading
                                     ?
@@ -131,7 +126,7 @@ export const CursosActividades = () => {
                 </div>
             </section>
 
-            <main className='contenido-principal curso-actividades'>
+            <main className='contenido-principal curso-instancias-eval'>
                 <div className="container">
                     <div className="row py-4">
                         <div className="col-md-3">
@@ -142,14 +137,14 @@ export const CursosActividades = () => {
                                             <>
                                             <li className='aside-item d-flex align-items-center'>
                                                 <Link className='aside-link' onClick={() => setShow(true)}>
-                                                    <FaRegPlusSquare className='icons-aside-menu-actividades' />
-                                                    Crear instancia
+                                                    <FaRegPlusSquare className='icons-aside-menu-instancias-eval' />
+                                                    Crear instancia evaluativa
                                                 </Link>
-                                                <Actividad show={show} handleClose={handleClose} cursoID={curso.id} setInstancias={setInstancias} handleInstanciaAgregada={handleInstanciaAgregada} />
+                                                <InstanciaEval show={show} handleClose={handleClose} cursoID={curso.id} setInstancias={setInstancias} handleInstanciaAgregada={handleInstanciaAgregada} />
                                             </li>
                                             <li className='aside-item'>
                                                 <Link className='aside-link' to={`/alumnos/${curso.id}`}>
-                                                    <PiUsersThreeBold className='icons-aside-menu-actividades' />
+                                                    <PiUsersThreeBold className='icons-aside-menu-instancias-eval' />
                                                     Alumnos
                                                 </Link>
                                             </li>
@@ -157,7 +152,7 @@ export const CursosActividades = () => {
                                         )}
                                         <li className='aside-item'>
                                             <Link className='aside-link' to={`/rendimiento/${curso.id}`}>
-                                                <RiBarChartBoxLine className='icons-aside-menu-actividades' />
+                                                <RiBarChartBoxLine className='icons-aside-menu-instancias-eval' />
                                                 Rendimiento
                                             </Link>
                                         </li>
@@ -165,7 +160,7 @@ export const CursosActividades = () => {
                                             <>  
                                             <li className='aside-item'>
                                                 <Link className='aside-link' onClick={() => setShowGrupo(true)}>
-                                                    <PiUsersThreeBold className='icons-aside-menu-actividades' />
+                                                    <PiUsersThreeBold className='icons-aside-menu-instancias-eval' />
                                                     Grupo
                                                 </Link>
                                                 <ModalCrearGrupo show={showGrupo} handleClose={handleCloseGrupo} grupoExistente={grupo}/>
@@ -174,7 +169,7 @@ export const CursosActividades = () => {
                                         )}
                                         <li className='aside-item'>
                                             <Link className='aside-link' to={`/recursos/${curso.id}`}>
-                                                <RiFileDownloadLine className='icons-aside-menu-actividades' />
+                                                <RiFileDownloadLine className='icons-aside-menu-instancias-eval' />
                                                 Recursos
                                             </Link>
                                         </li>
@@ -190,12 +185,12 @@ export const CursosActividades = () => {
                                 ) : (
                                     instancias.length > 0 ? (
                                         Object.entries(instancias).map(([key, value]) => (  
-                                            <Link to={`/actividad/${value.ID}/entregas`}
-                                                className="actividad-boton no-underline" 
+                                            <Link to={`/instancia-eval/${value.ID}/entregas`}
+                                                className="instancias-eval-boton no-underline" 
                                                 key={key}    
                                             >
                                                 <div className="col-md-12 d-flex align-items-center">
-                                                    <p className="actividad-nombre m-0">{value.nombre}</p>
+                                                    <p className="instancias-eval-nombre m-0">{value.nombre}</p>
                                                     { role === 'D' && (
                                                         <div className="ms-auto d-flex align-items-center">
                                                             <i className="fa fa-pencil me-2" aria-hidden="true"></i>

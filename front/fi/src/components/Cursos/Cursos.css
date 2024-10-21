@@ -1,0 +1,118 @@
+/* ESTILOS PARA CURSOS */
+.cursos-container{
+    min-height: 100vh;
+    position: relative;
+    padding: 2rem;
+    background-color: #f2f6fc 
+}
+
+.cursos-btns{
+    position: absolute;
+    right: 6.6rem;
+    margin: 5;
+    background-color: #1A2035 !important
+}
+
+.cursos-row{
+    padding: 5rem
+}
+
+.cursos-link{
+    text-decoration: none;
+    color: #000
+}
+
+.cursos-card-container{
+    border: 0.1rem solid #7fa7db !important
+}
+
+.cursos-img{
+    height: 10rem;
+    object-fit: cover;
+    background-image: url(/generica.png);
+    background-size: cover;
+    background-position: center;
+    background-color: #7fa7db
+}
+
+.cursos-img-progress{
+    text-align: center;
+}
+
+.cursos-img-progress-bar{
+    height: 0.4rem
+}
+.p-progressbar-value{
+    background: #2f3856;
+}
+
+/* ESTILOS PARA CREAR UN CURSO */
+.modal-header-agregar-curso{
+    background-color: #7fa7db;
+    color: #1A2035;
+    font-weight: bold
+}
+
+.modal-dropdown-comision{
+    height: 2.5rem;
+    font-size: 0.9rem;
+    border: 0.1rem solid #608ad1
+}
+
+.modal-select-materia{
+    border: 0.1rem solid #608ad1 !important
+}
+
+.btn-agregar-curso-cancelar{
+    background-color: #CCDCF1 !important; 
+    color: #1A2035 !important;
+    font-weight: bold; 
+    border-block-color: #1A2035
+}
+
+.btn-agregar-curso{
+    background-color: #1A2035
+}
+
+/* ESTILOS PARA VINCULARSE A UN CURSO */
+.vincular-alumno-container {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    border: solid #1A2035;
+    border-radius: 0.24rem;
+    background-color: #CCDCF1;
+    width: 100%;
+    height: 20rem
+}
+
+.text-description-vincular-alumno {
+    color: #1A2035; 
+    font-weight: bold; 
+    font-size: 1.5rem; 
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    align-self: center
+}
+
+.cod-v-alumno-container{
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.input-item-cod-v{
+    width: 48rem;
+    height: 48px;
+    font-size: 50px;
+}
+
+.btn-vincular-alumno {
+    border-radius: 0.24rem;
+    background-color: #1A2035;
+    color: #fff;
+    align-self: flex-end;
+    align-self: center;
+    margin: 4rem;
+}

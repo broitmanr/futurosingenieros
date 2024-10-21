@@ -5,4 +5,5 @@ export interface CommentedHighlight extends Highlight {
   comment?: string;
   user?: string;
   date?: string;
+  mine?: boolean;
 }

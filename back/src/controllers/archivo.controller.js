@@ -210,7 +210,7 @@ const getComentarios = async (req, res, next) => {
       include: [
         {
           model: models.Persona,
-          attributes: ['nombre', 'apellido']
+          attributes: ['nombre', 'apellido', 'rol']
         }
 
       ]
@@ -224,7 +224,8 @@ const getComentarios = async (req, res, next) => {
       position: comment.position,
       type: comment.type,
       fecha: comment.fecha,
-      usuario: `${comment.Persona.nombre} ${comment.Persona.apellido}` // Incluye los datos de la persona
+      usuario: `${comment.Persona.nombre} ${comment.Persona.apellido}`,
+      mine: comment.Persona.rol === res.locals.usuario.rol
     }))
 
     res.status(200).json(result)

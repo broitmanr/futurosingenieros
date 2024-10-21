@@ -71,7 +71,11 @@
 }
 
 .btn-agregar-curso{
+<<<<<<< HEAD
     background-color: #1A2035
+=======
+    background-color: #1A2035 !important
+>>>>>>> 2bb503b060b0b50c42e41e774b86af45ba90c959
 }
 
 /* ESTILOS PARA VINCULARSE A UN CURSO */

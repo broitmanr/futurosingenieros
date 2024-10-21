@@ -45,7 +45,6 @@ const crearEntrega = async (req, res, next) => {
         ]
       })
 
-
       if (!personaXgrupo) {
         return next({ ...errors.NotFoundError, details: 'No se encontró grupo para la persona y la entrega es grupal' })
       }
@@ -250,24 +249,24 @@ const asociarArchivosConEntrega = async (req, res, next) => {
 }
 // Un docente puede listar las entregas
 async function listarEntregasParaElDocente(req, res, next) {
-  const { idEntregaPactada } = req.params;
-  console.log('Entregas ID que llega del params', idEntregaPactada);
+  const { idEntregaPactada } = req.params
+  console.log('Entregas ID que llega del params', idEntregaPactada)
   try {
     const entregas = await models.Entrega.findAll({
       where: { entregaPactada_ID: idEntregaPactada },
       include: [
         {
           model: models.Persona,
-          attributes: ['legajo', 'nombre', 'apellido'],
-        },
-      ],
-    });
+          attributes: ['legajo', 'nombre', 'apellido']
+        }
+      ]
+    })
 
     if (!entregas.length) {
-      return next({ ...errors.NotFoundError, details: 'No se encontraron entregas de alumnos para esa entregaPactadaID' });
+      return next({ ...errors.NotFoundError, details: 'No se encontraron entregas de alumnos para esa entregaPactadaID' })
     }
-    let estadosEntregas = []
-    for (const entrega of entregas){
+    const estadosEntregas = []
+    for (const entrega of entregas) {
       estadosEntregas[entrega.ID] = await getEstado(entrega)
     }
 
@@ -277,15 +276,15 @@ async function listarEntregasParaElDocente(req, res, next) {
       nombre: entrega.Persona.nombre,
       apellido: entrega.Persona.apellido,
       nota: entrega.nota,
-      estado: estadosEntregas[entrega.ID].descripcion,
-    }));
+      estado: estadosEntregas[entrega.ID].descripcion
+    }))
 
-    res.status(200).json(entregasMapeadas);
+    res.status(200).json(entregasMapeadas)
   } catch (error) {
     return next({
       ...errors.InternalServerError,
-      details: 'Error al listar las entregas: ' + error.message,
-    });
+      details: 'Error al listar las entregas: ' + error.message
+    })
   }
 }
 
@@ -422,19 +421,17 @@ const ver = async (req, res, next) => {
 }
 
 async function getEstado(entrega) {
-
-
   // 0 sin entregar, 1 promocionado , 2 aprobado, 3 desaprobado, 4 con comentarios  5 sin corregir
   const estado = {
     id: null,
     descripcion: null
   }
-  if (entrega == null ) {
+  if (entrega == null) {
     estado.id = 0
     estado.descripcion = 'Sin entregar'
   } else {
     // tODO: MODIFICAR ESTO, ES MUY CROTO PARA SAFAR
-    if (entrega.ID === undefined){
+    if (entrega.ID === undefined) {
       entrega.ID = entrega.entregaId
     }
     if (entrega.nota) {
@@ -446,7 +443,7 @@ async function getEstado(entrega) {
           entrega_id: entrega.ID
         }
       })
-      console.log("problema 2")
+      console.log('problema 2')
       if (comentarios > 0) {
         estado.id = 4
         estado.descripcion = 'Con Comentarios'
@@ -477,7 +474,7 @@ const obtenerEntregaComoAlumno = async (req, res, next) => {
 
     // Obtener IDs de los grupos del alumno
     const grupoIds = personaXGrupos.map(personaXGrupo => personaXGrupo.Grupo.ID)
-
+    console.log(pico.blue(`Grupos del alumno: ${grupoIds}`))
     // Obtener la entrega asociada al persona_id del alumno
     let entrega = await models.Entrega.findOne({
       where: {
@@ -485,20 +482,27 @@ const obtenerEntregaComoAlumno = async (req, res, next) => {
         persona_id: personaId
       }
     })
-
     // Si no se encuentra una entrega individual, buscar una entrega grupal
     if (!entrega) {
-      entrega = await models.Entrega.findOne({
-        where: {
-          entregaPactada_ID: idEntregaPactada,
-          grupo_id: grupoIds // Sequelize detecta que esto es un array y realiza la comparación correctamente
-        }
-      })
-    }
+      console.log(pico.yellow('Advertencia: No se encontró ninguna entrega para el alumno de forma individual'))
 
+      // Buscar la entrega grupal iterando sobre los IDs de los grupos
+      for (const grupoId of grupoIds) {
+        console.log(pico.blue(`Buscando entrega grupal para grupo ID con valor actual de: ${grupoId}`))
+        entrega = await models.Entrega.findOne({
+          where: {
+            entregaPactada_ID: idEntregaPactada,
+            grupo_id: grupoId
+          }
+        })
+        if (entrega) {
+          break // Si se encuentra una entrega, salir del bucle porque ya se encontró la entrega grupal dado que tenemos la entregaPctadaId particular y el grupoId
+        }
+      }
+    }
     // Si no se encuentra ninguna entrega, devolver un error
     if (!entrega) {
-      console.log(pico.yellow('Advertencia: No se encontró ninguna entrega para el alumno'))
+      console.log(pico.yellow('Advertencia: No se encontró ninguna entrega para el alumno en el grupo '))
     }
 
     // Entregas encontradas:

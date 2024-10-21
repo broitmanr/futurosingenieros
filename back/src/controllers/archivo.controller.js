@@ -52,7 +52,7 @@ const inicializarArchivosDesdeCarpeta = async (carpetaId) => {
         updated_at: new Date(),
         updated_by: 'bd'
       })
-      console.log(pico.bgGreen(`Archivcolorso ${archivo.name} agregado a la base de datos.`))
+      console.log(pico.bgGreen(`Archivo:  ${archivo.name} agregado a la base de datos.`))
     }
   } catch (error) {
     console.error('Error al inicializar archivos desde la carpeta:', error)
@@ -184,7 +184,6 @@ const hacerComentario = async (req, res, next) => {
   }
 }
 
-
 const getComentarios = async (req, res, next) => {
   const { id } = req.params
 
@@ -205,19 +204,19 @@ const getComentarios = async (req, res, next) => {
     }
 
     const comentarios = await models.Comentario.findAll({
-      where:{
-        archivo_id:archivo.ID
+      where: {
+        archivo_id: archivo.ID
       },
-      include:[
-          {
-            model:models.Persona,
-            attributes:['nombre','apellido']
-          }
+      include: [
+        {
+          model: models.Persona,
+          attributes: ['nombre', 'apellido', 'rol']
+        }
 
       ]
     })
 
-// Mapea los resultados para devolverlos en el formato deseado
+    // Mapea los resultados para devolverlos en el formato deseado
     const result = comentarios.map(comment => ({
       ID: comment.ID,
       comentario: comment.comentario,
@@ -225,8 +224,9 @@ const getComentarios = async (req, res, next) => {
       position: comment.position,
       type: comment.type,
       fecha: comment.fecha,
-      usuario: `${comment.Persona.nombre} ${comment.Persona.apellido}` // Incluye los datos de la persona
-    }));
+      usuario: `${comment.Persona.nombre} ${comment.Persona.apellido}`,
+      mine: comment.Persona.rol === res.locals.usuario.rol
+    }))
 
     res.status(200).json(result)
   } catch (error) {
@@ -238,53 +238,53 @@ const getComentarios = async (req, res, next) => {
   }
 }
 const editComentario = async (req, res, next) => {
-  const { id } = req.params; // ID del comentario
-  const { type, content, position, comment } = req.body; // Datos a actualizar
+  const { id } = req.params // ID del comentario
+  const { type, content, position, comment } = req.body // Datos a actualizar
 
   try {
-    const comentario = await models.Comentario.findByPk(id); // Encuentra el comentario por ID
+    const comentario = await models.Comentario.findByPk(id) // Encuentra el comentario por ID
 
     if (!comentario) {
-      next({...errors.NotFoundError})
+      next({ ...errors.NotFoundError })
     }
 
     // Actualiza el comentario
-    comentario.type = type;
-    comentario.content = content; // Asegúrate de que el formato sea el adecuado
-    comentario.position = position; // Actualiza la posición si es necesario
-    comentario.comentario = comment; // Actualiza el texto del comentario
-    await comentario.save(); // Guarda los cambios
+    comentario.type = type
+    comentario.content = content // Asegúrate de que el formato sea el adecuado
+    comentario.position = position // Actualiza la posición si es necesario
+    comentario.comentario = comment // Actualiza el texto del comentario
+    await comentario.save() // Guarda los cambios
 
-    return res.status(200).json({ message: 'Comentario actualizado correctamente' });
+    return res.status(200).json({ message: 'Comentario actualizado correctamente' })
   } catch (error) {
-    console.error('Error al editar el comentario:', error);
+    console.error('Error al editar el comentario:', error)
     return next({
       ...errors.InternalServerError,
       details: 'Error al obtener el archivo: ' + error.message
     })
   }
-};
+}
 
 const deleteComentario = async (req, res, next) => {
-  const { id } = req.params; // ID del comentario a eliminar
+  const { id } = req.params // ID del comentario a eliminar
 
   try {
-    const comentario = await models.Comentario.findByPk(id); // Encuentra el comentario por ID
+    const comentario = await models.Comentario.findByPk(id) // Encuentra el comentario por ID
 
     if (!comentario) {
-      next({...errors.NotFoundError})
+      next({ ...errors.NotFoundError })
     }
 
-    await comentario.destroy(); // Elimina el comentario de la base de datos
-    return res.status(200).json({ message: 'Comentario eliminado correctamente' });
+    await comentario.destroy() // Elimina el comentario de la base de datos
+    return res.status(200).json({ message: 'Comentario eliminado correctamente' })
   } catch (error) {
-    console.error('Error al eliminar el comentario:', error);
+    console.error('Error al eliminar el comentario:', error)
     return next({
       ...errors.InternalServerError,
       details: 'Error al obtener el archivo: ' + error.message
     })
   }
-};
+}
 
 const subirMaterialCursada = async (req, res, next) => {
   const { cursoId } = req.params
@@ -455,5 +455,5 @@ module.exports = {
   getListaMaterialCursada,
   getComentarios,
   editComentario,
-  deleteComentario,
+  deleteComentario
 }

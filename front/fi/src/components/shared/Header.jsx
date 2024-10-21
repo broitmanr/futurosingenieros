@@ -1,13 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom'
 import { useRole } from '../../context/RolesContext';
-import { FaUserCircle } from "react-icons/fa";
+import { FaRegUserCircle } from "react-icons/fa";
 import './SharedStyles.css'
 import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-//import { ButtonGroup } from 'react-bootstrap';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+<<<<<<< HEAD
+=======
+import { GoSignOut } from "react-icons/go";
+import { CgProfile } from "react-icons/cg";
+import { FaRegBell } from "react-icons/fa6";
+import { Badge } from 'primereact/badge';
+>>>>>>> 2bb503b060b0b50c42e41e774b86af45ba90c959
 
 const Header = () => {
     const { role, setRole } = useRole()
@@ -15,6 +20,10 @@ const Header = () => {
     const [ dropdownUserVisible, setDropdownUserVisible ] = useState(false)
     const dropdownUserRef = useRef(null)
     const { isLoggedIn, setIsLoggedIn } = useAuth()
+<<<<<<< HEAD
+=======
+    const [ hasNotifications, setHasNotifications ] = useState(false)
+>>>>>>> 2bb503b060b0b50c42e41e774b86af45ba90c959
 
     useEffect(() => { //Redirección logo
         if(role && location.pathname === '/') {
@@ -71,11 +80,18 @@ const Header = () => {
                         FUTUROS INGENIEROS
                     </div>
                     { role && (
-                        <div className='user-items-container'> 
+                        <div className='user-items-container'>
+                            <div className='flex flex-wrap justify-content-center gap-4'>
+                                <i className="p-overlay-badge icon-notifications-container">
+                                    <FaRegBell color='#fff' size={32} />
+                                    {!hasNotifications && <Badge className='badge-notificacions-position' value="2" severity="danger"></Badge>}
+                                </i>
+                            </div>
                             <Dropdown show={dropdownUserVisible} ref={dropdownUserRef} onToggle={toogleDropdownUser}>
-                                <Dropdown.Toggle className='dropdown-toogle-user' as={FaUserCircle} size={32} />
-                                <Dropdown.Menu className='dropdown-menu-user' align={{ lg: 'end' }} flip={true} >
-                                    <Dropdown.Item className='dropdown-item-user' eventKey="1" onClick={handleLogOut}>Cerrar sesión</Dropdown.Item>    
+                                <Dropdown.Toggle className='dropdown-toogle-user' as={FaRegUserCircle} size={32} />
+                                <Dropdown.Menu className='dropdown-menu-user' /*align={{ lg: 'end' }}*/ flip={true} >
+                                    <Dropdown.Item className='dropdown-item-user' eventKey="1"><CgProfile size={24} /> Mi perfil</Dropdown.Item>
+                                    <Dropdown.Item className='dropdown-item-user' eventKey="2" onClick={handleLogOut}><GoSignOut size={24} /> Cerrar sesión</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>

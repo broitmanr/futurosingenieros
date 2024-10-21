@@ -8,7 +8,7 @@ import axios from 'axios';
 import './UploadWindow.css';  // Importar el archivo CSS correspondiente
 import { SlCloudUpload } from 'react-icons/sl';
 import { RxCross2 } from 'react-icons/rx';
-import { TfiFiles } from 'react-icons/tfi';
+import { LuFileSearch } from "react-icons/lu";
 
 const uploadIconUrl = '/Upload-FI.png';  // Asegúrate de que la ruta sea correcta
 
@@ -122,7 +122,7 @@ export default function UploadWindow({ entregaPactadaId, onUploadSuccess }) {
         </div>
     );
 
-    const chooseOptions = { iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined', icon: <TfiFiles /> };
+    const chooseOptions = { iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined', icon: <LuFileSearch size={16} /> };
     const cancelOptions = { iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined', icon: <RxCross2 /> };
 
     return (

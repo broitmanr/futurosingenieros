@@ -36,6 +36,7 @@
     color: #dc3545;
     border-color: #dc3545;
     transition: transform 0.2s ease-in-out;
+    border-radius: 50%
 }
 
 .custom-cancel-btn:hover {

@@ -17,7 +17,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Modal } from 'react-bootstrap';
 import { ProgressBar } from 'primereact/progressbar';
-import { TfiFiles } from "react-icons/tfi";
+import { LuFileSearch } from "react-icons/lu";
 import { SlCloudUpload } from "react-icons/sl";
 import { RxCross2 } from "react-icons/rx";
 import { IoMdCloudCircle } from "react-icons/io";
@@ -110,7 +110,7 @@ export default function Recursos() {
         </div>
     );
 
-    const chooseOptions = { iconOnly: true, className: 'recurso-choose-btn p-button-rounded p-button-outlined btn-header-modal-recursos', icon: <TfiFiles /> };
+    const chooseOptions = { iconOnly: true, className: 'recurso-choose-btn p-button-rounded p-button-outlined btn-header-modal-recursos', icon: <LuFileSearch size={16} /> };
     const cancelOptions = { iconOnly: true, className: 'recurso-cancel-btn p-button-danger p-button-outlined btn-header-modal-recursos', icon: <RxCross2 /> };
 
     const handleVerRecursos = async () => {
@@ -142,22 +142,33 @@ export default function Recursos() {
     const handleViewFile = (url) => {
         window.open(url, '_blank'); // Abre el archivo en una nueva pestaña
     };
-/*
-    const handleDownload = async (url, archivoNombre) => {
+    const handleDownload = async (archivoId, archivoNombre) => {
         try {
-            const response = await axios.get(url, { responseType: 'blob' }); // Asegúrate de especificar 'blob' como responseType
+            // Realizar la solicitud al backend para descargar el archivo
+            const response = await axios.get(`/archivo/${archivoId}`, {
+                withCredentials: true,
+                responseType: 'blob'
+            });
+
+            // Crear un blob a partir de los datos recibidos
             const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+            // Crear un enlace temporal para descargar el archivo
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', archivoNombre); // Puedes especificar el nombre del archivo
+            link.setAttribute('download', archivoNombre);  // Especifica el nombre del archivo a descargar
             document.body.appendChild(link);
+
+            // Simular el clic en el enlace para iniciar la descarga
             link.click();
+
+            // Eliminar el enlace temporal del DOM
             document.body.removeChild(link);
         } catch (error) {
             console.error('Error al descargar el archivo:', error);
         }
     };
-*/
+
     const header = () => {
         return(
             <div className="flex flex-wrap justify-content-end gap-2">
@@ -219,7 +230,7 @@ export default function Recursos() {
                         </div>
                     </div>
                     <div className="flex flex-column align-items-end ml-2">
-                        <Button icon={<IoDownloadOutline size={24} /*onClick={() => handleDownload(archivo.referencia, archivo.nombre)}*/ />} className="p-button-rounded btn-descargar-recurso"></Button>
+                        <Button icon={<IoDownloadOutline size={24} onClick={() => handleDownload(archivo.ID, archivo.nombre)} />} className="p-button-rounded btn-descargar-recurso"></Button>
                     </div>
                 </div>
             </div>

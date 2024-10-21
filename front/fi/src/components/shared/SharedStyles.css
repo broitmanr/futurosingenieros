@@ -1,25 +1,51 @@
 /* Estilos del header */
 .navbar-header-container{
-    background-color: #1A2035;
+    background: #1A2035;
     width: 100%;
+    border-radius: 0.2rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    padding: 0.4rem 2rem;
+    border-bottom: 0.1rem solid rgba(255, 255, 255, 0.6);
+    position: relative;
+}
+
+.navbar-header-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.012); /* Capa de brillo */
+    border-radius: 0.4rem;
+    filter: blur(14px); /* Difumina el brillo */
+    pointer-events: none; /* No interfiere con los clics */
 }
 
 .navbar-logo{
     height: 12vh;
+    transition: transform 0.3s ease;
 }
 
-.navbar-brand-text-container{
-    font-weight: bold; 
-    color: #fff;
-    font-size: 1.8vw; /*Ajusta tamaño de letra según ancho*/
-    left: 50%; /*Posiciona al texto en el centro*/
-    transform: translateX(-50%) /*Centra el texto*/
+.navbar-logo:hover {
+    transform: scale(1.06);
 }
 
-.navbar-brand-text{
-    font-weight: bold; 
+.navbar-brand-text-container, .navbar-brand-text {
+    font-weight: bold;
     color: #fff;
     text-align: center;
+    text-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.1);
+}
+
+.navbar-brand-text-container {
+    font-size: 1.7vw;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.navbar-brand-text {
+    font-size: 1.2rem;
 }
 
 .user-items-container{
@@ -48,8 +74,22 @@
 .subheader-container{
     background-color: #CCDCF1; 
     color: #1A2035; 
-    padding: 0.8vh;
-    border-bottom: 0.14rem solid #1A2035 
+    padding: 0.6vh;
+    border-radius: 0.2rem;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    border-bottom: 0.1rem solid #1A2035 
+}
+
+.subheader-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.03); /* Capa de brillo */
+    filter: blur(14px); /* Difumina el brillo */
+    pointer-events: none; /* No interfiere con los clics */
 }
 
 .subheader-container-fluid{
@@ -67,6 +107,19 @@
     text-align: center;
     padding: 2vh;
     margin-top: auto
+}
+
+.footer-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.012); /* Capa de brillo */
+    border-radius: 0.4rem;
+    filter: blur(15px); /* Difumina el brillo */
+    pointer-events: none; /* No interfiere con los clics */
 }
 
 .icon-footer{

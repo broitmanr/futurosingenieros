@@ -1,5 +1,5 @@
 .home-container{
-    min-height: 100vh; 
+    min-height: 80vh; 
     background-image: url('../../../public/utn2.jpg');
     background-size: cover;
     background-position: center;
@@ -14,17 +14,17 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6); /* Controla la opacidad*/
+    background-color: rgba(0, 0, 0, 0.5); /* Controla la opacidad*/
     z-index: 1;
 }
 
 .home-title{
     color: #fff;
     font-weight: bold; 
-    font-size: 2.8rem;
-    margin-bottom: 12rem;
+    font-size: 2.4rem;
+    margin-bottom: 10rem;
     z-index: 2;
-    text-shadow: 0 1.4px 1.2px #e7e7e7; /* Opcional: para una sombra sutil */
+    text-shadow: 0 1.2px 1.2px gray; /* Opcional: para una sombra sutil */
 }
 
 .home-form{
@@ -43,7 +43,7 @@
     width: 9rem;
     height: 3.2rem;
     font-size: 1.4rem;
-    border: 0.2rem solid #F2F6FC;
+    border: 0.1rem solid #F2F6FC;
     border-radius: 0.3rem;
 }
 

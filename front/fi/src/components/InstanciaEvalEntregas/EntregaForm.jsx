@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import axios from "axios";
-
+import './InstanciaEvalEntregas.css';
 
 export const EntregaForm = ({ show, handleClose, idInstanciaEval, handleEntregaAgregada }) => {
     const [formData, setFormData] = useState({})
@@ -44,12 +44,11 @@ export const EntregaForm = ({ show, handleClose, idInstanciaEval, handleEntregaA
     return (
         <>
             <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton style={{ backgroundColor: '#7fa7db', color: '#1A2035', fontWeight: 'bold' }}>
+                <Modal.Header closeButton>
                     <Modal.Title>Crear una entrega</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={e => handleSubmit(e)}>
-
                         <Form.Group className="mb-3" controlId="grupoInstancia">
                             <Form.Label>Nombre de la entrega</Form.Label>
                             <Form.Control name="nombre" onChange={e => onChange(e)} type="text" placeholder="Ingrese un nombre" />
@@ -79,16 +78,10 @@ export const EntregaForm = ({ show, handleClose, idInstanciaEval, handleEntregaA
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex justify-content-between w-100">
-                        <Button variant="secondary" onClick={handleClose}
-                            style={{
-                                backgroundColor: '#CCDCF1',
-                                color: '#1A2035',
-                                fontWeight: 'bold',
-                                borderBlockColor: '#1A2035',
-                            }}>
+                        <Button className='btn-entrega-cancelar' onClick={handleClose}>
                             Cancelar
                         </Button>
-                        <Button onClick={handleSubmit} variant="primary" style={{ backgroundColor: '#1A2035' }}>
+                        <Button className='btn-entrega-agregar' onClick={handleSubmit}>
                             Confirmar
                         </Button>
                     </div>

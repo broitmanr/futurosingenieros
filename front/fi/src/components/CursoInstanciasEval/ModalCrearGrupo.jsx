@@ -3,6 +3,7 @@ import { Button, Form, Modal, InputGroup, Alert } from 'react-bootstrap';
 import axios from "axios";
 import { useParams } from 'react-router-dom'; // Importar useParams
 import { LiaPlusSolid } from "react-icons/lia";
+import './CursoInstanciasEval.css';
 
 export const ModalCrearGrupo = ({ show, handleClose, grupoExistente }) => {
   const { id } = useParams(); // Obtener el cursoID de los parámetros de la URL
@@ -132,7 +133,7 @@ export const ModalCrearGrupo = ({ show, handleClose, grupoExistente }) => {
   return (
       <>
         <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton style={{ backgroundColor: '#7fa7db', color: '#1A2035', fontWeight: 'bold' }}>
+          <Modal.Header closeButton>
             <Modal.Title>{grupoExistente ? 'Editar Grupo' : 'Crear Grupo'}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -167,7 +168,7 @@ export const ModalCrearGrupo = ({ show, handleClose, grupoExistente }) => {
                       <Button
                           variant="outline-danger"
                           onClick={() => handleEliminarLegajo(index)}
-                          style={{ marginRight: '8px' }}
+                          className='btn-delete-legajo'
                           disabled={guardarDeshabilitado} // Deshabilitar si ya se guardó
                       >
                         <i className="fa fa-times"></i>
@@ -208,50 +209,29 @@ export const ModalCrearGrupo = ({ show, handleClose, grupoExistente }) => {
                     )}
                   </div>
               ))}
-              <div style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  padding: '1rem'
-              }}>
+              <div className='btn-agregar-legajo-container'>
               {/* Botón para agregar legajo */}
                 <Button
-                    variant="outline-primary"
-                    onClick={handleAgregarLegajo}
-                    disabled={guardarDeshabilitado} // Deshabilitar si ya se guardó
-                    style= {{ 
-                      backgroundColor: '#344474', 
-                      border: '0.1rem solid #344474', 
-                      borderRadius: '100%', 
-                      height: 'auto', 
-                      width: '10%', 
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center' 
-                  }}
+                  onClick={handleAgregarLegajo}
+                  disabled={guardarDeshabilitado} // Deshabilitar si ya se guardó
+                  className='btn-agregar-legajo'
                 >
                   {/* Agregar Legajo */}
-                  <LiaPlusSolid size={28} style={{ color: '#fff' }}/>
+                  <LiaPlusSolid size={30} color= '#fff' />
                 </Button>
-              </div>
-              {/* Espacio para separación visual */}
-              <div className="mt-3" />
-
-              <div className="d-flex justify-content-between">
-                <Button variant="secondary" onClick={handleClose} disabled={guardarDeshabilitado} 
-                  style={{ 
-                    backgroundColor: '#CCDCF1', 
-                    color: '#1A2035', 
-                    fontWeight: 'bold', 
-                    borderBlockColor: '#1A2035'
-                  }}>
-                  Cancelar
-                </Button>
-                <Button type="submit" disabled={guardarDeshabilitado || isLoading} style={{ backgroundColor: '#1A2035' }}>
-                  {isLoading ? 'Guardando...' : (grupoExistente ? 'Guardar Cambios' : 'Guardar Grupo')}
-                </Button>
-              </div>
+              </div>              
             </Form>
           </Modal.Body>
+          <Modal.Footer>
+            <div className="d-flex justify-content-between w-100">
+              <Button className='btn-curso-cancelar' onClick={handleClose} disabled={guardarDeshabilitado}>
+                Cancelar
+              </Button>
+              <Button className='btn-curso-agregar' type="submit" disabled={guardarDeshabilitado || isLoading}>
+                {isLoading ? 'Guardando...' : (grupoExistente ? 'Guardar Cambios' : 'Guardar Grupo')}
+              </Button>
+            </div>
+          </Modal.Footer>
         </Modal>
       </>
   );

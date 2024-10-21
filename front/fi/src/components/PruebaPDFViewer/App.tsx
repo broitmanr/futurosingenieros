@@ -18,6 +18,7 @@ import "./style/App.css";
 import { CommentedHighlight } from "./types";
 import axios from "axios";
 import {useParams} from "react-router-dom";
+import moment from "moment/moment";
 
 const PRIMARY_PDF_URL = "http://localhost:5000/api/archivo/";
 
@@ -100,6 +101,7 @@ const App = () => {
                 comment: comment.comentario,
                 user: comment.usuario,
                 date: new Date(comment.fecha).toLocaleDateString(),
+                mine: comment.mine
             }));
             console.log(mappedHighlights)
             setHighlights(mappedHighlights);
@@ -150,7 +152,7 @@ const App = () => {
     };
 
     const addHighlight = async (highlight: GhostHighlight, comment: string) => {
-        const newHighlight = { ...highlight, comment, id: getNextId() };
+        const newHighlight = { ...highlight, comment, id: getNextId(),user:'Vos', date:moment(Date().now).format('DD/MM/YYYY'),mine:true};
         setHighlights([newHighlight, ...highlights]);
 
         // Actualizar el hash con el ID del nuevo highlight

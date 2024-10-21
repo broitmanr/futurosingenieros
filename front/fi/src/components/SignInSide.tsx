@@ -16,6 +16,7 @@ import { useState } from "react";
 import { Modal } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRole } from '../context/RolesContext';
+import { useAuth } from '../context/AuthContext';
 
 const defaultTheme = createTheme();
 
@@ -28,10 +29,10 @@ export default function SignInSide() {
     const [isError, setIsError] = useState(false);
     const navigate = useNavigate();
     const { setRole } = useRole();
+    const { setIsLoggedIn } = useAuth()
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         axios.post('http://localhost:5000/auth/sign-in', {
             mail,
             password
@@ -40,11 +41,13 @@ export default function SignInSide() {
         })
             .then(response => {
                 if (response.data && response.data.success) {
+                    console.log('Data usuario: ', JSON.stringify(response.data.data))
                     setRole(response.data.data.role)
+                    setIsLoggedIn(true)
                     setIsError(false);
                     setModalMessage('Login Exitoso! Redirigiendo...');
                     setShowModal(true);
-                    navigate('/cursos')
+                    //navigate('/cursos')
                 } else {
                     setIsError(true);
                     setModalMessage('Algo falló. Inténtalo de nuevo.');

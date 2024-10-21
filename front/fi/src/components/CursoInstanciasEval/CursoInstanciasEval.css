@@ -128,7 +128,34 @@
     margin-right: 0.5rem;
 }
 
-/*Estilos del boton crear instancia*/
+.instancias-eval-boton {
+    display: block;
+    background-color: #CCDCF1; /* Color de fondo */
+    color: rgb(7, 7, 7); /* Color del texto */
+    border: 0.1rem solid #080808; /* Borde del botón */
+    padding: 10px 20px; /* Espaciado interno del botón */
+    margin: 5px 0; /* Espaciado externo del botón */
+    font-size: 16px; /* Tamaño de fuente */
+    cursor: pointer; /* Cambia el cursor al pasar por el botón */
+    border-radius: 4px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Transición para el efecto hover */
+    width: 100%; /* Hace que el botón ocupe el 100% del ancho del contenedor */
+  }
+  
+.instancias-eval-boton:hover {
+    background-color: #7fa7db; /* Color de fondo al pasar el ratón */
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+.instancias-eval-nombre {
+    font-size: 1.03rem;
+    color: #1A2035;
+}
+
+/*ESTILOS CREAR INSTANCIA*/
 
 /* Estilo base para el botón */
 .btn-primary {
@@ -184,49 +211,60 @@
     font-weight: bold; /* Texto en negrita para las etiquetas */
 }
 
+.agregar-instancia-eval-select{
+    margin-bottom: 1rem;
+    border: 0.1rem solid #608ad1 !important
+}
+
 /* Estilo para los botones del modal */
-.modal-footer .btn-secondary {
+.modal-footer .btn-curso-cancelar {
     background-color: #CCDCF1; /* Color de fondo */
     color: #1A2035; /* Color del texto */
     font-weight: bold; /* Texto en negrita */
     border: 1px solid #1A2035; /* Color del borde */
 }
 
-.modal-footer .btn-primary {
+.modal-footer .btn-curso-cancelar:hover {
+    transform: scale(1.1);
+    background-color: #80a7da;
+    color: #1a2035
+}
+
+.modal-footer .btn-curso-agregar {
     background-color: #1A2035; /* Color de fondo */
-    color: #ffffff; /* Color del texto */
-    font-weight: bold; /* Texto en negrita */
-    border: 1px solid #1A2035; /* Color del borde */
+}
+.modal-footer .btn-curso-agregar:hover {
+    transform: scale(1.1);
+    background-color: #324a76
 }
 
-.instancias-eval-boton {
-    display: block;
-    background-color: #CCDCF1; /* Color de fondo */
-    color: rgb(7, 7, 7); /* Color del texto */
-    border: 0.1rem solid #080808; /* Borde del botón */
-    padding: 10px 20px; /* Espaciado interno del botón */
-    margin: 5px 0; /* Espaciado externo del botón */
-    font-size: 16px; /* Tamaño de fuente */
-    cursor: pointer; /* Cambia el cursor al pasar por el botón */
-    border-radius: 4px; /* Bordes redondeados */
-    transition: background-color 0.3s ease; /* Transición para el efecto hover */
-    width: 100%; /* Hace que el botón ocupe el 100% del ancho del contenedor */
-  }
-  
-.instancias-eval-boton:hover {
-    background-color: #7fa7db; /* Color de fondo al pasar el ratón */
+/* ESTILOS CREAR GRUPO */
+.btn-delete-legajo{
+    margin-right: 0.8rem;
 }
 
-.no-underline {
-    text-decoration: none;
+.btn-agregar-legajo-container{
+    display: flex;
+    justify-content: flex-end
 }
 
-.instancias-eval-nombre {
-    font-size: 1.03rem;
-    color: #1A2035;
+.modal-body .btn-agregar-legajo{
+    background-color: #344474; 
+    border: 0.1rem solid #344474;
+    border-radius: 100%; 
+    height: auto; 
+    width: 10%; 
+    display: flex;
+    justify-content: center ;
+    align-items: center
 }
 
-/* ESTILOS DE ALUMNOS CURSO*/
+.modal-body .btn-agregar-legajo:hover{
+    transform: scale(1.1);
+    background-color: #395794
+}
+
+/* ESTILOS DE ALUMNOS CURSO */
 .alumnos-container { /* Estilos del contenedor */
     min-height: 100vh; 
     align-items: center;

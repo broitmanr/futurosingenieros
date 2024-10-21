@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { GoSignOut } from "react-icons/go";
 import { CgProfile } from "react-icons/cg";
 import { FaRegBell } from "react-icons/fa6";
+import { Badge } from 'primereact/badge';
 
 const Header = () => {
     const { role, setRole } = useRole()
@@ -16,6 +17,7 @@ const Header = () => {
     const [ dropdownUserVisible, setDropdownUserVisible ] = useState(false)
     const dropdownUserRef = useRef(null)
     const { isLoggedIn, setIsLoggedIn } = useAuth()
+    const [ hasNotifications, setHasNotifications ] = useState(false)
 
     useEffect(() => { //Redirección logo
         if(role && location.pathname === '/') {
@@ -72,8 +74,13 @@ const Header = () => {
                         FUTUROS INGENIEROS
                     </div>
                     { role && (
-                        <div className='user-items-container'> 
-                            <FaRegBell color='#fff' size={32} />
+                        <div className='user-items-container'>
+                            <div className='flex flex-wrap justify-content-center gap-4'>
+                                <i className="p-overlay-badge icon-notifications-container">
+                                    <FaRegBell color='#fff' size={32} />
+                                    {!hasNotifications && <Badge className='badge-notificacions-position' value="2" severity="danger"></Badge>}
+                                </i>
+                            </div>
                             <Dropdown show={dropdownUserVisible} ref={dropdownUserRef} onToggle={toogleDropdownUser}>
                                 <Dropdown.Toggle className='dropdown-toogle-user' as={FaRegUserCircle} size={32} />
                                 <Dropdown.Menu className='dropdown-menu-user' /*align={{ lg: 'end' }}*/ flip={true} >

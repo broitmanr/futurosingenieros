@@ -17,7 +17,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Modal } from 'react-bootstrap';
 import { ProgressBar } from 'primereact/progressbar';
-import { TfiFiles } from "react-icons/tfi";
+import { LuFileSearch } from "react-icons/lu";
 import { SlCloudUpload } from "react-icons/sl";
 import { RxCross2 } from "react-icons/rx";
 import { IoMdCloudCircle } from "react-icons/io";
@@ -110,7 +110,7 @@ export default function Recursos() {
         </div>
     );
 
-    const chooseOptions = { iconOnly: true, className: 'recurso-choose-btn p-button-rounded p-button-outlined btn-header-modal-recursos', icon: <TfiFiles /> };
+    const chooseOptions = { iconOnly: true, className: 'recurso-choose-btn p-button-rounded p-button-outlined btn-header-modal-recursos', icon: <LuFileSearch size={16} /> };
     const cancelOptions = { iconOnly: true, className: 'recurso-cancel-btn p-button-danger p-button-outlined btn-header-modal-recursos', icon: <RxCross2 /> };
 
     const handleVerRecursos = async () => {

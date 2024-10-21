@@ -56,6 +56,13 @@
     flex-direction: row
 }
 
+.badge-notificacions-position{
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+}
+
 .dropdown-toogle-user{
     color: #fff;
     cursor: pointer;
@@ -95,6 +102,11 @@
     .user-items-container {
         margin-right: 1rem;
     }
+
+    .icon-container svg {
+        width: 24px;
+        height: 24px;
+    }
 }
 
 /* Estilos del subheader */
@@ -104,7 +116,8 @@
     padding: 0.6vh;
     border-radius: 0.2rem;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
-    border-bottom: 0.1rem solid #1A2035 
+    border-bottom: 0.1rem solid #1A2035;
+    position: relative;
 }
 
 .subheader-container::after {
@@ -133,7 +146,8 @@
     color: #fff;
     text-align: center;
     padding: 2vh;
-    margin-top: auto
+    margin-top: auto;
+    position: relative;
 }
 
 .footer-container::after {
@@ -155,4 +169,44 @@
 
 .text-footer{
     font-size: 1.4vw
+}
+
+/* Mejorar lo responsive del subheader y footer */
+@media (max-width: 1200px) {
+    .subheader-container-fluid {
+        padding-left: 4rem;
+        padding-right: 4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .subheader-container-fluid {
+        font-size: 2vw;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    .footer-container {
+        padding: 1.5vh;
+    }
+
+    .text-footer {
+        font-size: 2vw;
+    }
+}
+
+@media (max-width: 480px) {
+    .subheader-container-fluid {
+        font-size: 3vw;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .footer-container {
+        padding: 1vh;
+    }
+
+    .text-footer {
+        font-size: 3vw;
+    }
 }

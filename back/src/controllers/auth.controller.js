@@ -12,7 +12,12 @@ module.exports = {
       const user = await models.Usuario.findOne({
         where: {
           mail: req.body.mail
-        }
+        },
+        include:[
+        {
+          model:models.Persona,
+          attributes:['nombre','apellido']
+        }]
       })
 
       if (user) {
@@ -32,7 +37,8 @@ module.exports = {
         data: {
           id: user.ID,
           token: jwt(user),
-          role: user.rol // Se incluye el rol
+          role: user.rol,
+          name: user.Persona?.nombre + ' '+ user.Persona?.apellido ?? null
         }
       })
     } catch (err) {

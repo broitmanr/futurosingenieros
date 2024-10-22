@@ -1,0 +1,203 @@
+/* Contenedor principal */
+body {
+    background: linear-gradient(to bottom, #e3f2fd, #f2f2f2); /* Degradado suave de azul a gris claro */
+    margin: 0;
+    padding: 0;
+    min-height: 100vh; /* Asegura que el fondo cubra toda la pantalla */
+}
+
+.data-perfil {
+    /*background-color: rgba(221, 231, 234, 0.804);*/
+    background-color: #e3f2fd;
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 800px;
+    margin: 20px auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Sección del nombre */
+.nombre-perfil {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    margin:10px;
+}
+
+.nombre-perfil i {
+    font-size: 24px;
+    color: #003366;
+    margin-right: 12px;
+    margin: 10px;
+}
+
+.nombre-perfil h2 {
+    color: #003366;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px;
+}
+
+/* Sección de datos */
+.datos-usuario-perfil {
+    margin-bottom: 30px;
+    margin:10px;
+}
+
+.datos-usuario-perfil h3 {
+    color: #003366;
+    font-size: 20px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+}
+
+.datos-usuario-perfil .d-flex {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* Estilos comunes para las secciones de datos */
+.legajo-perfil,
+.documento-perfil,
+.correo-perfil {
+    position: relative;
+    padding-bottom: 8px;
+    margin: 20px;
+}
+
+.legajo-perfil h5,
+.documento-perfil h5,
+.correo-perfil h5 {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-weight: normal;
+}
+
+.legajo-perfil i,
+.documento-perfil i,
+.correo-perfil i {
+    color: #003366;
+}
+
+.legajo-perfil span,
+.documento-perfil span,
+.correo-perfil span {
+    display: block;
+    color: #333;
+    font-size: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ddd;
+
+}
+
+/* Sección de cátedras */
+.catedras {
+    margin-top: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.catedras h4 {
+    color: #0f0f0f;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin:20px;
+    list-style: none ;
+}
+
+.catedras i {
+    color: #0e0f0f;
+}
+
+.catedras span{
+    margin:20px;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre el icono y el texto */
+    margin: 20px;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .data-perfil {
+        margin: 10px;
+        padding: 16px;
+    }
+
+    .datos-usuario-perfil .d-flex {
+        grid-template-columns: 1fr;
+    }
+}
+
+.correo-perfil {
+    position: relative;
+    padding-right: 30px; /* Asegura espacio para el ícono */
+}
+
+.legajo-perfil {
+    position: relative;
+    padding-right: 35px; /* Añade espacio a la derecha para el ícono */
+}
+
+.documento-perfil {
+    position: relative;
+    padding-right: 30px; /* Añade espacio a la derecha para el ícono */
+}
+
+.icono-editar {
+    position: absolute;
+    right: 0;
+    top:60%;
+    transform: translateY(-50%); /* Centra verticalmente el ícono */
+    cursor: pointer;
+    color: #746f68; /* Color amarillo del cuerpo del lápiz */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    font-size: 16px;
+}
+
+.legajo-perfil .icono-editar {
+    position: absolute;
+    right: 0;
+    top:60%;
+    transform: translateY(-40%); /* Centra verticalmente el ícono */
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+}
+
+
+
+.materia {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-left: 3%;
+}
+
+.materia span {
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease; /* Añade una transición para el hover */
+    text-decoration: underline;
+    color: #0e0f0f;
+}
+
+.materia span:hover {
+    transform: scale(1.02); /* Agranda solo el span al pasar el mouse */
+    color: #003366; /* Cambia el color del texto al hacer hover, opcional */
+}
+
+
+.icono-check {
+    flex-shrink: 0; /* Evita que el ícono se reduzca en caso de falta de espacio */
+    margin-right: 4px;
+}
+
+  

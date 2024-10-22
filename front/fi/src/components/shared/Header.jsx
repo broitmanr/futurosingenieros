@@ -6,13 +6,10 @@ import './SharedStyles.css'
 import Dropdown from 'react-bootstrap/Dropdown';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
-<<<<<<< HEAD
-=======
 import { GoSignOut } from "react-icons/go";
 import { CgProfile } from "react-icons/cg";
 import { FaRegBell } from "react-icons/fa6";
 import { Badge } from 'primereact/badge';
->>>>>>> 2bb503b060b0b50c42e41e774b86af45ba90c959
 
 const Header = () => {
     const { role, setRole } = useRole()
@@ -20,10 +17,7 @@ const Header = () => {
     const [ dropdownUserVisible, setDropdownUserVisible ] = useState(false)
     const dropdownUserRef = useRef(null)
     const { isLoggedIn, setIsLoggedIn } = useAuth()
-<<<<<<< HEAD
-=======
     const [ hasNotifications, setHasNotifications ] = useState(false)
->>>>>>> 2bb503b060b0b50c42e41e774b86af45ba90c959
 
     useEffect(() => { //Redirección logo
         if(role && location.pathname === '/') {

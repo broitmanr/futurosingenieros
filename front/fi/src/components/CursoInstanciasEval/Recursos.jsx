@@ -221,7 +221,7 @@ export default function Recursos() {
 
     const header = () => {
         return(
-            <div className="flex flex-wrap justify-content-end gap-2">
+            <div className="flex flex-wrap justify-content-center gap-2">
                 { role === 'D' &&
                 <>
                 <Toast ref={toast} />
@@ -316,7 +316,13 @@ export default function Recursos() {
     return (
         <div className='recursos-container'>
             {curso ? (
-                <BreadCrumb className='navegacion-recursos' model={items} home={home} />        
+                <>
+                <BreadCrumb className='recursos-breadcrumb' model={items} home={home} />
+                <div className='banner-recursos py-4'>
+                    <h1 className='nombre-materia'>Recursos</h1>
+                    <p className='nombre-comision'>{curso.Materium.nombre} {curso.Comision.nombre}</p>
+                </div>
+                </>
             ):(
                 <div>Cargando...</div>
             )

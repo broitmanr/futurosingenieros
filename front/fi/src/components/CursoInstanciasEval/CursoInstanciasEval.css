@@ -11,23 +11,6 @@
     box-sizing: border-box;
 }
 
-.banner-box {
-    border: 3px solid #0056b3; /* Borde azul oscuro */
-    border-radius: 10px; /* Esquinas redondeadas */
-    background-color: #ffffff; /* Fondo blanco */
-    padding: 25px; /* Espaciado interno */
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
-    text-align: center; /* Alineación centrada del texto */
-    transform: translateY(-5px); /* Efecto de elevación */
-}
-
-.nombre-materia {
-    font-size: 2.2rem; /* Tamaño de fuente más grande */
-    font-weight: bold; /* Negrita */
-    color: #0056b3; /* Color azul oscuro */
-    margin-bottom: 15px; /* Espacio inferior */
-}
-
 /* Asegura que la lista ocupe el ancho completo del contenedor */
 .aside-nav {
     padding: 0;
@@ -65,7 +48,7 @@
     font-size: 2rem; /* Tamaño de fuente más grande para el título */
     font-weight: bold; /* Negrita para darle más énfasis */
     color: #fff; /* Color oscuro del texto */
-    margin-bottom: 20px; /* Espacio adicional debajo del título */
+    margin-bottom: 0.3rem; /* Espacio adicional debajo del título */
     font-family: 'Roboto', sans-serif; /* Fuente personalizada */
     letter-spacing: 1px; /* Espaciado entre letras para mayor elegancia */
 }
@@ -419,7 +402,7 @@
 /* ESTILOS DE RECURSOS */
 
 .recursos-container {
-    min-height: 72vh;
+    min-height: 80vh;
     padding: 1rem;
     background-color: #fff;
     border-radius: 8px;
@@ -427,8 +410,23 @@
 
 .item-path-recursos{
     text-decoration: none;
-    color: #425fb3;
-    font-weight: bold;
+    color: rgb(70, 67, 67);
+    font-size: 1.2rem;
+}
+
+.recursos-breadcrumb{
+    border: none;
+    padding: 0;
+}
+
+.banner-recursos{
+    background: rgb(127, 167, 219);
+    background: linear-gradient(313deg, rgba(127, 167, 219, 1) 0%, rgba(26, 32, 53, 1) 100%);
+    color: #fff;
+    padding: 1rem;
+    border-radius: 0.8rem;
+    text-align: center;
+    width: 100%;
 }
 
 .p-dataview .p-dataview-header {

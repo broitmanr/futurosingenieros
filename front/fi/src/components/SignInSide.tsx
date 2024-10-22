@@ -41,6 +41,7 @@ export default function SignInSide() {
         })
             .then(response => {
                 if (response.data && response.data.success) {
+                    console.log('Data usuario: ', JSON.stringify(response.data.data))
                     setRole(response.data.data.role)
                     setIsLoggedIn(true)
                     setIsError(false);

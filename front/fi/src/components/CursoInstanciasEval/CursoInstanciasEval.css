@@ -580,3 +580,23 @@
 .p-confirm-popup .p-confirm-popup-footer button:last-child:hover {
     transform: scale(1.1)
 }
+
+.no-recursos{
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    height: 50vh
+}
+
+.no-recursos-img{
+    width: 12rem;
+    height: auto;
+    margin-bottom: 1rem
+}
+
+.no-recursos-text{
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333
+}

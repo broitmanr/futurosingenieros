@@ -167,22 +167,34 @@ export default function Recursos() {
     const handleViewFile = (url) => {
         window.open(url, '_blank'); // Abre el archivo en una nueva pestaña
     };
-/*
-    const handleDownload = async (url, archivoNombre) => {
+
+    const handleDownload = async (archivoId, archivoNombre) => {
         try {
-            const response = await axios.get(url, { responseType: 'blob' }); // Asegúrate de especificar 'blob' como responseType
+            // Realizar la solicitud al backend para descargar el archivo
+            const response = await axios.get(`/archivo/${archivoId}`, {
+                withCredentials: true,
+                responseType: 'blob'
+            });
+
+            // Crear un blob a partir de los datos recibidos
             const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+            // Crear un enlace temporal para descargar el archivo
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', archivoNombre); // Puedes especificar el nombre del archivo
+            link.setAttribute('download', archivoNombre);  // Especifica el nombre del archivo a descargar
             document.body.appendChild(link);
+
+            // Simular el clic en el enlace para iniciar la descarga
             link.click();
+
+            // Eliminar el enlace temporal del DOM
             document.body.removeChild(link);
         } catch (error) {
             console.error('Error al descargar el archivo:', error);
         }
     };
-*/
+
     const accept = () => {
         toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Recurso/s eliminado/s con éxito', life: 3000 });
     };
@@ -272,7 +284,7 @@ export default function Recursos() {
                         </div>
                     </div>
                     <div className="flex flex-column align-items-end ml-2">
-                        <Button icon={<IoDownloadOutline size={24} /*onClick={() => handleDownload(archivo.referencia, archivo.nombre)}*/ />} className="p-button-rounded btn-descargar-recurso"></Button>
+                        <Button icon={<IoDownloadOutline size={24} onClick={() => handleDownload(archivo.ID, archivo.nombre)} />} className="p-button-rounded btn-descargar-recurso"></Button>
                     </div>
                 </div>
             </div>
@@ -282,19 +294,12 @@ export default function Recursos() {
     const listTemplate = (archivos) => {
         if (!archivos || archivos.length === 0) {
             return (
-                <div className="no-recursos" style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
-                    height: '50vh'
-                }}>
+                <div className="no-recursos">
                     <img 
                         src="../../../public/NoEncontrado.png" 
-                        alt="No recursos" 
-                        style={{ width: '12rem', height: 'auto', marginBottom: '1rem' }}
+                        alt="No recursos"
                     />
-                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#333' }}>
+                    <span className='no-recursos-text'>
                         No se encontraron recursos
                     </span>
                 </div>

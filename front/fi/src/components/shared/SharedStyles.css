@@ -163,6 +163,19 @@
     pointer-events: none; /* No interfiere con los clics */
 }
 
+.footer-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.012); /* Capa de brillo */
+    border-radius: 0.4rem;
+    filter: blur(15px); /* Difumina el brillo */
+    pointer-events: none; /* No interfiere con los clics */
+}
+
 .icon-footer{
     margin-right: 1.2rem;
 }

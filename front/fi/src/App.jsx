@@ -11,7 +11,7 @@ import AlumnosCurso from './components/CursoInstanciasEval/AlumnosCurso.jsx';
 import { CursoInstanciasEval } from './components/CursoInstanciasEval/CursoInstanciasEval.jsx';
 import { InstanciaEvalEntregas } from './components/InstanciaEvalEntregas/InstanciaEvalEntregas.jsx';
 import { DetalleEntrega } from './components/DetalleEntrega/DetalleEntrega.jsx';
-import ArchivoPrueba from './components/PruebaPDFViewer/App.tsx';
+import ArchivoEntrega from './components/PruebaPDFViewer/App.tsx';
 import Rendimiento from './components/Rendimiento/Rendimiento.jsx';
 import Recursos from './components/CursoInstanciasEval/Recursos.jsx';
 import PrivateRoute from './PrivateRoutes';
@@ -37,7 +37,6 @@ const AppContent = () => {
         <Route path="/" element={<Home />}/>
         <Route path="/login" element={<SignInSide />}/>
         <Route path="/register" element={<SignUp />}/>
-        <Route path="/archivo/:id" element={<ArchivoPrueba />}/>
         <Route
           path="/cursos"
           element={
@@ -91,6 +90,14 @@ const AppContent = () => {
           element={
             <PrivateRoute allowedRoles={['D', 'A']}>
               <DetalleEntrega />
+            </PrivateRoute>
+          }
+        />
+        <Route 
+          path="/archivo/:id" 
+          element={
+            <PrivateRoute allowedRoles={['D', 'A']}>
+              <ArchivoEntrega />
             </PrivateRoute>
           }
         />

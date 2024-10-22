@@ -116,12 +116,8 @@
     padding: 0.6vh;
     border-radius: 0.2rem;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
-<<<<<<< HEAD
-    border-bottom: 0.1rem solid #1A2035 
-=======
     border-bottom: 0.1rem solid #1A2035;
     position: relative;
->>>>>>> 2bb503b060b0b50c42e41e774b86af45ba90c959
 }
 
 .subheader-container::after {

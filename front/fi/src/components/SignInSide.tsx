@@ -47,7 +47,7 @@ export default function SignInSide() {
                     setIsError(false);
                     setModalMessage('Login Exitoso! Redirigiendo...');
                     setShowModal(true);
-                    //navigate('/cursos')
+                    navigate('/cursos')
                 } else {
                     setIsError(true);
                     setModalMessage('Algo falló. Inténtalo de nuevo.');

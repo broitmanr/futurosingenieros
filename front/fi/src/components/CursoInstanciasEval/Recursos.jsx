@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
-import { Rating } from 'primereact/rating';
-import { Tag } from 'primereact/tag';
-import { classNames } from 'primereact/utils';
 import { FaPlus } from "react-icons/fa6";
 import { FaTrashAlt } from "react-icons/fa";
-import { BsTrash } from "react-icons/bs";
 import { IoDownloadOutline } from "react-icons/io5";
 import { Checkbox } from 'primereact/checkbox';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
@@ -14,15 +9,21 @@ import { FileUpload } from 'primereact/fileupload';
 import './CursoInstanciasEval.css'; //Se importan los estilos
 import { useRole } from '../../context/RolesContext';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Modal } from 'react-bootstrap';
 import { ProgressBar } from 'primereact/progressbar';
 import { LuFileSearch } from "react-icons/lu";
 import { SlCloudUpload } from "react-icons/sl";
 import { RxCross2 } from "react-icons/rx";
-import { IoMdCloudCircle } from "react-icons/io";
 import {CircularProgress} from "@mui/material";
 import { IoEyeSharp } from "react-icons/io5";
+import { confirmPopup, ConfirmPopup } from 'primereact/confirmpopup';
+import { Toast } from 'primereact/toast';
+import { CiWarning } from "react-icons/ci";
+import { CiCircleCheck } from "react-icons/ci";
+import { RxCrossCircled } from "react-icons/rx";
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { AiOutlineHome } from "react-icons/ai";
 
 export default function Recursos() {
     const { id } = useParams()
@@ -30,12 +31,36 @@ export default function Recursos() {
     const [selectedItems, setSelectedItems] = useState([]);
     const [files, setFiles] = useState([])
     const fileUploadRef = useRef(null)
+    const toast = useRef(null);
     const [visible, setVisible] = useState(false)
     const [totalSize, setTotalSize] = useState(0)
     const [loading, setLoading] = useState(false); // Estado para manejar el estado de carga
     const [archivos, setArchivos] = useState([])
     const handleCloseUpload = () => setVisible(false);
     const handleShowUpload = () => setVisible(true);
+    const [curso, setCurso] = useState(null);
+
+    useEffect(() => { // OBTENER LOS DATOS DEL CURSO
+        axios.get(`/curso/${id}`, { withCredentials: true })
+            .then(response => {
+                console.log(response.data);
+                setCurso(response.data)
+            })
+            .catch(err => {
+                console.log(err)
+            });
+    }, [id]);
+
+    const items = curso ? [
+        {template: () => 
+            <Link className="item-path-recursos" to={`/curso/${curso.id}`}>
+                {curso.Materium.nombre}
+            </Link>}, 
+        {template: () => <a className="item-path-recursos">Recursos</a>  }
+    ]: [];
+    const home = { icon: <AiOutlineHome size={22} color='#1a2035' />, url: ('/cursos') }
+
+    
 
     const handleFileChange = (e) => {
         const selectedFiles = [...e.files];
@@ -142,6 +167,7 @@ export default function Recursos() {
     const handleViewFile = (url) => {
         window.open(url, '_blank'); // Abre el archivo en una nueva pestaña
     };
+
     const handleDownload = async (archivoId, archivoNombre) => {
         try {
             // Realizar la solicitud al backend para descargar el archivo
@@ -169,12 +195,40 @@ export default function Recursos() {
         }
     };
 
+    const accept = () => {
+        toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Recurso/s eliminado/s con éxito', life: 3000 });
+    };
+
+    const showConfirmDelete = (event) => {
+        confirmPopup({
+            target: event.currentTarget,
+            group: 'templating',
+            header: 'Confirmation',
+            message: (
+                <div className="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
+                    <i className="text-6xl text-primary-500"></i>
+                    <CiWarning size={40} className='btn-gestionar-recurso' />
+                    <span>¿Está seguro que desea eliminar el/los recurso/s?</span>
+                </div>
+            ),
+            acceptIcon: <CiCircleCheck size={20} className='icons-delete-recurso' />,
+            rejectIcon: <RxCrossCircled size={20} className='icons-delete-recurso' />,
+            rejectClass: 'p-button-sm',
+            acceptClass: 'p-button-outlined p-button-sm btn-eliminar-recurso',
+            accept
+        });
+    };
+
     const header = () => {
         return(
             <div className="flex flex-wrap justify-content-end gap-2">
                 { role === 'D' &&
                 <>
-                <Button className='btn-gestionar-recurso' icon={<FaTrashAlt size={24} />} label="Eliminar recurso" text />
+                <Toast ref={toast} />
+                <ConfirmPopup group="templating" />
+                <div className="flex justify-content-center">
+                    <Button className='btn-gestionar-recurso' onClick={showConfirmDelete} icon={<FaTrashAlt size={24} />} label="Eliminar recurso" text />
+                </div>
                 <Button className='btn-gestionar-recurso' icon={<FaPlus size={24} />} label="Subir recurso" text onClick={handleShowUpload} />
                 <Modal show={visible} onHide={handleCloseUpload} >
                     <Modal.Header closeButton>
@@ -240,19 +294,12 @@ export default function Recursos() {
     const listTemplate = (archivos) => {
         if (!archivos || archivos.length === 0) {
             return (
-                <div className="no-recursos" style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
-                    height: '50vh'
-                }}>
+                <div className="no-recursos">
                     <img 
                         src="../../../public/NoEncontrado.png" 
-                        alt="No recursos" 
-                        style={{ width: '12rem', height: 'auto', marginBottom: '1rem' }}
+                        alt="No recursos"
                     />
-                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#333' }}>
+                    <span className='no-recursos-text'>
                         No se encontraron recursos
                     </span>
                 </div>
@@ -267,8 +314,17 @@ export default function Recursos() {
     };
     
     return (
-        <div className="card recursos-cards">
-            <DataView value={archivos} listTemplate={listTemplate} header={header()} />
+        <div className='recursos-container'>
+            {curso ? (
+                <BreadCrumb className='navegacion-recursos' model={items} home={home} />        
+            ):(
+                <div>Cargando...</div>
+            )
+            }
+            
+            <div>
+                <DataView value={archivos} listTemplate={listTemplate} header={header()} />
+            </div>
         </div>
     );
 

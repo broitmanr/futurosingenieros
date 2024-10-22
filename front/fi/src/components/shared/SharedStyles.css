@@ -63,6 +63,17 @@
     transform: translate(50%, -50%);
 }
 
+.user-data-header-container{
+    display: flex;
+    align-items: center
+}
+
+.user-data-header-container .user-name{
+    color: #fff;
+    margin-left: 0.3rem;
+    font-size: 0.9rem;
+}
+
 .dropdown-toogle-user{
     color: #fff;
     cursor: pointer;

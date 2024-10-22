@@ -29,7 +29,7 @@ export default function SignInSide() {
     const [isError, setIsError] = useState(false);
     const navigate = useNavigate();
     const { setRole } = useRole();
-    const { setIsLoggedIn } = useAuth()
+    const { setIsLoggedIn, setUserData } = useAuth()
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -41,8 +41,10 @@ export default function SignInSide() {
         })
             .then(response => {
                 if (response.data && response.data.success) {
-                    console.log('Data usuario: ', JSON.stringify(response.data.data))
-                    setRole(response.data.data.role)
+                    const userData = response.data.data;
+                    setUserData(userData)
+                    localStorage.setItem('userData', JSON.stringify(userData))
+                    setRole(userData.role)
                     setIsLoggedIn(true)
                     setIsError(false);
                     setModalMessage('Login Exitoso! Redirigiendo...');

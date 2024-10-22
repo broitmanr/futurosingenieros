@@ -14,10 +14,11 @@ import moment from "moment";
 
 const Header = () => {
     const { role, setRole } = useRole();
+    const [nombre, setNombre] = useState('')
     const navigate = useNavigate();
     const [dropdownUserVisible, setDropdownUserVisible] = useState(false);
     const dropdownUserRef = useRef(null);
-    const { isLoggedIn, setIsLoggedIn } = useAuth();
+    const { userData, setIsLoggedIn } = useAuth();
     const [hasNotifications, setHasNotifications] = useState(false);
     const [notificaciones, setNotificaciones] = useState([]); // Estado para notificaciones
     const [dropdownNotificacionesVisible, setDropdownNotificacionesVisible] = useState(false); // Para mostrar las notificaciones
@@ -35,6 +36,12 @@ const Header = () => {
     const toogleDropdownNotificaciones = () => {
         setDropdownNotificacionesVisible(!dropdownNotificacionesVisible);
     };
+
+    useEffect(() => { //Filtra el nombre del usuario para la bienvenida
+        if (userData) {
+            setNombre(userData.name);
+        }
+    }, [userData]);
 
     const handleLogOut = async () => {
         try {
@@ -136,13 +143,16 @@ const Header = () => {
                                     </div>
                                 )}
                             </div>
-                            <Dropdown show={dropdownUserVisible} ref={dropdownUserRef} onToggle={toogleDropdownUser}>
-                                <Dropdown.Toggle className='dropdown-toogle-user' as={FaRegUserCircle} size={32} />
-                                <Dropdown.Menu className='dropdown-menu-user'>
-                                    <Dropdown.Item className='dropdown-item-user' eventKey="1"><CgProfile size={24} /> Mi perfil</Dropdown.Item>
-                                    <Dropdown.Item className='dropdown-item-user' eventKey="2" onClick={handleLogOut}><GoSignOut size={24} /> Cerrar sesión</Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
+                            <div className='user-data-header-container'>
+                                <Dropdown show={dropdownUserVisible} ref={dropdownUserRef} onToggle={toogleDropdownUser}>
+                                    <Dropdown.Toggle className='dropdown-toogle-user' as={FaRegUserCircle} size={32} />
+                                    <Dropdown.Menu className='dropdown-menu-user'>
+                                        <Dropdown.Item className='dropdown-item-user' eventKey="1"><CgProfile size={24} /> Mi perfil</Dropdown.Item>
+                                        <Dropdown.Item className='dropdown-item-user' eventKey="2" onClick={handleLogOut}><GoSignOut size={24} /> Cerrar sesión</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                                <span className='user-name'>{nombre}</span>
+                            </div>
                         </div>
                     )}
                 </div>

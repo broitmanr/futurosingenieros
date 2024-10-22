@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom';
 import { useRole } from '../../context/RolesContext';
 import { FaRegUserCircle } from "react-icons/fa";
-import './SharedStyles.css'
+import './SharedStyles.css';
 import Dropdown from 'react-bootstrap/Dropdown';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -10,80 +10,135 @@ import { GoSignOut } from "react-icons/go";
 import { CgProfile } from "react-icons/cg";
 import { FaRegBell } from "react-icons/fa6";
 import { Badge } from 'primereact/badge';
+import moment from "moment";
 
 const Header = () => {
-    const { role, setRole } = useRole()
-    const navigate = useNavigate()
-    const [ dropdownUserVisible, setDropdownUserVisible ] = useState(false)
-    const dropdownUserRef = useRef(null)
-    const { isLoggedIn, setIsLoggedIn } = useAuth()
-    const [ hasNotifications, setHasNotifications ] = useState(false)
+    const { role, setRole } = useRole();
+    const navigate = useNavigate();
+    const [dropdownUserVisible, setDropdownUserVisible] = useState(false);
+    const dropdownUserRef = useRef(null);
+    const { isLoggedIn, setIsLoggedIn } = useAuth();
+    const [hasNotifications, setHasNotifications] = useState(false);
+    const [notificaciones, setNotificaciones] = useState([]); // Estado para notificaciones
+    const [dropdownNotificacionesVisible, setDropdownNotificacionesVisible] = useState(false); // Para mostrar las notificaciones
 
-    useEffect(() => { //Redirección logo
-        if(role && location.pathname === '/') {
-            navigate('/cursos')
+    useEffect(() => {
+        if (role && location.pathname === '/') {
+            navigate('/cursos');
         }
-    }, [role, navigate, location.pathname])
+    }, [role, navigate, location.pathname]);
 
     const toogleDropdownUser = () => {
-        setDropdownUserVisible(!dropdownUserVisible)
-    }
+        setDropdownUserVisible(!dropdownUserVisible);
+    };
+
+    const toogleDropdownNotificaciones = () => {
+        setDropdownNotificacionesVisible(!dropdownNotificacionesVisible);
+    };
 
     const handleLogOut = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/auth/sign-out', { withCredentials: true })
-            if(response){
-                setDropdownUserVisible(false)
-                setRole('')
-                setIsLoggedIn(false)
-                localStorage.removeItem('role')
-                navigate('/login')
+            const response = await axios.post('http://localhost:5000/auth/sign-out', { withCredentials: true });
+            if (response) {
+                setDropdownUserVisible(false);
+                setRole('');
+                setIsLoggedIn(false);
+                localStorage.removeItem('role');
+                navigate('/login');
             }
-        }catch(err){
-            console.log('No se logró cerrar sesión:', err)
+        } catch (err) {
+            console.log('No se logró cerrar sesión:', err);
         }
-    }
+    };
 
     const handleClickOpen = (e) => {
-        if(dropdownUserRef.current && !dropdownUserRef.current.contains(e.target)) {
-            setDropdownUserVisible(false)
+        if (dropdownUserRef.current && !dropdownUserRef.current.contains(e.target)) {
+            setDropdownUserVisible(false);
+            setDropdownNotificacionesVisible(false);
         }
-    }
+    };
 
     useEffect(() => {
-        document.addEventListener('mousedown', handleClickOpen)
+        document.addEventListener('mousedown', handleClickOpen);
         return () => {
-            document.removeEventListener('mousedown', handleClickOpen)
-        }
-    }, [])
+            document.removeEventListener('mousedown', handleClickOpen);
+        };
+    }, []);
 
-    return ( 
+    // Obtener las notificaciones al montar el componente
+    useEffect(() => {
+        const obtenerNotificaciones = async () => {
+            try {
+                const response = await axios.get('/notificacion', { withCredentials: true });
+                setNotificaciones(response.data);
+                setHasNotifications(response.data.some(notif => !notif.leido));
+            } catch (error) {
+                console.log('Error al obtener las notificaciones:', error);
+            }
+        };
+
+        obtenerNotificaciones();
+    }, []);
+
+    // Marcar notificación como leída
+    const marcarComoLeida = async (id) => {
+        try {
+            await axios.patch(`/notificacion/${id}`, {}, { withCredentials: true });
+            setNotificaciones(prev =>
+                prev.map(notif => notif.id === id ? { ...notif, leida: true } : notif)
+            );
+            setHasNotifications(notificaciones.some(notif => !notif.leida));
+        } catch (error) {
+            console.log('Error al marcar la notificación como leída:', error);
+        }
+    };
+
+    return (
         <React.Fragment>
-            <nav className="navbar-header-container navbar-expand-lg" data-bs-theme="dark" >
+            <nav className="navbar-header-container navbar-expand-lg" data-bs-theme="dark">
                 <div className="container-fluid d-flex justify-content-between align-items-center">
-                    {/*Cambié href*/}
-                    <Link className="navbar-brand" to={role ? '/cursos' : '/' }>
-                        {/*Ajusta tamaño de imagen según altura */}
+                    <Link className="navbar-brand" to={role ? '/cursos' : '/'}>
                         <img className='navbar-logo' src="/logoFrlp.png" alt="Logo" />
                     </Link>
                     <div className="navbar-brand-text-container position-absolute d-none d-lg-block">
                         FUTUROS INGENIEROS
                     </div>
-                    {/* Se añade para que sea responsive */}
                     <div className="navbar-brand-text d-lg-none">
                         FUTUROS INGENIEROS
                     </div>
-                    { role && (
+                    {role && (
                         <div className='user-items-container'>
+                            {/* Icono de notificaciones */}
                             <div className='flex flex-wrap justify-content-center gap-4'>
-                                <i className="p-overlay-badge icon-notifications-container">
+                                <i className="p-overlay-badge icon-notifications-container" onClick={toogleDropdownNotificaciones}>
                                     <FaRegBell color='#fff' size={32} />
-                                    {!hasNotifications && <Badge className='badge-notificacions-position' value="2" severity="danger"></Badge>}
+                                    {hasNotifications && <Badge className='badge-notificacions-position' value={notificaciones.filter(n => !n.leida).length} severity="danger"></Badge>}
                                 </i>
+                                {/* Dropdown de notificaciones */}
+                                {dropdownNotificacionesVisible && (
+                                    <div className="dropdown-notificaciones">
+                                        <span>Notificaciones</span>
+                                        {notificaciones.length === 0 ? (
+                                            <p>No hay notificaciones</p>
+                                        ) : (
+                                            notificaciones.map((notificacion) => (
+                                                <div
+                                                    key={notificacion.id}
+                                                    className={`notificacion-item ${notificacion.leido ? 'leida' : 'no-leida'}`}
+                                                    onClick={() => marcarComoLeida(notificacion.ID)}
+                                                >
+                                                    <p>{notificacion.detalle} - <small>{moment(notificacion.fecha).format('DD/MM/YY')}</small> </p>
+
+                                                </div>
+                                            ))
+                                        )}
+                                        {/*<Link to="/todas-las-notificaciones">Ver todas</Link>*/}
+                                    </div>
+                                )}
                             </div>
                             <Dropdown show={dropdownUserVisible} ref={dropdownUserRef} onToggle={toogleDropdownUser}>
                                 <Dropdown.Toggle className='dropdown-toogle-user' as={FaRegUserCircle} size={32} />
-                                <Dropdown.Menu className='dropdown-menu-user' /*align={{ lg: 'end' }}*/ flip={true} >
+                                <Dropdown.Menu className='dropdown-menu-user'>
                                     <Dropdown.Item className='dropdown-item-user' eventKey="1"><CgProfile size={24} /> Mi perfil</Dropdown.Item>
                                     <Dropdown.Item className='dropdown-item-user' eventKey="2" onClick={handleLogOut}><GoSignOut size={24} /> Cerrar sesión</Dropdown.Item>
                                 </Dropdown.Menu>
@@ -93,7 +148,7 @@ const Header = () => {
                 </div>
             </nav>
         </React.Fragment>
-    )
-}
+    );
+};
 
-export default Header
+export default Header;

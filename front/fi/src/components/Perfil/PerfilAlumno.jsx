@@ -23,25 +23,35 @@ export const PerfilAlumno = () => {
 
                         <div className="documento-perfil">
                             <h5><i class="fa-regular fa-address-card me-2"></i> Documento</h5>
-                            <span>42055128</span><GrEdit className="icono-editar" />
+                            <span>42055128</span>
                         </div>
 
                         <div className="correo-perfil">
                             <h5><i class="fa-regular fa-envelope me-2"></i> Correo</h5>
-                            <span>lesliemonges@gmail.com</span><GrEdit className="icono-editar" />
+                            <span>lesliemonges@lu.frlp.utn.edu.ar</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="catedras">
-                    <h4><i class="fa-solid fa-book"></i>Cátedras cursando</h4>
-                    <div className="materia">
-                        <span>Diseño de sistemas - Comisión s31</span>
-                        <span>Proyecto final - Comision s51</span>
-                        <span>Inteligencia artificial - Comision s51</span>
+                <h4><i class="fa-solid fa-book"></i>Cátedras cursando</h4>
+                <div className="materia">
+                    <div className='catedra-especifica'>
+                        <span>
+                            <strong>Diseño de sistemas</strong>
+                            <em>Comisión s31</em>
+                        </span>
                     </div>
-                    
+                    <span>
+                        <strong>Proyecto final</strong>
+                        <em>Comisión s51</em>
+                    </span>
+                    <span>
+                        <strong>Inteligencia artificial</strong>
+                        <em>Comisión s51</em>
+                    </span>
                 </div>
+</div>
             </section>
         </>
     )

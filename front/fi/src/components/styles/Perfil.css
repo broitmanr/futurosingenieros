@@ -1,14 +1,13 @@
 /* Contenedor principal */
 body {
-    background: linear-gradient(to bottom, #e3f2fd, #f2f2f2); /* Degradado suave de azul a gris claro */
+    background: linear-gradient(to bottom, #9bb2c2, #f2f2f2); /* Degradado suave de azul a gris claro */
     margin: 0;
     padding: 0;
     min-height: 100vh; /* Asegura que el fondo cubra toda la pantalla */
 }
 
 .data-perfil {
-    /*background-color: rgba(221, 231, 234, 0.804);*/
-    background-color: #e3f2fd;
+    background-color: #d1d5d8;
     border-radius: 8px;
     padding: 24px;
     max-width: 800px;
@@ -49,6 +48,7 @@ body {
     font-size: 20px;
     margin-bottom: 20px;
     margin-left: 10px;
+    font-family: Reboto;
 }
 
 .datos-usuario-perfil .d-flex {
@@ -64,13 +64,14 @@ body {
     position: relative;
     padding-bottom: 8px;
     margin: 20px;
+    color: #0f0f0f;
 }
 
 .legajo-perfil h5,
 .documento-perfil h5,
 .correo-perfil h5 {
-    color: #666;
-    font-size: 14px;
+    color: #070707;
+    font-size: 17px;
     margin-bottom: 8px;
     font-weight: normal;
 }
@@ -94,34 +95,90 @@ body {
 
 /* Sección de cátedras */
 .catedras {
-    margin-top: 30px;
-    background-color: #fff;
+    padding: 20px;
+    background-color: #f8f9fa;
     border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 20px 0;
+    cursor: pointer;
 }
 
 .catedras h4 {
-    color: #0f0f0f;
-    font-size: 20px;
+    font-size: 1.25rem;
+    font-family: Roboto;
+    font-weight: 600;
+    color: #18191b;
+    margin-bottom: 1rem;
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin:20px;
-    list-style: none ;
+    gap: 8px;
 }
 
-.catedras i {
-    color: #0e0f0f;
+.catedras h4 i {
+    color: #0b0b0b;
+    font-size: 1.1rem;
 }
 
-.catedras span{
-    margin:20px;
+.materia {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.materia span,
+.catedra-especifica span {
     display: flex;
     align-items: center;
-    gap: 8px; /* Espacio entre el icono y el texto */
-    margin: 20px;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    font-size: 0.875rem;
+    position: relative;
+}
+
+
+/* Contenedor para el ícono */
+.materia span::before,
+.catedra-especifica span::before {
+    content: '\f19d'; /* Ícono de graduación de Font Awesome */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 1rem;
+    color: #2563eb;
+    margin-right: 12px;
+    background-color: #eff6ff;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Estilo para el nombre de la materia */
+.materia span strong,
+.catedra-especifica span strong {
+    font-weight: 600;
+    color: #1e293b;
+    margin-right: 8px;
+}
+
+/* Estilo para la comisión */
+.materia span em,
+.catedra-especifica span em {
+    font-style: normal;
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+/* Flecha visible permanentemente */
+.materia span::after,
+.catedra-especifica span::after {
+    content: '>';
+    position: absolute;
+    right: 16px;
+    color: #0f2c68;
+    font-size: 1.5rem;
 }
 
 
@@ -175,29 +232,5 @@ body {
 
 
 
-.materia {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    margin-left: 3%;
-}
-
-.materia span {
-    cursor: pointer;
-    transition: transform 0.2s ease, color 0.2s ease; /* Añade una transición para el hover */
-    text-decoration: underline;
-    color: #0e0f0f;
-}
-
-.materia span:hover {
-    transform: scale(1.02); /* Agranda solo el span al pasar el mouse */
-    color: #003366; /* Cambia el color del texto al hacer hover, opcional */
-}
-
-
-.icono-check {
-    flex-shrink: 0; /* Evita que el ícono se reduzca en caso de falta de espacio */
-    margin-right: 4px;
-}
 
   

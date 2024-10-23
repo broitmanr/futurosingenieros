@@ -10,16 +10,6 @@ import { GoSignOut } from "react-icons/go";
 import { CgProfile } from "react-icons/cg";
 import { FaRegBell } from "react-icons/fa6";
 import { Badge } from 'primereact/badge';
-<<<<<<< HEAD
-
-const Header = () => {
-    const { role, setRole } = useRole()
-    const navigate = useNavigate()
-    const [ dropdownUserVisible, setDropdownUserVisible ] = useState(false)
-    const dropdownUserRef = useRef(null)
-    const { isLoggedIn, setIsLoggedIn } = useAuth()
-    const [ hasNotifications, setHasNotifications ] = useState(false)
-=======
 import moment from "moment";
 
 const Header = () => {
@@ -32,13 +22,21 @@ const Header = () => {
     const [hasNotifications, setHasNotifications] = useState(false);
     const [notificaciones, setNotificaciones] = useState([]); // Estado para notificaciones
     const [dropdownNotificacionesVisible, setDropdownNotificacionesVisible] = useState(false); // Para mostrar las notificaciones
->>>>>>> a828ee6177a8dd30d05264e410fa9f4fa44627b6
 
     useEffect(() => {
         if (role && location.pathname === '/') {
             navigate('/cursos');
         }
     }, [role, navigate, location.pathname]);
+
+    /*new*/
+    const handleProfileClick = () => {
+        if (role === 'A') {  // Si el rol es alumno
+            navigate('/perfil/alumno'); // Redirige a la página de perfil de alumno
+        } else if (role === 'D') {
+            navigate('/perfil/docente');
+        }
+    };
 
     const toogleDropdownUser = () => {
         setDropdownUserVisible(!dropdownUserVisible);
@@ -158,7 +156,9 @@ const Header = () => {
                                 <Dropdown show={dropdownUserVisible} ref={dropdownUserRef} onToggle={toogleDropdownUser}>
                                     <Dropdown.Toggle className='dropdown-toogle-user' as={FaRegUserCircle} size={32} />
                                     <Dropdown.Menu className='dropdown-menu-user'>
-                                        <Dropdown.Item className='dropdown-item-user' eventKey="1"><CgProfile size={24} /> Mi perfil</Dropdown.Item>
+                                    <Dropdown.Item className='dropdown-item-user' eventKey="1" onClick={handleProfileClick}>
+                                            <CgProfile size={24} /> Mi perfil
+                                        </Dropdown.Item>
                                         <Dropdown.Item className='dropdown-item-user' eventKey="2" onClick={handleLogOut}><GoSignOut size={24} /> Cerrar sesión</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>

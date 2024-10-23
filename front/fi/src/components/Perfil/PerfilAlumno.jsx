@@ -5,11 +5,11 @@ import { BiSolidCaretRightSquare } from "react-icons/bi";
 
 export const PerfilAlumno = () => {
     return (
-        <>
+        <> 
             <section className="data-perfil">
                 <div className="nombre-perfil">
                     <i class="fa-solid fa-user"></i>
-                    <h2>Juan Manuel Garcia</h2>
+                    <h2>Leslie Monges</h2>
                 </div>
 
                 <div className="datos-usuario-perfil">

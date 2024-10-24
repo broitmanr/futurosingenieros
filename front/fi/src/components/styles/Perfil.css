@@ -136,6 +136,12 @@ body {
     position: relative;
 }
 
+/* Estilo para el año */
+.catedra-especifica em {
+    font-style: italic;
+    color: #64748b;
+    font-size: 0.875rem; /* Ajustar el tamaño de fuente para que coincida con el resto del texto */
+}
 
 /* Contenedor para el ícono */
 .materia span::before,
@@ -168,19 +174,29 @@ body {
 .catedra-especifica span em {
     font-style: normal;
     color: #64748b;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
 }
 
 /* Flecha visible permanentemente */
-.materia span::after,
 .catedra-especifica span::after {
     content: '>';
     position: absolute;
     right: 16px;
     color: #0f2c68;
     font-size: 1.5rem;
+    cursor: pointer;
 }
 
+/* Efecto hover sobre la tarjeta de catedra-especifica */
+.catedra-especifica {
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.catedra-especifica:hover {
+    transform: translateY(-5px);
+    border-color: #00acc1;
+    box-shadow: 0px 0px 15px rgba(0, 172, 193, 0.5);
+}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -229,8 +245,3 @@ body {
     color: #666;
     font-size: 16px;
 }
-
-
-
-
-  

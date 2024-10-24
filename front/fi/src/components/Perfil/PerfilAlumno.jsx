@@ -2,6 +2,7 @@ import '../styles/Perfil.css';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaUserGraduate } from 'react-icons/fa';
 
 export const PerfilAlumno = () => {
     const [perfil, setPerfil] = useState(null);
@@ -65,15 +66,22 @@ export const PerfilAlumno = () => {
                 <div className="catedras">
                     <h4><i className="fa-solid fa-book"></i>Cátedras cursando</h4>
                     <div className="materia">
-                        {cursos.map(curso => (
-                            <div key={curso.id}>
-                                <div className='catedra-especifica' onClick={() => navigate(`/curso/${curso.id}`)}>
-                                    <span>
-                                    <strong>{curso.materia}</strong> <strong>Comisión {curso.comision}</strong> <em>{curso.anio}</em>
-                                    </span>
+                        {cursos.length > 0 ? (
+                            cursos.map(curso => (
+                                <div key={curso.id}>
+                                    <div className='catedra-especifica' onClick={() => navigate(`/curso/${curso.id}`)}>
+                                        <span>
+                                            <strong>{curso.materia}</strong> - <strong>Comisión {curso.comision}</strong> <em>{curso.anio}</em>
+                                        </span>
+                                    </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div className="no-cursos">
+                                <FaUserGraduate size={50} />
+                                <p>No estás cursando ninguna materia en este momento.</p>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </section>

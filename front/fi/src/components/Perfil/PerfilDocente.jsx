@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { GrEdit } from "react-icons/gr";
 import { useNavigate } from 'react-router-dom';
+import { FaChalkboardTeacher } from 'react-icons/fa';
 
 export const PerfilDocente = () => {
     const [perfil, setPerfil] = useState(null);
@@ -66,13 +67,21 @@ export const PerfilDocente = () => {
                 <div className="catedras">
                     <h4><i className="fa-solid fa-book"></i>Cátedras cargo</h4>
                     <div className="materia">
-                        {catedras.map(catedra => (
-                            <div className='catedra-especifica' key={catedra.id} onClick={() => navigate(`/curso/${catedra.id}`)}>
-                                <span>
-                                    <strong>{catedra.materia}</strong> <strong>Comisión {catedra.comision}</strong> <em>{catedra.anio}</em>
-                                </span>
+                        {catedras.length > 0 ? (
+                            catedras.map(catedra => (
+                                <div className='catedra-especifica' key={catedra.id} onClick={() => navigate(`/curso/${catedra.id}`)}>
+                                    <span>
+                                        <strong>{catedra.materia}</strong> - <strong>Comisión {catedra.comision}</strong> <em>{catedra.anio}</em>
+                                    </span>
+                                    <hr /> {/* Línea separadora */}
+                                </div>
+                            ))
+                        ) : (
+                            <div className="no-cursos">
+                            <FaChalkboardTeacher size={50} />
+                            <p>No tienes cátedras a cargo en este momento.</p>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </section>

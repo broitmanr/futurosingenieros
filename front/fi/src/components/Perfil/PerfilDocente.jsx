@@ -69,7 +69,7 @@ export const PerfilDocente = () => {
                         {catedras.map(catedra => (
                             <div className='catedra-especifica' key={catedra.id} onClick={() => navigate(`/curso/${catedra.id}`)}>
                                 <span>
-                                    <strong>{catedra.materia}</strong> - <strong>Comisión {catedra.comision}</strong> <em>{catedra.anio}</em>
+                                    <strong>{catedra.materia}</strong> <strong>Comisión {catedra.comision}</strong> <em>{catedra.anio}</em>
                                 </span>
                             </div>
                         ))}

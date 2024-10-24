@@ -1,15 +1,46 @@
 import '../styles/Perfil.css';
-import { IoCheckboxSharp } from "react-icons/io5";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { GrEdit } from "react-icons/gr";
-import { BiSolidCaretRightSquare } from "react-icons/bi";
+import { useNavigate } from 'react-router-dom';
+import { FaChalkboardTeacher } from 'react-icons/fa';
 
 export const PerfilDocente = () => {
+    const [perfil, setPerfil] = useState(null);
+    const [catedras, setCatedras] = useState([]);
+    const [datosCargados, setDatosCargados] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const obtenerDatos = async () => {
+            try {
+                const responsePerfil = await axios.get('/usuarios/miPerfil', { withCredentials: true });
+                setPerfil(responsePerfil.data.data);
+
+                const responseCatedras = await axios.get('/curso', { withCredentials: true });
+                setCatedras(responseCatedras.data);
+
+                setDatosCargados(true);
+            } catch (error) {
+                console.log('Error al obtener los datos del perfil:', error);
+            }
+        };
+
+        if (!datosCargados) {
+            obtenerDatos();
+        }
+    }, [datosCargados])
+
+    if (!perfil) {
+        return <div>Cargando...</div>;
+    }
+
     return (
         <>
             <section className="data-perfil">
-            <div className="nombre-perfil">
-                    <i class="fa-solid fa-user"></i>
-                    <h2>Victoria Heredia</h2>
+                <div className="nombre-perfil">
+                    <i className="fa-solid fa-user"></i>
+                    <h2>{perfil.nombre} {perfil.apellido}</h2>
                 </div>
 
                 <div className="datos-usuario-perfil">
@@ -17,32 +48,43 @@ export const PerfilDocente = () => {
 
                     <div className="d-flex">
                         <div className="legajo-perfil">
-                            <h5><i class="fa-regular fa-address-card me-2"></i> Legajo</h5>
-                            <span>30280</span>
+                            <h5><i className="fa-regular fa-address-card me-2"></i> Legajo</h5>
+                            <span>{perfil.legajo}</span>
                         </div>
 
                         <div className="documento-perfil">
-                            <h5><i class="fa-regular fa-address-card me-2"></i> Documento</h5>
-                            <span>42055128</span><GrEdit className="icono-editar" />
+                            <h5><i className="fa-regular fa-address-card me-2"></i> Documento</h5>
+                            <span>{perfil.dni}</span>
                         </div>
 
                         <div className="correo-perfil">
-                            <h5><i class="fa-regular fa-envelope me-2"></i> Correo</h5>
-                            <span>lesliemonges@gmail.com</span><GrEdit className="icono-editar" />
+                            <h5><i className="fa-regular fa-envelope me-2"></i> Correo</h5>
+                            <span>{perfil.email}</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="catedras">
-                    <h4><i class="fa-solid fa-book"></i>Cátedras cargo</h4>
+                    <h4><i className="fa-solid fa-book"></i>Cátedras cargo</h4>
                     <div className="materia">
-                        <span>Diseño de sistemas - Comisión s31</span>
-                        <span>Proyecto final - Comision s51</span>
-                        <span>Inteligencia artificial - Comision s51</span>
+                        {catedras.length > 0 ? (
+                            catedras.map(catedra => (
+                                <div className='catedra-especifica' key={catedra.id} onClick={() => navigate(`/curso/${catedra.id}`)}>
+                                    <span>
+                                        <strong>{catedra.materia}</strong> - <strong>Comisión {catedra.comision}</strong> <em>{catedra.anio}</em>
+                                    </span>
+                                    <hr /> {/* Línea separadora */}
+                                </div>
+                            ))
+                        ) : (
+                            <div className="no-cursos">
+                            <FaChalkboardTeacher size={50} />
+                            <p>No tienes cátedras a cargo en este momento.</p>
+                            </div>
+                        )}
                     </div>
-                    
                 </div>
             </section>
         </>
-    )
-}
+    );
+};

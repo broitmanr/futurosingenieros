@@ -1,5 +1,6 @@
 .rendimiento-container{
     min-height: 70vh;
+    background-color: #fff
 }
 
 .tabs-container{
@@ -36,18 +37,22 @@
     color: #1A2035; 
 }
 
-.custom-datatable-asistencia { 
+/* ESTILOS ASISTENCIA */
+.custom-datatable-asistencia {
     width: 100%; /* Tamaño de la tabla */
-    border: 0.1rem solid #1A2035;
     border-radius: 0.24rem;
     margin: 0 auto;
 }
 
 .custom-datatable-asistencia .p-datatable-header {
-    background-color: #1A2035 /* Color del encabezado */;
-    height: 5.4rem;
+    background-color: #ccdcf1 /* Color del encabezado con el search */;
+    height: 6rem;
     display: flex;
     align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin: 35px 0;
+    border: 1px solid #ddd;
 }
 
 .table-header-asistencia {
@@ -60,12 +65,12 @@
 }
 
 .custom-datatable-asistencia .p-datatable-thead > tr > th {
-    background-color: #CCDCF1; /* Color de la fila de filtros */
-    color: #1A2035
+    background-color: #344474; /* Color de la fila de filtros */
+    color: #fff
 }
 
 .custom-datatable-asistencia .p-datatable-tbody > tr > td {
-    background-color: white /* Color del cuerpo de la tabla */
+    background-color: #fff /* Color del cuerpo de la tabla */
 /*  border-top: #1A2035 solid; si se quiere agregar línea entre datos de la tabla */
 }
 
@@ -74,23 +79,11 @@
     min-width: 12rem
 }
 
-.titulo-inasistencias{
-    font-size: 14px;
-    text-align: right;
-    color: #fff;
-    background-color: rgb(25, 59, 112);
-    padding: 10px 20px;
-    border: 2px solid rgb(74, 144, 226);
-    border-radius: 15px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px;
-    display: inline-block;
-    margin: 10px 0px;
-}
-
 .custom-datatable-asistencia .p-sortable-column-icon {
-    color: #1a2035;
+    color: #fff
 }
 
+/* ESTILOS RENDIMIENTO INDIVIDUAL Y GRUPAL */
 .table-rendimiento-alumno__container {
     overflow-x: auto;
 }
@@ -113,4 +106,183 @@
     vertical-align: middle;
     text-align: center;
     background-color: #e6f3ff;
+}
+
+.container-informacion-catedra {
+    padding: 20px;                /* Añade espacio interno dentro del contenedor */
+    margin: 20px 0;  
+    background-color: #ccdcf1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border: transparent;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 8px
+}
+
+.titulo-rendimiento {
+    color: #193B70;
+    margin-bottom: 2rem;
+    font:
+        2.2rem Georgia,
+        "Bitstream Charter",
+        "URW Bookman L",
+        "Century Schoolbook L",
+        serif;
+    text-align: center;
+}
+
+.catedra-proyecto {
+    font-size: 18px; 
+    text-align: left;
+    color: #333;
+    margin-top: 10px;
+    font-weight: bold;
+    align-self: center
+}
+
+.input-search-alumnos{
+    margin-left: 2em
+}
+
+.text-box {
+    border: 2px solid #132438 !important;
+    /* Borde del recuadro en color azul */
+    padding: 20px;
+    /* Espacio interno del recuadro */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    /* Sombra suave */
+    background-color: #f9f9f9;
+    /* Fondo claro */
+    margin: 20px 0;
+    /* Espaciado alrededor del recuadro */
+    font-family: 'Arial', sans-serif;
+    /* Fuente */
+}
+
+
+.table-container .table {
+    margin: 10px 15;
+    /* Márgenes arriba y abajo */
+    background-color: brown;
+    border: 2px solid black;
+    /* Bordes */
+
+}
+
+.contenedor-rendimiento-alumnos {
+    max-width: 85%;
+    margin: auto;
+    padding: 2.5rem;
+    box-shadow: 0px 1px 8px #00000061;
+}
+
+.contenedor-acciones {
+    border: 1px solid #000;
+    margin-bottom: 1rem;
+    align-items: center;
+
+    div {
+        width: 24%;
+
+        i {
+            margin-right: .5rem;
+        }
+    }
+
+    .form-busqueda {
+        .btn-buscar {
+            color: #fff;
+            background-color: #193B70;
+            border-radius: 5px;
+            i{
+                margin: 0;
+            }
+        }
+    }
+}
+
+/* ESTILOS DE RENDIMIENTO PARA ALUMNOS */
+.informacion-rendimiento{
+    font-size: 1.3rem;
+    text-align: left;
+    color: black;
+    margin-top: 10px
+}
+
+.cards-rendimiento-datos-container{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.cards-rendimiento-datos{
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.8rem;
+    text-align: center;
+    width: 40%;
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin: 0.2rem;
+}
+
+.cards-rendimiento-datos:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.cards-rendimiento-datos-icon{
+    font-size: 1.8rem;
+    margin-bottom: 0.6rem;
+}
+
+.cards-rendimiento-datos-text{
+    font-size: 1rem;
+    font-weight: bold;
+    color: #344474;
+    margin-bottom: 0.5rem;
+}
+
+.cards-rendimiento-datos-value{
+    font-size: medium;
+    color: #555;
+}
+
+.card-participacion .card-body{
+    text-align: center;
+    background-color: #ccdcf1;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card-participacion .card-body:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-participacion .card-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #1A2035;
+}
+
+@media (max-width: 768px) {
+    .card-participacion {
+        width: 100%;
+    }
+
+    .card-participacion .card-body {
+        padding: 10px;
+    }
+
+    .card-participacion .pie-chart {
+        width: 100%;
+        height: auto;
+    }
 }

@@ -73,7 +73,6 @@ export const PerfilDocente = () => {
                                     <span>
                                         <strong>{catedra.materia}</strong> - <strong>Comisión {catedra.comision}</strong> <em>{catedra.anio}</em>
                                     </span>
-                                    <hr /> {/* Línea separadora */}
                                 </div>
                             ))
                         ) : (

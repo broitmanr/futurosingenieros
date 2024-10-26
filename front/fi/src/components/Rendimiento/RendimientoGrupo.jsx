@@ -4,7 +4,7 @@ import {pieArcLabelClasses, PieChart} from '@mui/x-charts';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
-import '../styles/RendimientoAlumno.css';
+import './Rendimiento.css';
 import {useRole} from "../../context/RolesContext.jsx";
 
 
@@ -51,39 +51,26 @@ const RendimientoGrupo = () => {
         label: alumno.nombre,
     }));
 
-
-
     // Calcular el total de participación
     const totalParticipacion = participacionData.reduce((sum, item) => sum + item.value, 0);
 
     return (
         <div className='contenedor-rendimiento-alumnos'>
-            <h1 className='TituloRendimiento'>Rendimiento del Grupo</h1>
-
+            <h1 className='titulo-rendimiento'>Rendimiento del Grupo</h1>
             <div >
                 <Row>
                     <Col md={5}>
                         <Row>
                             <Col>
-                                <span style={{
-                                    fontSize: "1.3rem",
-                                    textAlign: 'left',
-                                    color: 'black',
-                                    marginTop: '10px',
-                                }}>Curso: {curso.materia} {curso.comision}</span>
+                                <span className='informacion-rendimiento'>Curso: {curso.materia} {curso.comision}</span>
                             </Col>
                         </Row>
                         <Row>
                             <Col>
-                                <span style={{
-                                    fontSize: "1.2rem",
-                                    textAlign: 'left',
-                                    color: 'black',
-                                    marginTop: '10px',
-                                }}>Grupo: {grupo.numero} - {grupo.nombre}</span>
+                                <span className='informacion-rendimiento'>Grupo: {grupo.numero} - {grupo.nombre}</span>
                             </Col>
                         </Row>
-                        <Row className="mt-3">
+                        <Row className="mt-4">
                             <Col>
                                 <h3>Integrantes del Grupo</h3>
                                 <ul>
@@ -97,7 +84,7 @@ const RendimientoGrupo = () => {
                         </Row>
                     </Col>
                     <Col md={7}>
-                        <Card>
+                        <Card className='card-participacion'>
                             <Card.Body>
                                 <Card.Title>Participación</Card.Title>
                                 <PieChart
@@ -110,13 +97,11 @@ const RendimientoGrupo = () => {
                                         cornerRadius:10,
                                         innerRadius:5
                                     }]}
-
                                     height={160}
                                     width={500}
-                                    margin={{ top: 20, bottom: 20, left: 200, right: 300 }}
+                                    margin={{ top: 20, bottom: 20, left: 100, right: 300 }}
 
                                 />
-
                             </Card.Body>
                         </Card>
                     </Col>

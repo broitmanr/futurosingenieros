@@ -1,4 +1,4 @@
-import '../styles/RendimientoAlumno.css';
+import './Rendimiento.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import { PieChart } from '@mui/x-charts';
@@ -7,6 +7,9 @@ import axios from "axios";
 import {useParams} from "react-router-dom";
 import moment from "moment";
 import {useRole} from "../../context/RolesContext.jsx";
+import { CiCalendarDate } from "react-icons/ci";
+import { CiWarning } from "react-icons/ci";
+import { PiUsersThreeLight } from "react-icons/pi";
 
 const RendimientoAlumno = () => {
     const [entregas,setEntregas]=useState([])
@@ -47,49 +50,42 @@ const RendimientoAlumno = () => {
     }, []);
   return (
     <div className='contenedor-rendimiento-alumnos'>
-      <h1 className='TituloRendimiento'>
+      <h1 className='titulo-rendimiento'>
         Rendimiento del alumno
       </h1>
     {!loading ? (
-      <div className='containerFaltas'>
+      <div className='container-informacion-catedra'>
           <Row>
               <Col>
                   <Row>
                       <Col>
-                          <span style={{
-                              fontSize: "1.3rem",
-                              textAlign: 'left',    // Alineado a la izquierda
-                              color: 'black',       // Color de texto negro
-                              marginTop: '10px',
-                          }}>Curso: {curso.materia} {curso.comision}</span>
+                          <span className='informacion-rendimiento'>Curso: {curso.materia} {curso.comision}</span>
                       </Col>
                   </Row>
                   <Row>
                       <Col>
-                          <span style={{
-                              fontSize: "1.2rem",
-                              textAlign: 'left',    // Alineado a la izquierda
-                              color: 'black',       // Color de texto negro
-                              marginTop: '10px',
-                          }}> {alumno.legajo} - {alumno.nombre} {alumno.apellido}</span>
+                          <span className='informacion-rendimiento'> {alumno.legajo} - {alumno.nombre} {alumno.apellido}</span>
                       </Col>
                   </Row>
               </Col>
           </Row>
           <Row>
-              <Col>
-                  <span className='titulo-inasistencias'
-                      style={{
-                          fontSize: "1.4rem",
-                      }}>Inasistencias: {inasistencias}</span>
-                  <span className='titulo-inasistencias'
-                        style={{
-                            fontSize: "1.4rem",
-                        }}>Penalidades: {penalidades}</span>
-                  <span className='titulo-inasistencias'
-                        style={{
-                            fontSize: "1.4rem",
-                        }}>Grupo: {alumno.grupo.numero} - {alumno.grupo.nombre}</span>
+              <Col className='cards-rendimiento-datos-container'>
+                    <div className='card cards-rendimiento-datos'>
+                        <span className='cards-rendimiento-datos-icon'><CiCalendarDate /></span>
+                        <span className='cards-rendimiento-datos-text'>Inasistencias</span>
+                        <span className='cards-rendimiento-datos-value'>{inasistencias}</span>
+                    </div>
+                    <div className='card cards-rendimiento-datos'>
+                        <span className='cards-rendimiento-datos-icon'><CiWarning /></span>
+                        <span className='cards-rendimiento-datos-text'>Penalidades</span>
+                        <span className='cards-rendimiento-datos-value'>{penalidades}</span>
+                    </div>
+                    <div className='card cards-rendimiento-datos'>
+                        <span className='cards-rendimiento-datos-icon'><PiUsersThreeLight /></span>
+                        <span className='cards-rendimiento-datos-text'>Grupo</span>
+                        <span className='cards-rendimiento-datos-value'>{alumno.grupo.numero} - {alumno.grupo.nombre}</span>
+                    </div>
               </Col>
           </Row>
       </div> ) : (<span className={'badge badge-info'}>Cargando...</span>)}

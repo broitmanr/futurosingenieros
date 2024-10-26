@@ -132,6 +132,48 @@ async function listarTiposInstancias(req, res, next) {
   }
 }
 
+async function remove(req, res, next) {
+  if (req.params == null) { return next(errors.FaltanParametros) }
+  const { id } = req.params
+  try {
+    const instanciaEliminar = await models.InstanciaEvaluativa.findOne({
+      where: {
+        id
+      },
+      include: [
+        {
+          model: models.TipoInstancia,
+          attributes: ['ID', 'nombre']
+        },
+        {
+          model:models.EntregaPactada,
+          attributes:['ID']
+        }
+      ]
+    })
+    // Todo: eliminar solo si es dueño de la instancia
+
+    if (!instanciaEliminar) {
+      console.warn(yellow(`Advertencia: Instancia con ID ${id} no encontrado.`))
+      next({ ...errors.NotFoundError, details: `Instancia con ID ${id} no encontrada` })
+    }
+
+    if (instanciaEliminar.EntregaPactadas.length !== 0 ){
+      return next({...errors.ConflictError,details:'No se puede eliminar una instancia con entregas pactadas'})
+    }else{
+      instanciaEliminar.destroy()
+      return res.status(204)
+    }
+
+  } catch (error) {
+    console.error(red('Error al eliminar instancia:', error))
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al eliminar la instancia: ' + error.message
+    })
+  }
+}
+
 module.exports = {
-  crear, listarTiposInstancias, listar, ver
+  crear, listarTiposInstancias, listar, ver,remove
 }

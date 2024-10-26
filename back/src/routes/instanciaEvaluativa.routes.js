@@ -9,5 +9,5 @@ router.post('/', validate(instanciaEvaluativa.instanciaBase), checkRole.checkRol
 router.get('/tiposInstancias', InstanciaEvaluativa.listarTiposInstancias)
 router.get('/:id', checkRole.checkRole('D', 'A'), InstanciaEvaluativa.ver)
 router.get('/curso/:cursoID', InstanciaEvaluativa.listar)
-
+router.delete('/:id',checkRole.checkRoleDocente,InstanciaEvaluativa.remove)
 module.exports = router

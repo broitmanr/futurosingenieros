@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
-import { FilterMatchMode } from 'primereact/api';
-import { DataTable } from 'primereact/datatable';
-import { IconField } from 'primereact/iconfield';
-import { Column } from 'primereact/column';
-import { InputText } from 'primereact/inputtext';
 import { useParams } from 'react-router-dom';
 import { useRole } from '../../context/RolesContext';
-import axios from 'axios';
 import './Rendimiento.css'
 import RendimientoAlumno from './RendimientoAlumno';
 import RendimientoGrupo from './RendimientoGrupo';
 import { RendimientoGrupoProfe } from './RendimientoGrupoProfe';
 import { RendimientoAlumnoProfe } from './RendimientoAlumnoProfe';
 import Asistencia from "./Asistencia.jsx";
-
-
 
 function Rendimiento() {
     const { id } = useParams(); //Obtiene el id del curso pasado por parámetro
@@ -25,7 +17,6 @@ function Rendimiento() {
     const [total_inasistencias, SetTotalInasistencias] = useState('')
     const [alumnos, setAlumnos] = useState([]); //Estado para el listado de alumnos
     const [loading, setLoading] = useState(true); //Maneja estado de la solicitud
-
 
     return (
 

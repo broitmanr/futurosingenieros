@@ -5,7 +5,6 @@ const validate = require('../middlewares/validate')
 const usuarioScheme = require('../middlewares/schemes/usuario.scheme')
 const router = Router()
 
-router.get('/', usuarioController.prueba)
 router.post('/', validate(usuarioScheme.crearUsuario), usuarioController.crear)
-
+router.get('/miPerfil', usuarioController.MiPerfil)
 module.exports = router

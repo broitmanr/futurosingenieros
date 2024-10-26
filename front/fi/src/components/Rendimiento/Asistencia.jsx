@@ -11,6 +11,8 @@ import {InputText} from "primereact/inputtext";
 import {IconField} from "primereact/iconfield";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
+import './Rendimiento.css';
+import { FaSearch } from 'react-icons/fa';
 
 const Asistencia = () => {
     const { id } = useParams(); //Obtiene el id del curso pasado por parámetro
@@ -114,16 +116,16 @@ const Asistencia = () => {
 
     const renderHeader = () => {
         return (
-            <div className="table-header-asistencia" style={{ display: "flex", justifyContent: 'space-between'}}>
-                <h1 className='TituloRendimiento' style={{ fontSize: '2.2rem', marginBottom: '20px', color: '#fff', marginTop: '1rem' }}>Asistencia</h1>
-                <IconField>
-                    <InputText
-                        className='search-input-asistencia'
-                        value={globalFilterValue}
-                        onChange={onGlobalFilterChange}
-                        placeholder="Buscador general"
-                    />
-                </IconField>
+            <div className="table-header-asistencia">
+                <span className="p-input-icon-left">
+                    <FaSearch/>
+                        <InputText
+                            className='input-search-alumnos'
+                            value={globalFilterValue}
+                            onChange={onGlobalFilterChange}
+                            placeholder="Buscador general"
+                        />
+                </span>
             </div>
         );
     };
@@ -132,6 +134,9 @@ const Asistencia = () => {
 
     return (
         <div className='contenedor-rendimiento-alumnos'>
+            <h1 className='titulo-rendimiento'>
+                Asistencia de los alumnos
+            </h1>
             <DataTable
                 value={alumnos}
                 paginator rows={10}
@@ -161,6 +166,7 @@ const Asistencia = () => {
                     header="INASISTENCIAS"
                     body={(rowData) => rowData.inasistencias}
                     editor={(options) => cellEditor(options)} onCellEditComplete={onCellEditComplete}
+                    sortable
                 />
             </DataTable>
         </div>

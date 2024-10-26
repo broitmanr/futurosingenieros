@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
-
+import './Rendimiento.css';
 import axios from "axios";
 
 export const RendimientoGrupoProfe = () => {
@@ -46,35 +46,20 @@ export const RendimientoGrupoProfe = () => {
 
     const header = (
         <>
-            <h1 className='TituloRendimiento' style={{ fontSize: '2.2rem', textAlign: 'center', marginBottom: '20px', color: '#344474' }}>Rendimiento de los grupos</h1>
+            <h1 className='titulo-rendimiento'>Rendimiento de los grupos</h1>
 
-            <div className='containerFaltas' 
-                style={{ 
-                    backgroundColor: '#ccdcf1', 
-                    display: 'flex', 
-                    width: '100%', 
-                    border: 'transparent', 
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', 
-                    padding: '20px', 
-                    borderRadius: '8px'
-                }}>
-               {!loading ? (<h3 className='catedraProyecto' 
-                style={{ fontSize: "18px", 
-                    textAlign: 'left', 
-                    color: '#333', 
-                    marginTop: '10px',
-                    fontWeight: 'bold', 
-                    alignSelf: 'center' }}>
+            <div className='container-informacion-catedra'>
+               {!loading ? (<h3 className='catedra-proyecto'>
                     <div>{curso.materia}</div>
                     <div>{curso.comision}</div>
                 </h3>): '' }
                 <span className="p-input-icon-left">
                     <FaSearch />
                     <InputText
-                        style={{ marginLeft: '2em' }}
                         value={globalFilterValue}
                         onChange={onGlobalFilterChange}
                         placeholder="Buscar..."
+                        className='input-search-alumnos'
                     />
                 </span>
             </div>

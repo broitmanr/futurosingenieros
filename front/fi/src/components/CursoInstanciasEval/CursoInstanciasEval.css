@@ -249,10 +249,10 @@
 
 /* ESTILOS DE ALUMNOS CURSO */
 .alumnos-container { /* Estilos del contenedor */
-    min-height: 100vh; 
+    min-height: 100vh;
+    background-color: #f2f6fc;
     align-items: center;
     padding: 1rem;
-    border-radius: 2rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between

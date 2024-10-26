@@ -1,5 +1,5 @@
 const models = require('../database/models/index')
-
+const error = require('../const/error')
 const usuarioController = {
   listar: async (req, res) => {
     const users = await models.usuario.findAll()
@@ -15,25 +15,29 @@ const usuarioController = {
   crear: async (req, res, next) => {
 
   },
-
-  prueba: async (req, res) => {
-    console.log(res.locals.usuario)
-    try {
-      // await usuario.findOrCreate({
-      //     where: {
-      //         id: '1'
-      //     }, defaults: {
-      //         mail: 'broitmanroman@alu.frlp.utn.edu.ar',
-      //         persona_id: 1,
-      //         password: bcrypt.hashSync('password')
-      //     }
-      // })
-      res.json({
-        message: 'Hello World'
-      })
-    } catch (error) {
-      console.error(error)
+  MiPerfil: async (req, res, next) => {
+    const usuario = res.locals.usuario
+    const dataPersona = await models.Persona.findOne({
+      where: {
+        ID: usuario.persona_id
+      }
+    })
+    if (!dataPersona) {
+      return next({ ...error.NotFoundError, details: 'No se encontró la persona asociada al usuario en el metodo MiPerfil' })
     }
+    res.json({
+      success: true,
+      data: {
+        usuarioId: usuario.ID,
+        email: usuario.mail,
+        personaId: dataPersona.ID,
+        nombre: dataPersona.nombre,
+        apellido: dataPersona.apellido,
+        legajo: dataPersona.legajo,
+        dni: dataPersona.dni,
+        rol: dataPersona.rol
+      }
+    })
   }
 }
 

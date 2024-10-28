@@ -10,4 +10,5 @@ router.get('/tiposInstancias', InstanciaEvaluativa.listarTiposInstancias)
 router.get('/:id', checkRole.checkRole('D', 'A'), InstanciaEvaluativa.ver)
 router.get('/curso/:cursoID', InstanciaEvaluativa.listar)
 router.delete('/:id',checkRole.checkRoleDocente,InstanciaEvaluativa.remove)
+router.put('/:id',checkRole.checkRoleDocente,InstanciaEvaluativa.edit)
 module.exports = router

@@ -174,6 +174,83 @@ async function remove(req, res, next) {
   }
 }
 
+async function edit(req, res, next) {
+  if (req.params == null) { return next(errors.FaltanParametros) }
+  const { id } = req.params
+  try {
+    const instancia = await models.InstanciaEvaluativa.findByPk(id,{
+
+      include: [
+        {
+          model:models.Curso,
+          attributes:['ID'],
+        },
+        {
+          model:models.EntregaPactada,
+          attributes:['ID']
+        }
+      ]
+    })
+
+    if (!instancia) {
+
+      next({ ...errors.NotFoundError, details: `Instancia con ID ${id} no encontrada` })
+    }
+
+    if (!await instancia.Curso.esDocente(res.locals.usuario.persona_id)){
+      next({...errors.UsuarioNoAutorizado, details:'No es dueño de esa instancia'})
+    }
+    const { porcentajePonderacion, nombre, tipoInstanciaID, descripcion, grupo, penalidad_aplicable } = req.body
+    const transaction = await models.sequelize.transaction()
+    const instancias = await models.InstanciaEvaluativa.findAll({
+      where: { curso_id: instancia.Curso.ID }, // Ajusta el nombre del campo según tu modelo
+      attributes: ['porcentaje_ponderacion']
+    })
+
+    const totalPonderacion = instancias.reduce((acc, instancia) => {
+      return acc + instancia.porcentaje_ponderacion
+    }, 0)
+
+    if (totalPonderacion - instancia.porcentaje_ponderacion + parseInt(porcentajePonderacion) > 100) {
+      return next({ ...errors.ConflictError, details: 'El porcentaje de ponderación de las instancias supera el 100%, haga los cambios e intente nuevamente' })
+    }
+
+    if ((instancia.grupo !== grupo || instancia.penalidad_aplicable !== penalidad_aplicable)
+    && instancia.EntregaPactadas.length !== 0
+    ){
+      return next({...errors.ConflictError,details:'No puede cambiar grupal o aplica penalidad si existen entregas pactadas'})
+    }
+
+    try {
+      instancia.update({
+        porcentaje_ponderacion: porcentajePonderacion,
+        nombre,
+        descripcion,
+        grupo,
+        tipoInstancia_id: tipoInstanciaID,
+        updated_by: res.locals.usuario.ID,
+        penalidad_aplicable
+      }, { transaction })
+
+      await instancia.save({transaction});
+      await transaction.commit()
+      // Responder con el curso creado
+      res.status(200).json(instancia)
+    } catch (error) {
+      await transaction.rollback()
+      console.error(red(`Error al modificar la instancia:${error}`))
+      return next(errors.FaltanCampos)
+    }
+
+  } catch (error) {
+    console.error(red('Error al modificar instancia:', error))
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al modificar la instancia: ' + error.message
+    })
+  }
+}
+
 module.exports = {
-  crear, listarTiposInstancias, listar, ver,remove
+  crear, listarTiposInstancias, listar, ver,remove,edit
 }

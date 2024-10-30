@@ -8,5 +8,6 @@ router.get('/listar', diasEspecialesController.listarDiasEspeciales)
 router.get('/recuperar/:id', diasEspecialesController.obtenerDiaEspecial)
 router.put('/actualizar/:id', checkRole.checkRoleDocente, diasEspecialesController.actualizarDiaEspecial)
 router.delete('/eliminar/:id', checkRole.checkRoleDocente, diasEspecialesController.eliminarDiaEspecial)
+router.get('/byMonth/:month', checkRole.checkRole('D','A'), diasEspecialesController.listarDiasEspecialesByMonth)
 
 module.exports = router

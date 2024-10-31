@@ -37,5 +37,17 @@ module.exports = (sequelize, DataTypes) => {
     Curso.hasMany(models.PersonaXCurso, { foreignKey: 'curso_id' })
   }
 
+  Curso.prototype.esDocente = async function(docenteId) {
+    // Buscar en PersonaXCurso si hay un registro con el curso_id actual y el docenteId
+    const personaXCurso = await sequelize.models.PersonaXCurso.findOne({
+      where: {
+        curso_id: this.ID,
+        persona_id: docenteId,
+        rol: 'D'
+      }
+    })
+    return personaXCurso !== null
+  }
+
   return Curso
 }

@@ -7,7 +7,7 @@ const xlsx = require('xlsx')
 const fs = require('fs')
 
 // Función para crear un curso
-async function crear (req, res, next) {
+async function crear(req, res, next) {
   // Obtener los datos del cuerpo de la solicitud
   const { cicloLectivo, materiaID, comisionID } = req.body
   const transaction = await models.sequelize.transaction()
@@ -18,8 +18,8 @@ async function crear (req, res, next) {
     const cursoExistente = await models.Curso.findOne({
       where: {
         cicloLectivo,
-        materia_id:materiaID,
-        comision_id:comisionID
+        materia_id: materiaID,
+        comision_id: comisionID
       }
     })
     if (cursoExistente) {
@@ -51,11 +51,11 @@ async function crear (req, res, next) {
   }
 }
 
-async function ver (req, res, next) {
+async function ver(req, res, next) {
   const { id } = req.params
 
   try {
-    const cursoVer = await models.CursoConDetalle.findByPk(id,{
+    const cursoVer = await models.CursoConDetalle.findByPk(id, {
       include: [
         {
           model: models.Materia
@@ -109,7 +109,7 @@ async function ver (req, res, next) {
   }
 }
 
-async function listar (req, res, next) {
+async function listar(req, res, next) {
   try {
     const usuarioRol = res.locals.usuario.rol
     let cursos
@@ -123,7 +123,7 @@ async function listar (req, res, next) {
             attributes: ['nombre']
           }, {
             model: models.Materia,
-            attributes: ['nombre','imagen']
+            attributes: ['nombre', 'imagen']
           }, {
             model: models.PersonaXCurso,
             where: { persona_id: docenteId },
@@ -170,7 +170,7 @@ async function listar (req, res, next) {
   }
 }
 
-async function generarCodigoVinculacion (req, res, next) {
+async function generarCodigoVinculacion(req, res, next) {
   const { cursoId } = req.body
   const docenteId = res.locals.usuario.persona_id
 
@@ -210,7 +210,7 @@ async function generarCodigoVinculacion (req, res, next) {
   }
 }
 
-async function vincularEstudiante (req, res, next) {
+async function vincularEstudiante(req, res, next) {
   const transaction = await models.sequelize.transaction()
   try {
     const { codigoVinculacion } = req.body
@@ -255,13 +255,13 @@ async function vincularEstudiante (req, res, next) {
   } catch (error) {
     await transaction.rollback()
     console.error(red('Error al vincular Alumno al curso:', error))
-    next(error)
+    next({ ...errors.InternalServerError, details: 'Error al vincular Alumno al curso: ' + error.message })
   }
 }
 
 // Funciones para gestion de Alumnos en un curso
 
-async function agregarEstudiantes (req, res, next) {
+async function agregarEstudiantes(req, res, next) {
   const { id } = req.params
   const { Alumnos } = req.body // `Alumnos` es un array de persona_id
   const transaction = await models.sequelize.transaction()
@@ -310,7 +310,7 @@ async function agregarEstudiantes (req, res, next) {
   }
 }
 
-async function verMiembrosCurso (req, res, next) {
+async function verMiembrosCurso(req, res, next) {
   const { id } = req.params
   const { rol } = req.query
 
@@ -372,7 +372,7 @@ async function verMiembrosCurso (req, res, next) {
   }
 }
 
-async function agregarEstudianteByLegajo (req, res, next) {
+async function agregarEstudianteByLegajo(req, res, next) {
   const { id } = req.params
   const { legajo } = req.body
   const transaction = await models.sequelize.transaction()
@@ -418,12 +418,16 @@ async function agregarEstudianteByLegajo (req, res, next) {
     res.status(201).json({ message: 'Alumno agregado al curso' })
   } catch (error) {
     await transaction.rollback()
-    next(error)
+    console.error(red('Error al agregar Alumno:', error))
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al agregar Alumno: ' + error.message
+    })
   }
 }
 
 // Eliminar Alumnos de un curso
-async function eliminarEstudiante (req, res, next) {
+async function eliminarEstudiante(req, res, next) {
   const { id } = req.params
   const { estudiantes } = req.body // `Alumnos` es un array de persona_id
   const transaction = await models.sequelize.transaction()
@@ -452,11 +456,11 @@ async function eliminarEstudiante (req, res, next) {
   } catch (error) {
     await transaction.rollback()
     console.error(red('Error al eliminar Alumnos del curso:', error))
-    next(error)
+    next({ ...errors.InternalServerError, details: 'Error al eliminar Alumnos del curso: ' + error.message })
   }
 }
 
-async function actualizar (req, res, next) {
+async function actualizar(req, res, next) {
   const { id } = req.params
   const { cicloLectivo, materiaID, comisionID } = req.body
   const transaction = await models.sequelize.transaction()
@@ -489,15 +493,14 @@ async function actualizar (req, res, next) {
   } catch (error) {
     await transaction.rollback()
     console.error(red('Error al actualizar el curso:', error))
-    next(error)
+    next({ ...errors.InternalServerError, details: 'Error al actualizar el curso: ' + error.message })
   }
 }
 
-async function eliminarCursos (req, res, next) {
+async function eliminarCursos(req, res, next) {
   const { cursosIDs } = req.body // `cursosIDs` es un array de IDs de cursos
   const transaction = await models.sequelize.transaction()
   const docenteId = res.locals.usuario.persona_id
-
   try {
     for (const cursoID of cursosIDs) {
       const curso = await models.Curso.findByPk(cursoID, { transaction })
@@ -527,11 +530,11 @@ async function eliminarCursos (req, res, next) {
   } catch (error) {
     await transaction.rollback()
     console.error(red('Error al eliminar los cursos:', error))
-    next(error)
+    next({ ...errors.InternalServerError, details: 'Error al eliminar los cursos: ' + error.message })
   }
 }
 
-async function agregarEstudiantesExcel (req, res, next) {
+async function agregarEstudiantesExcel(req, res, next) {
   try {
     const cursoId = req.params.id
     const curso = await models.Curso.findByPk(cursoId)
@@ -611,7 +614,7 @@ async function agregarEstudiantesExcel (req, res, next) {
     res.status(200).json({ message: 'Archivo procesado correctamente y registros actualizados ', existentes, inexistentes })
   } catch (error) {
     console.error('Error al procesar el archivo Excel:', error)
-    res.status(500).json({ message: 'Hubo un error al procesar el archivo Excel' })
+    next({ ...errors.InternalServerError, details: 'Error al procesar el archivo Excel: ' + error.message })
   }
 }
 

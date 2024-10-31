@@ -425,7 +425,7 @@ async function agregarEstudianteByLegajo (req, res, next) {
 // Eliminar Alumnos de un curso
 async function eliminarEstudiante (req, res, next) {
   const { id } = req.params
-  const { Alumnos } = req.body // `Alumnos` es un array de persona_id
+  const { estudiantes } = req.body // `Alumnos` es un array de persona_id
   const transaction = await models.sequelize.transaction()
 
   try {
@@ -435,12 +435,11 @@ async function eliminarEstudiante (req, res, next) {
       return next({ ...errors.NotFoundError, details: `No se encontro ningun curso con este ID: ${id}` })
     }
 
-    for (const AlumnoId of Alumnos) {
+    for (const AlumnoId of estudiantes) {
       const Alumno = await models.PersonaXCurso.findOne({
         where: { persona_id: AlumnoId, curso_id: id },
         transaction
-      })
-
+      });
       if (!Alumno) {
         await transaction.rollback()
         return next({ ...errors.NotFoundError, details: `Estudiante con ID ${AlumnoId} no encontrado en el curso` })

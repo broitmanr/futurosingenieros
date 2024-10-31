@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Form, Modal } from 'react-bootstrap'; 
 import axios from 'axios';
 import { InputOtp } from 'primereact/inputotp';
 import { Button } from 'primereact/button';
 import './Cursos.css'
+import { Toast } from 'primereact/toast';
 
 function CursoVinculacion({ showVincular, handleCloseVincular, handleCursoAgregado }) {
   const [vinculo, setVinculo] = useState('');
+  const toastRef = useRef(null);
 
   //Se mueve al siguiente campo de entrada si se ingresó un valor
   const handleChangeValue = (e, index) => {
@@ -38,6 +40,7 @@ function CursoVinculacion({ showVincular, handleCloseVincular, handleCursoAgrega
       }, { withCredentials: true })
       handleCursoAgregado(response.data)
       setVinculo(Array(4).fill('')) //Limpia el input
+      toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Vinculación exitosa', life: 3000 });
       handleCloseVincular()
     } catch (err) {
       console.log('Error al vincularse al curso', err.response ? err.response.data : err.message)
@@ -52,6 +55,7 @@ function CursoVinculacion({ showVincular, handleCloseVincular, handleCursoAgrega
 
   return (
     <>
+      <Toast ref={toastRef} />
       <Modal show={showVincular} onHide={handleCloseVincular}>
         <Form onSubmit={handleVincularAlumno}>
           <div className="vincular-alumno-container">

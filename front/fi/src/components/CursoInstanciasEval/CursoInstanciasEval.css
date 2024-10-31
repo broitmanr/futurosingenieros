@@ -289,8 +289,13 @@
     border-bottom: #1A2035 0.1rem solid;
 }
 
-.table-header-agregar-alumno-icon{
+.table-header-agregar-alumno-icon, .table-header-cargar-alumno-icon, .table-header-eliminar-alumno-icon{
     margin-right: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.table-header-agregar-alumno-icon:hover, .table-header-cargar-alumno-icon:hover, .table-header-eliminar-alumno-icon:hover{
+    transform: scale(1.1)
 }
 
 .custom-datatable-alumnos .p-datatable-table .p-sortable-column-icon {

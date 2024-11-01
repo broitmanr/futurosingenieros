@@ -35,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     Curso.belongsTo(models.Materia, { foreignKey: 'materia_id' })
     Curso.belongsTo(models.Comision, { foreignKey: 'comision_id' })
     Curso.hasMany(models.PersonaXCurso, { foreignKey: 'curso_id' })
+    Curso.belongsToMany(models.Persona, { through: 'PersonaXCurso', foreignKey: 'curso_id', otherKey: 'persona_id' })
   }
 
   Curso.prototype.esDocente = async function(docenteId) {

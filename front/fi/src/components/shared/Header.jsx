@@ -98,12 +98,13 @@ const Header = () => {
 
     // Marcar notificación como leída
     const marcarComoLeida = async (id) => {
+
         try {
             await axios.patch(`/notificacion/${id}`, {}, { withCredentials: true });
             setNotificaciones(prev =>
-                prev.map(notif => notif.id === id ? { ...notif, leida: true } : notif)
+                prev.map(notif => notif.id === id ? { ...notif, leido: true } : notif)
             );
-            setHasNotifications(notificaciones.some(notif => !notif.leida));
+            setHasNotifications(notificaciones.some(notif => !notif.leido));
         } catch (error) {
             console.log('Error al marcar la notificación como leída:', error);
         }
@@ -128,7 +129,7 @@ const Header = () => {
                             <div className='flex flex-wrap justify-content-center gap-4'>
                                 <i className="p-overlay-badge icon-notifications-container" onClick={toogleDropdownNotificaciones}>
                                     <FaRegBell color='#fff' size={32} />
-                                    {hasNotifications && <Badge className='badge-notificacions-position' value={notificaciones.filter(n => !n.leida).length} severity="danger"></Badge>}
+                                    {hasNotifications && <Badge className='badge-notificacions-position' value={notificaciones.filter(n => !n.leido).length} severity="danger"></Badge>}
                                 </i>
                                 {/* Dropdown de notificaciones */}
                                 {dropdownNotificacionesVisible && (

@@ -4,12 +4,15 @@ const { handleTransaction } = require('../const/transactionHelper')
 const models = require('../database/models/index')
 const { validarDocenteInstanciaEvaluativa } = require('../middlewares/validarDocente')
 const { getEstado } = require('./entrega.controller')
+const {crearNotificacionesParaAlumnos} = require('../services/notificacionService')
 
 // Función para crear una entrega pactada
 async function crear(req, res, next) {
-  const { nombre, numero, descripcion, fechavto1, fechavto2, instanciaEvaluativaID } = req.body
+  const { nombre, numero, descripcion, fechavto1, fechavto2, instanciaEvaluativaID } = req.body;
+
   const nuevaEntregaPactada = await handleTransaction(async (transaction) => {
-    return await models.EntregaPactada.create({
+    // Crear la nueva entrega pactada
+    const entrega = await models.EntregaPactada.create({
       nombre,
       numero,
       descripcion,
@@ -17,13 +20,54 @@ async function crear(req, res, next) {
       fechavto2,
       instanciaEvaluativa_id: instanciaEvaluativaID,
       updated_by: res.locals.usuario.ID
-    }, { transaction })
-  }, next)
+    }, { transaction });
+
+    // Obtener la instancia evaluativa y el curso asociado, con personas y usuarios
+    const instanciaEvaluativa = await models.InstanciaEvaluativa.findByPk(instanciaEvaluativaID, {
+      include: {
+        model: models.Curso,
+        include: {
+          model: models.Persona,
+          where: { rol: 'A' },
+          include: {
+            model: models.Usuario,
+            attributes: ['ID'] // Solo traer el ID del usuario
+          }
+        }
+      }
+    });
+
+    console.log("Instancia--"+instanciaEvaluativa)
+
+    if (!instanciaEvaluativa || !instanciaEvaluativa.Curso) {
+      throw new Error('No se encontró el curso asociado a la instancia evaluativa');
+    }
+
+    // Obtener los IDs de usuarios de alumnos con cuenta de usuario asociada
+    const usuarioIds = instanciaEvaluativa.Curso.Personas
+        .filter(persona => persona.Usuario) // Filtrar personas que tienen un usuario asociado
+        .map(persona => persona.Usuario.ID);
+
+    // Crear mensaje de notificación
+    const mensaje = `Se ha creado una nueva entrega pactada: ${nombre}. Fecha de vencimiento: ${fechavto1}`;
+
+    // Llamar al servicio para crear las notificaciones
+    await crearNotificacionesParaAlumnos(
+        usuarioIds,
+        mensaje,
+        1,
+        res.locals.usuario.ID,
+        transaction
+    );
+
+    return entrega;
+  }, next);
 
   if (nuevaEntregaPactada) {
-    res.status(201).json({ message: 'EntregaPactada generada exitosamente', data: nuevaEntregaPactada })
+    res.status(201).json({ message: 'EntregaPactada generada exitosamente', data: nuevaEntregaPactada });
   }
 }
+
 
 // Función para ver una entrega pactada
 async function ver(req, res, next) {

@@ -13,6 +13,8 @@ const { set } = require('./mailer/mailer')
 const cron = require('node-cron')
 const { verificarPenalidadesBackground } = require('./controllers/penalidad.controller')
 // const { inicializarArchivosDesdeCarpeta } = require('./controllers/archivo.controller')
+const {iniciarNotificacionesVencimiento} = require('./services/notificacionScheduler')
+const {enviarNotificacionesVencimientoEntrega} = require("./services/notificacionService");
 const configuracionApi = async (app) => {
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
@@ -51,6 +53,7 @@ const init = async () => {
     console.log('Ejecutando verificación de penalidades...')
     verificarPenalidadesBackground()
   })
+  iniciarNotificacionesVencimiento()
   /* Usamos un timeout de unos 5 segundos para que asegurarnos que todo la bd se sincronice e iniciamos inicializarArchivosDesdeCarpeta
   setTimeout(() => {
     const imgFolder = '1m0G7726_malY8pAMFtMKhMXRIzW2GvMx'

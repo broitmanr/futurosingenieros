@@ -26,18 +26,23 @@ async function crear(req, res, next) {
     const instanciaEvaluativa = await models.InstanciaEvaluativa.findByPk(instanciaEvaluativaID, {
       include: {
         model: models.Curso,
-        include: {
+        include: [
+          {
           model: models.Persona,
           where: { rol: 'A' },
           include: {
             model: models.Usuario,
             attributes: ['ID'] // Solo traer el ID del usuario
           }
-        }
+        },
+          {
+            model:models.Materia,
+            attributes:['nombre']
+          }
+        ]
       }
     });
 
-    console.log("Instancia--"+instanciaEvaluativa)
 
     if (!instanciaEvaluativa || !instanciaEvaluativa.Curso) {
       throw new Error('No se encontró el curso asociado a la instancia evaluativa');
@@ -49,7 +54,7 @@ async function crear(req, res, next) {
         .map(persona => persona.Usuario.ID);
 
     // Crear mensaje de notificación
-    const mensaje = `Se ha creado una nueva entrega pactada: ${nombre}. Fecha de vencimiento: ${fechavto1}`;
+    const mensaje = ` ${instanciaEvaluativa.Curso.Materium.nombre} nueva entrega. Fecha de vencimiento: ${fechavto1}`;
 
     // Llamar al servicio para crear las notificaciones
     await crearNotificacionesParaAlumnos(

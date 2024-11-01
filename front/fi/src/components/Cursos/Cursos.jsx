@@ -127,14 +127,17 @@ const Cursos = () => {
             )}
             { role === 'A' && (
                 <>
-                    <Calendar
-                        onMonthChange={fetchSpecialDays}
-                        specialDays={dias}
-                    />
-                    <Button className='cursos-btns' onClick={() => setShowVincular (true) }>
-                        Vincular curso
-                    </Button>
-                    <CursoVinculacion showVincular={showVincular} handleCloseVincular={handleCloseVincular} handleCursoAgregado={handleCursoAgregado} />
+                    <div className="cursos-components-container">
+                        <Calendar
+                            className='calendar-component'
+                            onMonthChange={fetchSpecialDays}
+                            specialDays={dias}
+                        />
+                        <Button className='cursos-btns' onClick={() => setShowVincular (true) }>
+                            Vincular curso
+                        </Button>
+                        <CursoVinculacion showVincular={showVincular} handleCloseVincular={handleCloseVincular} handleCursoAgregado={handleCursoAgregado} />
+                    </div>
                 </>
 
             )}

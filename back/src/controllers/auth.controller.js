@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const transporter = require('../mailer/sendEmailWithTemplate')
 const jwt = require('../middlewares/signJWT')
 const rolservice = require('../services/rolservice')
+const isPasswordValid = require('../const/passwordValidation')
 
 module.exports = {
   login: async (req, res, next) => {
@@ -13,11 +14,11 @@ module.exports = {
         where: {
           mail: req.body.mail
         },
-        include:[
-        {
-          model:models.Persona,
-          attributes:['nombre','apellido']
-        }]
+        include: [
+          {
+            model: models.Persona,
+            attributes: ['nombre', 'apellido']
+          }]
       })
 
       if (user) {
@@ -38,7 +39,7 @@ module.exports = {
           id: user.ID,
           token: jwt(user),
           role: user.rol,
-          name: user.Persona?.nombre + ' '+ user.Persona?.apellido ?? null
+          name: user.Persona?.nombre + ' ' + user.Persona?.apellido ?? null
         }
       })
     } catch (err) {
@@ -48,6 +49,14 @@ module.exports = {
 
   registrarse: async (req, res, next) => {
     try {
+      // Validar la contraseña
+      if (!isPasswordValid(req.body.password)) {
+        return next({
+          ...errors.ValidationError,
+          details: 'La contraseña debe tener al menos 8 caracteres alfanuméricos'
+        })
+      }
+
       const persona = await models.Persona.findOne({
         where: {
           legajo: req.body.legajo
@@ -65,16 +74,10 @@ module.exports = {
       const nombre = persona ? persona.nombre : user.mail.split('@')[0]
 
       try {
-        const mailresponse = await transporter.mailRegistro(req.body.mail, nombre)
-        console.log(mailresponse)
+        await transporter.mailRegistro(req.body.mail, nombre)
       } catch (e) {
-        console.log(e)
-        res.json({
-          success: false,
-          data: {
-            error: e
-          }
-        })
+        console.log('Error al enviar mail de registro:', e)
+        return next({ ...errors.InternalServerError, details: e.message })
       }
 
       res.json({

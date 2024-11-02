@@ -17,11 +17,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     updated_at: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: false
     },
-    fecha:{
-      type:DataTypes.DATE,
-      allowNull:false,
+    fecha: {
+      type: DataTypes.DATE,
+      allowNull: false,
       defaultValue: DataTypes.NOW
     },
     updated_by: {

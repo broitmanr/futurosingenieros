@@ -14,8 +14,6 @@ const validate = (schemas) => {
         validationErrors.push(...error.details.map(detail => detail.message))
       }
     }
-
-    console.log(schemas)
     if (schemas.body) {
       const { error } = schemas.body.validate(req.body, { abortEarly: false })
       if (error) {

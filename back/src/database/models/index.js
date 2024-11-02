@@ -25,9 +25,9 @@ fs
   .filter(file => {
     return (
       file.indexOf('.') !== 0 &&
-                file !== basename &&
-                file.slice(-3) === '.js' &&
-                file.indexOf('.test.js') === -1
+      file !== basename &&
+      file.slice(-3) === '.js' &&
+      file.indexOf('.test.js') === -1
     )
   })
   .forEach(file => {
@@ -45,7 +45,9 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize
 db.Sequelize = Sequelize
 
-// Sincronizar con la base de datos
-sequelize.sync()
+// Sincronizar con la base de datos y exportar la promesa
+const syncPromise = sequelize.authenticate().then(() => {
+  return sequelize.sync()
+})
 
-module.exports = db
+module.exports = { ...db, syncPromise }

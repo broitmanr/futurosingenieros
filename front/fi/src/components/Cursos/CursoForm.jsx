@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap'; 
 import axios from 'axios';
 import { Dropdown } from 'primereact/dropdown';
 import './Cursos.css'
+import { Toast } from 'primereact/toast';
 
 function Curso({ show, handleClose, handleCursoAgregado }) {
   const currentYear = new Date().getFullYear(); //Constante para obtener el año actual
@@ -17,6 +18,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
   const [selectedComision, setSelectedComision] = useState(initialForm.selectedComision);
   const [selectedMateria, setSelectedMateria] = useState(initialForm.selectedMateria);
   const [isSubmitting, setIsSubmitting] = useState(false); // Estado para controlar el estado de la solicitud
+  const toastRef = useRef(null);
 
   useEffect(() => { //Limpia el form luego de agregar un curso
     if(show){
@@ -68,6 +70,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
     .then(response => {
       console.log('Curso creado con éxito', response.data)
       handleCursoAgregado(response.data) //Actualiza lista de cursos
+      toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Curso creado con éxito', life: 3000 });
       handleClose();
     })
     .catch (err => console.log('Error al querer crear el curso', err))
@@ -91,6 +94,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
 
   return (
     <>
+      <Toast ref={toastRef} />
       <Modal show={show} onHide={handleClose}>
         <Form onSubmit={handleConfirmar}>
           <Modal.Header className='modal-header-agregar-curso' closeButton>

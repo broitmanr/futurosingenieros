@@ -1,6 +1,7 @@
 const models = require('../database/models/index')
 const errors = require('../const/error')
 const pico = require('picocolors')
+const {Op} = require("sequelize");
 
 // Función para crear un día especial
 async function crearDiaEspecial(req, res, next) {
@@ -65,6 +66,56 @@ async function listarDiasEspeciales(req, res, next) {
             ...errors.InternalServerError,
             details: 'Error al listar los días especiales: ' + error.message
         })
+    }
+}
+
+async function listarDiasEspecialesByMonth(req, res, next) {
+    try {
+        const { month } = req.params;
+
+        // Validar que month y year sean números válidos
+        const monthNum = parseInt(month);
+        const yearNum = new Date().getFullYear();
+
+        if (isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+            return res.status(400).json({
+                error: 'El mes debe ser un número entre 1 y 12'
+            });
+        }
+
+        if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2100) {
+            return res.status(400).json({
+                error: 'Año inválido'
+            });
+        }
+
+        // Construir el rango de fechas para el mes y año dados
+        const startDate = new Date(yearNum, monthNum - 1, 1);
+        const endDate = new Date(yearNum, monthNum, 0, 23, 59, 59, 999);
+
+        // Consultar a la base de datos
+        const diasEspeciales = await models.DiasEspeciales.findAll({
+            where: {
+                fecha: {
+                    [Op.between]: [startDate, endDate]
+                }
+            }
+        });
+
+        // Mapear los días especiales para devolver el formato deseado
+        const result = diasEspeciales.map(dia => ({
+            day: new Date(dia.fecha).getDate(), // Obtener el número del día del mes
+            description: dia.nombre, // Campo `nombre`
+            color: generarColorPastel(), // Generar color pastel para cada fecha
+            fullDescription: dia.descripcion
+        }));
+
+        res.status(200).json(result);
+    } catch (error) {
+        next({
+            status: 500,
+            message: 'Error al listar los días especiales: ' + error.message
+        });
     }
 }
 
@@ -139,11 +190,20 @@ async function eliminarDiaEspecial(req, res, next) {
         })
     }
 }
+// Función para generar un color pastel con baja opacidad
+    function generarColorPastel() {
+        const r = Math.floor((Math.random() * 127) + 30); // Genera un valor entre 127-254 para tonos claros
+        const g = Math.floor((Math.random() * 127) + 40);
+        const b = Math.floor((Math.random() * 127) + 60);
+        const opacity = 0.7; // Baja opacidad
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
 
 module.exports = {
     crearDiaEspecial,
     listarDiasEspeciales,
     obtenerDiaEspecial,
     actualizarDiaEspecial,
-    eliminarDiaEspecial
+    eliminarDiaEspecial,
+    listarDiasEspecialesByMonth
 }

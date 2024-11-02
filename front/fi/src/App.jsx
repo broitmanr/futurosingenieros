@@ -22,6 +22,7 @@ import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { PerfilAlumno } from './components/Perfil/PerfilAlumno.jsx';
 import { PerfilDocente } from './components/Perfil/PerfilDocente.jsx';
 
+
 axios.defaults.baseURL = 'http://localhost:5000/api'
 
 const AppContent = () => {

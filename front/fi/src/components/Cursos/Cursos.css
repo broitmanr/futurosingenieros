@@ -1,7 +1,7 @@
 /* ESTILOS PARA CURSOS */
 .cursos-container{
     min-height: 100vh;
-    position: relative;
+    /* position: relative; */
     padding: 2rem;
     background-color: #f2f6fc 
 }
@@ -11,6 +11,16 @@
     right: 6.6rem;
     margin: 5;
     background-color: #1A2035 !important
+}
+
+.cursos-components-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.p-button.p-button-text{
+    left: 4rem;
+    font-size: large;
 }
 
 .cursos-row{
@@ -42,8 +52,41 @@
 .cursos-img-progress-bar{
     height: 0.4rem
 }
+
 .p-progressbar-value{
     background: #2f3856;
+}
+
+.icon-delete-curso:hover{
+    transform: scale(1.1);
+}
+
+.popup-confirm-delete{
+    width: 50vw
+}
+
+.popup-message{
+    font-size: 1.12rem;
+}
+
+.button-cancelar{
+    background-color: #CCDCF1 !important;
+    color: #1A2035 !important;
+    margin-right: 1rem;
+    border: 0.1rem solid #608ad1 !important;
+    border-radius: 0.4rem;
+    font-size: 1.1rem;
+}
+
+.button-eliminar{
+    color: #fff !important;
+    background-color: #1A2035 !important;
+    border-radius: 0.4rem !important;
+    font-size: 1.08rem !important;
+}
+
+.icons-delete-curso{
+    margin-right: 0.2rem;
 }
 
 /* ESTILOS PARA CREAR UN CURSO */
@@ -108,11 +151,15 @@
     font-size: 50px;
 }
 
-.btn-vincular-alumno {
+.btn-vincular-alumno{
     border-radius: 0.24rem;
     background-color: #1A2035;
     color: #fff;
     align-self: flex-end;
     align-self: center;
     margin: 4rem;
+}
+
+.btn-vincular-alumno:hover{
+    transform: scale(1.1);
 }

@@ -2,7 +2,18 @@ const errors = require('../const/error')
 const models = require('../database/models/index')
 
 async function crear(tipo, texto, personaId) {
+  try {
+    const notificacion = await models.Notificacion.create({
+      detalle: texto,
+      leido: false,
+      tipoNotificacion_id: tipo,
+      usuario_id: personaId
+    })
 
+    return notificacion
+  } catch (error) {
+    return error
+  }
 }
 
 async function obtenerUltimasNotificaciones(req, res, next) {

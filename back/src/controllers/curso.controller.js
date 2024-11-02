@@ -430,7 +430,6 @@ async function agregarEstudianteByLegajo(req, res, next) {
 async function eliminarEstudiante(req, res, next) {
   const { id } = req.params
   const { estudiantes } = req.body // `Alumnos` es un array de persona_id
-  console.log('Alumnos recibidos del body:', estudiantes)
   const transaction = await models.sequelize.transaction()
 
   try {
@@ -445,7 +444,6 @@ async function eliminarEstudiante(req, res, next) {
         where: { persona_id: AlumnoId, curso_id: id },
         transaction
       })
-      console.log('Alumno encontrados previo a eliminarlos:', Alumno)
       if (!Alumno) {
         await transaction.rollback()
         return next({ ...errors.NotFoundError, details: `Estudiante con ID ${AlumnoId} no encontrado en el curso` })

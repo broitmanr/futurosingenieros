@@ -9,9 +9,11 @@ const manageTempFiles = require('./middlewares/archivosTemporales')
 const { set } = require('./mailer/mailer')
 const cron = require('node-cron')
 const { verificarPenalidadesBackground } = require('./controllers/penalidad.controller')
+// const { inicializarArchivosDesdeCarpeta } = require('./controllers/archivo.controller')
+const { iniciarNotificacionesVencimiento } = require('./services/notificacionScheduler')
+const { enviarNotificacionesVencimientoEntrega } = require('./services/notificacionService')
 
-// Configuración de middlewares y API
-const configuracionApi = (app) => {
+const configuracionApi = async (app) => {
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
   app.use(cors({
@@ -34,6 +36,8 @@ function createApp() {
   const app = express()
   configuracionApi(app)
   configuracionRouter(app)
+  iniciarNotificacionesVencimiento()
+
   return app
 }
 
@@ -62,6 +66,7 @@ if (require.main === module) {
   })
 }
 
+// Exportar funciones para poder ser utilizadas en tests
 module.exports = {
   createApp,
   startServer

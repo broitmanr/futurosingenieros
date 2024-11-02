@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FilterMatchMode } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -7,7 +7,9 @@ import { IconField } from 'primereact/iconfield';
 import { FloatLabel } from 'primereact/floatlabel'; //Se importa componente para agregar al alumno
 import { Button } from 'primereact/button';
 import { InputOtp } from 'primereact/inputotp';
-import { Dialog } from 'primereact/dialog';
+import { Checkbox } from 'primereact/checkbox';
+import { confirmPopup, ConfirmPopup } from 'primereact/confirmpopup';
+import { Toast } from 'primereact/toast';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { AlumnosDatos } from '../shared/dataAlumnos'; //Se importan los datos de prueba
 import 'primereact/resources/primereact.css';
@@ -18,6 +20,10 @@ import { PiUserCirclePlusBold } from "react-icons/pi";
 import { FaRegFileExcel } from "react-icons/fa";
 import { FileUpload } from 'primereact/fileupload';
 import { PiCopyBold } from "react-icons/pi";
+import { BsTrash } from "react-icons/bs";
+import { CiWarning } from "react-icons/ci";
+import { CiCircleCheck } from "react-icons/ci";
+import { RxCrossCircled } from "react-icons/rx";
 import axios from 'axios';
 
 function AlumnosCurso() {
@@ -26,6 +32,7 @@ function AlumnosCurso() {
   const [legajo, setLegajo] = useState(''); //Estado para el legajo
   const [codigoVinculacion, setCodigoVinculacion] = useState(''); //Estado para el código de vinculación
   const [alumnos, setAlumnos] = useState([]); //Estado para el listado de alumnos
+  const [selectedAlumnos, setSelectedAlumnos] = useState([]);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     'Persona.legajo': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -33,12 +40,11 @@ function AlumnosCurso() {
   });
   const [loading, setLoading] = useState(true); //Maneja estado de la solicitud
   const [globalFilterValue, setGlobalFilterValue] = useState('');
-  const [visible, setVisible] = useState(false); //Manejo del Dialog
   const handleScroll = () => { //Manejo del desplazo a la sección Agregar Alumnos
     document.getElementById('agregarAlumnos').scrollIntoView({ behavior: 'smooth'})
   };
-
   const [error, setError] = useState('');
+  const toast = useRef(null);
 
   const handleCargarAlumnosExcel = async (e) => { //Cargar alumnos desde un archivo excel
     const file = e.target.files[0];
@@ -103,8 +109,8 @@ function AlumnosCurso() {
         const response = await axios.post(`/curso/${id}/estudiante`, {
         legajo: legajo }, { withCredentials: true })
         if (response.status === 201) {
-          setVisible(true)
           fetchAlumnos(); //Actualiza lista de estudiantes
+          toast.current.show({ severity: 'success', summary: 'Éxito', detail: `¡Alumno con legajo ${legajo} agregado con éxito!`, life: 3000 });
         }
       } catch (err) {
         console.log('Error al agregar al alumno', err)
@@ -128,7 +134,54 @@ function AlumnosCurso() {
 
   const copiarCodigo = () => {
     navigator.clipboard.writeText(codigoVinculacion)
+    toast.current.show({ severity: 'info', summary: 'Información', detail: 'Se ha copiado el código', life: 3000 });
   }
+
+  const handleSelectAlumno = (AlumnoId) => {
+    setSelectedAlumnos((prevSelected) => {
+      if (prevSelected.includes(AlumnoId)) {
+          return prevSelected.filter((id) => id !== AlumnoId); // Deseleccionar
+      } else {
+          return [...prevSelected, AlumnoId]; // Seleccionar
+      }
+    });
+  }
+  
+  const handleDeleteAlumno = async () => {
+    try{
+      const response = await axios.delete(`/curso/${id}/estudiantes`, {
+      data: { estudiantes: selectedAlumnos }, withCredentials: true })
+      if (response.data) {
+        fetchAlumnos();
+        setSelectedAlumnos([])
+        toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Alumno/s eliminado/s con éxito', life: 3000 });
+      }
+    } catch (err) {
+      console.log('Error al eliminar al alumno', err)
+    }
+  }
+
+  const showConfirmDelete = (e) => {
+    confirmPopup({
+        target: e.currentTarget,
+        group: 'templating',
+        header: 'Confirmation',
+        message: (
+            <div className="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
+                <i className="text-6xl text-primary-500"></i>
+                <CiWarning size={40} className='btn-gestionar-recurso' />
+                <span>¿Está seguro que desea eliminar el/los alumno/s?</span>
+            </div>
+        ),
+        accept: () => handleDeleteAlumno(),
+        acceptIcon: <CiCircleCheck size={20} className='icons-delete-recurso' />,
+        acceptLabel: 'Eliminar',
+        rejectIcon: <RxCrossCircled size={20} className='icons-delete-recurso' />,
+        rejectLabel: 'Cancelar',
+        rejectClass: 'p-button-sm',
+        acceptClass: 'p-button-outlined p-button-sm btn-eliminar-recurso'
+    });
+  };
 
   const onGlobalFilterChange = (e) => { //Buscador general
     const value = e.target.value;
@@ -165,14 +218,14 @@ function AlumnosCurso() {
           <OverlayTrigger overlay={
             <Tooltip id="tooltip-agregar-alumno" className='tooltip-agregar-alumno'>Agregar alumno</Tooltip>}>
             <span className="d-inline-block">
-              <PiUserCirclePlusBold className='table-header-agregar-alumno-icon' data-tip='Agregar alumno' onClick={handleScroll} color='#e2ebf7' size={38}/>
+              <PiUserCirclePlusBold className='table-header-agregar-alumno-icon' data-tip='Agregar alumno' onClick={handleScroll} color='#a8c6e8' size={36}/>
             </span>
           </OverlayTrigger>
           <OverlayTrigger overlay={
             <Tooltip id="tooltip-cargar-alumnos" className='tooltip-cargar-alumnos'>Cargar alumnos</Tooltip>}>
             <span className="d-inline-block">
               <label htmlFor="file-upload" className="custom-file-upload">
-                <FaRegFileExcel data-tip='Cargar alumnos' color='#e2ebf7' size={30} />
+                <FaRegFileExcel className='table-header-cargar-alumno-icon' data-tip='Cargar alumnos' color='#6dbb7c' size={29} />
               </label>
               <input 
                   id="file-upload"
@@ -183,6 +236,13 @@ function AlumnosCurso() {
                   onChange={handleCargarAlumnosExcel} 
               />
             </span>
+          </OverlayTrigger>
+          <OverlayTrigger overlay={
+            <Tooltip id="tooltip-eliminar-alumno" className='tooltip-eliminar-alumno'>Eliminar alumno</Tooltip>}>
+            <div className="d-inline-block flex flex-wrap justify-content-center gap-2">
+              <ConfirmPopup group="templating" />
+              <BsTrash className='table-header-eliminar-alumno-icon' data-tip='Eliminar alumno' color='#e6838c' size={32} onClick={showConfirmDelete} />
+            </div>
           </OverlayTrigger>
         </div>
         <IconField >
@@ -203,6 +263,7 @@ function AlumnosCurso() {
     <div className="alumnos-container">
       <h5 className="text-title-alumnos">Listado de alumnos</h5>
       {error && <p>{error}</p>}
+      <Toast ref={toast} />
       <DataTable
         value={alumnos}
         paginator rows={10}
@@ -215,6 +276,14 @@ function AlumnosCurso() {
         emptyMessage="Lo siento, no se encontraron alumnos."
         className='custom-datatable-alumnos'
       >
+        <Column
+          body={(rowData) => (
+            <Checkbox 
+              checked={selectedAlumnos.includes(rowData.persona_id)} 
+              onChange={() => handleSelectAlumno(rowData.persona_id)} 
+            />
+          )}
+        />
         <Column
           className='columns-data-alumnos'
           field="Persona.legajo"
@@ -274,12 +343,6 @@ function AlumnosCurso() {
             <label className="text-input-item" htmlFor="legajo">Legajo</label>
           </FloatLabel>
           <Button className="btn-agregar-alumno" onClick={handleAgregarAlumnoConLegajo} label="Agregar" />
-          <Dialog className='dialog-agregar-alumno' header="Alumno agregado" visible={visible} onHide={() => setVisible(false)}
-            breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
-            <p className="m-0">
-              ¡Alumno con legajo {legajo} agregado con éxito!
-            </p>
-          </Dialog>
         </div>
         <div className="card-agregar-alumnos-container">
           {/* Generar código de vinculación */}

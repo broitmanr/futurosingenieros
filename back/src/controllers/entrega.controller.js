@@ -4,6 +4,7 @@ const models = require('../database/models/index')
 const GoogleDriveService = require('../services/GoogleDriveService') // Importa el servicio de Google Drive
 const fs = require('fs') // Para manejar el stream de archivos
 const pico = require('picocolors')
+const {crearNotificacionesParaAlumnos} = require("../services/notificacionService");
 const googleDriveService = new GoogleDriveService()
 
 const crearEntrega = async (req, res, next) => {
@@ -18,7 +19,7 @@ const crearEntrega = async (req, res, next) => {
       include: [
         {
           model: models.InstanciaEvaluativa,
-          attributes: ['grupo', 'curso_id']
+          attributes: ['grupo', 'curso_id','nombre']
         }
       ]
     })
@@ -81,9 +82,25 @@ const crearEntrega = async (req, res, next) => {
           const grupo = await models.Grupo.findByPk(grupoId, {
             include: [{
               model: models.Persona,
-              attributes: ['ID']
+              attributes: ['ID'],
+              include:{model:models.Usuario}
             }]
           })
+
+          // Mando las notificaciones
+          const usuarioIds = grupo.Personas
+              .filter(persona => persona.Usuario)
+              .map(persona => persona.Usuario.ID);
+
+          const mensaje = `Se ha realizado la entrega de ${entregaPactada.InstanciaEvaluativa.nombre} - ${entregaPactada.nombre} `;
+
+          await crearNotificacionesParaAlumnos(
+              usuarioIds,
+              mensaje,
+              2,
+              res.locals.usuario.ID,
+              transaction
+          );
 
           const porcentaje = parseFloat((100 / parseInt(grupo.Personas.length)).toFixed(2))
           for (const persona of grupo.Personas) {

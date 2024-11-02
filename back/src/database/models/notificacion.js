@@ -37,5 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     Notificacion.belongsTo(models.TipoNotificacion, { foreignKey: 'tipoNotificacion_id', allowNull: false })
     Notificacion.belongsTo(models.Usuario, { foreignKey: 'usuario_id', allowNull: false })
   }
+
+
   return Notificacion
 }

@@ -460,7 +460,7 @@ async function getEstado(entrega) {
           entrega_id: entrega.ID
         }
       })
-      console.log('problema 2')
+
       if (comentarios > 0) {
         estado.id = 4
         estado.descripcion = 'Con Comentarios'

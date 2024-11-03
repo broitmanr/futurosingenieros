@@ -152,7 +152,48 @@ const Sidebar = ({
 
   return (
       <div className="sidebar">
-        {/* ... (resto del JSX igual hasta la parte de los highlights) ... */}
+        {/* Description section */}
+        <div className="sidebar-descripcion">
+          {!isLoading && entrega ? (
+              <>
+                <h2 className="sidebar-entrega-nombre">
+                  {entrega.nombre}
+                </h2>
+                <h5 className='sidebar-entrega-descripcion'>{entrega.descripcion}</h5>
+                <b>Fecha de entrega: {moment(entrega.fecha).format('DD/MM/YY')}</b>
+                {role === 'D' && !entrega.nota ? (
+                    <>
+                      <div className="entrega-sincalificar-container">
+                        <FloatLabel className='entrega-sin-calificar-floatlabel'>
+                          <InputText id="nota" value={nota} onChange={(e) => setNota(e.target.value)} />
+                          <label htmlFor="nota">Calificar</label>
+                        </FloatLabel>
+                        <Button className="entrega-sin-calificar-btn" label='Calificar' onClick={handleCalificar} />
+                      </div>
+                    </>
+                ): role === 'D' && (
+                    <>
+                      <div className="entrega-calificada-container">
+                        <label htmlFor="nota">Calificación</label>
+                        <InputText id="nota" readOnly value={entrega.nota} />
+                      </div>
+                    </>
+                )}
+              </>
+          ) :(<h3>Cargando entrega...</h3>)}
+          <p className={'mt-2'}>
+            <small>
+              Para marcar un área en específico mantené apretado alt y seleccioná dicha área
+            </small>
+          </p>
+        </div>
+        {!isLoading && entrega && (entrega.archivos.length > 1) && (
+            <div className="siguiente-entrega-container">
+              <button onClick={toggleDocument} className="sidebar__toggle">
+                Siguiente Entrega
+              </button>
+            </div>
+        )}
 
         {highlights && (
             <ul className="sidebar__highlights">

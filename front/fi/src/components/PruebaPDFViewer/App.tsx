@@ -101,7 +101,8 @@ const App = () => {
                 comment: comment.comentario,
                 user: comment.usuario,
                 date: new Date(comment.fecha).toLocaleDateString(),
-                mine: comment.mine
+                mine: comment.mine,
+                answers: comment.answers,
             }));
             console.log(mappedHighlights)
             setHighlights(mappedHighlights);
@@ -308,7 +309,7 @@ const App = () => {
             {contextMenu && <ContextMenu {...contextMenu} />}
             <Sidebar
                 highlights={highlights}
-                resetHighlights={() => setHighlights([])}
+                onHighlightsUpdate={setHighlights}
                 toggleDocument={toggleDocument}
                 isLoading={isLoading}
                 entrega={entrega}

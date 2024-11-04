@@ -56,25 +56,37 @@ function CursoVinculacion({ showVincular, handleCloseVincular, handleCursoAgrega
   return (
     <>
       <Toast ref={toastRef} />
-      <Modal show={showVincular} onHide={handleCloseVincular}>
-        <Form onSubmit={handleVincularAlumno}>
-          <div className="vincular-alumno-container">
-            <h5 className="text-description-vincular-alumno">Ingrese el código de vinculación</h5>
-            <div className='cod-v-alumno-container'>
-                <InputOtp 
-                  className="input-item-cod-v"
-                  numInputs={4}
-                  value={vinculo} 
-                  onChange={(e) => setVinculo(e.value)}
-                />
-            </div>
-            <div className="d-flex justify-content-between align-items-center w-100">
-              <Button className="btn-vincular-alumno" onClick={handleCancelarVinculacion} label='Cancelar' />
-              <Button className="btn-vincular-alumno" type='submit' label='Agregar' />
-            </div>
-          </div>
-        </Form>
-      </Modal>
+      <Modal show={showVincular} onHide={handleCloseVincular} data-cy="modal-vinculacion">
+  <Form onSubmit={handleVincularAlumno}>
+    <div className="vincular-alumno-container">
+      <h5 className="text-description-vincular-alumno">Ingrese el código de vinculación</h5>
+      <div className='cod-v-alumno-container'>
+        <InputOtp 
+          className="input-item-cod-v"
+          numInputs={4}
+          value={vinculo} 
+          onChange={(e) => setVinculo(e.value)}
+          inputClassName="otp-input"
+          data-cy="codigo-vinculacionAlumno"
+        />
+      </div>
+      <div className="d-flex justify-content-between align-items-center w-100">
+        <Button 
+          className="btn-vincular-alumno" 
+          onClick={handleCancelarVinculacion} 
+          label='Cancelar'
+          data-cy="btn-cancelar-vinculacion"
+        />
+        <Button 
+          className="btn-vincular-alumno" 
+          type='submit' 
+          label='Agregar'
+          data-cy="btn-confirmar-vinculacion"
+        />
+      </div>
+    </div>
+  </Form>
+</Modal>
     </>
   );
 }

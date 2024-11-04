@@ -38,13 +38,17 @@ function createApp() {
   configuracionRouter(app)
   iniciarNotificacionesVencimiento()
 
+  // Ruta de salud para verificar que el servidor este corriendo
+  app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'OK' })
+  })
   return app
 }
 
 function startServer(app, port) {
   return new Promise((resolve) => {
     const server = app.listen(port, () => {
-      console.log(`App escuchando en puerto ${port}`)
+      console.log(`Servidor corriendo en http://localhost:${port}`)
       swaggerDocs(app, port)
 
       // Configurar cron job

@@ -162,12 +162,12 @@ const Header = () => {
                             </div>
                             <div className='user-data-header-container'>
                                 <Dropdown show={dropdownUserVisible} ref={dropdownUserRef} onToggle={toogleDropdownUser}>
-                                    <Dropdown.Toggle className='dropdown-toogle-user' as={FaRegUserCircle} size={32} />
+                                    <Dropdown.Toggle className='dropdown-toogle-user' as={FaRegUserCircle} size={32} data-cy="perfil-icon"/>
                                     <Dropdown.Menu className='dropdown-menu-user'>
                                     <Dropdown.Item className='dropdown-item-user' eventKey="1" onClick={handleProfileClick}>
                                             <CgProfile size={24} /> Mi perfil
                                         </Dropdown.Item>
-                                        <Dropdown.Item className='dropdown-item-user' eventKey="2" onClick={handleLogOut}><GoSignOut size={24} /> Cerrar sesión</Dropdown.Item>
+                                        <Dropdown.Item className='dropdown-item-user' eventKey="2" onClick={handleLogOut}><GoSignOut size={24}  data-cy="logout"  /> Cerrar sesión</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
                                 <span className='user-name'>{nombre}</span>

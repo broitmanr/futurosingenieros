@@ -8,7 +8,8 @@ function Home(){
             <h5 className='home-title'>¡Bienvenidos a Futuros Ingenieros!</h5>  
             <form className='home-form'> 
                 <Link className='home-redirect' to="/login">
-                    <button className="btn-empezar">
+                    <button className="btn-empezar" data-testid="start-button"
+                    >
                         Empezar
                     </button>
                 </Link>  

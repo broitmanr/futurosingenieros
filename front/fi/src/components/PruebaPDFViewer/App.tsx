@@ -4,7 +4,7 @@ import ContextMenu, { ContextMenuProps } from "./ContextMenu";
 import ExpandableTip from "./ExpandableTip";
 import HighlightContainer from "./HighlightContainer";
 import Sidebar from "./Sidebar";
-
+import {ProgressSpinner} from "primereact/progressspinner";
 import {
     GhostHighlight,
     Highlight,
@@ -17,7 +17,7 @@ import {
 import "./style/App.css";
 import { CommentedHighlight } from "./types";
 import axios from "axios";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import moment from "moment/moment";
 
 const PRIMARY_PDF_URL = "http://localhost:5000/api/archivo/";
@@ -25,7 +25,7 @@ const PRIMARY_PDF_URL = "http://localhost:5000/api/archivo/";
 const getNextId = () => String(Math.random()).slice(2);
 
 const parseIdFromHash = () => {
-    return document.location.hash.slice("#highlight-".length); // Extrae el ID desde el hash
+    return document.location.hash.slice("#highlight-".length);
 };
 
 const resetHash = () => {
@@ -33,61 +33,64 @@ const resetHash = () => {
 };
 
 const App = () => {
-    const [url, setUrl] = useState<string | null>(null); // URL del PDF
+    const [url, setUrl] = useState<string | null>(null);
     const [entrega, setEntrega] = useState<any | null>(null);
     const [highlights, setHighlights] = useState<Array<CommentedHighlight>>([]);
     const currentPdfIndexRef = useRef(0);
     const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null);
     const highlighterUtilsRef = useRef<PdfHighlighterUtils>();
-    const [archivos, setArchivos] = useState<string[]>([]); // Lista de archivos PDF
-    const [isLoading, setIsLoading] = useState(true); // Estado para manejar la carga del PDF
-    const [highlightPen, setHighlightPen] = useState<boolean>(false); // Controlar si el usuario está seleccionando texto para resaltar
-    const [currentArchivoId, setCurrentArchivoId] = useState<string | null>(null); // Almacena el ID del archivo actual
-    const [currentArchivoIndex, setCurrentArchivoIndex] = useState(0); // Índice del archivo actual
-    const [error,setError] = useState<string|null>(null)
+    const [archivos, setArchivos] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [highlightPen, setHighlightPen] = useState<boolean>(false);
+    const [currentArchivoId, setCurrentArchivoId] = useState<string | null>(null);
+    const [currentArchivoIndex, setCurrentArchivoIndex] = useState(0);
+    const [error, setError] = useState<string | null>(null);
     const { id } = useParams();
 
+    // Efecto para cargar la entrega
     useEffect(() => {
         const fetchEntrega = async () => {
+            setIsLoading(true);
             try {
                 const response = await axios.get(`/entrega/${id}`, { withCredentials: true });
-                setEntrega(response.data)
+                setEntrega(response.data);
             } catch (error) {
                 console.error("Error al obtener la entrega:", error);
-                setError(error.response.data.error.details)
+                setError(error.response?.data?.error?.details || "Error desconocido");
             } finally {
-                setIsLoading(false); // Marcar como finalizada la carga
+                setIsLoading(false);
             }
         };
-
-
         fetchEntrega();
-    }, []);
+    }, [id]);
 
+    // Efecto para cargar el PDF y comentarios cuando `entrega` cambia
     useEffect(() => {
+        if (!entrega) return;
+
+
         const fetchPdf = async () => {
+            setIsLoading(true);
             try {
                 const archivos = entrega.archivos;
-
-                if (archivos.length > 0) {
-                    setArchivos(archivos); // Guarda la lista de archivos
-                    setUrl(`${PRIMARY_PDF_URL}${archivos[0]}`); // Establece la URL del primer archivo
-                    await fetchComentarios(archivos[0]); // Obtén los comentarios para el primer archivo
-                    setCurrentArchivoId(archivos[0]); // Almacena el ID del archivo actual
+                if (archivos && archivos.length > 0) {
+                    setArchivos(archivos);
+                    setUrl(`${PRIMARY_PDF_URL}${archivos[0]}`);
+                    setCurrentArchivoId(archivos[0]);
+                    await fetchComentarios(archivos[0]);
                 }
             } catch (error) {
-                console.error("Error al obtener la entrega:", error);
-                setError(error.response.data.error.details)
-            } finally {
-                setIsLoading(false); // Marcar como finalizada la carga
+                console.error("Error al obtener el PDF:", error);
+                setError(error.response?.data?.error?.details || "Error desconocido");
+            } finally{
+                setIsLoading(false)
             }
         };
-
 
         fetchPdf();
     }, [entrega]);
 
-    // Obtener comentarios del archivo
+    // Función para obtener comentarios del archivo actual
     const fetchComentarios = async (archivoId: string) => {
         try {
             const response = await axios.get(`/archivo/comentario/${archivoId}`, { withCredentials: true });
@@ -104,7 +107,7 @@ const App = () => {
                 mine: comment.mine,
                 answers: comment.answers,
             }));
-            console.log(mappedHighlights)
+
             setHighlights(mappedHighlights);
         } catch (error) {
             console.error("Error al obtener los comentarios:", error);
@@ -115,14 +118,12 @@ const App = () => {
     useEffect(() => {
         const scrollToHighlightFromHash = () => {
             const highlight = getHighlightById(parseIdFromHash());
-
             if (highlight && highlighterUtilsRef.current) {
                 highlighterUtilsRef.current.scrollToHighlight(highlight);
             }
         };
 
         window.addEventListener("hashchange", scrollToHighlightFromHash);
-
         return () => {
             window.removeEventListener("hashchange", scrollToHighlightFromHash);
         };
@@ -143,38 +144,33 @@ const App = () => {
             yPos: event.clientY,
             deleteHighlight: () => {
                 deleteHighlight(highlight);
-                setContextMenu(null); // Cierra el menú contextual al eliminar
+                setContextMenu(null);
             },
             editComment: () => {
                 editComment(highlight);
-                setContextMenu(null); // Cierra el menú contextual al editar
+                setContextMenu(null);
             },
         });
     };
 
     const addHighlight = async (highlight: GhostHighlight, comment: string) => {
-        const newHighlight = { ...highlight, comment, id: getNextId(),user:'Vos', date:moment(Date().now).format('DD/MM/YYYY'),mine:true};
+        const newHighlight = { ...highlight, comment, id: getNextId(), user: 'Vos', date: moment().format('DD/MM/YYYY'), mine: true };
         setHighlights([newHighlight, ...highlights]);
 
-        // Actualizar el hash con el ID del nuevo highlight
         document.location.hash = `#highlight-${newHighlight.id}`;
 
-        // Lógica para enviar el nuevo comentario al backend
         try {
-            if (!currentArchivoId) {
-                throw new Error("El ID del archivo no está disponible.");
-            }
+            if (!currentArchivoId) throw new Error("El ID del archivo no está disponible.");
 
-            // Determina el tipo de contenido
             const body = {
-                type: highlight.type, // El tipo (text o area) se toma del highlight
+                type: highlight.type,
                 content: {
-                    text: highlight.type === "text" ? highlight.content.text : "", // Solo se asigna texto si es un comentario de texto
-                    image: highlight.type === "area" ? highlight.content.image : undefined, // Asigna la imagen si es un área
+                    text: highlight.type === "text" ? highlight.content.text : "",
+                    image: highlight.type === "area" ? highlight.content.image : undefined,
                 },
                 position: {
-                    boundingRect: highlight.position.boundingRect, // Usamos la posición del highlight
-                    rects: highlight.position.rects, // Si hay rectángulos, también los incluimos
+                    boundingRect: highlight.position.boundingRect,
+                    rects: highlight.position.rects,
                 },
                 comment
             };
@@ -186,26 +182,17 @@ const App = () => {
         }
     };
 
-
-
-
     const deleteHighlight = async (highlight: ViewportHighlight | Highlight) => {
         try {
-            if (!currentArchivoId) {
-                throw new Error("El ID del archivo no está disponible.");
-            }
+            if (!currentArchivoId) throw new Error("El ID del archivo no está disponible.");
 
             await axios.delete(`/archivo/comentario/${highlight.id}`, { withCredentials: true });
-            console.log("Comentario eliminado correctamente");
-
-            // Actualiza los highlights en el estado
             setHighlights(highlights.filter((h) => h.id !== highlight.id));
-            resetHash(); // Restablece el hash al eliminar un resaltado
+            resetHash();
         } catch (error) {
             console.error("Error al eliminar el comentario:", error);
         }
     };
-
 
     const editHighlight = (idToUpdate: string, edit: Partial<CommentedHighlight>) => {
         setHighlights(
@@ -225,23 +212,16 @@ const App = () => {
                     placeHolder={highlight.comment}
                     onSubmit={async (input) => {
                         try {
-                            if (!currentArchivoId) {
-                                throw new Error("El ID del archivo no está disponible.");
-                            }
+                            if (!currentArchivoId) throw new Error("El ID del archivo no está disponible.");
 
-                            // Estructura del cuerpo de la solicitud para editar el comentario
                             const body = {
                                 type: highlight.type,
-                                content: {
-                                    text: highlight.content.text, // Mantén el texto original
-                                },
+                                content: { text: highlight.content.text },
                                 position: highlight.position,
-                                comment: input, // Nuevo comentario
+                                comment: input,
                             };
 
                             await axios.put(`/archivo/comentario/${highlight.id}`, body, { withCredentials: true });
-                            console.log("Comentario editado correctamente");
-
                             editHighlight(highlight.id, { comment: input });
                             highlighterUtilsRef.current!.setTip(null);
                             highlighterUtilsRef.current!.toggleEditInProgress(false);
@@ -256,14 +236,16 @@ const App = () => {
         highlighterUtilsRef.current.setTip(editCommentTip);
         highlighterUtilsRef.current.toggleEditInProgress(true);
     };
-    const toggleDocument = async () => {
-        const nextIndex = (currentArchivoIndex + 1) % archivos.length; // Cambia al siguiente índice
-        setCurrentArchivoIndex(nextIndex); // Actualiza el índice del archivo actual
-        const nextArchivoId = archivos[nextIndex]; // Obtén el ID del siguiente archivo
-        setUrl(`${PRIMARY_PDF_URL}${nextArchivoId}`); // Actualiza la URL del PDF
-        await fetchComentarios(nextArchivoId); // Vuelve a obtener los comentarios para el nuevo archivo
-    };
 
+    const toggleDocument = async () => {
+        setIsLoading(true)
+        const nextIndex = (currentArchivoIndex + 1) % archivos.length;
+        setCurrentArchivoIndex(nextIndex);
+        const nextArchivoId = archivos[nextIndex];
+        setUrl(`${PRIMARY_PDF_URL}${nextArchivoId}`);
+        await fetchComentarios(nextArchivoId);
+        setIsLoading(false)
+    };
 
     return (
         <div className="App" style={{ display: "flex", height: "100vh" }}>
@@ -277,22 +259,20 @@ const App = () => {
                 }}
             >
                 {!error ? !isLoading && url ? (
-                    <PdfLoader document={{url:url,withCredentials:true}}>
+                    <PdfLoader document={{ url: url, withCredentials: true }}>
                         {(pdfDocument) => (
                             <PdfHighlighter
                                 enableAreaSelection={(event) => event.altKey}
                                 pdfDocument={pdfDocument}
                                 onScrollAway={resetHash}
-                                utilsRef={(_pdfHighlighterUtils) => {
-                                    highlighterUtilsRef.current = _pdfHighlighterUtils;
+                                utilsRef={(ref) => {
+                                    highlighterUtilsRef.current = ref;
                                 }}
                                 textSelectionColor={highlightPen ? "rgba(255, 226, 143, 1)" : undefined}
                                 onSelection={highlightPen ? (selection) => addHighlight(selection.makeGhostHighlight(), "") : undefined}
                                 selectionTip={!highlightPen && <ExpandableTip addHighlight={addHighlight} />}
                                 highlights={highlights}
-                                style={{
-                                    height: "calc(100% - 41px)",
-                                }}
+                                style={{ height: "calc(100% - 41px)" }}
                             >
                                 <HighlightContainer
                                     editHighlight={editHighlight}
@@ -302,8 +282,10 @@ const App = () => {
                         )}
                     </PdfLoader>
                 ) : (
-                    <div className={'badge badge-primary'}>Cargando PDF...</div>
-                ): <h5>{error}</h5>}
+                    <>
+                        <ProgressSpinner />
+                    </>
+                ) : <h5>{error}</h5>}
             </div>
 
             {contextMenu && <ContextMenu {...contextMenu} />}

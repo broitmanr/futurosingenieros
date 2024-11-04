@@ -115,6 +115,7 @@ export default function SignInSide() {
                                 autoComplete="email"
                                 autoFocus
                                 value={mail}
+                                data-testid="email-input"
                                 onChange={(e) => setMail(e.target.value)}
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
@@ -149,6 +150,7 @@ export default function SignInSide() {
                                 label="Contraseña"
                                 type="password"
                                 id="password"
+                                data-testid="password-input"
                                 autoComplete="current-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -183,6 +185,7 @@ export default function SignInSide() {
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
                                 style= {{ backgroundColor: '#1A2035', marginTop: '3rem' }}
+                                data-testid="login-button"
                             >
                                 Entrar
                             </Button>

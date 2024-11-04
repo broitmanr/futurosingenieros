@@ -8,8 +8,8 @@
     "test": "jest --verbose --runInBand --detectOpenHandles",
     "test:unit": "jest tests/unit --detectOpenHandles",
     "test:integration": "jest tests/integration",
-    "test:e2e:check": "node tests/e2e/scripts/check-servers.js",
-    "test:e2e": "npm run test:e2e:check && cypress run",
+    "test:e2e:check": "node tests/e2e/scripts/check-server.js",
+    "test:e2e": "npm run test:e2e:check && sleep 3 && cypress run",
     "test:e2e:open": "npm run test:e2e:check && cypress open",
     "test:acceptance": "cucumber-js tests/acceptance/features/**/*.feature"
   },
@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@sequelize/mysql": "^7.0.0-alpha.41",
+    "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

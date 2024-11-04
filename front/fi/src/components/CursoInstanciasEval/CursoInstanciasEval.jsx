@@ -142,8 +142,8 @@ export const CursoInstanciasEval = () => {
                                                 </Link>
                                                 <InstanciaEval show={show} handleClose={handleClose} cursoID={curso.id} setInstancias={setInstancias} handleInstanciaAgregada={handleInstanciaAgregada} />
                                             </li>
-                                            <li className='aside-item'>
-                                                <Link className='aside-link' to={`/alumnos/${curso.id}`}>
+                                            <li className='aside-item'  data-cy="alumnos-tab">
+                                                <Link className='aside-link' to={`/alumnos/${curso.id}`} >
                                                     <PiUsersThreeBold className='icons-aside-menu-instancias-eval' />
                                                     Alumnos
                                                 </Link>

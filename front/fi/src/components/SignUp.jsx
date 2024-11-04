@@ -150,7 +150,7 @@ export default function SignOut() {
             </StepperPanel>
             <StepperPanel header="Completar registro">
                 <div className="flex flex-column h-12rem second-register">
-                    <Form noValidate validated={validatedSecond} onSubmit={handleSecondSubmit}>
+                    <Form className='second-register-form' noValidate validated={validatedSecond} onSubmit={handleSecondSubmit}>
                         <Form.Group className="mb-3" controlId="formGroupName">
                             <Form.Label>Nombre</Form.Label>
                             <Form.Control required placeholder="Ingrese su nombre" />
@@ -166,7 +166,7 @@ export default function SignOut() {
                             <Form.Control required type='number' placeholder="Ingrese su documento" />
                             <Form.Control.Feedback type='invalid'>Debe ingresar su documento</Form.Control.Feedback>
                         </Form.Group>
-                        <Col xs="auto" className="my-1 btns-sign-out">
+                        <Col xs="auto" className="my-1 btns-second-sign-out">
                             <Button className='btn-cancel-sign-out' onClick={() => stepperRef.current.prevCallback()}>Volver</Button>
                             <Button className='btn-confirm-sign-out' type='submit'>Confirmar</Button>
                         </Col>

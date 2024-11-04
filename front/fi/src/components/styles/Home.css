@@ -50,6 +50,7 @@
 /* Estilos de SignOut */
 .register-container{
     min-height: 70vh;
+    background-color: #fff;
     position: relative;
     justify-content: center;
     align-items: center;
@@ -81,20 +82,31 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    margin: 8rem;
+    margin: 8rem
+}
+
+.btns-second-sign-out{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1rem
 }
 
 .btn-cancel-sign-out{
     background-color: #ccdcf1 !important;
-    color: #1A2035 !important;
+    color: #1A2035 !important
 }
 
 .btn-confirm-sign-out{
     background-color: #1A2035 !important;
-    color: #fff !important;
+    color: #fff !important
 }
 
 .second-register{
-    justify-content: center;
     align-items: center;
+    background-color: #fff
+}
+
+.second-register-form{
+    width: 50%;
 }

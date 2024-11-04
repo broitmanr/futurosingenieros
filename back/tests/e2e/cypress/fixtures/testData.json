@@ -1,0 +1,10 @@
+{
+    "usuarioAlumno": {
+      "mail": "broitmanroman@alu.frlp.utn.edu.ar",
+      "password": "password"
+    },
+    "usuarioDocente": {
+      "mail": "franco@frlp.utn.edu.ar",
+      "password": "password"
+    }
+  }

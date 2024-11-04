@@ -119,10 +119,17 @@ const Cursos = () => {
         <div className="cursos-container">
             { role === 'D' && (
                 <>
-                    <Button className='cursos-btns' onClick={() => setShow (true)} data-cy="boton-agregar-curso">
-                        Agregar curso
-                    </Button>
-                    <Curso loading={loading} show={show} handleClose={handleClose} handleCursoAgregado={handleCursoAgregado} />
+                    <div className="cursos-components-container">
+                    <Calendar
+                                className='calendar-component'
+                                onMonthChange={fetchSpecialDays}
+                                specialDays={dias}
+                            />
+                        <Button className='cursos-btns' onClick={() => setShow (true)} data-cy="boton-agregar-curso">
+                            Agregar curso
+                        </Button>
+                        <Curso loading={loading} show={show} handleClose={handleClose} handleCursoAgregado={handleCursoAgregado} />
+                    </div>
                 </>
             )}
             { role === 'A' && (

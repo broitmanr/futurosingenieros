@@ -1,6 +1,7 @@
 /* En tu archivo CSS */
 .p-overlaypanel {
     font-size: 0.9rem;
+    top: 10rem !important; /* Agregar margen superior específico */
 }
 
 .p-overlaypanel .p-overlaypanel-content {

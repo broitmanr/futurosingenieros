@@ -90,7 +90,7 @@ module.exports = {
       })
 
       if (!persona) {
-        res.status(404).json({
+        return res.status(404).json({
           persona_id: null
         })
       }
@@ -128,7 +128,7 @@ module.exports = {
         return next({ ...errors.InternalServerError, details:'No se pudo enviar mail de registro'})
       }
 
-      res.json({
+      return res.status(201).json({
         success: true,
         data: {
           // id: user.ID
@@ -141,8 +141,8 @@ module.exports = {
 
   registrarseDe0: async (req, res, next) => {
     try {
-      const { legajo, password,email,confirmEmail,confirmPassword } = req.body.usuario
-      const { nombre, apellido,documento} = req.body.persona
+      const { legajo, password,email,confirmEmail,confirmPassword } = req.body.userData
+      const { nombre, apellido,documento} = req.body.personData
 
 
       if (password !== confirmPassword){
@@ -155,7 +155,7 @@ module.exports = {
 
 
 
-      if (!isPasswordValid(req.body.password)) {
+      if (!isPasswordValid(password)) {
         return next({
           ...errors.ValidationError,
           details: 'La contraseña debe tener al menos 8 caracteres alfanuméricos'
@@ -189,14 +189,9 @@ module.exports = {
         })
       }
 
-      const personaNew = await models.Persona.create({
-        nombre: nombre,
-        apellido: apellido,
-        dni: documento,
-        rol: rolservice.rolByMail(req.body.mail) ? 'D' : 'A',
-      })
 
-      // Todo: verificar que el mail termine o con frlp.utn.edu.ar
+
+      // verificar que el mail termine o con frlp.utn.edu.ar
       if (!rolservice.isFrlpMail(email)){
         return next({
           ...errors.ConflictError,
@@ -204,6 +199,13 @@ module.exports = {
         })
       }
 
+      const personaNew = await models.Persona.create({
+        nombre: nombre,
+        apellido: apellido,
+        legajo:legajo,
+        dni: documento,
+        rol: rolservice.rolByMail(req.body.mail) ? 'D' : 'A',
+      })
       const passwordHashed= bcrypt.hashSync(password, 10)
 
       const user = await models.Usuario.create({
@@ -216,13 +218,14 @@ module.exports = {
       const name = personaNew ? personaNew.nombre : user.mail.split('@')[0]
 
       try {
+        console.log('Enviar mail')
         // await transporter.mailRegistro(email, name)
       } catch (e) {
 
         return next({ ...errors.InternalServerError, details:'No se pudo enviar mail de registro'})
       }
 
-      res.json({
+      return res.status(201).json({
         success: true,
         data: {
           // id: user.ID

@@ -11,22 +11,22 @@ import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import './styles/Home.css'
 import axios from 'axios'
+import {Toast} from "primereact/toast";
 
 export default function SignOut() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
     const [confirmEmail, setConfirmEmail] = useState('');
-    const [selectedRole, setSelectedRole] = useState(null);
     const [validatedFirst, setValidatedFirst] = useState(false);
     const [validatedSecond, setValidatedSecond] = useState(false);
     const [userData, setUserData] = useState({})
+    const [personData, setPersonData] = useState({})
     const stepperRef = useRef(null);
     const navigate = useNavigate();
+    const toast = useRef(null);
 
-    const handleRoleChange = (role) => {
-        setSelectedRole(role);
-    };
+
 
     /*const handleSubmit = (e) => {
         const form = e.currentTarget;
@@ -43,40 +43,60 @@ export default function SignOut() {
     const handleSubmitPrueba = async (e) => {
         e.preventDefault()
         const form = e.currentTarget;
-        console.log('userData:', userData);
-    console.log('password:', password);
-    console.log('confirmPassword:', confirmPassword);
-    console.log('email:', email);
-    console.log('confirmEmail:', confirmEmail);
-        if (form.checkValidity() === false || selectedRole === null || password !== confirmPassword || email !== confirmEmail) {
+        if (form.checkValidity() === false || password !== confirmPassword || email !== confirmEmail) {
             e.stopPropagation();
             setValidatedFirst(true)
+
         }else{
             setValidatedFirst(false);
             try{
-                const response = await axios.post('http://localhost:5000/auth/sign-up', userData, { withCredentials: true })
+                const response = await axios.post('http://localhost:5000/auth/sign-up',userData, { withCredentials: true })
                 if(response.data.success){
-                    alert('Registro exitoso. Redirigiendo al login...')
+                    toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Registro exitoso', life: 3000 });
                     navigate('/login')
-                }else{
-                    alert('Oops...no hemos logrado encontrarte. Por favor, completá el siguiente formulario')
-                    stepperRef.current.nextCallback()
                 }
             }catch(err){
-                console.log('No se ha logrado registrar al usuario', err)
+                if (err.response && err.response.status === 404){
+                    stepperRef.current.nextCallback()
+                }else if(err.response){
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: err.response.data.error.details, life: 3000 });
+
+                }else{
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Hubo un error', life: 3000 });
+                }
+
             }
         }
     };
 
-    const handleSecondSubmit = (e) => {
+    const handleSecondSubmit = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         const form = e.currentTarget;
         if (form.checkValidity() === false) {
         e.preventDefault();
         e.stopPropagation();
         setValidatedSecond(true)
-        }else{
+        }
+        else{
             setValidatedSecond(false);
-            navigate('/login')
+            try{
+                console.log(userData,personData)
+                const response = await axios.post('http://localhost:5000/auth/sign-up-zero',{userData,personData}, { withCredentials: true })
+                if(response.data.success){
+                    toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Registro exitoso', life: 3000 });
+                    navigate('/login')
+                }
+            }catch(err){
+                if(err.response){
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: err.response.data.error.details, life: 3000 });
+
+                }else{
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Hubo un error', life: 3000 });
+                }
+
+                console.log('No se ha logrado registrar al usuario', err)
+            }
         }
     };
 
@@ -92,11 +112,19 @@ export default function SignOut() {
             setPassword(value)
         }
     }
+    const handleSecondChange = (e) => {
+        const {name, value} = e.target
+        setPersonData((prevState) => ({
+            ...prevState,
+            [name]: value
+        }))
+    }
+
 
     return(
         <div className="register-container">
             <h5 className='title-sign-up'>Registrarme</h5>
-            <Stepper ref={stepperRef} style={{ flexBasis: '50rem' }}>
+            <Stepper linear ref={stepperRef} style={{ flexBasis: '50rem' }}>
             <StepperPanel header="Información de usuario">
                 <div className="flex flex-column h-12rem">
                     <Form noValidate validated={validatedFirst} onSubmit={handleSubmitPrueba}>
@@ -109,8 +137,13 @@ export default function SignOut() {
 
                             <Form.Group as={Col} controlId="formGridConfirmEmail">
                             <Form.Label>Confirmar Email</Form.Label>
-                            <Form.Control required type="email" placeholder="Ingrese nuevamente su email" value={confirmEmail} 
-                                onChange={(e) => setConfirmEmail(e.target.value)} isInvalid={validatedFirst && userData.email !== confirmEmail} />
+                            <Form.Control required type="email" name='confirmEmail' placeholder="Ingrese nuevamente su email" value={confirmEmail}
+                                          onChange={(e) => {
+                                              const cemail = e.target.value;
+                                              setConfirmEmail(cemail);
+                                              handleChange(e);
+                                          }}
+                                          isInvalid={validatedFirst && userData.email !== confirmEmail} />
                             <Form.Control.Feedback type='invalid'>
                                 {validatedFirst && userData.email !== confirmEmail ? "Los correos no coinciden" : "Por favor, confirme su email"}
                             </Form.Control.Feedback>
@@ -125,16 +158,20 @@ export default function SignOut() {
 
                             <Form.Group as={Col} controlId="formGridConfirmPassword">
                             <Form.Label>Confirmar contraseña</Form.Label>
-                            <Form.Control required type="password" placeholder="Ingrese nuevamente su contraseña" value={confirmPassword} 
-                                onChange={(e) => setConfirmPassword(e.target.value)} isInvalid={validatedFirst && userData.password !== confirmPassword} />
+                            <Form.Control required type="password" name='confirmPassword' placeholder="Ingrese nuevamente su contraseña" value={confirmPassword}
+                                          onChange={(e) => {
+                                              const cpass = e.target.value;
+                                              setConfirmPassword(cpass);
+                                              handleChange(e);
+                                          }} isInvalid={validatedFirst && userData.password !== confirmPassword} />
                             <Form.Control.Feedback type='invalid'>
                                 {validatedFirst && userData.password !== confirmPassword ? "Las contraseñas no coinciden" : "Por favor, confirme su contraseña"}
                             </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} controlId="formGridLegajo">
                             <Form.Label>Legajo o DNI</Form.Label>
-                            <Form.Control required type="number" name='legajo' placeholder="Ingrese su legajo o DNI" onChange={handleChange} />
-                            <Form.Control.Feedback type='invalid'>Debe ingresar su legajo o DNI</Form.Control.Feedback>
+                            <Form.Control required type="number" name='legajo' placeholder="Ingrese su legajo" onChange={handleChange} />
+                            <Form.Control.Feedback type='invalid'>Debe ingresar su legajo</Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                         <Col xs="auto" className="my-1 btns-sign-out">
@@ -153,17 +190,17 @@ export default function SignOut() {
                     <Form noValidate validated={validatedSecond} onSubmit={handleSecondSubmit}>
                         <Form.Group className="mb-3" controlId="formGroupName">
                             <Form.Label>Nombre</Form.Label>
-                            <Form.Control required placeholder="Ingrese su nombre" />
+                            <Form.Control required name='nombre' onChange={handleSecondChange} placeholder="Ingrese su nombre" />
                             <Form.Control.Feedback type='invalid'>Debe ingresar su nombre</Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formGroupLastName">
                             <Form.Label>Apellido</Form.Label>
-                            <Form.Control required placeholder="Ingrese su apellido" />
+                            <Form.Control required name='apellido' onChange={handleSecondChange} placeholder="Ingrese su apellido" />
                             <Form.Control.Feedback type='invalid'>Debe ingresar su apellido</Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formGroupId">
                             <Form.Label>Documento</Form.Label>
-                            <Form.Control required type='number' placeholder="Ingrese su documento" />
+                            <Form.Control required name='documento' onChange={handleSecondChange} type='number' placeholder="Ingrese su documento" />
                             <Form.Control.Feedback type='invalid'>Debe ingresar su documento</Form.Control.Feedback>
                         </Form.Group>
                         <Col xs="auto" className="my-1 btns-sign-out">
@@ -174,6 +211,7 @@ export default function SignOut() {
                 </div>
             </StepperPanel>
             </Stepper>
+            <Toast ref={toast} />
         </div>
     )
 }

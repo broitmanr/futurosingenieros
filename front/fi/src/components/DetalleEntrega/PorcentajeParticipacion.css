@@ -1,0 +1,191 @@
+.participation-section {
+    background: #fff;
+    border-radius: 0.6rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.25rem;
+    margin-top: 2.5rem;
+}
+
+.participation-header {
+    color: #1A2035;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.participation-header .lucide {
+    width: 1.5rem;
+    height: 2rem;
+}
+
+.participation-grid {
+    display: grid;
+    gap: 0.625rem;
+    margin-top: 0.5rem;
+}
+
+.participant-row {
+    display: grid;
+    grid-template-columns: minmax(150px, 2fr) minmax(140px, 1fr);
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: #F2F6FC;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.participant-row:hover {
+    background-color: #E5EEF9;
+    transform: translateX(2px);
+}
+
+.participant-name {
+    font-size: 0.9rem;
+    color: #1A2035;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 1rem;
+}
+
+.percentage-input-container {
+    margin-left: 2.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+}
+
+/* Estilo del InputNumber */
+.percentage-input {
+    display: flex;
+    align-items: center;
+    width: 120px;
+}
+
+/* Estilo del input */
+.p-inputnumber-input {
+    font-size: 0.9rem;
+    color: #193B70;
+    text-align: center;
+    padding: 0.375rem 0.5rem;
+    height: 32px;
+    border-radius: 0.4rem;
+    border: 1px solid #ccdcf1;
+    margin-left: 28px;
+    transition: all 0.2s ease;
+}
+
+/* Contenedor de botones reposicionado */
+.p-inputnumber-button-group {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Botones de incremento/decremento */
+.p-inputnumber-button-up,
+.p-inputnumber-button-down {
+    width: 24px;
+    height: 15px;
+    background-color: #F2F6FC;
+    color: #344474;
+    border: 1px solid #ccdcf1;
+    border-radius: 0.3rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Efectos hover en botones */
+.p-inputnumber-button-up:hover,
+.p-inputnumber-button-down:hover {
+    color: #1A2035;
+    background-color: #E5EEF9;
+    border-color: #0e1b42;
+    transform: scale(1.05);
+}
+
+/* Efecto active en botones */
+.p-inputnumber-button-up:active,
+.p-inputnumber-button-down:active {
+    transform: scale(0.95);
+}
+
+/* Focus state mejorado */
+.p-inputnumber:focus-within .p-inputnumber-input {
+    border-color: #344474;
+    box-shadow: 0 0 0 2px rgba(52, 68, 116, 0.1);
+}
+
+.progress-section {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #F2F6FC;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.progress-label {
+    font-size: 0.85rem;
+    color: #193B70;
+    font-weight: 500;
+}
+
+.progress-percentage {
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.progress-percentage.complete {
+    color: #4CAF50;
+}
+
+.progress-percentage.over {
+    color: #f44336;
+}
+
+.progress-percentage.incomplete {
+    color: #344474;
+}
+
+/* Barra de progreso mejorada */
+.p-progressbar {
+    height: 8px;
+    background: #F2F6FC;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.p-progressbar-value {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+}
+
+.save-button {
+    background-color: #ccdcf1;
+    color: #1A2035;
+    border-radius: 0.5rem;
+    margin-top: 1.5rem;
+    border: none;
+
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.save-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}

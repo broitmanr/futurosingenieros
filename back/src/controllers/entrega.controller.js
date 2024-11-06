@@ -536,6 +536,7 @@ const obtenerEntregaComoAlumno = async (req, res, next) => {
   }
 }
 const modificarPorcentajeParticipacion = async (req, res, next) => {
+  console.log('Entre a modificar porcentaje /:entregaId/porcentaje-participacion')
   const { entregaId } = req.params
   const { porcentajes } = req.body
   /* { "personaId": porcentaje  EJ: "porcentajes": {
@@ -611,7 +612,7 @@ const obtenerPorcentajeParticipacion = async (req, res, next) => {
       include: [
         {
           model: models.Persona,
-          attributes: ['ID', 'nombre', 'apellido']
+          attributes: ['ID', 'nombre', 'apellido', 'legajo']
         }
       ]
     })
@@ -624,6 +625,7 @@ const obtenerPorcentajeParticipacion = async (req, res, next) => {
       personaId: participacion.Persona.ID,
       nombre: participacion.Persona.nombre,
       apellido: participacion.Persona.apellido,
+      legajo: participacion.Persona.legajo,
       porcentaje: participacion.porcentaje_participacion
     }))
 

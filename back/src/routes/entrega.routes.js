@@ -31,4 +31,8 @@ router.get('/:id',
 )
 
 router.get('/miEntregaAlumno/:idEntregaPactada', entregaController.obtenerEntregaComoAlumno)
+
+router.patch('/actualizar/:entregaId/porcentaje-participacion', checkRole.checkRole('A'), entregaController.modificarPorcentajeParticipacion)
+router.get('/:entregaId/porcentaje-participacion', entregaController.obtenerPorcentajeParticipacion)
+
 module.exports = router

@@ -49,7 +49,6 @@
 }
 
 .percentage-input-container {
-    margin-left: 2.1rem;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -188,4 +187,12 @@
 .save-button:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+
+.progress-percentage-container {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-right: 1rem;
 }

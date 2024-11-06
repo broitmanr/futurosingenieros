@@ -110,7 +110,7 @@ const PorcentajeParticipacion = ({ participantes, porcentajes, handlePorcentajeC
             <div className="progress-section">
                 <div className="progress-header">
                     <span className="progress-label">Progreso Total</span>
-                    <div className="flex items-center gap-1" style={{ marginRight: '1rem' }}>
+                    <div className="progress-percentage-container">
                         <Percent size={14} className="text-[#344474]" />
                         <span className={`progress-percentage ${
                             totalPorcentaje === 100 ? 'complete' : 

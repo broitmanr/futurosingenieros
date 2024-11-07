@@ -472,6 +472,7 @@ async function grupo(req, res, next) {
       ],
     });
 
+    if (!grupoID) return next({ ...errors.NotFoundError, details: 'Grupo no encontrado' });
     grupo = await models.Grupo.findByPk(grupoID.ID, {
       attributes: ['ID', 'nombre', 'numero'],
       include: [
@@ -591,7 +592,7 @@ async function grupo(req, res, next) {
       nombre: persona.nombre,
       apellido: persona.apellido,
       legajo: persona.legajo,
-      promedioParticipacion: participacionPorAlumno.find(p => p.alumnoId === persona.ID)?.promedioParticipacion ?? 0,
+      promedioParticipacion: participacionPorAlumno.find(p => p.alumnoId === persona.ID)?.promedioParticipacion.toFixed(2) ?? 0,
     })),
     entregasAgrupadas,
   };

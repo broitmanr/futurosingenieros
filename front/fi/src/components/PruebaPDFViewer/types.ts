@@ -6,4 +6,11 @@ export interface CommentedHighlight extends Highlight {
   user?: string;
   date?: string;
   mine?: boolean;
+  answers?: Array<{
+    id: string;
+    comentario: string;
+    usuario: string;
+    mine: boolean;
+    fecha: string;
+  }>;
 }

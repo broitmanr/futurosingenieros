@@ -75,7 +75,14 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
       toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Curso creado con éxito', life: 3000 });
       handleClose();
     })
-    .catch (err => console.log('Error al querer crear el curso', err))
+    .catch (err => {
+      console.log('Error al querer crear el curso', err);
+      if (err.response && err.response.status === 409) {
+        toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Ya existe un curso con esos datos', life: 3000 });
+      } else {
+        toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Error al querer crear el curso', life: 3000 });
+      }
+    })
     .finally(() => {
       setIsSubmitting(false); // Establecer isSubmitting en false cuando la solicitud se complete o falle
     });
@@ -97,7 +104,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
   return (
     <>
       <Toast ref={toastRef} />
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} data-cy="modal-agregar-curso">
         <Form onSubmit={handleConfirmar}>
           <Modal.Header className='modal-header-agregar-curso' closeButton>
             <Modal.Title>Agregar curso</Modal.Title>
@@ -111,6 +118,8 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
                   value={anio}
                   min={currentYear}
                   onChange={handleAnioChange}
+                  onKeyDown={(e) => e.preventDefault()} // Prevenir la entrada de texto
+                  data-cy="input-ciclo-lectivo"
                 />
               </Form.Group>
               <Form.Group className="mb-3 d-flex flex-column" controlId="grupoComision">
@@ -125,6 +134,7 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
                   emptyMessage="Oops... no se encontró la comisión"
                   emptyFilterMessage="Oops... no se encontró la comisión"
                   appendTo="self" //Muestra el drop dentro del modal
+                  data-cy="dropdown-comision"
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="grupoMateria">
@@ -132,7 +142,9 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
                 <Form.Select 
                   className='modal-select-materia'
                   aria-label="Floating label select example"
-                  value={selectedMateria} onChange={(e) => setSelectedMateria(e.target.value)}>
+                  value={selectedMateria} onChange={(e) => setSelectedMateria(e.target.value)}
+                  data-cy="select-materia"
+                >
                   <option value="">Seleccione una materia</option>
                   {materias.map(materia => (<option key={materia.ID} value={materia.ID}>{materia.nombre}</option>))}
                 </Form.Select>
@@ -140,10 +152,10 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
           </Modal.Body>
           <Modal.Footer>
             <div className="d-flex justify-content-between w-100">
-              <Button className='btn-agregar-curso-cancelar' onClick={handleCancelar}>
+              <Button className='btn-agregar-curso-cancelar' onClick={handleCancelar} data-cy="btn-cancelar-curso">
                 Cancelar
               </Button>
-              <Button className='btn-agregar-curso' type="submit" disabled={isSubmitting}>
+              <Button className='btn-agregar-curso' type="submit" disabled={isSubmitting} data-cy="btn-confirmar-curso">
                 {isSubmitting ? 'Confirmando...' : 'Confirmar'}
               </Button>
             </div>

@@ -129,8 +129,13 @@ const Cursos = () => {
         <div className="cursos-container">
             { role === 'D' && (
                 <>
-                    <div>
-                        <Button className='cursos-btns' onClick={() => setShow(true)}>
+                    <div className="cursos-components-container">
+                        <Calendar
+                            className='calendar-component'
+                            onMonthChange={fetchSpecialDays}
+                            specialDays={dias}
+                        />
+                        <Button className='cursos-btns' onClick={() => setShow (true)} data-cy="boton-agregar-curso">
                             Agregar curso
                         </Button>
                         <Curso loading={loading} show={show} handleClose={handleClose} handleCursoAgregado={handleCursoAgregado} />
@@ -144,13 +149,12 @@ const Cursos = () => {
                             onMonthChange={fetchSpecialDays}
                             specialDays={dias}
                         />
-                        <Button className='cursos-btns' onClick={() => setShowVincular (true) }>
-                            Vincular curso
-                        </Button>
-                        <CursoVinculacion showVincular={showVincular} handleCloseVincular={handleCloseVincular} handleCursoAgregado={handleCursoAgregado} />
+                    <Button className='cursos-btns' onClick={() => setShowVincular (true) } data-cy="unirse-curso">
+                        Vincular curso
+                    </Button>
+                    <CursoVinculacion showVincular={showVincular} handleCloseVincular={handleCloseVincular} handleCursoAgregado={handleCursoAgregado} />
                     </div>
                 </>
-
             )}
             {loading && <p>Cargando cursos...</p>}
             {error && <p>{error}</p>}
@@ -160,7 +164,7 @@ const Cursos = () => {
                 <Row xs={1} md={3} className="g-4 cursos-row">
                     {cursos.map((item, idx) => (
                         <Col key={idx}>
-                                <Card className="cursos-card-container" onClick={() => navigate(`/curso/${item.id}`)}>
+                            <Card className="cursos-card-container" onClick={() => navigate(`/curso/${item.id}`)} data-cy={`curso-${item.id}`}>
                                 <Card.Img
                                     variant="top"
                                     src={item.image}
@@ -239,4 +243,4 @@ const Cursos = () => {
         </div>
     );
 }
-export default Cursos
+export default Cursos;

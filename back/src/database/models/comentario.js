@@ -13,15 +13,15 @@ module.exports = (sequelize, DataTypes) => {
     },
     content: {
       type: DataTypes.JSON,
-      allowNull: false
+      allowNull: true
     },
     position: {
       type: DataTypes.JSON,
-      allowNull: false
+      allowNull: true
     },
     type: {
       type: DataTypes.STRING(50),
-      allowNull: false
+      allowNull: true
     },
     fecha: {
       type: DataTypes.DATE,
@@ -46,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
     Comentario.belongsTo(models.Entrega, { foreignKey: 'entrega_id', allowNull: false })
     Comentario.belongsTo(models.Persona, { foreignKey: 'emisor_id', allowNull: false })
     Comentario.belongsTo(models.Archivo, { foreignKey: 'archivo_id', allowNull: false })
+    Comentario.hasMany(models.Comentario,{foreignKey:'respuesta_id'})
   }
   return Comentario
 }

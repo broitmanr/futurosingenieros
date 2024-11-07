@@ -6,11 +6,15 @@ import { useRole } from "../../context/RolesContext";
 import { Button } from 'primereact/button';
 import './DetalleEntrega.css';
 import UploadWindow from "./UploadWindow";
+import ParticipationSection from "./PorcentajeParticipacion";
 
 export const DetalleEntrega = () => {
     const { role } = useRole();
     const [entregaDetalle, setEntregaDetalle] = useState({});
     const [entregaAsociada, setEntregaAsociada] = useState(null); // Estado para una única entrega
+    const [porcentajes, setPorcentajes] = useState({});
+    const [totalPorcentaje, setTotalPorcentaje] = useState(0);
+    const [participantes, setParticipantes] = useState([]);
     const params = useParams();
     const navigate = useNavigate();
     const [isLoading, setLoading] = useState(true);
@@ -25,6 +29,18 @@ export const DetalleEntrega = () => {
                 const entregaResponse = await axios.get(`/entrega/miEntregaAlumno/${params.id}`, { withCredentials: true });
                 if (entregaResponse.data.success && entregaResponse.data.entrega) {
                     setEntregaAsociada(entregaResponse.data.entrega); // Actualizar con la única entrega
+
+                    // Obtener los porcentajes de participación
+                    const porcentajesResponse = await axios.get(`/entrega/${entregaResponse.data.entrega.ID}/porcentaje-participacion`, { withCredentials: true });
+                    console.log('Porcentajes de participación recuperados desde el endpoint /:entregaId/porcentaje-participacion:', porcentajesResponse.data);
+                    setParticipantes(porcentajesResponse.data);
+                    const initialPorcentajes = {};
+                    porcentajesResponse.data.forEach(participacion => {
+                        initialPorcentajes[participacion.personaId] = parseFloat(participacion.porcentaje);
+                    });
+                    setPorcentajes(initialPorcentajes);
+                    const total = Object.values(initialPorcentajes).reduce((acc, val) => acc + parseFloat(val || 0), 0);
+                    setTotalPorcentaje(total);
                 } else {
                     setEntregaAsociada(null);
                 }
@@ -44,6 +60,22 @@ export const DetalleEntrega = () => {
             .then(response => {
                 if (response.data.success && response.data.entrega) {
                     setEntregaAsociada(response.data.entrega);
+
+                    // Obtener los porcentajes de participación
+                    axios.get(`/entrega/${response.data.entrega.ID}/porcentaje-participacion`, { withCredentials: true })
+                        .then(porcentajesResponse => {
+                            setParticipantes(porcentajesResponse.data);
+                            const initialPorcentajes = {};
+                            porcentajesResponse.data.forEach(participacion => {
+                                initialPorcentajes[participacion.personaId] = parseFloat(participacion.porcentaje);
+                            });
+                            setPorcentajes(initialPorcentajes);
+                            const total = Object.values(initialPorcentajes).reduce((acc, val) => acc + parseFloat(val || 0), 0);
+                            setTotalPorcentaje(total);
+                        })
+                        .catch(err => {
+                            console.error('Error al obtener los porcentajes de participación:', err);
+                        });
                 } else {
                     setEntregaAsociada(null);
                 }
@@ -53,6 +85,26 @@ export const DetalleEntrega = () => {
                 console.error('Error al actualizar la entrega:', err);
                 setLoading(false);
             });
+    };
+
+    const handlePorcentajeChange = (personaId, value) => {
+        const newPorcentajes = { ...porcentajes, [personaId]: parseFloat(value) };
+        setPorcentajes(newPorcentajes);
+        const total = Object.values(newPorcentajes).reduce((acc, val) => acc + parseFloat(val || 0), 0);
+        setTotalPorcentaje(total);
+    };
+
+    const handleSubmit = async () => {
+        try {
+            const porcentajesNumericos = {};
+            for (const [personaId, porcentaje] of Object.entries(porcentajes)) {
+                porcentajesNumericos[personaId] = parseFloat(porcentaje);
+            }
+            console.log('Enviando porcentajes de participación:', porcentajesNumericos);
+            await axios.patch(`/entrega/actualizar/${entregaAsociada.ID}/porcentaje-participacion`, { porcentajes: porcentajesNumericos }, { withCredentials: true });
+        } catch (err) {
+            console.error('Error al actualizar los porcentajes de participación:', err);
+        }
     };
 
     return (
@@ -96,6 +148,15 @@ export const DetalleEntrega = () => {
                                                     <Button icon="pi pi-plus" className="btn-subir-version" label="Subir otra entrega" 
                                                         onClick={() => setEntregaAsociada(null)} />
                                                 </div>
+                                                {entregaDetalle.InstanciaEvaluativa.grupo && (
+                                                <ParticipationSection
+                                                    participantes={participantes}
+                                                    porcentajes={porcentajes}
+                                                    handlePorcentajeChange={handlePorcentajeChange}
+                                                    totalPorcentaje={totalPorcentaje}
+                                                    handleSubmit={handleSubmit}
+                                                />
+                                            )}
                                             </div>
                                         </div>
                                     ) : (

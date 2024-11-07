@@ -331,6 +331,15 @@ const actualizarGrupo = async (req, res, next) => {
       const legajosEliminados = legajosActuales.filter(id => !legajos.includes(id));
 
 
+      // Si hay actividades entregadas no pueden cambiar participantes
+      const entrega = await models.Entrega.findOne({
+        where:{grupo_id:id}
+      })
+      if (entrega && (legajosNuevos || legajosEliminados)){
+          return next({...errors.ConflictError,details:'No puedes agregar o eliminar personas con entregas hechas'})
+      }
+
+
       // Agregar los nuevos legajos
       for (const idPersona of legajosNuevos) {
         const persona = await models.Persona.findByPk(idPersona);

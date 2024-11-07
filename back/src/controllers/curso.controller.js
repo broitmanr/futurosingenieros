@@ -443,7 +443,7 @@ async function eliminarEstudiante(req, res, next) {
       const Alumno = await models.PersonaXCurso.findOne({
         where: { persona_id: AlumnoId, curso_id: id },
         transaction
-      });
+      })
       if (!Alumno) {
         await transaction.rollback()
         return next({ ...errors.NotFoundError, details: `Estudiante con ID ${AlumnoId} no encontrado en el curso` })

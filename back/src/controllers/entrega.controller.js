@@ -4,7 +4,7 @@ const models = require('../database/models/index')
 const GoogleDriveService = require('../services/GoogleDriveService') // Importa el servicio de Google Drive
 const fs = require('fs') // Para manejar el stream de archivos
 const pico = require('picocolors')
-const {crearNotificacionesParaAlumnos} = require("../services/notificacionService");
+const { crearNotificacionesParaAlumnos } = require('../services/notificacionService')
 const googleDriveService = new GoogleDriveService()
 
 const crearEntrega = async (req, res, next) => {
@@ -19,7 +19,7 @@ const crearEntrega = async (req, res, next) => {
       include: [
         {
           model: models.InstanciaEvaluativa,
-          attributes: ['grupo', 'curso_id','nombre']
+          attributes: ['grupo', 'curso_id', 'nombre']
         }
       ]
     })
@@ -83,24 +83,24 @@ const crearEntrega = async (req, res, next) => {
             include: [{
               model: models.Persona,
               attributes: ['ID'],
-              include:{model:models.Usuario}
+              include: { model: models.Usuario }
             }]
           })
 
           // Mando las notificaciones
           const usuarioIds = grupo.Personas
-              .filter(persona => persona.Usuario)
-              .map(persona => persona.Usuario.ID);
+            .filter(persona => persona.Usuario)
+            .map(persona => persona.Usuario.ID)
 
-          const mensaje = `Se ha realizado la entrega de ${entregaPactada.InstanciaEvaluativa.nombre} - ${entregaPactada.nombre} `;
+          const mensaje = `Se ha realizado la entrega de ${entregaPactada.InstanciaEvaluativa.nombre} - ${entregaPactada.nombre} `
 
           await crearNotificacionesParaAlumnos(
-              usuarioIds,
-              mensaje,
-              2,
-              res.locals.usuario.ID,
-              transaction
-          );
+            usuarioIds,
+            mensaje,
+            2,
+            res.locals.usuario.ID,
+            transaction
+          )
 
           const porcentaje = parseFloat((100 / parseInt(grupo.Personas.length)).toFixed(2))
           for (const persona of grupo.Personas) {
@@ -265,7 +265,7 @@ const asociarArchivosConEntrega = async (req, res, next) => {
   }
 }
 // Un docente puede listar las entregas
-async function listarEntregasParaElDocente(req, res, next) {
+async function listarEntregasParaElDocente (req, res, next) {
   const { idEntregaPactada } = req.params
   console.log('Entregas ID que llega del params', idEntregaPactada)
   try {
@@ -306,7 +306,7 @@ async function listarEntregasParaElDocente(req, res, next) {
 }
 
 // Función para actualizar una entrega
-async function actualizar(req, res, next) {
+async function actualizar (req, res, next) {
   const { idEntrega } = req.params
   const { fecha, nota, grupoId, personaId } = req.body
 
@@ -341,7 +341,7 @@ async function actualizar(req, res, next) {
 }
 
 // Función para eliminar una entrega
-async function eliminar(req, res, next) {
+async function eliminar (req, res, next) {
   const { idEntrega } = req.params
 
   const entregaEliminada = await handleTransaction(async (transaction) => {
@@ -437,7 +437,7 @@ const ver = async (req, res, next) => {
   }
 }
 
-async function getEstado(entrega) {
+async function getEstado (entrega) {
   // 0 sin entregar, 1 promocionado , 2 aprobado, 3 desaprobado, 4 con comentarios  5 sin corregir
   const estado = {
     id: null,
@@ -460,7 +460,7 @@ async function getEstado(entrega) {
           entrega_id: entrega.ID
         }
       })
-      console.log('problema 2')
+
       if (comentarios > 0) {
         estado.id = 4
         estado.descripcion = 'Con Comentarios'
@@ -535,7 +535,109 @@ const obtenerEntregaComoAlumno = async (req, res, next) => {
     })
   }
 }
+const modificarPorcentajeParticipacion = async (req, res, next) => {
+  console.log('Entre a modificar porcentaje /:entregaId/porcentaje-participacion')
+  const { entregaId } = req.params
+  const { porcentajes } = req.body
+  /* { "personaId": porcentaje  EJ: "porcentajes": {
+    "1": 40,
+    "134": 35,
+    "1200": 25
+  } */
+  console.log(pico.blue(`Modificando porcentajes de participación para la entrega con ID ${entregaId}`))
+  console.log(pico.yellow(`Porcentajes de participación recibidos desde el body: ${JSON.stringify(porcentajes, null, 2)}`))
+  try {
+    await handleTransaction(async (transaction) => {
+      const entrega = await models.Entrega.findByPk(entregaId, {
+        include: [
+          {
+            model: models.EntregaPactada,
+            include: [
+              {
+                model: models.InstanciaEvaluativa,
+                attributes: ['grupo']
+              }
+            ]
+          }
+        ],
+        transaction
+      })
 
+      if (!entrega) {
+        return next({ ...errors.NotFoundError, details: `Entrega con ${entregaId} no encontrada` })
+      }
+
+      if (!entrega.EntregaPactada.InstanciaEvaluativa.grupo) {
+        return next({ ...errors.ValidationError, details: 'La entrega no pertenece a una instancia evaluativa grupal, proba con otra entregaId' })
+      }
+
+      const totalPorcentaje = Object.values(porcentajes).reduce((acc, val) => acc + val, 0)
+      if (totalPorcentaje !== 100) {
+        return next({ ...errors.ValidationError, details: 'Los porcentajes de participación deben sumar 100%' })
+      }
+
+      for (const [personaId, porcentaje] of Object.entries(porcentajes)) {
+        const personaXEntrega = await models.PersonaXEntrega.findOne({
+          where: {
+            persona_id: personaId,
+            entrega_id: entregaId
+          },
+          transaction
+        })
+
+        if (!personaXEntrega) {
+          return next({ ...errors.NotFoundError, details: `No se encontró participación para la persona con ID ${personaId} en la entrega` })
+        }
+
+        await personaXEntrega.update({ porcentaje_participacion: porcentaje }, { transaction })
+      }
+      console.log(pico.green('Porcentajes de participación actualizados exitosamente'))
+      res.status(200).json({ message: 'Porcentajes de participación actualizados exitosamente' })
+    }, next)
+  } catch (error) {
+    console.error(pico.red(`Error al modificar el porcentaje de participación: ${error.message}`))
+    return next({
+      ...errors.InternalServerError,
+      details: 'Error al modificar el porcentaje de participación: ' + error.message
+    })
+  }
+}
+
+const obtenerPorcentajeParticipacion = async (req, res, next) => {
+  const { entregaId } = req.params
+
+  try {
+    const participaciones = await models.PersonaXEntrega.findAll({
+      where: { entrega_id: entregaId },
+      include: [
+        {
+          model: models.Persona,
+          attributes: ['ID', 'nombre', 'apellido', 'legajo']
+        }
+      ]
+    })
+
+    if (!participaciones.length) {
+      return next({ ...errors.NotFoundError, details: 'No se encontraron participaciones para la entrega' })
+    }
+
+    const resultado = participaciones.map(participacion => ({
+      personaId: participacion.Persona.ID,
+      nombre: participacion.Persona.nombre,
+      apellido: participacion.Persona.apellido,
+      legajo: participacion.Persona.legajo,
+      porcentaje: participacion.porcentaje_participacion
+    }))
+
+    res.status(200).json(resultado)
+  } catch (error) {
+    console.error(pico.red(`Error al obtener el porcentaje de participación: ${error.message}`))
+    return next({
+      ...errors.InternalServerError,
+      details: 'Error al obtener el porcentaje de participación: ' + error.message
+    })
+  }
+}
 module.exports = {
   listarEntregasParaElDocente,
   crearEntrega,
@@ -543,5 +645,7 @@ module.exports = {
   asociarArchivosConEntrega,
   ver,
   getEstado,
-  obtenerEntregaComoAlumno
+  obtenerEntregaComoAlumno,
+  modificarPorcentajeParticipacion,
+  obtenerPorcentajeParticipacion
 }

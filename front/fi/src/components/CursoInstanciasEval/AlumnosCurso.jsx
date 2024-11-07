@@ -380,24 +380,35 @@ function AlumnosCurso() {
             </FloatLabel>
             <Button className="btn-agregar-alumno" onClick={handleAgregarAlumnoConLegajo} label="Agregar" />
           </div>
-          <div className="card-agregar-alumnos-container">
+          <div className="card-agregar-alumnos-container" data-cy="generar-codigo">
             {/* Generar código de vinculación */}
             <h5 className="text-description-agregar-alumno">Con código de vinculación</h5>
             <div className='generar-codigo-container'>
-              { !codigoVinculacion && <InputOtp className="input-item-alumnos" disabled /> }
+              { !codigoVinculacion && <InputOtp className="input-item-alumnos" disabled data-cy="input-codigo-vinculacion-disabled"/> }
               { codigoVinculacion && 
-                <>
-                  <InputOtp className="input-item-alumnos" readOnly value={codigoVinculacion} />
-                  <PiCopyBold className='clipboard-codigo-generado' onClick={copiarCodigo} size={24} />
-                </>
+                <div  className="codigo-container flex items-center space-x-2" data-cy="codigo-container">
+                  <InputOtp 
+                    className="input-item-alumnos" 
+                    readOnly 
+                    value={codigoVinculacion} 
+                    inputClassName="otp-input"
+                    data-cy="input-codigo-vinculacion"
+                  />
+                  <PiCopyBold 
+                    className='clipboard-codigo-generado'  
+                    onClick={copiarCodigo} 
+                    size={24} 
+                    data-cy="copiar-codigo"
+                  />
+                </div>
               }
             </div>
-            <Button className="btn-generar-codigo" onClick={handleGenerarCodigo} label="Generar" />
+            <Button className="btn-generar-codigo" onClick={handleGenerarCodigo} label="Generar" data-cy="btn-generar-codigo"/>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default AlumnosCurso

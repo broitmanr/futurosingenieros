@@ -117,6 +117,7 @@
     background-color: #1A2035 !important;
     color: #fff !important;
     border: none;
+    border-radius: 0.5rem;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
@@ -129,6 +130,7 @@
     background-color: #ccdcf1 !important;
     color: #1A2035 !important;
     border: none;
+    border-radius: 0.5rem;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
@@ -140,7 +142,8 @@
 .button-group {
     display: flex;
     justify-content: center;
-    gap: 15px; /* Espacio entre los botones */
+    margin-top: 3rem;
+    gap: 5rem;
 }
 
 .icon-ver-archivo{

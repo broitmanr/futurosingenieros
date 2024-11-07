@@ -30,7 +30,12 @@ const RendimientoGrupo = () => {
                 setData(response.data);
                 setLoading(false);
             } catch (err) {
-                setError('Error al cargar los datos');
+                if (err.response){
+                    setError(err.response?.status === 404 ? 'Sin grupo':'Error al cargar los datos');
+                }else{
+                    setError('Error');
+                }
+
                 setLoading(false);
             }
         };

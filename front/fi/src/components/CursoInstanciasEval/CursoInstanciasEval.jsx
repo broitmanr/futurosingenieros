@@ -1,17 +1,24 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import './CursoInstanciasEval.css';
-import { Button } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { Button, Card } from 'react-bootstrap';
+import { useEffect, useRef, useState } from 'react';
 import InstanciaEval from './InstanciaEvalForm'
 import axios from "axios";
 import { FaRegPlusSquare } from "react-icons/fa";
+import { TbEdit } from "react-icons/tb";
+import { BsTrash } from "react-icons/bs";
 import { RiFileDownloadLine } from "react-icons/ri";
 import { PiUsersThreeBold } from "react-icons/pi";
 import { RiBarChartBoxLine } from "react-icons/ri";
 import { useRole } from '../../context/RolesContext';
 import { ModalCrearGrupo } from './ModalCrearGrupo';
 import { Badge } from 'primereact/badge';
-
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { Toast } from 'primereact/toast';
+import { CiWarning } from "react-icons/ci";
+import { CiCircleCheck } from "react-icons/ci";
+import { RxCrossCircled } from "react-icons/rx";
+import { Col } from 'react-bootstrap';
 
 export const CursoInstanciasEval = () => {
     
@@ -20,15 +27,16 @@ export const CursoInstanciasEval = () => {
     const [showGrupo, setShowGrupo] = useState(false);
     const [grupo, setGrupo] = useState(false);
     const [instancias, setInstancias] = useState({});
-
+    const [instanciasDelete, setInstanciasDelete] = useState(null) //Estado para manejar la instancia a eliminar
+    const [visibleConfirmDelete, setVisibleConfirmDelete] = useState(false);
     const [curso, setCurso] = useState({});
     const [isLoading, setLoading] = useState({});
     const params = useParams();
-
+    const toastRef = useRef(null)
     const handleClose = () => setShow(false);
     const handleCloseGrupo = () => setShowGrupo(false);
-
     const [shouldFetchInstancia, setShouldFetchInstancia] = useState(false); //Estados para manejar la actualización de la instancia
+    const navigate = useNavigate()
 
     const fetchGrupoAlumno = async () => {
         try {
@@ -98,6 +106,30 @@ export const CursoInstanciasEval = () => {
         setShouldFetchInstancia(true) //Activa el estado de actualización
     };
 
+    const accept = async () => {
+        try{
+            const response = await axios.delete(`/instanciaEvaluativa/${instanciasDelete}`, { withCredentials: true })
+            if(response.data){
+                fetchCursoInstancia()
+                toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Instancia eliminada con éxito', life: 3000 })
+            }
+        } catch(err) {
+            console.log('Error al eliminar la instancia:', err)
+        }finally{
+            setVisibleConfirmDelete(false)
+        }
+    }
+
+    const reject = () => {
+        setVisibleConfirmDelete(false)
+    }
+
+    const showConfirmDelete = (e, value) => {
+        e.stopPropagation();
+        setInstanciasDelete(value.ID);
+        setVisibleConfirmDelete(true)
+    }
+
     return (
         <>
             <section className="seccionBanner py-4">
@@ -140,7 +172,7 @@ export const CursoInstanciasEval = () => {
                                                     <FaRegPlusSquare className='icons-aside-menu-instancias-eval' />
                                                     Crear instancia evaluativa
                                                 </Link>
-                                                <InstanciaEval show={show} handleClose={handleClose} cursoID={curso.id} setInstancias={setInstancias} handleInstanciaAgregada={handleInstanciaAgregada} />
+                                                <InstanciaEval show={show} handleClose={handleClose} cursoID={curso.id} instancias={instancias} setInstancias={setInstancias} handleInstanciaAgregada={handleInstanciaAgregada} />
                                             </li>
                                             <li className='aside-item'>
                                                 <Link className='aside-link' to={`/alumnos/${curso.id}`}>
@@ -177,6 +209,7 @@ export const CursoInstanciasEval = () => {
                                 </nav>
                             </aside>
                         </div>
+                        <Toast ref={toastRef} />
                         <div className="col-md-9">
                             <h4 className="mt-3">Instancias evaluativas creadas</h4>
                             {
@@ -185,20 +218,44 @@ export const CursoInstanciasEval = () => {
                                 ) : (
                                     instancias.length > 0 ? (
                                         Object.entries(instancias).map(([key, value]) => (  
-                                            <Link to={`/instancia-eval/${value.ID}/entregas`}
+                                            <Col
                                                 className="instancias-eval-boton no-underline" 
-                                                key={key}    
+                                                key={key}
                                             >
-                                                <div className="col-md-12 d-flex align-items-center">
-                                                    <p className="instancias-eval-nombre m-0">{value.nombre}</p>
-                                                    { role === 'D' && (
-                                                        <div className="ms-auto d-flex align-items-center">
-                                                            <i className="fa fa-pencil me-2" aria-hidden="true"></i>
-                                                            <i className="fa-solid fa-trash text-danger"></i>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </Link>
+                                                <Card className='card-instancias-evaluativas' onClick={() => navigate(`/instancia-eval/${value.ID}/entregas`)}>
+                                                    <div className="col-md-12 d-flex align-items-center">
+                                                        <p className="instancias-eval-nombre m-0">{value.nombre}</p>
+                                                        { role === 'D' && (
+                                                            <div className="ms-auto d-flex align-items-center" onClick={(e) => e.stopPropagation()}>
+                                                                <div>
+                                                                    <TbEdit color='#632f79' size={24} className="icon-delete-curso" />
+                                                                </div>
+                                                                <BsTrash color='red' size={21} className="icon-delete-curso"
+                                                                onClick={(e) => showConfirmDelete(e, value)} />
+                                                                <ConfirmDialog
+                                                                    className="popup-confirm-delete"
+                                                                    visible={visibleConfirmDelete}
+                                                                    onHide={reject}
+                                                                    message={
+                                                                        <div className="flex flex-column align-items-center w-full gap-3">
+                                                                            <span className="popup-message">¿Está seguro que desea eliminar la instancia?</span>
+                                                                        </div>
+                                                                    }
+                                                                    header="Confirmación"
+                                                                    icon={<CiWarning size={40} className="text-6xl text-primary-500" />}
+                                                                    footer={
+                                                                        <div>
+                                                                            <Button onClick={reject} className="button-cancelar"><CiCircleCheck size={22} color="#1a2035" className="icons-delete-curso" /> Cancelar</Button> 
+                                                                            <Button onClick={accept} className="button-eliminar"><RxCrossCircled size={22} className="icons-delete-curso" /> Eliminar</Button>
+                                                                        </div>
+                                                                    }
+                                                                    breakpoints={{ '1100px': '75vw', '960px': '100vw' }}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </Card>
+                                            </Col>
                                         ))
                                     ) : (
                                         <p className='text-danger'>Este curso no posee instancias evaluativas.</p>

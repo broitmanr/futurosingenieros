@@ -1,32 +1,57 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import axios from "axios";
 import './InstanciaEvalEntregas.css';
+import { Toast } from 'primereact/toast';
 
-export const EntregaForm = ({ show, handleClose, idInstanciaEval, handleEntregaAgregada }) => {
+export const EntregaForm = ({ show, handleClose, idInstanciaEval, entregas, handleEntregaAgregada }) => {
     const [formData, setFormData] = useState({})
+    const toastRef = useRef(null)
 
     const onChange = (e) => {
-    
         setFormData(prevState => {
           return { ...prevState, [e.target.name]: e.target.value }
         })
-      };
+    };
 
- 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('prueba')
-
+        if (!formData.nombre){ 
+            toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Debe ingresar un nombre', life: 3000 })
+            return 
+        }
+        const hayNombresDuplicados = entregas.some(entrega => entrega.nombre.toLowerCase() === formData.nombre.toLowerCase())
+        if(hayNombresDuplicados){
+        toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Ya existe una entrega con ese nombre, por favor, elige otro nombre', life: 3000 })
+        return 
+        }
+        if(/^\d+$/.test(formData.nombre)){
+            toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'El nombre no puede ser solo un número', life: 3000 })
+            return
+        }
         formData.instanciaEvaluativaID = parseInt(idInstanciaEval);
         formData.numero = parseInt(formData.numero)
+        if (!formData.numero){ 
+            toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Debe ingresar un número entero', life: 3000 })
+            return 
+        }
+        const hayNumerosDuplicados = entregas.some(entrega => entrega.numero === formData.numero)
+        if(hayNumerosDuplicados){
+            toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Ya existe una entrega con ese número, por favor, elige otro número', life: 3000 })
+            return
+        }
+        if(!formData.fechavto1){
+            toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Debe ingresar la fecha de vencimiento 1', life: 3000 })
+            return
+        }
         console.log(formData);
         // PASAR LA DATA EN REQ BODY.
         axios.post(`/entregaPactada`, formData, { withCredentials: true }) // Ajusta la URL de la API según corresponda
             .then(response => {
-                console.log('Instancia evaluativa creada', response.data);
+                console.log('Instancia evaluativa creada', response.data)
                 setFormData({})
                 handleEntregaAgregada(response.data)
+                toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Entrega Pactada    creada con éxito', life: 3000 });
                 /*setInstancias(prevState => {
                     return [...prevState, response.data]
                 })*/
@@ -36,13 +61,19 @@ export const EntregaForm = ({ show, handleClose, idInstanciaEval, handleEntregaA
                 alert('Error: ' + err.response.data.error.message)
                 // setError('Error al crear la instancia evaluativa');
 
-            });
-
-        handleClose();
-
+            })
+        handleClose()
     }
+
+    const handleCancelar = () => {
+        console.log('Creación de entrega cancelada')
+        setFormData({})
+        handleClose()
+    }
+
     return (
         <>
+            <Toast ref={toastRef} />
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Crear una entrega</Modal.Title>
@@ -53,15 +84,17 @@ export const EntregaForm = ({ show, handleClose, idInstanciaEval, handleEntregaA
                             <Form.Label>Nombre de la entrega</Form.Label>
                             <Form.Control name="nombre" onChange={e => onChange(e)} type="text" placeholder="Ingrese un nombre" />
                         </Form.Group>
-
                         <Form.Group className="mb-3" controlId="grupoInstancia">
                             <Form.Label>Numero de entrega</Form.Label>
                             <Form.Control name="numero" onChange={e => onChange(e)} type="number" placeholder="Ingrese un numero" />
                         </Form.Group>
-
                         <Form.Group className="mb-3" controlId="grupoInstancia">
                             <Form.Label>Fecha de vencimiento 1</Form.Label>
-                            <Form.Control name="fechavto1" onChange={e => onChange(e)} type="date" placeholder="Ingrese una fecha" />
+                            <Form.Control name="fechavto1" 
+                            value={formData.fechavto1}
+                            onChange={e => onChange(e)} type="date"
+                            min={new Date().toISOString().split("T")[0]} //No permite elegir una fecha anterior a la actual
+                            placeholder="Ingrese una fecha" />
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="grupoInstancia">
@@ -78,7 +111,7 @@ export const EntregaForm = ({ show, handleClose, idInstanciaEval, handleEntregaA
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex justify-content-between w-100">
-                        <Button className='btn-entrega-cancelar' onClick={handleClose}>
+                        <Button className='btn-entrega-cancelar' onClick={handleCancelar}>
                             Cancelar
                         </Button>
                         <Button className='btn-entrega-agregar' onClick={handleSubmit}>

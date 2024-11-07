@@ -58,6 +58,8 @@ function Curso({ show, handleClose, handleCursoAgregado }) {
 
   const handleConfirmar = (e) => { //Crear curso
     e.preventDefault();
+    if (!selectedComision) { toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar una comision', life: 3000 }); return; }
+    if (!selectedMateria) { toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar una materia', life: 3000 }); return; }
     setIsSubmitting(true); // Establecer isSubmitting en true cuando se inicie la solicitud
     axios.post('/curso',
       { 

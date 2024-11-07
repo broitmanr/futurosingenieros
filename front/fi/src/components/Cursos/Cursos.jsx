@@ -3,12 +3,14 @@ import data from '../shared/data';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import Curso from './CursoForm';
 import CursoVinculacion from './CursoVinculacion'
+import CursoModificar from "./CursoModificarForm.jsx";
 import axios from "axios";
 import { useRole } from "../../context/RolesContext";
 import { Link, useNavigate } from "react-router-dom";
 import { ProgressBar } from 'primereact/progressbar';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
+import { TbEdit } from "react-icons/tb";
 import { BsTrash } from "react-icons/bs";
 import { CiWarning } from "react-icons/ci";
 import { CiCircleCheck } from "react-icons/ci";
@@ -23,7 +25,10 @@ import "primeicons/primeicons.css";
 const Cursos = () => {
     const { role } = useRole();
     const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const [showFormModificar, setShowFormModificar] = useState(false);
     const [showVincular, setShowVincular] = useState(false)
+    const handleCloseVincular = () => setShowVincular(false);
     const [cursos, setCursos] = useState([]); // Estado para almacenar los cursos
     const [loading, setLoading] = useState(true); // Estado para manejar el estado de carga
     const [imageLoading, setImageLoading] = useState(true) 
@@ -32,14 +37,14 @@ const Cursos = () => {
     const navigate = useNavigate()
     const toastRef = useRef(null);
     const [cursoDelete, setCursoDelete] = useState(null) //Estado para manejar el curso a eliminar
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    const handleCloseVincular = () => setShowVincular(false);
-
+    const [cursoToModify, setCursoToModify] = useState(null) //Estado para manejar el curso a modificar
     const [shouldFetch, setShouldFetch] = useState(false); //Estados para manejar la actualización del curso
     const [dias,setDias]=useState([]);
-    // useEffect para hacer la petición con axios 
+    
+    const handleCloseModificarForm = () => {
+        setShowFormModificar(false);
+        setCursoToModify(null)
+    }
 
     const fetchCursos = async () => {
         try{
@@ -71,8 +76,13 @@ const Cursos = () => {
         setCursos(prevCursos => [...prevCursos, nuevoCurso])
         setShouldFetch(true) //Activa el estado de actualización
     };
-    const fetchSpecialDays = async (month) => {
 
+    const handleCursoModificado = (cursoModificado) => {
+        setCursos(prevCursos => prevCursos.map(curso => curso.ID === cursoModificado.ID ? cursoModificado : curso))
+        setShouldFetch(true) //Activa el estado de actualización
+    };
+
+    const fetchSpecialDays = async (month) => {
         try {
             const response = await axios.get(`/eventos/byMonth/${month}`, { withCredentials: true });
             if (response.status === 200) {
@@ -83,8 +93,8 @@ const Cursos = () => {
             console.error('Al listar las fechas', err);
             setLoading(false)
         }
-
-    };
+    }
+    
     useEffect(() => {
         // Llama a fetchSpecialDays para el mes inicial al montar el componente
         const initialMonth = new Date().getMonth() + 1;
@@ -119,17 +129,18 @@ const Cursos = () => {
         <div className="cursos-container">
             { role === 'D' && (
                 <>
-                    <Button className='cursos-btns' onClick={() => setShow (true)}>
-                        Agregar curso
-                    </Button>
-                    <Curso loading={loading} show={show} handleClose={handleClose} handleCursoAgregado={handleCursoAgregado} />
+                    <div>
+                        <Button className='cursos-btns' onClick={() => setShow(true)}>
+                            Agregar curso
+                        </Button>
+                        <Curso loading={loading} show={show} handleClose={handleClose} handleCursoAgregado={handleCursoAgregado} />
+                    </div>
                 </>
             )}
             { role === 'A' && (
                 <>
                     <div className="cursos-components-container">
                         <Calendar
-                            className='calendar-component'
                             onMonthChange={fetchSpecialDays}
                             specialDays={dias}
                         />
@@ -181,7 +192,14 @@ const Cursos = () => {
                                             <>
                                                 <Col className="col-md-2">
                                                     <div onClick={(e) => e.stopPropagation()}>
-                                                        <div className="flex flex-wrap justify-content-center gap-2">
+                                                        <div className="flex flex-wrap justify-content-center">
+                                                            <div>
+                                                                <TbEdit color='#632f79' size={22} className="icon-delete-curso"
+                                                                onClick={() => {
+                                                                    setCursoToModify(item)
+                                                                    setShowFormModificar(true)
+                                                                }} />
+                                                            </div>
                                                             <BsTrash color='red' size={22} className="icon-delete-curso"
                                                             onClick={(e) => showConfirmDelete(e, item)} />
                                                         </div>
@@ -213,6 +231,9 @@ const Cursos = () => {
                             </Card>
                         </Col>
                     ))}
+                    {cursoToModify && (
+                        <CursoModificar showFormModificar={showFormModificar} handleCloseModificarForm={handleCloseModificarForm} curso={cursoToModify} handleCursoModificado={handleCursoModificado} />
+                    )}
                 </Row>
             )}
         </div>

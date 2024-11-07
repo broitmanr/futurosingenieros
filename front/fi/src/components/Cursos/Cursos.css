@@ -8,8 +8,7 @@
 
 .cursos-btns{
     position: absolute;
-    right: 6.6rem;
-    margin: 5;
+    right: 7rem;
     background-color: #1A2035 !important
 }
 
@@ -57,6 +56,10 @@
     background: #2f3856;
 }
 
+.icon-delete-curso{
+    margin-bottom: 0.2rem;
+}
+
 .icon-delete-curso:hover{
     transform: scale(1.1);
 }
@@ -86,7 +89,7 @@
 }
 
 .icons-delete-curso{
-    margin-right: 0.2rem;
+    margin-right: 0.2rem
 }
 
 /* ESTILOS PARA CREAR UN CURSO */

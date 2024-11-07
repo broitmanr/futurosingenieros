@@ -43,13 +43,12 @@ export default function Recursos() {
     useEffect(() => { // OBTENER LOS DATOS DEL CURSO
         axios.get(`/curso/${id}`, { withCredentials: true })
             .then(response => {
-                console.log(response.data);
                 setCurso(response.data)
             })
             .catch(err => {
                 console.log(err)
-            });
-    }, [id]);
+            })
+    }, [id])
 
     const items = curso ? [
         {template: () => 
@@ -212,7 +211,9 @@ export default function Recursos() {
                 </div>
             ),
             acceptIcon: <CiCircleCheck size={20} className='icons-delete-recurso' />,
+            acceptLabel: 'Eliminar',
             rejectIcon: <RxCrossCircled size={20} className='icons-delete-recurso' />,
+            rejectLabel: 'Cancelar',
             rejectClass: 'p-button-sm',
             acceptClass: 'p-button-outlined p-button-sm btn-eliminar-recurso',
             accept

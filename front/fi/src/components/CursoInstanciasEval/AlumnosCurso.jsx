@@ -15,7 +15,7 @@ import { AlumnosDatos } from '../shared/dataAlumnos'; //Se importan los datos de
 import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import './CursoInstanciasEval.css'; //Se importan los estilos
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { PiUserCirclePlusBold } from "react-icons/pi";
 import { FaRegFileExcel } from "react-icons/fa";
 import { FileUpload } from 'primereact/fileupload';
@@ -24,11 +24,14 @@ import { BsTrash } from "react-icons/bs";
 import { CiWarning } from "react-icons/ci";
 import { CiCircleCheck } from "react-icons/ci";
 import { RxCrossCircled } from "react-icons/rx";
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { AiOutlineHome } from "react-icons/ai";
 import axios from 'axios';
 
 function AlumnosCurso() {
   //Estados para agregar un alumno
   const { id } = useParams(); //Obtiene el id del curso pasado por parámetro
+  const [curso, setCurso] = useState(null);
   const [legajo, setLegajo] = useState(''); //Estado para el legajo
   const [codigoVinculacion, setCodigoVinculacion] = useState(''); //Estado para el código de vinculación
   const [alumnos, setAlumnos] = useState([]); //Estado para el listado de alumnos
@@ -45,6 +48,25 @@ function AlumnosCurso() {
   };
   const [error, setError] = useState('');
   const toast = useRef(null);
+
+  useEffect(() => { // OBTENER LOS DATOS DEL CURSO
+    axios.get(`/curso/${id}`, { withCredentials: true })
+        .then(response => {
+            setCurso(response.data)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+  }, [id])
+
+  const items = curso ? [
+    {template: () => 
+        <Link className="item-path-recursos" to={`/curso/${curso.id}`}>
+            {curso.Materium.nombre}
+        </Link>}, 
+    {template: () => <a className="item-path-recursos">Alumnos</a>  }
+  ]: [];
+  const home = { icon: <AiOutlineHome size={22} color='#1a2035' />, url: ('/cursos') }
 
   const handleCargarAlumnosExcel = async (e) => { //Cargar alumnos desde un archivo excel
     const file = e.target.files[0];
@@ -173,6 +195,7 @@ function AlumnosCurso() {
                 <span>¿Está seguro que desea eliminar el/los alumno/s?</span>
             </div>
         ),
+        className: 'confirm-delete-popup',
         accept: () => handleDeleteAlumno(),
         acceptIcon: <CiCircleCheck size={20} className='icons-delete-recurso' />,
         acceptLabel: 'Eliminar',
@@ -261,102 +284,116 @@ function AlumnosCurso() {
 
   return (
     <div className="alumnos-container">
-      <h5 className="text-title-alumnos">Listado de alumnos</h5>
-      {error && <p>{error}</p>}
-      <Toast ref={toast} />
-      <DataTable
-        value={alumnos}
-        paginator rows={10}
-        dataKey="ID"
-        filters={filters}
-        filterDisplay="row"
-        loading={loading}
-        globalFilterFields={['Persona.legajo', 'Persona.nombre', 'Persona.apellido']}
-        header={header}
-        emptyMessage="Lo siento, no se encontraron alumnos."
-        className='custom-datatable-alumnos'
-      >
-        <Column
-          body={(rowData) => (
-            <Checkbox 
-              checked={selectedAlumnos.includes(rowData.persona_id)} 
-              onChange={() => handleSelectAlumno(rowData.persona_id)} 
-            />
-          )}
-        />
-        <Column
-          className='columns-data-alumnos'
-          field="Persona.legajo"
-          header="LEGAJO"
-          filter
-          filterPlaceholder="Buscar por Legajo"
-          filterElement={
-            <input
-              className='inputs-filters-alumnos'
-              type='text' 
-              onKeyPress={handleKeyPressLegajo} 
-              inputMode='numeric' 
-              onChange={(e) => onFilterChange(e, 'Persona.legajo')}
-            />
-          }
-        />
-        <Column
-          className='columns-data-alumnos'
-          field="nombreCompleto"
-          header="NOMBRE COMPLETO"
-          filter
-          filterPlaceholder="Buscar por Nombre completo"
-          filterElement={
-            <input
-              className='inputs-filters-alumnos'
-              type='text' 
-              onKeyPress={handleKeyNombreApellido} 
-              inputMode='text'
-              onChange={(e) => onFilterChange(e, 'nombreCompleto')}
-            />
-          }
-          sortable
-        />
-        <Column
+      {curso ? (
+        <>
+        <div className='breadscrumb-container'>
+          <BreadCrumb className='recursos-breadcrumb' model={items} home={home} />
+        </div>
+        <div className='banner-recursos py-4'>
+          <h1 className='nombre-materia'>Listado de alumnos</h1>
+          <p className='nombre-comision'>{curso.Materium.nombre} {curso.Comision.nombre}</p>
+        </div>
+        </>
+      ):(
+        <div>Cargando...</div>
+      )}
+      <div className='alumnos-components-container'>
+        {error && <p>{error}</p>}
+        <Toast ref={toast} />
+        <DataTable
+          value={alumnos}
+          paginator rows={10}
+          dataKey="ID"
+          filters={filters}
+          filterDisplay="row"
+          loading={loading}
+          globalFilterFields={['Persona.legajo', 'Persona.nombre', 'Persona.apellido']}
+          header={header}
+          emptyMessage="Lo siento, no se encontraron alumnos."
+          className='custom-datatable-alumnos'
+        >
+          <Column
+            body={(rowData) => (
+              <Checkbox 
+                checked={selectedAlumnos.includes(rowData.persona_id)} 
+                onChange={() => handleSelectAlumno(rowData.persona_id)} 
+              />
+            )}
+          />
+          <Column
             className='columns-data-alumnos'
-            field="mail"
-            header="MAIL"
+            field="Persona.legajo"
+            header="LEGAJO"
             filter
-            filterPlaceholder="Buscar por mail"
+            filterPlaceholder="Buscar por Legajo"
             filterElement={
               <input
-                  className='inputs-filters-alumnos'
-                  type='text'
-                  inputMode='text'
+                className='inputs-filters-alumnos'
+                type='text' 
+                onKeyPress={handleKeyPressLegajo} 
+                inputMode='numeric' 
+                onChange={(e) => onFilterChange(e, 'Persona.legajo')}
+              />
+            }
+          />
+          <Column
+            className='columns-data-alumnos'
+            field="nombreCompleto"
+            header="NOMBRE COMPLETO"
+            filter
+            filterPlaceholder="Buscar por Nombre completo"
+            filterElement={
+              <input
+                className='inputs-filters-alumnos'
+                type='text' 
+                onKeyPress={handleKeyNombreApellido} 
+                inputMode='text'
+                onChange={(e) => onFilterChange(e, 'nombreCompleto')}
               />
             }
             sortable
-        />
-      </DataTable>
-      <h5 className="text-title-alumnos">Agregar alumno</h5>
-      <div className='agregar-alumnos-container' id='agregarAlumnos'>
-        <div className="card-agregar-alumnos-container">
-          {/* Agregar alumno manualmente */}
-          <h5 className='text-description-agregar-alumno'>Con Legajo</h5>
-          <FloatLabel className="input-agregar-alumnos">
-            <InputText className="input-item-alumnos" id="legajo" value={legajo} onKeyPress={handleKeyPressLegajo} onChange={(e) => setLegajo(e.target.value)} />
-            <label className="text-input-item" htmlFor="legajo">Legajo</label>
-          </FloatLabel>
-          <Button className="btn-agregar-alumno" onClick={handleAgregarAlumnoConLegajo} label="Agregar" />
-        </div>
-        <div className="card-agregar-alumnos-container">
-          {/* Generar código de vinculación */}
-          <h5 className="text-description-agregar-alumno">Con código de vinculación</h5>
-          <div className='generar-codigo-container'>
-            { !codigoVinculacion && <InputOtp className="input-item-alumnos" disabled /> }
-            { codigoVinculacion && 
-              <>
-                <InputOtp className="input-item-alumnos" readOnly value={codigoVinculacion} />
-                <PiCopyBold className='clipboard-codigo-generado' onClick={copiarCodigo} size={24} />
-              </>
-            }
+          />
+          <Column
+              className='columns-data-alumnos'
+              field="mail"
+              header="MAIL"
+              filter
+              filterPlaceholder="Buscar por mail"
+              filterElement={
+                <input
+                    className='inputs-filters-alumnos'
+                    type='text'
+                    inputMode='text'
+                />
+              }
+              sortable
+          />
+        </DataTable>
+        <h5 className="text-title-alumnos">Agregar alumno</h5>
+        <div className='agregar-alumnos-container' id='agregarAlumnos'>
+          <div className="card-agregar-alumnos-container">
+            {/* Agregar alumno manualmente */}
+            <h5 className='text-description-agregar-alumno'>Con Legajo</h5>
+            <FloatLabel className="input-agregar-alumnos">
+              <InputText className="input-item-alumnos" id="legajo" value={legajo} onKeyPress={handleKeyPressLegajo} onChange={(e) => setLegajo(e.target.value)} />
+              <label className="text-input-item" htmlFor="legajo">Legajo</label>
+            </FloatLabel>
+            <Button className="btn-agregar-alumno" onClick={handleAgregarAlumnoConLegajo} label="Agregar" />
           </div>
-          <Button className="btn-generar-codigo" onClick={handleGenerarCodigo} label="Generar" />
+          <div className="card-agregar-alumnos-container">
+            {/* Generar código de vinculación */}
+            <h5 className="text-description-agregar-alumno">Con código de vinculación</h5>
+            <div className='generar-codigo-container'>
+              { !codigoVinculacion && <InputOtp className="input-item-alumnos" disabled /> }
+              { codigoVinculacion && 
+                <>
+                  <InputOtp className="input-item-alumnos" readOnly value={codigoVinculacion} />
+                  <PiCopyBold className='clipboard-codigo-generado' onClick={copiarCodigo} size={24} />
+                </>
+              }
+            </div>
+            <Button className="btn-generar-codigo" onClick={handleGenerarCodigo} label="Generar" />
+          </div>
         </div>
       </div>
     </div>

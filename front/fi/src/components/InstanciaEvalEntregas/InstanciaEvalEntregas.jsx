@@ -120,15 +120,13 @@ export const InstanciaEvalEntregas = () => {
                     <>
                     <div className="entrega-subtitulo d-flex justify-content-between">
                         <h2>Entregas</h2>
-                        
-                            <Button className="crear-entrega" onClick={() => setShow(true)}>
-                                <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
-                                Crear Entrega
-                            </Button>
-                        
+                        <Button className="crear-entrega" onClick={() => setShow(true)}>
+                            <i className="fa fa-plus-square me-2" aria-hidden="true"></i>
+                            Crear Entrega
+                        </Button>
                     </div>
                     {
-                        idInstanciaEval ? <EntregaForm show={show} handleClose={handleClose} idInstanciaEval={idInstanciaEval} handleEntregaAgregada={handleEntregaAgregada} /> : null
+                        idInstanciaEval ? <EntregaForm show={show} handleClose={handleClose} idInstanciaEval={idInstanciaEval} entregas={entregas} handleEntregaAgregada={handleEntregaAgregada} /> : null
                     }
                     <div className='p-grid'>
                         <div className='p-col-3'>

@@ -126,7 +126,9 @@
   }
   
 .instancias-eval-boton:hover {
-    background-color: #7fa7db; /* Color de fondo al pasar el ratón */
+    /*background-color: #7fa7db;  Color de fondo al pasar el ratón */
+    transform: scale(1.03);
+    transition: all 0.3s ease;
 }
 
 .no-underline {
@@ -136,6 +138,11 @@
 .instancias-eval-nombre {
     font-size: 1.03rem;
     color: #1A2035;
+}
+
+.card-instancias-evaluativas{
+    background-color: inherit !important;
+    border: none !important
 }
 
 /*ESTILOS CREAR INSTANCIA*/
@@ -251,19 +258,20 @@
 .alumnos-container { /* Estilos del contenedor */
     min-height: 100vh;
     background-color: #f2f6fc;
+    padding: 1rem
+}
+
+.breadscrumb-container{
+    display: flex;
+    justify-content: flex-start;
+}
+
+.alumnos-components-container{
     align-items: center;
     padding: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between
-}
-
-.text-title-alumnos {
-    color: #1A2035; 
-    font-weight: bold; 
-    font-size: 1.5rem; 
-    margin-top: 1rem;
-    margin-bottom: 0.8rem
 }
 
 .custom-datatable-alumnos { 
@@ -422,6 +430,7 @@
 .recursos-breadcrumb{
     border: none;
     padding: 0;
+    background-color: inherit
 }
 
 .banner-recursos{
@@ -577,7 +586,8 @@
 .p-confirm-popup .p-confirm-popup-footer button:last-child {
     color: #fff;
     background-color: #1A2035;
-    border-radius: 0.4rem
+    border-radius: 0.4rem;
+    margin-left: 4rem;
 }
 
 .p-confirm-popup .p-confirm-popup-footer button:last-child:hover {

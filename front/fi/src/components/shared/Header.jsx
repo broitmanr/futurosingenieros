@@ -37,36 +37,37 @@ const Header = () => {
         } else if (role === 'D') {
             navigate('/perfil/docente');
         }
-    };
+    }
 
     const toogleDropdownUser = () => {
         setDropdownUserVisible(!dropdownUserVisible);
-    };
+    }
 
     const toogleDropdownNotificaciones = () => {
-        setDropdownNotificacionesVisible(!dropdownNotificacionesVisible);
-    };
+        setDropdownNotificacionesVisible(!dropdownNotificacionesVisible)
+    }
 
     useEffect(() => { //Filtra el nombre del usuario para la bienvenida
         if (userData) {
-            setNombre(userData.name);
+            setNombre(userData.name)
         }
-    }, [userData]);
+    }, [userData])
 
     const handleLogOut = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/auth/sign-out', { withCredentials: true });
+            const response = await axios.post('http://localhost:5000/auth/sign-out', { withCredentials: true })
             if (response) {
-                setDropdownUserVisible(false);
-                setRole('');
-                setIsLoggedIn(false);
-                localStorage.removeItem('role');
-                navigate('/login');
+                setDropdownUserVisible(false)
+                setRole('')
+                setIsLoggedIn(false)
+                localStorage.removeItem('role')
+                localStorage.removeItem('userData')
+                navigate('/login')
             }
         } catch (err) {
-            console.log('No se logró cerrar sesión:', err);
+            console.log('No se logró cerrar sesión:', err)
         }
-    };
+    }
 
     const handleClickOpen = (e) => {
         const isUserOpen = dropdownUserRef.current && dropdownUserRef.current.contains(e.target)

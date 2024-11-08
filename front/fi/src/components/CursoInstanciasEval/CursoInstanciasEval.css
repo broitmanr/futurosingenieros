@@ -416,10 +416,10 @@
 /* ESTILOS DE RECURSOS */
 
 .recursos-container {
-    min-height: 80vh;
+    min-height: 100vh;
     padding: 1rem;
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 8px
 }
 
 .item-path-recursos{
@@ -596,17 +596,16 @@
 }
 
 .no-recursos{
-    display: flex;
+    display: flex; 
     flex-direction: column; 
-    justify-content: center;
-    align-items: center;
+    justify-content: center; 
+    align-items: center; 
     height: 50vh
 }
 
 .no-recursos-img{
     width: 12rem;
-    height: auto;
-    margin-bottom: 1rem
+    height: auto
 }
 
 .no-recursos-text{

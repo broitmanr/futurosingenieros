@@ -44,7 +44,15 @@ const RendimientoGrupo = () => {
     }, [id]);
 
     if (loading) return <span className="badge badge-info">Cargando...</span>;
-    if (error) return <div>Error: {error}</div>;
+    // if (error) return <div>Error: {error}</div>;
+    if (error) return <div className="no-entregas" >
+    <img 
+        src="/NoEncontrado.png" 
+        alt="No entregas" 
+        className='img-no-entregas'
+    />
+    <p className='text-danger'>Usted no pertenece a ningún grupo</p>
+    </div>   
     if (!data) return null;
 
     const { curso, grupo, alumnos, entregasAgrupadas } = data;

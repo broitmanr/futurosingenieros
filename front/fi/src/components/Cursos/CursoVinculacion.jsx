@@ -9,6 +9,7 @@ import { Toast } from 'primereact/toast';
 function CursoVinculacion({ showVincular, handleCloseVincular, handleCursoAgregado }) {
   const [vinculo, setVinculo] = useState('');
   const toastRef = useRef(null);
+  const [isCancel, setIsCancel] = useState(false)
 
   //Se mueve al siguiente campo de entrada si se ingresó un valor
   const handleChangeValue = (e, index) => {
@@ -29,10 +30,14 @@ function CursoVinculacion({ showVincular, handleCloseVincular, handleCursoAgrega
 
   const handleVincularAlumno = async (e) => {
     e.preventDefault();
+    if(isCancel){
+      setIsCancel(false)
+      return
+    }
     const codigoVinculacion = vinculo;
     if(!codigoVinculacion) {
-      console.log('Se debe ingresar un código de vinculación')
-      return;
+      toastRef.current.show({ severity: 'error', summary: 'Error', detail: `Debe ingresar un código de vinculación`, life: 3000 })
+      return
     }
     try{
       const response = await axios.post('/curso/vincular-estudiante', {
@@ -43,15 +48,22 @@ function CursoVinculacion({ showVincular, handleCloseVincular, handleCursoAgrega
       toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Vinculación exitosa', life: 3000 });
       handleCloseVincular()
     } catch (err) {
-      console.log('Error al vincularse al curso', err.response ? err.response.data : err.message)
+      if (err.response.status === 404){
+        toastRef.current.show({ severity: 'error', summary: 'Error', detail: `Código ${codigoVinculacion} no válido, por favor, revise nuevamente el código ingresado`, life: 3500 })
+      } else if (err.response.status === 409){
+        toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Ya perteneces al curso correspondiente al código ingresado', life: 3000 })
+      } else {
+        console.log('Error al vincularse al curso', err.response ? err.response.data : err.message)
+      }
     }
   }
 
   const handleCancelarVinculacion = () => {
     console.log('Curso cancelado')
+    setIsCancel(true)
     setVinculo('')
     handleCloseVincular()
-  };
+  }
 
   return (
     <>

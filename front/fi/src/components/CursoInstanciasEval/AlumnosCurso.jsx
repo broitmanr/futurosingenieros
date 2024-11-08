@@ -132,13 +132,20 @@ function AlumnosCurso() {
         legajo: legajo }, { withCredentials: true })
         if (response.status === 201) {
           fetchAlumnos(); //Actualiza lista de estudiantes
-          toast.current.show({ severity: 'success', summary: 'Éxito', detail: `¡Alumno con legajo ${legajo} agregado con éxito!`, life: 3000 });
+          toast.current.show({ severity: 'success', summary: 'Éxito', detail: `¡Alumno con legajo ${legajo} agregado con éxito!`, life: 3000 })
         }
       } catch (err) {
-        console.log('Error al agregar al alumno', err)
+        if (err.response.status === 409) {
+          toast.current.show({ severity: 'error', summary: 'Error', detail: `El alumno con ${legajo} ya pertenece al curso`, life: 3000 })
+        }else if (err.response.status === 404){
+          toast.current.show({ severity: 'error', summary: 'Error', detail: `Alumno con ${legajo} no encontrado, por favor, revise nuevamente el legajo ingresado`, life: 3500 })
+        }else{
+          console.log('Error al agregar al alumno', err)
+        }
       }
     } else {
       console.log('Por favor, ingrese un legajo')
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Debe ingresar un legajo', life: 3000 })
     }
   }
 

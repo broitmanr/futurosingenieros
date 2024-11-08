@@ -108,13 +108,16 @@ export const CursoInstanciasEval = () => {
 
     const accept = async () => {
         try{
-            const response = await axios.delete(`/instanciaEvaluativa/${instanciasDelete}`, { withCredentials: true })
-            if(response.data){
+            await axios.delete(`/instanciaEvaluativa/${instanciasDelete}`, { withCredentials: true })
+        } catch(err) {
+            if (err.response.status === 404){
                 fetchCursoInstancia()
                 toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Instancia eliminada con éxito', life: 3000 })
+            }else if(err.response.status === 409) {
+                toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'No se puede eliminar una instancia con entregas pactadas', life: 3500 })
+            }else{
+                console.log('Error al eliminar la instancia:', err)
             }
-        } catch(err) {
-            console.log('Error al eliminar la instancia:', err)
         }finally{
             setVisibleConfirmDelete(false)
         }
@@ -132,6 +135,7 @@ export const CursoInstanciasEval = () => {
 
     return (
         <>
+            <Toast ref={toastRef} />
             <section className="seccionBanner py-4">
                 <div className="instancia-container">
                     <div className="row">
@@ -209,7 +213,6 @@ export const CursoInstanciasEval = () => {
                                 </nav>
                             </aside>
                         </div>
-                        <Toast ref={toastRef} />
                         <div className="col-md-9">
                             <h4 className="mt-3">Instancias evaluativas creadas</h4>
                             {

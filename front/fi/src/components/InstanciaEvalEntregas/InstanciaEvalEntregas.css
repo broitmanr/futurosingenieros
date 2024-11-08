@@ -147,13 +147,39 @@
 
 .panel-individual-entregas{
     margin-right: 1rem;
+    align-items: center;
+    flex-direction: row
 }
 
-.panel-individual-entregas .p-panelmenu-header-link{
+.p-panelmenu .p-panelmenu-header .p-panelmenu-header-content{
     text-decoration: none;
-    background-color: #1A2035;;
+    background-color: #1A2035;
     color: #fff;
     border-radius: 0.4rem;
+    height: auto;
+    width: 100%;
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    margin: 0.4rem;
+    padding: 0.2rem
+}
+
+.entrega-label-cd{
+    margin-left: 0.2rem;
+    display: flex;
+    justify-content: flex-start
+}
+
+.icon-delete-entrega{
+    margin-left: auto;
+    margin-right: 0.2rem;
+    display: flex;
+    justify-content: flex-end
+}
+
+.icon-delete-entrega:hover{
+    transform: scale(1.1)
 }
 
 .no-entregas{

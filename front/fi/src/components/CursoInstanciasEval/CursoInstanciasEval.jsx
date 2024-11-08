@@ -109,10 +109,12 @@ export const CursoInstanciasEval = () => {
     const accept = async () => {
         try{
             const response = await axios.delete(`/instanciaEvaluativa/${instanciasDelete}`, { withCredentials: true })
-            if(response.data){
+            if(response.status === 204){
                 fetchCursoInstancia()
                 toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Instancia eliminada con éxito', life: 3000 })
-            }else if(err.response.status === 409) {
+            }
+        } catch (err){
+            if(err.response.status === 409) {
                 toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'No se puede eliminar una instancia con entregas pactadas', life: 3500 })
             }else{
                 console.log('Error al eliminar la instancia:', err)

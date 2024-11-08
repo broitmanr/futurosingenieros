@@ -4,11 +4,11 @@ const { handleTransaction } = require('../const/transactionHelper')
 const models = require('../database/models/index')
 const { validarDocenteInstanciaEvaluativa } = require('../middlewares/validarDocente')
 const { getEstado } = require('./entrega.controller')
-const {crearNotificacionesParaAlumnos} = require('../services/notificacionService')
+const { crearNotificacionesParaAlumnos } = require('../services/notificacionService')
 
 // Función para crear una entrega pactada
-async function crear(req, res, next) {
-  const { nombre, numero, descripcion, fechavto1, fechavto2, instanciaEvaluativaID } = req.body;
+async function crear (req, res, next) {
+  const { nombre, numero, descripcion, fechavto1, fechavto2, instanciaEvaluativaID } = req.body
 
   const nuevaEntregaPactada = await handleTransaction(async (transaction) => {
     // Crear la nueva entrega pactada
@@ -20,7 +20,7 @@ async function crear(req, res, next) {
       fechavto2,
       instanciaEvaluativa_id: instanciaEvaluativaID,
       updated_by: res.locals.usuario.ID
-    }, { transaction });
+    }, { transaction })
 
     // Obtener la instancia evaluativa y el curso asociado, con personas y usuarios
     const instanciaEvaluativa = await models.InstanciaEvaluativa.findByPk(instanciaEvaluativaID, {
@@ -28,54 +28,52 @@ async function crear(req, res, next) {
         model: models.Curso,
         include: [
           {
-          model: models.Persona,
-          where: { rol: 'A' },
-          include: {
-            model: models.Usuario,
-            attributes: ['ID'] // Solo traer el ID del usuario
-          }
-        },
+            model: models.Persona,
+            where: { rol: 'A' },
+            include: {
+              model: models.Usuario,
+              attributes: ['ID'] // Solo traer el ID del usuario
+            }
+          },
           {
-            model:models.Materia,
-            attributes:['nombre']
+            model: models.Materia,
+            attributes: ['nombre']
           }
         ]
       }
-    });
-
+    })
 
     if (!instanciaEvaluativa || !instanciaEvaluativa.Curso) {
-      throw new Error('No se encontró el curso asociado a la instancia evaluativa');
+      throw new Error('No se encontró el curso asociado a la instancia evaluativa')
     }
 
     // Obtener los IDs de usuarios de alumnos con cuenta de usuario asociada
     const usuarioIds = instanciaEvaluativa.Curso.Personas
-        .filter(persona => persona.Usuario) // Filtrar personas que tienen un usuario asociado
-        .map(persona => persona.Usuario.ID);
+      .filter(persona => persona.Usuario) // Filtrar personas que tienen un usuario asociado
+      .map(persona => persona.Usuario.ID)
 
     // Crear mensaje de notificación
-    const mensaje = ` ${instanciaEvaluativa.Curso.Materium.nombre} nueva entrega. Fecha de vencimiento: ${fechavto1}`;
+    const mensaje = ` ${instanciaEvaluativa.Curso.Materium.nombre} nueva entrega. Fecha de vencimiento: ${fechavto1}`
 
     // Llamar al servicio para crear las notificaciones
     await crearNotificacionesParaAlumnos(
-        usuarioIds,
-        mensaje,
-        1,
-        res.locals.usuario.ID,
-        transaction
-    );
+      usuarioIds,
+      mensaje,
+      1,
+      res.locals.usuario.ID,
+      transaction
+    )
 
-    return entrega;
-  }, next);
+    return entrega
+  }, next)
 
   if (nuevaEntregaPactada) {
-    res.status(201).json({ message: 'EntregaPactada generada exitosamente', data: nuevaEntregaPactada });
+    res.status(201).json({ message: 'EntregaPactada generada exitosamente', data: nuevaEntregaPactada })
   }
 }
 
-
 // Función para ver una entrega pactada
-async function ver(req, res, next) {
+async function ver (req, res, next) {
   const { id } = req.params
 
   try {
@@ -122,7 +120,7 @@ async function ver(req, res, next) {
 }
 
 // Función para listar todas las entregas pactadas de una instancia evaluativa
-async function listarEntregasInstancia(req, res, next) {
+async function listarEntregasInstancia (req, res, next) {
   const { instanciaID } = req.params
   // Se podria verificar que pertenezca el curso a la persona
 
@@ -185,7 +183,7 @@ async function listarEntregasInstancia(req, res, next) {
 }
 
 // Función para actualizar una entrega pactada
-async function actualizar(req, res, next) {
+async function actualizar (req, res, next) {
   const { id } = req.params
   const { nombre, numero, descripcion, fechavto1, fechavto2, instanciaEvaluativaID } = req.body
 
@@ -230,10 +228,10 @@ async function actualizar(req, res, next) {
 }
 
 // Función para eliminar una entrega pactada
-async function eliminar(req, res, next) {
+async function eliminar (req, res, next) {
   const { id } = req.params
 
-  const entregaPactadaEliminada = await handleTransaction(async (transaction) => {
+  await handleTransaction(async (transaction) => {
     const entregaPactada = await models.EntregaPactada.findByPk(id, {
       attributes: ['ID'],
       transaction
@@ -246,12 +244,8 @@ async function eliminar(req, res, next) {
     }
 
     await entregaPactada.destroy({ transaction })
-    return entregaPactada
+    return res.status(204).send()
   }, next)
-
-  if (entregaPactadaEliminada) {
-    res.status(200).json({ message: 'Entrega pactada eliminada exitosamente' })
-  }
 }
 
 module.exports = {

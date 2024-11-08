@@ -109,7 +109,7 @@ export const CursoInstanciasEval = () => {
     const accept = async () => {
         try{
             const response = await axios.delete(`/instanciaEvaluativa/${instanciasDelete}`, { withCredentials: true })
-            if(response.data){
+            if(response.status === 204){
                 fetchCursoInstancia()
                 toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Instancia eliminada con éxito', life: 3000 })
             }

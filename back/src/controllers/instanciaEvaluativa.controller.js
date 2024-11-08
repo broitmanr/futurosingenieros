@@ -3,7 +3,7 @@ const models = require('../database/models/index')
 const { red, yellow } = require('picocolors')
 
 // Función para crear una entrega
-async function crear(req, res, next) {
+async function crear (req, res, next) {
   const { porcentajePonderacion, cursoID, nombre, tipoInstanciaID, descripcion, grupo, penalidad_aplicable } = req.body
   const transaction = await models.sequelize.transaction()
   // Si el usuario no tiene persona asociada entonces no puede crear el curso
@@ -52,7 +52,7 @@ async function crear(req, res, next) {
   }
 }
 
-async function ver(req, res, next) {
+async function ver (req, res, next) {
   const { id } = req.params
 
   try {
@@ -83,7 +83,7 @@ async function ver(req, res, next) {
   }
 }
 
-async function listar(req, res, next) {
+async function listar (req, res, next) {
   try {
     if (req.params == null) { return next(errors.CredencialesInvalidas) }
     const curso = req.params.cursoID
@@ -115,7 +115,7 @@ async function listar(req, res, next) {
   }
 }
 
-async function listarTiposInstancias(req, res, next) {
+async function listarTiposInstancias (req, res, next) {
   try {
     // Agregar validar que sea los q el es docente
     const tiposinstancias = await models.TipoInstancia.findAll({
@@ -132,7 +132,7 @@ async function listarTiposInstancias(req, res, next) {
   }
 }
 
-async function remove(req, res, next) {
+async function remove (req, res, next) {
   if (req.params == null) { return next(errors.FaltanParametros) }
   const { id } = req.params
   try {
@@ -146,8 +146,8 @@ async function remove(req, res, next) {
           attributes: ['ID', 'nombre']
         },
         {
-          model:models.EntregaPactada,
-          attributes:['ID']
+          model: models.EntregaPactada,
+          attributes: ['ID']
         }
       ]
     })
@@ -158,13 +158,12 @@ async function remove(req, res, next) {
       next({ ...errors.NotFoundError, details: `Instancia con ID ${id} no encontrada` })
     }
 
-    if (instanciaEliminar.EntregaPactadas.length !== 0 ){
-      return next({...errors.ConflictError,details:'No se puede eliminar una instancia con entregas pactadas'})
-    }else{
+    if (instanciaEliminar.EntregaPactadas.length !== 0) {
+      return next({ ...errors.ConflictError, details: 'No se puede eliminar una instancia con entregas pactadas' })
+    } else {
       instanciaEliminar.destroy()
-      return res.status(204)
+      return res.status(204).send()
     }
-
   } catch (error) {
     console.error(red('Error al eliminar instancia:', error))
     next({
@@ -174,31 +173,30 @@ async function remove(req, res, next) {
   }
 }
 
-async function edit(req, res, next) {
+async function edit (req, res, next) {
   if (req.params == null) { return next(errors.FaltanParametros) }
   const { id } = req.params
   try {
-    const instancia = await models.InstanciaEvaluativa.findByPk(id,{
+    const instancia = await models.InstanciaEvaluativa.findByPk(id, {
 
       include: [
         {
-          model:models.Curso,
-          attributes:['ID'],
+          model: models.Curso,
+          attributes: ['ID']
         },
         {
-          model:models.EntregaPactada,
-          attributes:['ID']
+          model: models.EntregaPactada,
+          attributes: ['ID']
         }
       ]
     })
 
     if (!instancia) {
-
       next({ ...errors.NotFoundError, details: `Instancia con ID ${id} no encontrada` })
     }
 
-    if (!await instancia.Curso.esDocente(res.locals.usuario.persona_id)){
-      next({...errors.UsuarioNoAutorizado, details:'No es dueño de esa instancia'})
+    if (!await instancia.Curso.esDocente(res.locals.usuario.persona_id)) {
+      next({ ...errors.UsuarioNoAutorizado, details: 'No es dueño de esa instancia' })
     }
     const { porcentajePonderacion, nombre, tipoInstanciaID, descripcion, grupo, penalidad_aplicable } = req.body
     const transaction = await models.sequelize.transaction()
@@ -215,10 +213,10 @@ async function edit(req, res, next) {
       return next({ ...errors.ConflictError, details: 'El porcentaje de ponderación de las instancias supera el 100%, haga los cambios e intente nuevamente' })
     }
 
-    if ((instancia.grupo !== grupo || instancia.penalidad_aplicable !== penalidad_aplicable)
-    && instancia.EntregaPactadas.length !== 0
-    ){
-      return next({...errors.ConflictError,details:'No puede cambiar grupal o aplica penalidad si existen entregas pactadas'})
+    if ((instancia.grupo !== grupo || instancia.penalidad_aplicable !== penalidad_aplicable) &&
+    instancia.EntregaPactadas.length !== 0
+    ) {
+      return next({ ...errors.ConflictError, details: 'No puede cambiar grupal o aplica penalidad si existen entregas pactadas' })
     }
 
     try {
@@ -232,7 +230,7 @@ async function edit(req, res, next) {
         penalidad_aplicable
       }, { transaction })
 
-      await instancia.save({transaction});
+      await instancia.save({ transaction })
       await transaction.commit()
       // Responder con el curso creado
       res.status(200).json(instancia)
@@ -241,7 +239,6 @@ async function edit(req, res, next) {
       console.error(red(`Error al modificar la instancia:${error}`))
       return next(errors.FaltanCampos)
     }
-
   } catch (error) {
     console.error(red('Error al modificar instancia:', error))
     next({
@@ -252,5 +249,5 @@ async function edit(req, res, next) {
 }
 
 module.exports = {
-  crear, listarTiposInstancias, listar, ver,remove,edit
+  crear, listarTiposInstancias, listar, ver, remove, edit
 }

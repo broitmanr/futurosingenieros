@@ -8,16 +8,22 @@ export const AuthProvider = ({ children }) => {
     });
 
     // MODIFICACIONES PARA GUARDAR LA DATA DEL USER.
-    const [userData,setUserData] = useState(() => {
-        return localStorage.getItem('userData') || null // Obtener data del usuario logeado
-    });
+    const [userData, setUserData] = useState(() => { const savedUserData = localStorage.getItem('userData')
+        try { 
+            return savedUserData ? JSON.parse(savedUserData) : null; // Obtener data del usuario logeado 
+        } catch (error) {
+            console.log('Error parsing userData from localStorage:', error)
+            return null
+        } 
+    })
 
     useEffect(() => {
         if(isLoggedIn) {
             localStorage.setItem('isLoggedIn', isLoggedIn)
-            localStorage.setItem('userData', userData)
+            localStorage.setItem('userData', JSON.stringify(userData))
         }else{
             localStorage.removeItem('isLoggedIn')
+            localStorage.removeItem('userData')
         }
     }, [isLoggedIn, userData])
 

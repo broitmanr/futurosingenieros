@@ -79,6 +79,11 @@
     min-width: 12rem
 }
 
+.columns-data-asistencia__sum {
+    font-size: 0.87rem;
+    max-width: 3rem;
+}
+
 .custom-datatable-asistencia .p-sortable-column-icon {
     color: #fff
 }

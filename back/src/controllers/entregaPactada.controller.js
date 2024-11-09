@@ -230,19 +230,37 @@ async function actualizar (req, res, next) {
 // Función para eliminar una entrega pactada
 async function eliminar (req, res, next) {
   const { id } = req.params
-
+  const { confirm } = req.query
   await handleTransaction(async (transaction) => {
-    const entregaPactada = await models.EntregaPactada.findByPk(id, {
-      attributes: ['ID'],
+    const entregaPactada = await models.EntregaPactada.findOne({
+      where: { id },
+      include: [
+        {
+          model: models.Entrega,
+          attributes: ['ID']
+        }
+      ],
       transaction
     })
 
     if (!entregaPactada) {
       console.warn(yellow(`Advertencia: Entrega pactada con ID ${id} no encontrada.`))
-      await transaction.rollback()
       return next({ ...errors.NotFoundError, details: 'Entrega pactada no encontrada' })
     }
 
+    if (entregaPactada.Entregas.length !== 0) {
+      if (confirm === 'true') {
+        // Eliminar todas las entregas asociadas si se ha confirmado -- OPCIONAL --
+        await models.Entrega.destroy({
+          where: { entregaPactada_ID: id },
+          transaction
+        })
+      } else {
+        return next({ ...errors.ConflictError, details: 'No se puede eliminar una entrega pactada con entregas asociadas sin confirmación...' })
+      }
+    }
+
+    // Eliminar la entrega pactada
     await entregaPactada.destroy({ transaction })
     return res.status(204).send()
   }, next)

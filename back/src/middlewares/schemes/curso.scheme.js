@@ -67,6 +67,18 @@ const verMiembrosCurso = Joi.object({
   })
 })
 
+const modificarPatch = Joi.object({
+  cicloLectivo: Joi.number().integer().optional().messages({
+    'number.integer': 'El ciclo lectivo debe ser un número entero.'
+  }),
+  materiaID: Joi.number().integer().optional().messages({
+    'number.integer': 'El ID de la materia debe ser un número entero.'
+  }),
+  comisionID: Joi.number().integer().optional().messages({
+    'number.integer': 'El ID de la comisión debe ser un número entero.'
+  })
+})
+
 module.exports = {
   cursoBase,
   vincularEstudiante,
@@ -74,5 +86,6 @@ module.exports = {
   agregarEstudiantes,
   eliminarEstudiantes,
   eliminarCurso,
-  verMiembrosCurso
+  verMiembrosCurso,
+  modificarPatch
 }

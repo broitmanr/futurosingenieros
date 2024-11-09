@@ -5,9 +5,10 @@ const generador = require('../services/generadores')
 const { join } = require('path')
 const xlsx = require('xlsx')
 const fs = require('fs')
+const handleTransaction = require('../const/transactionHelper')
 
 // Función para crear un curso
-async function crear(req, res, next) {
+async function crear (req, res, next) {
   // Obtener los datos del cuerpo de la solicitud
   const { cicloLectivo, materiaID, comisionID } = req.body
   const transaction = await models.sequelize.transaction()
@@ -51,7 +52,7 @@ async function crear(req, res, next) {
   }
 }
 
-async function ver(req, res, next) {
+async function ver (req, res, next) {
   const { id } = req.params
 
   try {
@@ -109,7 +110,7 @@ async function ver(req, res, next) {
   }
 }
 
-async function listar(req, res, next) {
+async function listar (req, res, next) {
   try {
     const usuarioRol = res.locals.usuario.rol
     let cursos
@@ -170,7 +171,7 @@ async function listar(req, res, next) {
   }
 }
 
-async function generarCodigoVinculacion(req, res, next) {
+async function generarCodigoVinculacion (req, res, next) {
   const { cursoId } = req.body
   const docenteId = res.locals.usuario.persona_id
 
@@ -210,7 +211,7 @@ async function generarCodigoVinculacion(req, res, next) {
   }
 }
 
-async function vincularEstudiante(req, res, next) {
+async function vincularEstudiante (req, res, next) {
   const transaction = await models.sequelize.transaction()
   try {
     const { codigoVinculacion } = req.body
@@ -261,7 +262,7 @@ async function vincularEstudiante(req, res, next) {
 
 // Funciones para gestion de Alumnos en un curso
 
-async function agregarEstudiantes(req, res, next) {
+async function agregarEstudiantes (req, res, next) {
   const { id } = req.params
   const { Alumnos } = req.body // `Alumnos` es un array de persona_id
   const transaction = await models.sequelize.transaction()
@@ -310,7 +311,7 @@ async function agregarEstudiantes(req, res, next) {
   }
 }
 
-async function verMiembrosCurso(req, res, next) {
+async function verMiembrosCurso (req, res, next) {
   const { id } = req.params
   const { rol } = req.query
 
@@ -372,7 +373,7 @@ async function verMiembrosCurso(req, res, next) {
   }
 }
 
-async function agregarEstudianteByLegajo(req, res, next) {
+async function agregarEstudianteByLegajo (req, res, next) {
   const { id } = req.params
   const { legajo } = req.body
   const transaction = await models.sequelize.transaction()
@@ -427,7 +428,7 @@ async function agregarEstudianteByLegajo(req, res, next) {
 }
 
 // Eliminar Alumnos de un curso
-async function eliminarEstudiante(req, res, next) {
+async function eliminarEstudiante (req, res, next) {
   const { id } = req.params
   const { estudiantes } = req.body // `Alumnos` es un array de persona_id
   const transaction = await models.sequelize.transaction()
@@ -460,7 +461,7 @@ async function eliminarEstudiante(req, res, next) {
   }
 }
 
-async function actualizar(req, res, next) {
+async function actualizar (req, res, next) {
   const { id } = req.params
   const { cicloLectivo, materiaID, comisionID } = req.body
   const transaction = await models.sequelize.transaction()
@@ -497,44 +498,45 @@ async function actualizar(req, res, next) {
   }
 }
 
-async function eliminarCursos(req, res, next) {
+async function eliminarCursos (req, res, next) {
   const { cursosIDs } = req.body // `cursosIDs` es un array de IDs de cursos
-  const transaction = await models.sequelize.transaction()
   const docenteId = res.locals.usuario.persona_id
-  try {
-    for (const cursoID of cursosIDs) {
-      const curso = await models.Curso.findByPk(cursoID, { transaction })
-      if (!curso) {
-        await transaction.rollback()
+  for (const cursoID of cursosIDs) {
+    await handleTransaction(async (transaction) => {
+      const cursoEliminar = await models.Curso.findOne({
+        where: { ID: cursoID },
+        include: [{ model: models.InstanciaEvaluativa, attributes: ['ID'] }],
+        transaction
+      })
+      if (!cursoEliminar) {
+        console.warn(yellow(`Advertencia: Curso con ID ${cursoID} no encontrado.`))
         return next({ ...errors.NotFoundError, details: `Curso con ID ${cursoID} no encontrado` })
       }
-
-      // Verificar que el curso pertenece al docente logueado
       const esDocente = await models.PersonaXCurso.findOne({
         where: { persona_id: docenteId, curso_id: cursoID, rol: 'D' },
         transaction
       })
-
       if (!esDocente) {
-        await transaction.rollback()
+        console.warn(yellow(`Advertencia: Usuario con ID ${docenteId} no es docente del curso con ID ${cursoID}.`))
         return next({ ...errors.UsuarioNoAutorizado, details: 'No tienes permiso para eliminar este curso.' })
       }
-
-      // Eliminar el curso y todas las vinculaciones asociadas
-      await models.PersonaXCurso.destroy({ where: { curso_id: cursoID }, transaction })
-      await curso.destroy({ transaction })
-    }
-
-    await transaction.commit()
-    res.status(200).json({ message: 'Cursos eliminados exitosamente' })
-  } catch (error) {
-    await transaction.rollback()
-    console.error(red('Error al eliminar los cursos:', error))
-    next({ ...errors.InternalServerError, details: 'Error al eliminar los cursos: ' + error.message })
+      if (cursoEliminar.InstanciaEvaluativas.length > 0) {
+        console.warn(yellow(`Advertencia: Curso con ID ${cursoID} tiene instancias evaluativas asociadas.`))
+        return next({ ...errors.ConflictError, details: `Curso con ID ${cursoID} tiene instancias evaluativas asociadas` })
+      }
+      // Eliminamos las vinculaciones de personas con el curso y luego el curso
+      await models.PersonaXCurso.destroy({
+        where: { curso_id: cursoID },
+        transaction
+      })
+      await cursoEliminar.destroy({ transaction })
+      console.log('Curso con ID:', cursoID + ' eliminado correctamente')
+    })
   }
+  res.status(204).send()
 }
 
-async function agregarEstudiantesExcel(req, res, next) {
+async function agregarEstudiantesExcel (req, res, next) {
   try {
     const cursoId = req.params.id
     const curso = await models.Curso.findByPk(cursoId)

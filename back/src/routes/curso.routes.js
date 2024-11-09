@@ -11,7 +11,7 @@ router.get('/', checkRole.checkRole('D', 'A'), cursoController.listar)
 router.delete('/', validate(cursoScheme.eliminarCurso), checkRole.checkRoleDocente, cursoController.eliminarCursos)
 router.put('/:id', validate(cursoScheme.cursoBase), checkRole.checkRoleDocente, cursoController.actualizar)
 router.get('/:id', cursoController.ver)
-
+router.patch('/:id', validate({ params: cursoScheme.idParams, body: cursoScheme.modificarPatch }), cursoController.actualizar)
 router.post('/generar-codigo', validate(cursoScheme.generarCodigoVinculacion), checkRole.checkRoleDocente, cursoController.generarCodigoVinculacion)
 router.post('/vincular-estudiante', validate(cursoScheme.vincularEstudiante), checkRole.checkRoleEstudiante, cursoController.vincularEstudiante)
 

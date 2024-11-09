@@ -155,15 +155,26 @@ async function remove (req, res, next) {
 
     if (!instanciaEliminar) {
       console.warn(yellow(`Advertencia: Instancia con ID ${id} no encontrado.`))
-      next({ ...errors.NotFoundError, details: `Instancia con ID ${id} no encontrada` })
+      return next({ ...errors.NotFoundError, details: `Instancia con ID ${id} no encontrada` })
     }
 
-    if (instanciaEliminar.EntregaPactadas.length !== 0) {
-      return next({ ...errors.ConflictError, details: 'No se puede eliminar una instancia con entregas pactadas' })
-    } else {
-      instanciaEliminar.destroy()
-      return res.status(204).send()
+    // Verificamos si hay entregas asociadas a las entregas pactadas de esta instancia
+    const entregasAsociadas = await models.Entrega.findAll({
+      include: [
+        {
+          model: models.EntregaPactada,
+          where: { instanciaEvaluativa_id: id },
+          attributes: ['ID']
+        }
+      ]
+    })
+
+    if (entregasAsociadas.length > 0) {
+      return next({ ...errors.ConflictError, details: 'No se puede eliminar una instancia con entregas pactadas y entregas asociadas' })
     }
+
+    await instanciaEliminar.destroy()
+    return res.status(204).send()
   } catch (error) {
     console.error(red('Error al eliminar instancia:', error))
     next({

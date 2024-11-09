@@ -115,9 +115,10 @@ export const CursoInstanciasEval = () => {
             }
         } catch (err){
             if(err.response.status === 409) {
-                toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'No se puede eliminar una instancia con entregas pactadas', life: 3500 })
+                toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'No se puede eliminar una instancia con entregas de alumnos', life: 3500 })
             }else{
                 console.log('Error al eliminar la instancia:', err)
+                toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar la instancia', life: 3000 })
             }
         }finally{
             setVisibleConfirmDelete(false)

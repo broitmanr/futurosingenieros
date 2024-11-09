@@ -106,16 +106,21 @@ export const InstanciaEvalEntregas = () => {
     }
 
     const accept = async () => {
-        try{
-            const response = axios.delete(`/entregaPactada/${entregaDelete}`, {withCredentials: true})
-            if(response.status === 204){
-                fetchEntregaInstancia()
+        try {
+            const response = await axios.delete(`/entregaPactada/${entregaDelete}`, { withCredentials: true });
+            if (response.status === 204) {
+                fetchEntregaInstancia();
                 toastR.current.show({ severity: 'success', summary: 'Éxito', detail: 'Entrega pactada eliminada con éxito', life: 3000 });
             }
         } catch (err) {
-            console.log('No se ha logrado eliminar la entrega pactada', err)
+            if (err.response && err.response.status === 409) {
+                toastR.current.show({ severity: 'error', summary: 'Error', detail: 'No se puede eliminar una entrega pactada con entregas asociadas', life: 3000 });
+            } else {
+                console.log('No se ha logrado eliminar la entrega pactada', err);
+                toastR.current.show({ severity: 'error', summary: 'Error', detail: 'No se ha logrado eliminar la entrega pactada', life: 3000 });
+            }
         }
-        setVisibleConfirmDelete(false)
+        setVisibleConfirmDelete(false);
     }
 
     const reject = () => {

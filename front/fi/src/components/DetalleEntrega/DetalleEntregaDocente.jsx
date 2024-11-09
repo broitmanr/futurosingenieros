@@ -28,7 +28,7 @@ export default function DetallaEntregaIndividual({entrega}) {
             }
         } catch (err) {
             console.log(err);
-            setErrorMessage('No se encontraron entregas');
+            setErrorMessage('No se encontraron entregas hechas por alumnos');
         } finally {
             setLoading(false);
         }
@@ -135,7 +135,7 @@ export default function DetallaEntregaIndividual({entrega}) {
             editMode="cell" 
             header={header} 
             reorderableColumns
-            emptyMessage={errorMessage || "Oops...no se hay entregas para mostrar"}
+            emptyMessage={<span style={{ fontStyle: 'italic' }}>{errorMessage || "Oops...no hay entregas para mostrar"}</span>}
             >
                 <Column
                     className='columns-data-entrega-docente'

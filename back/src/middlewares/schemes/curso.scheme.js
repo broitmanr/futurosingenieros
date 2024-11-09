@@ -48,11 +48,9 @@ const eliminarEstudiantes = Joi.object({
 })
 
 const eliminarCurso = Joi.object({
-  cursosIDs: Joi.array().items(Joi.number().integer().messages({
-    'number.integer': 'El ID del curso debe ser un número entero.'
-  })).required().messages({
-    'array.base': 'La lista de IDs de cursos debe ser un arreglo.',
-    'any.required': 'La lista de IDs de cursos es obligatoria.'
+  cursoId: Joi.number().integer().required().messages({
+    'number.integer': 'El ID del curso debe ser un número entero.',
+    'any.required': 'El ID del curso es obligatorio.'
   })
 })
 

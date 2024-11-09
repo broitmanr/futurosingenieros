@@ -35,10 +35,11 @@ module.exports = (sequelize, DataTypes) => {
     Curso.belongsTo(models.Materia, { foreignKey: 'materia_id' })
     Curso.belongsTo(models.Comision, { foreignKey: 'comision_id' })
     Curso.hasMany(models.PersonaXCurso, { foreignKey: 'curso_id' })
+    Curso.hasMany(models.InstanciaEvaluativa, { foreignKey: 'curso_id' })
     Curso.belongsToMany(models.Persona, { through: 'PersonaXCurso', foreignKey: 'curso_id', otherKey: 'persona_id' })
   }
 
-  Curso.prototype.esDocente = async function(docenteId) {
+  Curso.prototype.esDocente = async function (docenteId) {
     // Buscar en PersonaXCurso si hay un registro con el curso_id actual y el docenteId
     const personaXCurso = await sequelize.models.PersonaXCurso.findOne({
       where: {

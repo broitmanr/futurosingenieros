@@ -102,15 +102,34 @@ const Cursos = () => {
     }, []);
 
     const accept = async () => {
-        try{
-            const response = await axios.delete('/curso', { data: {cursosIDs: [cursoDelete] }, withCredentials: true })
-            if(response.data){
-                fetchCursos()
+        try {
+            const response = await axios.delete('/curso', { data: { cursoId: cursoDelete }, withCredentials: true });
+            if (response.status === 204) {
+                fetchCursos();
                 toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Curso eliminado con éxito', life: 3000 });
             }
-        } catch(err) {
-            console.log('Error al eliminar el curso:', err)
-        }    
+        } catch (err) {
+            if (err.response) {
+                const { status, data } = err.response;
+                const errorDetails = data.error?.details;
+                if (status === 403) {
+                    toastRef.current.show({ severity: 'error', summary: 'Error', detail: errorDetails || 'No tienes permiso para eliminar este curso.', life: 3000 });
+                } else if (status === 404) {
+                    toastRef.current.show({ severity: 'error', summary: 'Error', detail: errorDetails || 'Curso no encontrado, vuelva a intentar por favor.', life: 3000 });
+                } else if (status === 409) {
+                    if (errorDetails && errorDetails.includes('instancias evaluativas')) {
+                        toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Curso con instancias evaluativas y entregas de alumnos cargadas.', life: 3000 });
+                    } else if (errorDetails && errorDetails.includes('grupos asociados')) {
+                        toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'No se puede eliminar el curso porque tiene grupos asociados.', life: 3000 });
+                    } else {
+                        toastRef.current.show({ severity: 'error', summary: 'Error', detail: errorDetails || 'Conflicto al eliminar el curso.', life: 3000 });
+                    }
+                }
+            } else {
+                console.log('Error al eliminar el curso:', err);
+                toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el curso', life: 3000 });
+            }
+        }
         setVisibleConfirm(false)
     }
 

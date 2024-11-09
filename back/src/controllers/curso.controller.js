@@ -5,8 +5,7 @@ const generador = require('../services/generadores')
 const { join } = require('path')
 const xlsx = require('xlsx')
 const fs = require('fs')
-const handleTransaction = require('../const/transactionHelper')
-
+const { handleTransaction } = require('../const/transactionHelper')
 // Función para crear un curso
 async function crear (req, res, next) {
   // Obtener los datos del cuerpo de la solicitud
@@ -498,44 +497,75 @@ async function actualizar (req, res, next) {
   }
 }
 
-async function eliminarCursos (req, res, next) {
-  const { cursosIDs } = req.body // `cursosIDs` es un array de IDs de cursos
+// Función para eliminar un curso
+async function eliminarCurso (req, res, next) {
+  const { cursoId } = req.body
   const docenteId = res.locals.usuario.persona_id
-  for (const cursoID of cursosIDs) {
+
+  try {
     await handleTransaction(async (transaction) => {
       const cursoEliminar = await models.Curso.findOne({
-        where: { ID: cursoID },
+        where: { ID: cursoId },
         include: [{ model: models.InstanciaEvaluativa, attributes: ['ID'] }],
         transaction
       })
+
       if (!cursoEliminar) {
-        console.warn(yellow(`Advertencia: Curso con ID ${cursoID} no encontrado.`))
-        return next({ ...errors.NotFoundError, details: `Curso con ID ${cursoID} no encontrado` })
+        console.warn(yellow(`Advertencia: Curso con ID ${cursoId} no encontrado.`))
+        return next({ ...errors.NotFoundError, details: `No se encontró ningún curso con ID ${cursoId}` })
       }
+
       const esDocente = await models.PersonaXCurso.findOne({
-        where: { persona_id: docenteId, curso_id: cursoID, rol: 'D' },
+        where: { persona_id: docenteId, curso_id: cursoId, rol: 'D' },
         transaction
       })
+
       if (!esDocente) {
-        console.warn(yellow(`Advertencia: Usuario con ID ${docenteId} no es docente del curso con ID ${cursoID}.`))
-        return next({ ...errors.UsuarioNoAutorizado, details: 'No tienes permiso para eliminar este curso.' })
+        console.warn(yellow(`Advertencia: Usuario con ID ${docenteId} no es docente del curso con ID ${cursoId}.`))
+        return next({ ...errors.UsuarioNoAutorizado, details: `Usuario con ID ${docenteId} no es docente del curso con ID ${cursoId}` })
       }
-      if (cursoEliminar.InstanciaEvaluativas.length > 0) {
-        console.warn(yellow(`Advertencia: Curso con ID ${cursoID} tiene instancias evaluativas asociadas.`))
-        return next({ ...errors.ConflictError, details: `Curso con ID ${cursoID} tiene instancias evaluativas asociadas` })
+
+      for (const instancia of cursoEliminar.InstanciaEvaluativas) {
+        const entregasAsociadas = await models.Entrega.findAll({
+          include: [
+            {
+              model: models.EntregaPactada,
+              where: { instanciaEvaluativa_id: instancia.ID },
+              attributes: ['ID']
+            }
+          ],
+          transaction
+        })
+
+        if (entregasAsociadas.length > 0) {
+          console.warn(yellow(`Advertencia: Curso con ID ${cursoId} tiene instancias evaluativas con entregas asociadas.`))
+          return next({ ...errors.ConflictError, details: `Curso con ID ${cursoId} tiene instancias evaluativas con entregas asociadas.` })
+        }
       }
-      // Eliminamos las vinculaciones de personas con el curso y luego el curso
-      await models.PersonaXCurso.destroy({
-        where: { curso_id: cursoID },
+      // Verificar si hay grupos asociados al curso
+      const gruposAsociados = await models.Grupo.findAll({
+        where: { curso_id: cursoId },
         transaction
       })
+
+      if (gruposAsociados.length > 0) {
+        console.warn(yellow(`Advertencia: Curso con ID ${cursoId} tiene grupos asociados.`))
+        return next({ ...errors.ConflictError, details: `Curso con ID ${cursoId} tiene grupos asociados.` })
+      }
+
+      await models.PersonaXCurso.destroy({ where: { curso_id: cursoId }, transaction })
       await cursoEliminar.destroy({ transaction })
-      console.log('Curso con ID:', cursoID + ' eliminado correctamente')
+      console.log('Curso con ID:', cursoId + ' eliminado correctamente')
+    }, next)
+    return res.status(204).send()
+  } catch (error) {
+    console.error(red(`Error en la transacción: ${error}`))
+    return next({
+      ...errors.InternalServerError,
+      details: 'Error en la transacción: ' + error.message
     })
   }
-  res.status(204).send()
 }
-
 async function agregarEstudiantesExcel (req, res, next) {
   try {
     const cursoId = req.params.id
@@ -630,7 +660,7 @@ module.exports = {
   verMiembrosCurso,
   eliminarEstudiante,
   actualizar,
-  eliminarCursos,
+  eliminarCurso,
   agregarEstudianteByLegajo,
   agregarEstudiantesExcel
 }

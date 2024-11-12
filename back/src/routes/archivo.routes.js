@@ -16,4 +16,5 @@ router.put('/comentario/:id', archivoController.editComentario)
 router.delete('/comentario/:id', archivoController.deleteComentario)
 router.post('/subirMaterial/:cursoId', uploadFiles.array('files', 5), archivoController.subirMaterialCursada)
 router.get('/:cursoId/:nombre', archivoController.getMaterialCursadaByName)
+router.delete('/:id', archivoController.deleteMaterial)
 module.exports = router

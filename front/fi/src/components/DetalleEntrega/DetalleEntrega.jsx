@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from "moment";
 import { useRole } from "../../context/RolesContext";
@@ -7,10 +7,12 @@ import { Button } from 'primereact/button';
 import './DetalleEntrega.css';
 import UploadWindow from "./UploadWindow";
 import ParticipationSection from "./PorcentajeParticipacion";
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { AiOutlineHome } from "react-icons/ai";
 
 export const DetalleEntrega = () => {
     const { role } = useRole();
-    const [entregaDetalle, setEntregaDetalle] = useState({});
+    const [entregaDetalle, setEntregaDetalle] = useState({ InstanciaEvaluativa: { Curso: { ID: null}}});
     const [entregaAsociada, setEntregaAsociada] = useState(null); // Estado para una única entrega
     const [porcentajes, setPorcentajes] = useState({});
     const [totalPorcentaje, setTotalPorcentaje] = useState(0);
@@ -18,18 +20,19 @@ export const DetalleEntrega = () => {
     const params = useParams();
     const navigate = useNavigate();
     const [isLoading, setLoading] = useState(true);
+    const [curso, setCurso] = useState(null);
+    console.log('en', entregaDetalle)
 
     useEffect(() => {
         const fetchEntregaDetalle = async () => {
             try {
                 const response = await axios.get(`/entregaPactada/${params.id}`, { withCredentials: true });
                 setEntregaDetalle(response.data);
-                
+                // setCursoID(response.data.InstanciaEvaluativa.Curso.ID)
                 // Verificar si ya hay una entrega asociada
                 const entregaResponse = await axios.get(`/entrega/miEntregaAlumno/${params.id}`, { withCredentials: true });
                 if (entregaResponse.data.success && entregaResponse.data.entrega) {
                     setEntregaAsociada(entregaResponse.data.entrega); // Actualizar con la única entrega
-
                     // Obtener los porcentajes de participación
                     const porcentajesResponse = await axios.get(`/entrega/${entregaResponse.data.entrega.ID}/porcentaje-participacion`, { withCredentials: true });
                     console.log('Porcentajes de participación recuperados desde el endpoint /:entregaId/porcentaje-participacion:', porcentajesResponse.data);
@@ -53,6 +56,33 @@ export const DetalleEntrega = () => {
         };
         fetchEntregaDetalle();
     }, [params.id]);
+    
+    useEffect(() => { // OBTENER LOS DATOS DEL CURSO
+        if(entregaDetalle){
+            const cursoID = entregaDetalle.InstanciaEvaluativa.Curso.ID
+            axios.get(`/curso/${cursoID}`, { withCredentials: true })
+                .then(response => {
+                    setCurso(response.data)
+                })
+                .catch(err => {
+                    console.log(err)
+                })  
+        }
+        
+      }, [entregaDetalle])
+    
+    const items = curso ? [
+    {template: () => 
+        <Link className="item-path-entrega-detalle" to={`/curso/${entregaDetalle.InstanciaEvaluativa.Curso.ID}`}>
+            {entregaDetalle.InstanciaEvaluativa.Curso.Materium.nombre}
+        </Link>}, 
+    {template: () => 
+        <Link className="item-path-entrega-detalle" to={`/instancia-eval/${entregaDetalle.InstanciaEvaluativa.ID}/entregas`}>
+            {entregaDetalle.InstanciaEvaluativa.nombre}
+        </Link>},
+    {template: () => <a className="item-path-entrega-detalle">{entregaDetalle.nombre}</a>  }
+    ]: [];
+    const home = { icon: <AiOutlineHome size={22} color='#fff' />, url: ('/cursos') }
 
     const handleUploadSuccess = () => {
         setLoading(true);
@@ -110,6 +140,20 @@ export const DetalleEntrega = () => {
     return (
         <div className="entrega-detalle-container">
             {role === 'A' &&
+            <>
+            {curso ? (
+                <>
+                <div className='breadscrumb-container'>
+                  <BreadCrumb className='entrega-detalle-breadcrumb' model={items} home={home} />
+                </div>
+                <div className='banner-entrega-detalle py-4'>
+                  <h1 className='nombre-materia'>Entrega detalle</h1>
+                  <p className='nombre-comision'>{entregaDetalle.InstanciaEvaluativa.Curso.Materium.nombre} {entregaDetalle.InstanciaEvaluativa.Curso.Comision.nombre}</p>
+                </div>
+                </>
+              ):(
+                <div>Cargando...</div>
+              )}
                 <div className="container d-flex justify-content-center">
                     <div className="container-box-entrega-detalle flex-column">
                         <div className="col-md-6 mx-auto border-2 box-entrega-detalle mb-3">
@@ -168,6 +212,7 @@ export const DetalleEntrega = () => {
                         </div>
                     </div>
                 </div>
+            </>    
             }
         </div>
     );

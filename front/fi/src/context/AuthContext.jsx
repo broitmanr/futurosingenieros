@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
         try { 
             return savedUserData ? JSON.parse(savedUserData) : null; // Obtener data del usuario logeado 
         } catch (error) {
-            console.log('Error parsing userData from localStorage:', error)
+            console.log('Error al pasar user data', error)
             return null
         } 
     })

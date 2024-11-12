@@ -35,17 +35,32 @@
     font-weight: bold;
     color: #fff;
     text-align: center;
-    text-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.1);
+    text-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.1)
 }
 
 .navbar-brand-text-container {
     font-size: 1.7vw;
     left: 50%;
     transform: translateX(-50%);
+    display: flex;
+    text-align: center;
+    margin-bottom: 1rem;
 }
 
 .navbar-brand-text {
-    font-size: 1.2rem;
+    font-size: 1.2rem
+}
+
+.btn-fi-icon{
+    grid: inherit;
+    display: grid;
+    align-items: center;
+    margin-right: 20px;
+    transform: rotate(-14deg);
+    position: relative;
+    top: 15px;
+    right: 11px;
+    z-index: 3;
 }
 
 .user-items-container{
@@ -122,13 +137,15 @@
 
 /* Estilos del subheader */
 .subheader-container{
-    background-color: #CCDCF1; 
+    background-color: #4a4e69;
+    background: linear-gradient(135deg, #4a4e69, #5a5e89);
     color: #1A2035; 
     padding: 0.6vh;
     border-radius: 0.2rem;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     border-bottom: 0.1rem solid #1A2035;
-    position: relative;
+    position: relative
 }
 
 .subheader-container::after {
@@ -139,16 +156,17 @@
     right: 0;
     bottom: 0;
     background: rgba(255, 255, 255, 0.03); /* Capa de brillo */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     filter: blur(14px); /* Difumina el brillo */
-    pointer-events: none; /* No interfiere con los clics */
+    pointer-events: none /* No interfiere con los clics */
 }
 
 .subheader-container-fluid{
     font-weight: bold; 
     font-size: 1.4vw;
-    color: #1A2035; 
+    color: #fff; 
     padding-left: 8rem;
-    padding-right: 8rem;
+    padding-right: 8rem
 }
 
 /* Estilos del footer */

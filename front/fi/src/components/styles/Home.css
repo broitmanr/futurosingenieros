@@ -5,6 +5,7 @@
     background-position: center;
     position: relative;
     justify-content: center;
+    overflow: hidden
 }
 
 .home-container::before{
@@ -14,37 +15,56 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Controla la opacidad*/
+    background-color: rgba(0, 0, 0, 0.6); /* Controla la opacidad*/
     z-index: 1;
 }
 
 .home-title{
     color: #fff;
     font-weight: bold; 
-    font-size: 2.4rem;
+    font-size: 3rem;
     margin-bottom: 10rem;
     z-index: 2;
-    text-shadow: 0 1.2px 1.2px gray; /* Opcional: para una sombra sutil */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Opcional: para una sombra sutil */
+    background: linear-gradient(135deg, #fff, #cfd0de);
+    background-clip: text;
+    -webkit-text-fill-color: transparent
 }
 
 .home-form{
     width: 40rem;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     z-index: 2;
 }
 
 .home-redirect{
-    text-decoration: none;
+    text-decoration: none
 }
 
 .btn-empezar{
-    background-color: #1A2035; 
+    background: linear-gradient(135deg, #1a2035, #4a4e69);
     color: #fff; 
-    width: 9rem;
-    height: 3.2rem;
-    font-size: 1.4rem;
-    border: 0.1rem solid #F2F6FC;
-    border-radius: 0.3rem;
+    padding: 10px 30px;
+    font-size: 1.3rem;
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, background 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.btn-empezar:hover{
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #4a4e69, #1a2035)
+}
+
+.btn-empezar-icon{
+    margin-right: 0.5rem
 }
 
 /* Estilos de SignOut */

@@ -11,6 +11,7 @@ import { CgProfile } from "react-icons/cg";
 import { FaRegBell } from "react-icons/fa6";
 import { Badge } from 'primereact/badge';
 import moment from "moment";
+import { PiGraduationCapDuotone } from "react-icons/pi";
 
 const Header = () => {
     const { role, setRole } = useRole();
@@ -81,40 +82,42 @@ const Header = () => {
     }; 
 
     useEffect(() => {
-        document.addEventListener('mousedown', handleClickOpen);
+        document.addEventListener('mousedown', handleClickOpen)
         return () => {
-            document.removeEventListener('mousedown', handleClickOpen);
-        };
-    }, []);
+            document.removeEventListener('mousedown', handleClickOpen)
+        }
+    }, [])
 
     // Obtener las notificaciones al montar el componente
     useEffect(() => {
         const obtenerNotificaciones = async () => {
             try {
-                const response = await axios.get('/notificacion', { withCredentials: true });
-                setNotificaciones(response.data);
-                setHasNotifications(response.data.some(notif => !notif.leido));
+                const response = await axios.get('/notificacion', { withCredentials: true })
+                setNotificaciones(response.data)
+                setHasNotifications(response.data.some(notif => !notif.leido))
             } catch (error) {
-                console.log('Error al obtener las notificaciones:', error);
+                console.log('Error al obtener las notificaciones:', error)
             }
-        };
+        }
+        obtenerNotificaciones()
+    }, [])
 
-        obtenerNotificaciones();
-    }, []);
+    useEffect(() => {
+        setHasNotifications(notificaciones.some(notif => !notif.leido))
+    }, [notificaciones])
 
     // Marcar notificación como leída
     const marcarComoLeida = async (id) => {
-
         try {
-            await axios.patch(`/notificacion/${id}`, {}, { withCredentials: true });
+            await axios.patch(`/notificacion/${id}`, {}, { withCredentials: true })
             setNotificaciones(prev =>
                 prev.map(notif => notif.id === id ? { ...notif, leido: true } : notif)
-            );
-            setHasNotifications(notificaciones.some(notif => !notif.leido));
+            )
+            setHasNotifications(notificaciones.some(notif => !notif.leido))
         } catch (error) {
-            console.log('Error al marcar la notificación como leída:', error);
+            console.log('Error al marcar la notificación como leída:', error)
         }
-    };
+    }
 
     return (
         <React.Fragment>
@@ -124,9 +127,11 @@ const Header = () => {
                         <img className='navbar-logo' src="/logoFrlp.png" alt="Logo" />
                     </Link>
                     <div className="navbar-brand-text-container position-absolute d-none d-lg-block">
+                        <PiGraduationCapDuotone className='btn-fi-icon' color="#fff" size={22} />
                         FUTUROS INGENIEROS
                     </div>
                     <div className="navbar-brand-text d-lg-none">
+                        <PiGraduationCapDuotone className='btn-fi-icon' color="#fff" size={22} />
                         FUTUROS INGENIEROS
                     </div>
                     {role && (

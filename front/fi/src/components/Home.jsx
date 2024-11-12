@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from 'react-router-dom';
+import { PiGraduationCapDuotone } from "react-icons/pi";
+import { FaUserGraduate } from "react-icons/fa6";
 import './styles/Home.css'
 
 function Home(){
@@ -10,6 +12,7 @@ function Home(){
                 <Link className='home-redirect' to="/login">
                     <button className="btn-empezar" data-testid="start-button"
                     >
+                        <FaUserGraduate className='btn-empezar-icon' color="#fff" size={20} />
                         Empezar
                     </button>
                 </Link>  

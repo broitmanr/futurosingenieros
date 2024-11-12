@@ -14,6 +14,7 @@ import { CiCircleCheck } from "react-icons/ci";
 import { RxCrossCircled } from "react-icons/rx";
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
+import { TbEdit } from "react-icons/tb";
 
 export const InstanciaEvalEntregas = () => {
     const { role } = useRole()
@@ -90,10 +91,13 @@ export const InstanciaEvalEntregas = () => {
         command: () => setSelectedEntrega(entrega),
         template: (entrega, options) => {
             return (
-                <div className='p-d-flex p-jc-between p-ai-center'>
+                <div className='p-d-flex row p-jc-between'>
                     <span className='entrega-label-cd'>{entrega.label}</span>
-                    <BsTrash color='red' size={22} className="icon-delete-entrega"
-                    onClick={(e) => showConfirmDeleteEntrega(e, entrega)} />
+                    <div className='icon-container-entrega'>
+                        <TbEdit color='#ead9f5' size={24} className="icon-delete-entrega" />
+                        <BsTrash color='red' size={22} className="icon-delete-entrega"
+                        onClick={(e) => showConfirmDeleteEntrega(e, entrega)} />
+                    </div>
                 </div>
             )
         }

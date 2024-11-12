@@ -1,17 +1,43 @@
 .entrega-detalle-container{
-    background: rgb(127, 167, 219);
     background: linear-gradient(313deg, rgba(127, 167, 219, 1) 0%, rgba(26, 32, 53, 1) 100%);
     min-height: 70vh; 
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    overflow: hidden;
+    overflow: hidden
+}
+
+.item-path-entrega-detalle{
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.08rem
+}
+
+.p-breadcrumb .p-breadcrumb-list li.p-menuitem-separator{
+    color: #9e9595
+}
+
+.banner-entrega-detalle{
+    background: inherit;
+    color: #fff;
+    padding: 1rem;
+    border-radius: 0.8rem;
+    text-align: center;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8)
+}
+
+.entrega-detalle-breadcrumb{
+    border: none;
+    padding: 0;
+    background-color: inherit;
+    margin-top: 0.6rem
 }
 
 .container-box-entrega-detalle {
     display: flex;
     flex-direction: row;
     width: 100%; 
-
     margin-top: 1rem;
     margin-bottom: 1rem;
 }

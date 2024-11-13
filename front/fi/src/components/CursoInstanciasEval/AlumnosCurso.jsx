@@ -140,7 +140,7 @@ function AlumnosCurso() {
             }
         } catch (err) {
             if (err.response.status === 409) {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: `El alumno con ${legajo} ya pertenece al curso`, life: 3000 });
+                toast.current.show({ severity: 'error', summary: 'Error', detail: `El alumno con legajo ${legajo} ya pertenece al curso`, life: 3000 });
             } else if (err.response.status === 404) {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: `Alumno con ${legajo} no encontrado, por favor, revise nuevamente el legajo ingresado`, life: 3500 });
             } else {
@@ -183,19 +183,25 @@ function AlumnosCurso() {
     });
   }
   
-  const handleDeleteAlumno = async () => {
-    try{
-      const response = await axios.delete(`/curso/${id}/estudiantes`, {
-      data: { estudiantes: selectedAlumnos }, withCredentials: true })
-      if (response.data) {
-        fetchAlumnos();
-        setSelectedAlumnos([])
-        toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Alumno/s eliminado/s con éxito', life: 3000 });
-      }
+const handleDeleteAlumno = async () => {
+    try {
+        const response = await axios.delete(`/curso/${id}/estudiantes`, {
+            data: { estudiantes: selectedAlumnos }, withCredentials: true
+        });
+        if (response.data) {
+            fetchAlumnos();
+            setSelectedAlumnos([])
+            toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Alumno/s eliminado/s con éxito', life: 3000 })
+        }
     } catch (err) {
-      console.log('Error al eliminar al alumno', err)
+        if (err.response) {
+          toast.current.show({ severity: 'error', summary: 'Error', detail: err.response.data.error.details, life: 3000 })
+        } else {
+            console.log('Error al eliminar al alumno:', err)
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar al alumno', life: 3000 })
+        }
     }
-  }
+}
 
   const showConfirmDelete = (e) => {
     confirmPopup({

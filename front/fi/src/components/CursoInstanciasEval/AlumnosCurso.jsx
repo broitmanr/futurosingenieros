@@ -304,7 +304,7 @@ function AlumnosCurso() {
           <BreadCrumb className='recursos-breadcrumb' model={items} home={home} />
         </div>
         <div className='banner-recursos py-4'>
-          <h1 className='nombre-materia'>Listado de alumnos</h1>
+          <h1 className='nombre-materia'>Alumnos</h1>
           <p className='nombre-comision'>{curso.Materium.nombre} {curso.Comision.nombre}</p>
         </div>
         </>

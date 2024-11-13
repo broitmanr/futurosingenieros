@@ -40,7 +40,11 @@ export default function UploadWindow({ entregaPactadaId, onUploadSuccess }) {
             toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'Debe seleccionar al menos un archivo para subir', life: 3000 });
             return;
         }
-
+    
+        if (loading) {
+            return; // Evitar múltiples clics
+        }
+    
         try {
             setLoading(true);
 
@@ -90,7 +94,7 @@ export default function UploadWindow({ entregaPactadaId, onUploadSuccess }) {
         return (
             <div className="upload-header">
                 {chooseButton}
-                <Button icon={<SlCloudUpload color='#155724' />} onClick={handleSubirRecurso} className="p-button-success btn-header-modal-recursos" />
+                <Button icon={<SlCloudUpload color='#155724' />} onClick={handleSubirRecurso} className="p-button-success btn-header-modal-recursos" disabled={loading} />
                 {cancelButton}
                 <div className="flex align-items-center gap-3 ml-auto">
                     <span>{fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B'} / 10 MB</span>

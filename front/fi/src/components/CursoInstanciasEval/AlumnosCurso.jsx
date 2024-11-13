@@ -189,6 +189,10 @@ function AlumnosCurso() {
   
   const handleDeleteAlumno = async () => {
     try{
+      if (selectedAlumnos.length === 0){
+          toast.current.show({ severity: 'warn', summary: 'Atención', detail: 'Seleccione al menos un alumno', life: 3000 });
+          return;
+      }
       const response = await axios.delete(`/curso/${id}/estudiantes`, {
       data: { estudiantes: selectedAlumnos }, withCredentials: true })
       if (response.data) {

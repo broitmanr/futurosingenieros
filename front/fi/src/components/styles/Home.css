@@ -21,15 +21,13 @@
 
 .home-title{
     color: #fff;
-    /* font-weight: bold; */
     font-size: 2.4rem;
     margin-bottom: 10rem;
     margin-top: 6rem;
     z-index: 2;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8); /*Opcional: para una sombra sutil*/
     background: linear-gradient(135deg, #fff, #cfd0de);
-    background-clip: text;
-    /* -webkit-text-fill-color: transparent */
+    background-clip: text
 }
 
 .home-form{

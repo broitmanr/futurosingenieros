@@ -154,9 +154,7 @@
 
 /* Estilos del subheader */
 .subheader-container{
-    /* background-color: #4a4e69; */
-    background-color: #cfd0de;
-    /* background: linear-gradient(135deg, #1A2035, #6d77a3, #1a2035); */
+    background-color: #dddee8;
     color: #1A2035; 
     padding: 0.6vh;
     border-radius: 0.2rem;

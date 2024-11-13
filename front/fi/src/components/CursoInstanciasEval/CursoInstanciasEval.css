@@ -294,12 +294,23 @@
     width: 100%;
     padding: 0.5rem;
     border-radius: 1rem;
-    border-bottom: #1A2035 0.1rem solid;
+    border-bottom: #1A2035 0.15rem solid;
 }
 
 .table-header-agregar-alumno-icon, .table-header-cargar-alumno-icon, .table-header-eliminar-alumno-icon{
     margin-right: 1rem;
     transition: transform 0.2s ease;
+}
+
+.btn-eliminar-alumno-icon{
+    background-color: transparent !important;
+    border: none !important; 
+    margin: 0 !important;
+    padding: 0 !important
+}
+
+.table-header-eliminar-alumno-icon{
+    margin-bottom: 0.1rem !important
 }
 
 .table-header-agregar-alumno-icon:hover, .table-header-cargar-alumno-icon:hover, .table-header-eliminar-alumno-icon:hover{
@@ -420,6 +431,10 @@
     padding: 1rem;
     background-color: #fff;
     border-radius: 8px
+}
+
+.header-recursos-container{
+    margin-right: 8rem
 }
 
 .item-path-recursos{

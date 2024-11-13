@@ -236,7 +236,7 @@ export default function Recursos() {
 
     const header = () => {
         return(
-            <div className="flex flex-wrap justify-content-center gap-2">
+            <div className="header-recursos-container flex flex-wrap justify-content-center gap-2">
                 { role === 'D' &&
                 <>
                 <Toast ref={toast} />

@@ -184,6 +184,15 @@
     margin: auto;
     padding: 2.5rem;
     box-shadow: 0px 1px 8px #00000061;
+    background: #fff
+}
+
+.rendimiento-individual-breadcrumb{
+    border: none;
+    top: 0;
+    padding: 0;
+    background-color: inherit;
+    margin-bottom: 1rem
 }
 
 .contenedor-acciones {

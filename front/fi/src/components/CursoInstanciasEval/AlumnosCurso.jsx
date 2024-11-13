@@ -290,7 +290,7 @@ function AlumnosCurso() {
             <Tooltip id="tooltip-eliminar-alumno" className='tooltip-eliminar-alumno'>Eliminar alumno</Tooltip>}>
             <div className="d-inline-block" style={{verticalAlign:'bottom'}}>
               <ConfirmPopup group="templating" />
-                <Button icon={<BsTrash className='table-header-eliminar-alumno-icon' data-tip='Eliminar alumno' color='#e6838c' size={32}/>} onClick={showConfirmDelete} style={{backgroundColor:'transparent',border:'none', margin:0,padding:0}}></Button>
+                <Button className='btn-eliminar-alumno-icon' icon={<BsTrash className='table-header-eliminar-alumno-icon' data-tip='Eliminar alumno' color='#e6838c' size={32}/>} onClick={showConfirmDelete}></Button>
             </div>
           </OverlayTrigger>
         </div>

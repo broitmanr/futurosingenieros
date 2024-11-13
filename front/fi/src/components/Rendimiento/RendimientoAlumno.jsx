@@ -4,12 +4,14 @@ import { Button, Card, Col, Row } from 'react-bootstrap';
 import { PieChart } from '@mui/x-charts';
 import React,{useEffect, useState} from "react";
 import axios from "axios";
-import {useParams} from "react-router-dom";
+import {useParams, Link} from "react-router-dom";
 import moment from "moment";
 import {useRole} from "../../context/RolesContext.jsx";
 import { CiCalendarDate } from "react-icons/ci";
 import { CiWarning } from "react-icons/ci";
 import { PiUsersThreeLight } from "react-icons/pi";
+import { AiOutlineHome } from "react-icons/ai";
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 const RendimientoAlumno = () => {
     const [entregas,setEntregas]=useState([])
@@ -22,6 +24,15 @@ const RendimientoAlumno = () => {
     const {id,idAlumno} = useParams();
     const { role } = useRole()
 
+    const items = curso ? [
+        {template: () => 
+            <Link className="item-path-recursos" to={`/curso/${curso.id}`}>
+                {curso.materia}
+            </Link>},
+        {template: () => <a className="item-path-recursos">Rendimiento individual</a> }, 
+        {template: () => <a className="item-path-recursos">{alumno.nombre} {alumno.apellido}</a>  }
+    ]: [];
+    const home = { icon: <AiOutlineHome size={22} color='#1a2035' />, url: ('/cursos') }
 
     useEffect(() => {
         const fetchInstancias = async () => {
@@ -50,9 +61,12 @@ const RendimientoAlumno = () => {
     }, []);
   return (
     <div className='contenedor-rendimiento-alumnos'>
-      <h1 className='titulo-rendimiento'>
-        Rendimiento del alumno
-      </h1>
+        { role === 'D' && (
+        <BreadCrumb className='rendimiento-individual-breadcrumb' model={items} home={home} />
+        )}
+        <h1 className='titulo-rendimiento'>
+            Rendimiento del alumno
+        </h1>
     {!loading ? (
       <div className='container-informacion-catedra'>
           <Row>

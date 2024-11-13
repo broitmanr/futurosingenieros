@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -8,6 +8,7 @@ import './DetalleEntrega.css'
 import moment from 'moment';
 import { IoOpenOutline } from "react-icons/io5";
 import axios from 'axios';
+import { Toast } from 'primereact/toast';
 
 export default function DetallaEntregaIndividual({entrega}) {
     const { id } = useParams(); //Id de la instancia
@@ -15,6 +16,7 @@ export default function DetallaEntregaIndividual({entrega}) {
     const [isLoading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [nota, setNota] = useState('');
+    const toastRef = useRef(null)
 
     const handleEntregasHechas = async () => {
         setLoading(true);
@@ -63,8 +65,11 @@ export default function DetallaEntregaIndividual({entrega}) {
                 console.log('rowData', rowData);
                 try{
                     const response = await axios.patch(`/entrega/calificar/${rowData.id}`, { nota: newValue }, { withCredentials: true })
-                    console.log('Calificación', response.data)
-                    handleEntregasHechas()
+                    if(response.status === 200){
+                        toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Entrega calificada con éxito', life: 3000 })
+                        console.log('Calificación', response.data)
+                        handleEntregasHechas()
+                    }
                 }catch(err){
                     console.log('Error al modificar la nota:', err)
                 }
@@ -129,6 +134,8 @@ export default function DetallaEntregaIndividual({entrega}) {
     const header = renderHeader(); 
 
     return (
+        <>
+        <Toast ref={toastRef} />
         <div className="card p-fluid">
             <DataTable className='detalle-entrega-docente' 
             dataKey="ID"
@@ -182,6 +189,7 @@ export default function DetallaEntregaIndividual({entrega}) {
                 />
             </DataTable>
         </div>
-    );
+        </>
+    )
 }
         

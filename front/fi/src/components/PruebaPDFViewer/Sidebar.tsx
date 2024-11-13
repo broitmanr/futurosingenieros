@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import type { Highlight } from "react-pdf-highlighter-extended";
 import "./style/Sidebar.css";
 import { CommentedHighlight } from "./types";
@@ -10,6 +10,7 @@ import axios from "axios";
 import { useRole } from "../../context/RolesContext";
 import Avatar from "@mui/material/Avatar";
 import { TextareaAutosize } from "@mui/material";
+import { Toast } from 'primereact/toast';
 
 interface SidebarProps {
   highlights: Array<CommentedHighlight>;
@@ -45,6 +46,7 @@ const Sidebar = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const hasNextEntrega = entrega && entrega.nextEntrega;
   const { role } = useRole();
+  const toastRef = useRef(null)
 
   const handleCalificar = async () => {
     try {
@@ -52,7 +54,10 @@ const Sidebar = ({
           `/entrega/calificar/${entrega.ID}`,
           { nota },
           { withCredentials: true }
-      );
+      )
+      if(response.status===200){
+        toastRef.current.show({ severity: 'success', summary: 'Éxito', detail: 'Entrega calificada con éxito', life: 3000 })
+      }
       console.log('Calificado', response.data);
     } catch (err) {
       console.log('Error al calificar la entrega:', err);
@@ -151,6 +156,8 @@ const Sidebar = ({
   };
 
   return (
+      <>
+      <Toast ref={toastRef} />
       <div className="sidebar">
         {/* Description section */}
         <div className="sidebar-descripcion">
@@ -278,6 +285,7 @@ const Sidebar = ({
             </ul>
         )}
       </div>
+    </>
   );
 };
 

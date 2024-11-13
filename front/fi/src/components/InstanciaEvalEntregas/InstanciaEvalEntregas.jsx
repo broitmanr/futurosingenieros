@@ -15,6 +15,7 @@ import { RxCrossCircled } from "react-icons/rx";
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { TbEdit } from "react-icons/tb";
+import { EntregaModify } from './EntregaModicarForm';
 
 export const InstanciaEvalEntregas = () => {
     const { role } = useRole()
@@ -28,7 +29,9 @@ export const InstanciaEvalEntregas = () => {
     const [entregaDelete, setEntregaDelete] = useState(null)
     const toastR = useRef(null)
     const params = useParams();
-    const handleClose = () => setShow(false);
+    const handleClose = () => setShow(false)
+    const [showModify, setShowModify] = useState(false);
+    const handleCloseModify = () => setShowModify(false);
     const [isLoading, setLoading] = useState(true);
     const badges = ['dark', 'success', 'info', 'danger', 'warning', 'light']
 
@@ -93,12 +96,20 @@ export const InstanciaEvalEntregas = () => {
             return (
                 <div className='p-d-flex row p-jc-between'>
                     <span className='entrega-label-cd'>{entrega.label}</span>
-                    <div className='icon-container-entrega'>
-                        <TbEdit color='#ead9f5' size={24} className="icon-delete-entrega" />
+                    <div className='icon-container-entrega' onClick={(e) => e.stopPropagation()}>
+                        <TbEdit color='#ead9f5' size={24} className="icon-delete-entrega"
+                        onClick={() => setShowModify(true)} />
                         <BsTrash color='red' size={22} className="icon-delete-entrega"
                         onClick={(e) => showConfirmDeleteEntrega(e, entrega)} />
                     </div>
+                    {
+                        idInstanciaEval ? 
+                            <EntregaModify showModify={showModify} handleCloseModify={handleCloseModify} idInstanciaEval={idInstanciaEval} 
+                            entregas={entregas} /*handleEntregaAgregada={handleEntregaAgregada}*/ /> 
+                        : null
+                    }
                 </div>
+                
             )
         }
     }))
@@ -108,6 +119,11 @@ export const InstanciaEvalEntregas = () => {
         setEntregas(prevEntrega => [...prevEntrega, nuevaEntrega])
         setShouldFetchEntregas(true) //Activa el estado de actualización
     }
+
+    // const handleEntregaModificada = (entregaModificada) => {
+    //     setEntregas(prevEntregas => prevEntregas.map(entrega => entrega.ID === entregaModificada.ID ? entregaModificada : entrega))
+    //     setShouldFetchEntregas(true) //Activa el estado de actualización
+    // }
 
     const accept = async () => {
         try {

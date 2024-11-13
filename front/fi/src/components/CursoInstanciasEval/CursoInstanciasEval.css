@@ -591,6 +591,10 @@
     margin-left: 4rem;
 }
 
+.p-confirm-popup::after, .p-confirm-popup::before {
+    position: relative;
+}
+
 .p-confirm-popup .p-confirm-popup-footer button:last-child:hover {
     transform: scale(1.1)
 }

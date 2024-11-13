@@ -122,7 +122,7 @@ module.exports = {
       const name = persona ? persona.nombre : user.mail.split('@')[0]
 
       try {
-        // await transporter.mailRegistro(email, name)
+        await transporter.mailRegistro(email, name)
       } catch (e) {
 
         return next({ ...errors.InternalServerError, details:'No se pudo enviar mail de registro'})
@@ -219,7 +219,7 @@ module.exports = {
 
       try {
         console.log('Enviar mail')
-        // await transporter.mailRegistro(email, name)
+        await transporter.mailRegistro(email, name)
       } catch (e) {
 
         return next({ ...errors.InternalServerError, details:'No se pudo enviar mail de registro'})

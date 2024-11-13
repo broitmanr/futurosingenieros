@@ -27,6 +27,7 @@ import { RxCrossCircled } from "react-icons/rx";
 import { BreadCrumb } from 'primereact/breadcrumb';
 import { AiOutlineHome } from "react-icons/ai";
 import axios from 'axios';
+import {IoDownloadOutline} from "react-icons/io5";
 
 function AlumnosCurso() {
   //Estados para agregar un alumno
@@ -74,6 +75,7 @@ function AlumnosCurso() {
     if (!file) {
       console.log('No se seleccionó un archivo')
       //alert('Por favor, selecciona un archivo.');
+        setLoading(false)
       return;
     }
     const formData = new FormData();
@@ -84,10 +86,12 @@ function AlumnosCurso() {
     if (!allowedExtensions.exec(file.name)) {
         console.log('Archivo inválido')
         //alert('Por favor, selecciona un archivo válido (.xls o .xlsx).');
+        setLoading(false)
         return;
     }
 
     try {
+
       const response = await axios.post(`/curso/${id}/estudiantesExcel`, formData, { withCredentials: true });
       if (response.status === 200) {
         console.log('Estudiantes agregados con éxito', response.data)
@@ -183,16 +187,15 @@ function AlumnosCurso() {
     });
   }
   
-const handleDeleteAlumno = async () => {
-    try {
-        const response = await axios.delete(`/curso/${id}/estudiantes`, {
-            data: { estudiantes: selectedAlumnos }, withCredentials: true
-        });
-        if (response.data) {
-            fetchAlumnos();
-            setSelectedAlumnos([])
-            toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Alumno/s eliminado/s con éxito', life: 3000 })
-        }
+  const handleDeleteAlumno = async () => {
+    try{
+      const response = await axios.delete(`/curso/${id}/estudiantes`, {
+      data: { estudiantes: selectedAlumnos }, withCredentials: true })
+      if (response.data) {
+        fetchAlumnos();
+        setSelectedAlumnos([])
+        toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Alumno/s eliminado/s con éxito', life: 3000 });
+      }
     } catch (err) {
         if (err.response) {
           toast.current.show({ severity: 'error', summary: 'Error', detail: err.response.data.error.details, life: 3000 })
@@ -276,15 +279,18 @@ const handleDeleteAlumno = async () => {
                   type="file" 
                   accept=".xlsx, .xls" 
                   style={{ display: 'none' }} 
-                  onChange={handleCargarAlumnosExcel} 
+                  onChange={(e)=>{
+                      setLoading(true);
+                      handleCargarAlumnosExcel(e);
+                  }}
               />
             </span>
           </OverlayTrigger>
           <OverlayTrigger overlay={
             <Tooltip id="tooltip-eliminar-alumno" className='tooltip-eliminar-alumno'>Eliminar alumno</Tooltip>}>
-            <div className="d-inline-block flex flex-wrap justify-content-center gap-2">
+            <div className="d-inline-block" style={{verticalAlign:'bottom'}}>
               <ConfirmPopup group="templating" />
-              <BsTrash className='table-header-eliminar-alumno-icon' data-tip='Eliminar alumno' color='#e6838c' size={32} onClick={showConfirmDelete} />
+                <Button icon={<BsTrash className='table-header-eliminar-alumno-icon' data-tip='Eliminar alumno' color='#e6838c' size={32}/>} onClick={showConfirmDelete} style={{backgroundColor:'transparent',border:'none', margin:0,padding:0}}></Button>
             </div>
           </OverlayTrigger>
         </div>
@@ -310,7 +316,7 @@ const handleDeleteAlumno = async () => {
           <BreadCrumb className='recursos-breadcrumb' model={items} home={home} />
         </div>
         <div className='banner-recursos py-4'>
-          <h1 className='nombre-materia'>Listado de alumnos</h1>
+          <h1 className='nombre-materia'>Alumnos</h1>
           <p className='nombre-comision'>{curso.Materium.nombre} {curso.Comision.nombre}</p>
         </div>
         </>

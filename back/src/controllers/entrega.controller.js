@@ -377,8 +377,19 @@ async function eliminar (req, res, next) {
 const calificarEntrega = async (req, res, next) => {
   const { idEntrega } = req.params
   const { nota } = req.body
+  const transaction = await models.sequelize.transaction()
   try {
-    const entrega = await models.Entrega.findByPk(idEntrega)
+    const entrega = await models.Entrega.findByPk(idEntrega,{
+      include: [
+        {
+          model: models.PersonaXEntrega,
+          include: {
+            model: models.Persona, include: { model: models.Usuario }
+          }
+        },
+        { model: models.EntregaPactada }
+      ], transaction
+    })
     if (!entrega || !nota) {
       console.warn(pico.yellow(`Advertencia: Entrega con ID ${idEntrega} no encontrada.`))
       return next({ ...errors.NotFoundError, details: 'Entrega no encontrada' })
@@ -387,7 +398,18 @@ const calificarEntrega = async (req, res, next) => {
     entrega.nota = nota
     entrega.updated_by = res.locals.usuario.ID
 
-    await entrega.save()
+    await entrega.save({transaction})
+
+
+      const alumnosID = entrega.PersonaXEntregas.map(pe => pe.Persona?.Usuario?.ID ?? null)
+          .filter(id => id !== null)
+      const mensaje = `El docente calificó la entrega ${entrega.EntregaPactada.nombre}`
+
+      // Crear notificaciones dentro de la transacción
+      await crearNotificacionesParaAlumnos(alumnosID, mensaje, 5, res.locals.usuario.ID, transaction)
+      await transaction.commit()
+
+
 
     res.status(200).json(entrega)
   } catch (error) {

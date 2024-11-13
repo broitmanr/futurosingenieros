@@ -136,6 +136,10 @@ body {
     position: relative;
 }
 
+.separator-perfil{
+    margin-right: 0.4rem;
+}
+
 /* Estilo para el año */
 .catedra-especifica em {
     font-style: italic;

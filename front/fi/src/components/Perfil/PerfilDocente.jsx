@@ -65,13 +65,13 @@ export const PerfilDocente = () => {
                 </div>
 
                 <div className="catedras">
-                    <h4><i className="fa-solid fa-book"></i>Cátedras cargo</h4>
+                    <h4><i className="fa-solid fa-book"></i>Cátedras a cargo</h4>
                     <div className="materia">
                         {catedras.length > 0 ? (
                             catedras.map(catedra => (
                                 <div className='catedra-especifica' key={catedra.id} onClick={() => navigate(`/curso/${catedra.id}`)}>
                                     <span>
-                                        <strong>{catedra.materia}</strong> - <strong>Comisión {catedra.comision}</strong> <em>{catedra.anio}</em>
+                                        <strong>{catedra.materia}</strong> <div className='separator-perfil'> - </div> <strong> Comisión {catedra.comision}</strong> <em>{catedra.anio}</em>
                                     </span>
                                 </div>
                             ))

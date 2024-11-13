@@ -64,7 +64,6 @@ export const InstanciaEvalEntregas = () => {
         try {
             const response = await axios.get(`/entregaPactada/instancia/${params.id}`, { withCredentials: true })
             if(response.data){
-                console.log(response.data)
                 setEntregas(response.data);
                 setLoading(false);
             }

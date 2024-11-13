@@ -275,6 +275,11 @@ async function listarEntregasParaElDocente (req, res, next) {
         {
           model: models.Persona,
           attributes: ['legajo', 'nombre', 'apellido']
+        },
+        {
+          model:models.Grupo,
+          required:false,
+          attributes: ['numero','nombre']
         }
       ]
     })
@@ -293,7 +298,10 @@ async function listarEntregasParaElDocente (req, res, next) {
       nombre: entrega.Persona.nombre,
       apellido: entrega.Persona.apellido,
       nota: entrega.nota,
-      estado: estadosEntregas[entrega.ID].descripcion
+      estado: estadosEntregas[entrega.ID].descripcion,
+      grupal: !!entrega.Grupo,
+      grupo: entrega.Grupo ?? null
+
     }))
 
     res.status(200).json(entregasMapeadas)

@@ -21,6 +21,7 @@ export default function DetallaEntregaIndividual({entrega}) {
         setErrorMessage("");
         setEntregasHechas([]);
 
+
         try {
             const response = await axios.get(`/entrega/listarEntregasHechas/${entrega.ID}`, { withCredentials: true });
             if (response.data && response.data.length > 0) {
@@ -141,14 +142,15 @@ export default function DetallaEntregaIndividual({entrega}) {
                     className='columns-data-entrega-docente'
                     field="legajo"
                     key="legajo"
-                    header="LEGAJO"
+                    header="LEGAJO/N°"
+                    body={(rowData)=>`${rowData.grupal ? rowData.grupo.numero : rowData.legajo}`}
                 />
                 <Column
                     className='columns-data-entrega-docente'
                     field="nombre"
                     key="nombre"
                     header="NOMBRE"
-                    body={(rowData) => `${rowData.apellido}, ${rowData.nombre}`}
+                    body={(rowData) => rowData.grupal ? rowData.grupo.nombre :`${rowData.apellido}, ${rowData.nombre}`}
                     sortable
                     sortField="apellido"
                 />

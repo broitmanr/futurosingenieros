@@ -88,23 +88,27 @@ const Header = () => {
         }
     }, [])
 
+    const obtenerNotificaciones = async () => {
+        try {
+            const response = await axios.get('/notificacion', { withCredentials: true })
+            setNotificaciones(response.data)
+            setHasNotifications(response.data.some(notif => !notif.leido))
+        } catch (error) {
+            console.log('Error al obtener las notificaciones:', error)
+        }
+    }
     // Obtener las notificaciones al montar el componente
     useEffect(() => {
-        const obtenerNotificaciones = async () => {
-            try {
-                const response = await axios.get('/notificacion', { withCredentials: true })
-                setNotificaciones(response.data)
-                setHasNotifications(response.data.some(notif => !notif.leido))
-            } catch (error) {
-                console.log('Error al obtener las notificaciones:', error)
-            }
-        }
+
         obtenerNotificaciones()
+
+        const interval = setInterval(obtenerNotificaciones, 15000);
+
+        // Limpia el intervalo cuando el componente se desmonte
+        return () => clearInterval(interval);
     }, [])
 
-    useEffect(() => {
-        setHasNotifications(notificaciones.some(notif => !notif.leido))
-    }, [notificaciones])
+
 
     // Marcar notificación como leída
     const marcarComoLeida = async (id) => {
@@ -113,7 +117,7 @@ const Header = () => {
             setNotificaciones(prev =>
                 prev.map(notif => notif.id === id ? { ...notif, leido: true } : notif)
             )
-            setHasNotifications(notificaciones.some(notif => !notif.leido))
+            obtenerNotificaciones()
         } catch (error) {
             console.log('Error al marcar la notificación como leída:', error)
         }

@@ -379,33 +379,48 @@ async function agregarEstudianteByLegajo (req, res, next) {
 
   try {
     const curso = await models.Curso.findByPk(id, { transaction })
-    if (!curso) return next({ ...errors.NotFoundError, details: 'Curso no encontrado' })
+    if (!curso) {
+      await transaction.rollback()
+      return next({ ...errors.NotFoundError, details: 'Curso no encontrado' })
+    }
 
     const Alumno = await models.Persona.findOne({
       where: {
         legajo,
         rol: 'A'
-      }
+      },
+      transaction
     })
-    if (!Alumno) return next({ ...errors.NotFoundError, details: 'Estudiante no encontrado' })
+    if (!Alumno) {
+      await transaction.rollback()
+      return next({ ...errors.NotFoundError, details: 'Estudiante no encontrado' })
+    }
 
     // Verificar si el docente está asociado al curso
     const esDocente = await models.PersonaXCurso.findOne({
-      where: { persona_id: res.locals.usuario.persona_id, curso_id: id, rol: 'D' }
+      where: { persona_id: res.locals.usuario.persona_id, curso_id: id, rol: 'D' },
+      transaction
     })
 
     if (!esDocente) {
-      next(errors.UsuarioNoAutorizado)
+      await transaction.rollback()
+      return next(errors.UsuarioNoAutorizado)
     }
 
+    // Bloquear la fila para evitar condiciones de carrera
     const AlumnoInCurso = await models.PersonaXCurso.findOne({
       where: {
         persona_id: Alumno.ID,
         curso_id: id
-      }
+      },
+      lock: transaction.LOCK.UPDATE,
+      transaction
     })
 
-    if (AlumnoInCurso) return next({ ...errors.ConflictError, details: 'El Alumno ya está en el curso' })
+    if (AlumnoInCurso) {
+      await transaction.rollback()
+      return next({ ...errors.ConflictError, details: 'El Alumno ya está en el curso' })
+    }
 
     await models.PersonaXCurso.create({
       persona_id: Alumno.ID,
@@ -426,17 +441,18 @@ async function agregarEstudianteByLegajo (req, res, next) {
   }
 }
 
-// Eliminar Alumnos de un curso
 async function eliminarEstudiante (req, res, next) {
   const { id } = req.params
-  const { estudiantes } = req.body // `Alumnos` es un array de persona_id
+  console.log('ID del curso:', id)
+  const { estudiantes } = req.body // `estudiantes` es un array de persona_id
+  console.log('Estudiantes recibidos en el endpoint:', estudiantes)
   const transaction = await models.sequelize.transaction()
 
   try {
     const curso = await models.Curso.findByPk(id, { transaction })
     if (!curso) {
       await transaction.rollback()
-      return next({ ...errors.NotFoundError, details: `No se encontro ningun curso con este ID: ${id}` })
+      return next({ ...errors.NotFoundError, details: `No se encontró ningún curso con este ID: ${id}` })
     }
 
     for (const AlumnoId of estudiantes) {
@@ -448,7 +464,35 @@ async function eliminarEstudiante (req, res, next) {
         await transaction.rollback()
         return next({ ...errors.NotFoundError, details: `Estudiante con ID ${AlumnoId} no encontrado en el curso` })
       }
-      await Alumno.destroy({ transaction })
+
+      // Verificar si el alumno tiene entregas en entregasPactadas con instanciasEvaluativas de tipo grupal
+      const entregasGrupales = await models.Entrega.findAll({
+        include: [
+          {
+            model: models.EntregaPactada,
+            include: [
+              {
+                model: models.InstanciaEvaluativa,
+                where: { curso_id: id, grupo: true },
+                attributes: ['ID']
+              }
+            ],
+            attributes: ['ID'],
+            required: true
+          }
+        ],
+        where: { persona_id: AlumnoId },
+        transaction
+      })
+
+      console.log(`Entregas grupales encontradas para el estudiante con ID ${AlumnoId}:`, entregasGrupales)
+
+      if (entregasGrupales.length > 0) {
+        await transaction.rollback()
+        return next({ ...errors.ConflictError, details: `Estudiante con ID ${AlumnoId} tiene entregas grupales asociadas en el curso y no puede ser eliminado` })
+      }
+
+      await models.PersonaXCurso.destroy({ where: { persona_id: AlumnoId, curso_id: id }, transaction })
     }
 
     await transaction.commit()

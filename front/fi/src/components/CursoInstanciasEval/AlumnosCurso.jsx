@@ -43,6 +43,7 @@ function AlumnosCurso() {
   });
   const [loading, setLoading] = useState(true); //Maneja estado de la solicitud
   const [globalFilterValue, setGlobalFilterValue] = useState('');
+  const [isAdding, setIsAdding] = useState(false); // Estado para manejar el estado de agregar alumnos
   const handleScroll = () => { //Manejo del desplazo a la sección Agregar Alumnos
     document.getElementById('agregarAlumnos').scrollIntoView({ behavior: 'smooth'})
   };
@@ -126,28 +127,34 @@ function AlumnosCurso() {
 
   const handleAgregarAlumnoConLegajo = async (e) => { //Agregar alumno con el legajo
     e.preventDefault();
-    if(legajo) {
-      try {
-        const response = await axios.post(`/curso/${id}/estudiante`, {
-        legajo: legajo }, { withCredentials: true })
-        if (response.status === 201) {
-          fetchAlumnos(); //Actualiza lista de estudiantes
-          toast.current.show({ severity: 'success', summary: 'Éxito', detail: `¡Alumno con legajo ${legajo} agregado con éxito!`, life: 3000 })
+    if (isAdding) return; // Evitar múltiples clics
+    setIsAdding(true);
+    if (legajo) {
+        try {
+            const response = await axios.post(`/curso/${id}/estudiante`, {
+                legajo: legajo
+            }, { withCredentials: true });
+            if (response.status === 201) {
+                fetchAlumnos(); // Actualiza lista de estudiantes
+                toast.current.show({ severity: 'success', summary: 'Éxito', detail: `¡Alumno con legajo ${legajo} agregado con éxito!`, life: 3000 });
+            }
+        } catch (err) {
+            if (err.response.status === 409) {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: `El alumno con ${legajo} ya pertenece al curso`, life: 3000 });
+            } else if (err.response.status === 404) {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: `Alumno con ${legajo} no encontrado, por favor, revise nuevamente el legajo ingresado`, life: 3500 });
+            } else {
+                console.log('Error al agregar al alumno', err);
+            }
+        } finally {
+            setIsAdding(false);
         }
-      } catch (err) {
-        if (err.response.status === 409) {
-          toast.current.show({ severity: 'error', summary: 'Error', detail: `El alumno con ${legajo} ya pertenece al curso`, life: 3000 })
-        }else if (err.response.status === 404){
-          toast.current.show({ severity: 'error', summary: 'Error', detail: `Alumno con ${legajo} no encontrado, por favor, revise nuevamente el legajo ingresado`, life: 3500 })
-        }else{
-          console.log('Error al agregar al alumno', err)
-        }
-      }
     } else {
-      console.log('Por favor, ingrese un legajo')
-      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Debe ingresar un legajo', life: 3000 })
+        console.log('Por favor, ingrese un legajo');
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Debe ingresar un legajo', life: 3000 });
+        setIsAdding(false);
     }
-  }
+}
 
   const handleGenerarCodigo = async (e) => { //Generar código de vinculación
     e.preventDefault();

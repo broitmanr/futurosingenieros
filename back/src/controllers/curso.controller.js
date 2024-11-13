@@ -379,33 +379,48 @@ async function agregarEstudianteByLegajo (req, res, next) {
 
   try {
     const curso = await models.Curso.findByPk(id, { transaction })
-    if (!curso) return next({ ...errors.NotFoundError, details: 'Curso no encontrado' })
+    if (!curso) {
+      await transaction.rollback()
+      return next({ ...errors.NotFoundError, details: 'Curso no encontrado' })
+    }
 
     const Alumno = await models.Persona.findOne({
       where: {
         legajo,
         rol: 'A'
-      }
+      },
+      transaction
     })
-    if (!Alumno) return next({ ...errors.NotFoundError, details: 'Estudiante no encontrado' })
+    if (!Alumno) {
+      await transaction.rollback()
+      return next({ ...errors.NotFoundError, details: 'Estudiante no encontrado' })
+    }
 
     // Verificar si el docente está asociado al curso
     const esDocente = await models.PersonaXCurso.findOne({
-      where: { persona_id: res.locals.usuario.persona_id, curso_id: id, rol: 'D' }
+      where: { persona_id: res.locals.usuario.persona_id, curso_id: id, rol: 'D' },
+      transaction
     })
 
     if (!esDocente) {
-      next(errors.UsuarioNoAutorizado)
+      await transaction.rollback()
+      return next(errors.UsuarioNoAutorizado)
     }
 
+    // Bloquear la fila para evitar condiciones de carrera
     const AlumnoInCurso = await models.PersonaXCurso.findOne({
       where: {
         persona_id: Alumno.ID,
         curso_id: id
-      }
+      },
+      lock: transaction.LOCK.UPDATE,
+      transaction
     })
 
-    if (AlumnoInCurso) return next({ ...errors.ConflictError, details: 'El Alumno ya está en el curso' })
+    if (AlumnoInCurso) {
+      await transaction.rollback()
+      return next({ ...errors.ConflictError, details: 'El Alumno ya está en el curso' })
+    }
 
     await models.PersonaXCurso.create({
       persona_id: Alumno.ID,
@@ -426,17 +441,18 @@ async function agregarEstudianteByLegajo (req, res, next) {
   }
 }
 
-// Eliminar Alumnos de un curso
 async function eliminarEstudiante (req, res, next) {
   const { id } = req.params
-  const { estudiantes } = req.body // `Alumnos` es un array de persona_id
+  console.log('ID del curso:', id)
+  const { estudiantes } = req.body // `estudiantes` es un array de persona_id
+  console.log('Estudiantes recibidos en el endpoint:', estudiantes)
   const transaction = await models.sequelize.transaction()
 
   try {
     const curso = await models.Curso.findByPk(id, { transaction })
     if (!curso) {
       await transaction.rollback()
-      return next({ ...errors.NotFoundError, details: `No se encontro ningun curso con este ID: ${id}` })
+      return next({ ...errors.NotFoundError, details: 'No se encontró ningún curso con este ID' })
     }
 
     for (const AlumnoId of estudiantes) {
@@ -446,17 +462,53 @@ async function eliminarEstudiante (req, res, next) {
       })
       if (!Alumno) {
         await transaction.rollback()
-        return next({ ...errors.NotFoundError, details: `Estudiante con ID ${AlumnoId} no encontrado en el curso` })
+        return next({ ...errors.NotFoundError, details: 'Estudiante no encontrado en el curso' })
       }
-      await Alumno.destroy({ transaction })
+
+      // Verificar si el alumno tiene entregas asociadas en el curso específico
+      const entregasAsociadas = await models.Entrega.findAll({
+        include: [
+          {
+            model: models.EntregaPactada,
+            include: [
+              {
+                model: models.InstanciaEvaluativa,
+                where: { curso_id: id },
+                attributes: ['ID', 'grupo']
+              }
+            ],
+            attributes: ['ID'],
+            required: true
+          }
+        ],
+        where: { persona_id: AlumnoId },
+        transaction
+      })
+
+      console.log('Entregas asociadas encontradas para el estudiante en el curso:', entregasAsociadas)
+
+      // Verificar si alguna de las entregas es grupal o personal
+      const entregasGrupales = entregasAsociadas.filter(entrega => entrega.EntregaPactada.InstanciaEvaluativa.grupo)
+      const entregasPersonales = entregasAsociadas.filter(entrega => !entrega.EntregaPactada.InstanciaEvaluativa.grupo)
+
+      console.log('Entregas grupales encontradas para el estudiante en el curso:', entregasGrupales)
+      console.log('Entregas personales encontradas para el estudiante en el curso:', entregasPersonales)
+
+      if (entregasGrupales.length > 0 || entregasPersonales.length > 0) {
+        await transaction.rollback()
+        return next({ ...errors.ConflictError, details: 'El estudiante tiene entregas asociadas en el curso y no puede ser eliminado' })
+      }
+
+      // Eliminar al estudiante del curso
+      await models.PersonaXCurso.destroy({ where: { persona_id: AlumnoId, curso_id: id }, transaction })
     }
 
     await transaction.commit()
-    res.status(200).json({ message: 'Estudiantes eliminados del curso exitosamente' })
+    res.status(204).send()
   } catch (error) {
     await transaction.rollback()
     console.error(red('Error al eliminar Alumnos del curso:', error))
-    next({ ...errors.InternalServerError, details: 'Error al eliminar Alumnos del curso: ' + error.message })
+    next({ ...errors.InternalServerError, details: 'Error al eliminar Alumnos del curso' })
   }
 }
 
@@ -501,7 +553,8 @@ async function actualizar (req, res, next) {
 async function eliminarCurso (req, res, next) {
   const { cursoId } = req.body
   const docenteId = res.locals.usuario.persona_id
-
+  console.log('ID del curso:', cursoId)
+  console.log('ID del docente:', docenteId)
   try {
     await handleTransaction(async (transaction) => {
       const cursoEliminar = await models.Curso.findOne({
@@ -512,7 +565,7 @@ async function eliminarCurso (req, res, next) {
 
       if (!cursoEliminar) {
         console.warn(yellow(`Advertencia: Curso con ID ${cursoId} no encontrado.`))
-        return next({ ...errors.NotFoundError, details: `No se encontró ningún curso con ID ${cursoId}` })
+        return next({ ...errors.NotFoundError, details: 'No se encontró ningún curso' })
       }
 
       const esDocente = await models.PersonaXCurso.findOne({
@@ -522,9 +575,21 @@ async function eliminarCurso (req, res, next) {
 
       if (!esDocente) {
         console.warn(yellow(`Advertencia: Usuario con ID ${docenteId} no es docente del curso con ID ${cursoId}.`))
-        return next({ ...errors.UsuarioNoAutorizado, details: `Usuario con ID ${docenteId} no es docente del curso con ID ${cursoId}` })
+        return next({ ...errors.UsuarioNoAutorizado, details: 'Usuario logueado actual no es docente del curso' })
       }
 
+      // Verificar si hay grupos asociados al curso
+      const gruposAsociados = await models.Grupo.findAll({
+        where: { curso_id: cursoId },
+        transaction
+      })
+
+      if (gruposAsociados.length > 0) {
+        console.warn(yellow(`Advertencia: Curso con ID ${cursoId} tiene grupos asociados.`))
+        return next({ ...errors.ConflictError, details: 'El curso tiene grupos asociados.' })
+      }
+
+      // Eliminar todas las instancias evaluativas y sus dependencias
       for (const instancia of cursoEliminar.InstanciaEvaluativas) {
         const entregasAsociadas = await models.Entrega.findAll({
           include: [
@@ -541,16 +606,9 @@ async function eliminarCurso (req, res, next) {
           console.warn(yellow(`Advertencia: Curso con ID ${cursoId} tiene instancias evaluativas con entregas asociadas.`))
           return next({ ...errors.ConflictError, details: `Curso con ID ${cursoId} tiene instancias evaluativas con entregas asociadas.` })
         }
-      }
-      // Verificar si hay grupos asociados al curso
-      const gruposAsociados = await models.Grupo.findAll({
-        where: { curso_id: cursoId },
-        transaction
-      })
 
-      if (gruposAsociados.length > 0) {
-        console.warn(yellow(`Advertencia: Curso con ID ${cursoId} tiene grupos asociados.`))
-        return next({ ...errors.ConflictError, details: `Curso con ID ${cursoId} tiene grupos asociados.` })
+        await models.EntregaPactada.destroy({ where: { instanciaEvaluativa_id: instancia.ID }, transaction })
+        await models.InstanciaEvaluativa.destroy({ where: { ID: instancia.ID }, transaction })
       }
 
       await models.PersonaXCurso.destroy({ where: { curso_id: cursoId }, transaction })

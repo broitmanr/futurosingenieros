@@ -8,9 +8,9 @@ const googleDriveService = new GoogleDriveService()
 const { handleTransaction } = require('../const/transactionHelper')
 const fs = require('fs')
 const { normalizeFileName } = require('../const/normalizarNombre')
-const {Op} = require("sequelize");
-const {arch} = require("process");
-const {crearNotificacionesParaAlumnos} = require("../services/notificacionService");
+const { Op } = require('sequelize')
+const { arch } = require('process')
+const { crearNotificacionesParaAlumnos } = require('../services/notificacionService')
 
 // Función para obtener una imagen
 const obtenerImagen = async (req, res, next) => {
@@ -143,11 +143,11 @@ const obtenerFile = async (req, res, next) => {
 }
 
 const hacerComentario = async (req, res, next) => {
-  const { id } = req.params;
-  const { comment, type, position, content } = req.body;
+  const { id } = req.params
+  const { comment, type, position, content } = req.body
 
   // Iniciar una transacción
-  const transaction = await models.sequelize.transaction();
+  const transaction = await models.sequelize.transaction()
 
   try {
     const archivo = await models.Archivo.findByPk(id, {
@@ -155,9 +155,10 @@ const hacerComentario = async (req, res, next) => {
         {
           model: models.Entrega,
           include: [
-            { model: models.PersonaXEntrega,
-              include:{
-              model:models.Persona,include:{model:models.Usuario}
+            {
+              model: models.PersonaXEntrega,
+              include: {
+                model: models.Persona, include: { model: models.Usuario }
               }
             },
             { model: models.EntregaPactada }
@@ -165,20 +166,20 @@ const hacerComentario = async (req, res, next) => {
         }
       ],
       transaction
-    });
+    })
 
     if (!archivo) {
-      await transaction.rollback();
-      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' });
+      await transaction.rollback()
+      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
     }
     if (!archivo.Entrega) {
-      await transaction.rollback();
-      return next({ ...errors.NotFoundError, details: 'El archivo no tiene una entrega asociada' });
+      await transaction.rollback()
+      return next({ ...errors.NotFoundError, details: 'El archivo no tiene una entrega asociada' })
     }
 
     if (res.locals.usuario.rol === 'D') {
-      const ahora = new Date();
-      const hace20Minutos = new Date(Date.now() - 20 * 60 * 1000);
+      const ahora = new Date()
+      const hace20Minutos = new Date(Date.now() - 20 * 60 * 1000)
 
       const comentarios = await models.Comentario.findAll({
         where: {
@@ -189,16 +190,16 @@ const hacerComentario = async (req, res, next) => {
           archivo_id: id
         },
         transaction
-      });
+      })
 
       // Si no hay comentarios hace más de 20 minutos sobre la entrega, notificar a los alumnos
       if (comentarios.length === 0) {
         const alumnosID = archivo.Entrega.PersonaXEntregas.map(pe => pe.Persona?.Usuario?.ID ?? null)
-            .filter(id => id !== null);
-        const mensaje = `El docente hizo un comentario sobre la entrega ${archivo.Entrega.EntregaPactada.nombre}`;
+          .filter(id => id !== null)
+        const mensaje = `El docente hizo un comentario sobre la entrega ${archivo.Entrega.EntregaPactada.nombre}`
 
         // Crear notificaciones dentro de la transacción
-        await crearNotificacionesParaAlumnos(alumnosID, mensaje, 5, res.locals.usuario.ID, transaction);
+        await crearNotificacionesParaAlumnos(alumnosID, mensaje, 5, res.locals.usuario.ID, transaction)
       }
     }
 
@@ -212,30 +213,30 @@ const hacerComentario = async (req, res, next) => {
       position,
       content,
       updated_by: res.locals.usuario.ID
-    }, { transaction });
+    }, { transaction })
 
     // Confirmar transacción
-    await transaction.commit();
+    await transaction.commit()
 
-    res.status(200).json(comentario);
+    res.status(200).json(comentario)
   } catch (error) {
     // Si ocurre algún error, revertir la transacción
-    await transaction.rollback();
-    console.error('Error al obtener el archivo:', error);
+    await transaction.rollback()
+    console.error('Error al obtener el archivo:', error)
     next({
       ...errors.InternalServerError,
       details: 'Error al obtener el archivo: ' + error.message
-    });
+    })
   }
-};
+}
 
 const responderComentario = async (req, res, next) => {
   // Id del comentario a responder
-  const { id } = req.params;
-  const { comment } = req.body;
+  const { id } = req.params
+  const { comment } = req.body
 
   // Iniciar una transacción
-  const transaction = await models.sequelize.transaction();
+  const transaction = await models.sequelize.transaction()
 
   try {
     const comentario = await models.Comentario.findByPk(id, {
@@ -243,34 +244,35 @@ const responderComentario = async (req, res, next) => {
         {
           model: models.Entrega,
           include: [
-            { model: models.PersonaXEntrega,
-              include:{
-                model:models.Persona,include:{model:models.Usuario}
+            {
+              model: models.PersonaXEntrega,
+              include: {
+                model: models.Persona, include: { model: models.Usuario }
               }
             },
             { model: models.EntregaPactada }
           ]
         },
         {
-          model:models.Archivo
+          model: models.Archivo
         }
       ],
       transaction
-    });
+    })
     // Aca deberia verificar que el usuario esa autorizado par responder eso
 
     if (!comentario) {
-      await transaction.rollback();
-      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' });
+      await transaction.rollback()
+      return next({ ...errors.NotFoundError, details: 'Archivo no encontrado' })
     }
     if (!comentario.Entrega) {
-      await transaction.rollback();
-      return next({ ...errors.NotFoundError, details: 'El archivo no tiene una entrega asociada' });
+      await transaction.rollback()
+      return next({ ...errors.NotFoundError, details: 'El archivo no tiene una entrega asociada' })
     }
 
     if (res.locals.usuario.rol === 'D') {
-      const ahora = new Date();
-      const hace20Minutos = new Date(Date.now() - 20 * 60 * 1000);
+      const ahora = new Date()
+      const hace20Minutos = new Date(Date.now() - 20 * 60 * 1000)
 
       const comentarios = await models.Comentario.findAll({
         where: {
@@ -281,19 +283,18 @@ const responderComentario = async (req, res, next) => {
           entrega_id: comentario.Entrega.ID
         },
         transaction
-      });
+      })
 
       // Si no hay comentarios hace más de 20 minutos sobre la entrega, notificar a los alumnos
       if (comentarios.length === 0) {
         const alumnosID = comentario.Entrega.PersonaXEntregas.map(pe => pe.Persona?.Usuario?.ID ?? null)
-            .filter(id => id !== null);
-        const mensaje = `El docente respondió un comentario sobre la entrega ${comentario.Entrega.EntregaPactada.nombre}`;
+          .filter(id => id !== null)
+        const mensaje = `El docente respondió un comentario sobre la entrega ${comentario.Entrega.EntregaPactada.nombre}`
 
         // Crear notificaciones dentro de la transacción
-        await crearNotificacionesParaAlumnos(alumnosID, mensaje, 5, res.locals.usuario.ID, transaction);
+        await crearNotificacionesParaAlumnos(alumnosID, mensaje, 5, res.locals.usuario.ID, transaction)
       }
     }
-
 
     // Crear el comentario dentro de la transacción
     const respuesta = await models.Comentario.create({
@@ -301,34 +302,33 @@ const responderComentario = async (req, res, next) => {
       emisor_id: res.locals.usuario.persona_id,
       entrega_id: comentario.Entrega.ID,
       comentario: comment,
-      respuesta_id:comentario.ID,
+      respuesta_id: comentario.ID,
       updated_by: res.locals.usuario.ID
-    }, { transaction });
+    }, { transaction })
 
     const persona = await models.Persona.findByPk(res.locals.usuario.persona_id)
     // Confirmar transacción
-    await transaction.commit();
+    await transaction.commit()
 
-    const respuestaJson={
-      ID:respuesta.ID,
-      comentario:comment,
-      fecha:respuesta.fecha,
-      usuario:`${persona.nombre} ${persona.apellido}`,
-      mine:true,
+    const respuestaJson = {
+      ID: respuesta.ID,
+      comentario: comment,
+      fecha: respuesta.fecha,
+      usuario: `${persona.nombre} ${persona.apellido}`,
+      mine: true
     }
 
-    res.status(200).json(respuestaJson);
+    res.status(200).json(respuestaJson)
   } catch (error) {
     // Si ocurre algún error, revertir la transacción
-    await transaction.rollback();
-    console.error('Error al obtener el archivo:', error);
+    await transaction.rollback()
+    console.error('Error al obtener el archivo:', error)
     next({
       ...errors.InternalServerError,
       details: 'Error al obtener el archivo: ' + error.message
-    });
+    })
   }
-};
-
+}
 
 const getComentarios = async (req, res, next) => {
   const { id } = req.params
@@ -352,7 +352,7 @@ const getComentarios = async (req, res, next) => {
     const comentarios = await models.Comentario.findAll({
       where: {
         archivo_id: archivo.ID,
-        respuesta_id:null
+        respuesta_id: null
       },
       include: [
         {
@@ -360,9 +360,9 @@ const getComentarios = async (req, res, next) => {
           attributes: ['nombre', 'apellido', 'rol']
         },
         {
-          model:models.Comentario,
-          attributes:['ID','comentario','fecha'],
-          include:{
+          model: models.Comentario,
+          attributes: ['ID', 'comentario', 'fecha'],
+          include: {
             model: models.Persona,
             attributes: ['nombre', 'apellido', 'rol']
           }
@@ -381,13 +381,13 @@ const getComentarios = async (req, res, next) => {
       fecha: comment.fecha,
       usuario: `${comment.Persona.nombre} ${comment.Persona.apellido}`,
       mine: comment.Persona.rol === res.locals.usuario.rol,
-      answers:comment.Comentarios.map(answer => ({
+      answers: comment.Comentarios.map(answer => ({
         ID: answer.ID,
         comentario: answer.comentario,
         fecha: answer.fecha,
         usuario: `${answer.Persona.nombre} ${answer.Persona.apellido}`,
-        mine: answer.Persona.rol === res.locals.usuario.rol,
-      })),
+        mine: answer.Persona.rol === res.locals.usuario.rol
+      }))
     }))
 
     res.status(200).json(result)
@@ -606,6 +606,26 @@ const getListaMaterialCursada = async (req, res, next) => {
     })
   }
 }
+const deleteMaterial = async (req, res, next) => {
+  const { id } = req.params
+  try {
+    const archivo = await models.Archivo.findByPk(id)
+    if (!archivo) {
+      return next({ ...errors.NotFoundError, details: `Archivo con ${id} no encontrado` })
+    }
+    const fileId = googleDriveService.extractFileIdFromLink(archivo.referencia)
+    await googleDriveService.deleteFile(fileId)
+    await archivo.destroy()
+    res.status(204).send()
+  } catch (error) {
+    console.error('Error al eliminar el archivo:', error)
+    next({
+      ...errors.InternalServerError,
+      details: 'Error al eliminar el archivo: ' + error
+    })
+  }
+}
+
 module.exports = {
   obtenerImagen,
   obtenerImagenByNombre,
@@ -618,5 +638,6 @@ module.exports = {
   getListaMaterialCursada,
   getComentarios,
   editComentario,
-  deleteComentario
+  deleteComentario,
+  deleteMaterial
 }

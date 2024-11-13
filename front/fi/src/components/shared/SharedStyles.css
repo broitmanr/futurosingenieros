@@ -61,6 +61,23 @@
     top: 15px;
     right: 11px;
     z-index: 3;
+    transition: transform 0.6s ease; /* Duración de la animación */
+}
+
+.btn-fi-icon:hover {
+    animation: hoverAnimation 0.5s ease-in-out;
+}
+
+@keyframes hoverAnimation {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-1rem) rotate(180deg); /* Subir y girar parcialmente */
+    }
+    100% {
+        transform: translateY(0) rotate(360deg); /* Volver a la posición inicial */
+    }
 }
 
 .user-items-container{

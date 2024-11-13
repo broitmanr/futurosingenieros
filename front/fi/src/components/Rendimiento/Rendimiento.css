@@ -1,6 +1,7 @@
 .rendimiento-container{
     min-height: 70vh;
-    background-color: #fff
+    background-color: #fff;
+    padding: 1rem
 }
 
 .tabs-container{

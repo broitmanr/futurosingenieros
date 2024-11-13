@@ -88,7 +88,7 @@ const RendimientoGrupo = () => {
                                 <h3>Integrantes del Grupo</h3>
                                 <ul>
                                     {alumnos.map((alumno, index) => (
-                                        <li key={alumno.id} style={{color: participacionData[index].color,fontSize:'1rem',listStyle:'none'}}>
+                                        <li key={alumno.id} style={{color: participacionData[index].color,fontSize:'1rem',listStyle:'none', marginRight: '10 %'}}>
                                             {alumno.legajo} - {alumno.nombre} {alumno.apellido}
                                         </li>
                                     ))}

@@ -24,7 +24,6 @@ async function obtenerUltimasNotificaciones(req, res, next) {
       order: [['fecha', 'DESC']],
       limit: 5 // Limitar a las últimas 5 notificaciones
     })
-    console.log(notificaciones)
     return res.status(200).json(notificaciones)
   } catch (error) {
     console.error(error)

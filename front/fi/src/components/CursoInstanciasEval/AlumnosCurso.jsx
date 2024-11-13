@@ -27,6 +27,7 @@ import { RxCrossCircled } from "react-icons/rx";
 import { BreadCrumb } from 'primereact/breadcrumb';
 import { AiOutlineHome } from "react-icons/ai";
 import axios from 'axios';
+import {IoDownloadOutline} from "react-icons/io5";
 
 function AlumnosCurso() {
   //Estados para agregar un alumno
@@ -43,6 +44,7 @@ function AlumnosCurso() {
   });
   const [loading, setLoading] = useState(true); //Maneja estado de la solicitud
   const [globalFilterValue, setGlobalFilterValue] = useState('');
+  const [isAdding, setIsAdding] = useState(false); // Estado para manejar el estado de agregar alumnos
   const handleScroll = () => { //Manejo del desplazo a la sección Agregar Alumnos
     document.getElementById('agregarAlumnos').scrollIntoView({ behavior: 'smooth'})
   };
@@ -73,6 +75,7 @@ function AlumnosCurso() {
     if (!file) {
       console.log('No se seleccionó un archivo')
       //alert('Por favor, selecciona un archivo.');
+        setLoading(false)
       return;
     }
     const formData = new FormData();
@@ -83,10 +86,12 @@ function AlumnosCurso() {
     if (!allowedExtensions.exec(file.name)) {
         console.log('Archivo inválido')
         //alert('Por favor, selecciona un archivo válido (.xls o .xlsx).');
+        setLoading(false)
         return;
     }
 
     try {
+
       const response = await axios.post(`/curso/${id}/estudiantesExcel`, formData, { withCredentials: true });
       if (response.status === 200) {
         console.log('Estudiantes agregados con éxito', response.data)
@@ -126,28 +131,34 @@ function AlumnosCurso() {
 
   const handleAgregarAlumnoConLegajo = async (e) => { //Agregar alumno con el legajo
     e.preventDefault();
-    if(legajo) {
-      try {
-        const response = await axios.post(`/curso/${id}/estudiante`, {
-        legajo: legajo }, { withCredentials: true })
-        if (response.status === 201) {
-          fetchAlumnos(); //Actualiza lista de estudiantes
-          toast.current.show({ severity: 'success', summary: 'Éxito', detail: `¡Alumno con legajo ${legajo} agregado con éxito!`, life: 3000 })
+    if (isAdding) return; // Evitar múltiples clics
+    setIsAdding(true);
+    if (legajo) {
+        try {
+            const response = await axios.post(`/curso/${id}/estudiante`, {
+                legajo: legajo
+            }, { withCredentials: true });
+            if (response.status === 201) {
+                fetchAlumnos(); // Actualiza lista de estudiantes
+                toast.current.show({ severity: 'success', summary: 'Éxito', detail: `¡Alumno con legajo ${legajo} agregado con éxito!`, life: 3000 });
+            }
+        } catch (err) {
+            if (err.response.status === 409) {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: `El alumno con legajo ${legajo} ya pertenece al curso`, life: 3000 });
+            } else if (err.response.status === 404) {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: `Alumno con ${legajo} no encontrado, por favor, revise nuevamente el legajo ingresado`, life: 3500 });
+            } else {
+                console.log('Error al agregar al alumno', err);
+            }
+        } finally {
+            setIsAdding(false);
         }
-      } catch (err) {
-        if (err.response.status === 409) {
-          toast.current.show({ severity: 'error', summary: 'Error', detail: `El alumno con ${legajo} ya pertenece al curso`, life: 3000 })
-        }else if (err.response.status === 404){
-          toast.current.show({ severity: 'error', summary: 'Error', detail: `Alumno con ${legajo} no encontrado, por favor, revise nuevamente el legajo ingresado`, life: 3500 })
-        }else{
-          console.log('Error al agregar al alumno', err)
-        }
-      }
     } else {
-      console.log('Por favor, ingrese un legajo')
-      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Debe ingresar un legajo', life: 3000 })
+        console.log('Por favor, ingrese un legajo');
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Debe ingresar un legajo', life: 3000 });
+        setIsAdding(false);
     }
-  }
+}
 
   const handleGenerarCodigo = async (e) => { //Generar código de vinculación
     e.preventDefault();
@@ -186,9 +197,14 @@ function AlumnosCurso() {
         toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Alumno/s eliminado/s con éxito', life: 3000 });
       }
     } catch (err) {
-      console.log('Error al eliminar al alumno', err)
+        if (err.response) {
+          toast.current.show({ severity: 'error', summary: 'Error', detail: err.response.data.error.details, life: 3000 })
+        } else {
+            console.log('Error al eliminar al alumno:', err)
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar al alumno', life: 3000 })
+        }
     }
-  }
+}
 
   const showConfirmDelete = (e) => {
     confirmPopup({
@@ -263,15 +279,18 @@ function AlumnosCurso() {
                   type="file" 
                   accept=".xlsx, .xls" 
                   style={{ display: 'none' }} 
-                  onChange={handleCargarAlumnosExcel} 
+                  onChange={(e)=>{
+                      setLoading(true);
+                      handleCargarAlumnosExcel(e);
+                  }}
               />
             </span>
           </OverlayTrigger>
           <OverlayTrigger overlay={
             <Tooltip id="tooltip-eliminar-alumno" className='tooltip-eliminar-alumno'>Eliminar alumno</Tooltip>}>
-            <div className="d-inline-block flex flex-wrap justify-content-center gap-2">
+            <div className="d-inline-block" style={{verticalAlign:'bottom'}}>
               <ConfirmPopup group="templating" />
-              <BsTrash className='table-header-eliminar-alumno-icon' data-tip='Eliminar alumno' color='#e6838c' size={32} onClick={showConfirmDelete} />
+                <Button icon={<BsTrash className='table-header-eliminar-alumno-icon' data-tip='Eliminar alumno' color='#e6838c' size={32}/>} onClick={showConfirmDelete} style={{backgroundColor:'transparent',border:'none', margin:0,padding:0}}></Button>
             </div>
           </OverlayTrigger>
         </div>
@@ -297,7 +316,7 @@ function AlumnosCurso() {
           <BreadCrumb className='recursos-breadcrumb' model={items} home={home} />
         </div>
         <div className='banner-recursos py-4'>
-          <h1 className='nombre-materia'>Listado de alumnos</h1>
+          <h1 className='nombre-materia'>Alumnos</h1>
           <p className='nombre-comision'>{curso.Materium.nombre} {curso.Comision.nombre}</p>
         </div>
         </>

@@ -93,13 +93,26 @@ export default function Recursos() {
             console.log('No se ha logrado subir el recurso:', err)
         }
     }
-
-    const handleRemoveFile = (file, props) => {
-        const newFiles = files.filter(f => f.name !== file.name);
-        setFiles(newFiles);
-        updateTotalSize(newFiles);
-        props.onRemove(file);
-    };
+    const handleRemoveFile = async () => {
+        try {
+            setLoading(true)
+            for (const fileId of selectedItems) {
+                const response = await axios.delete(`/archivo/${fileId}`, { withCredentials: true })
+                if (response.status === 204) {
+                    const newFiles = files.filter(f => f.id !== fileId)
+                    setFiles(newFiles)
+                    updateTotalSize(newFiles)
+                }
+            }
+            await handleVerRecursos(); // Actualizar la lista de archivos
+            toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Archivos eliminados con éxito', life: 3000 })
+        } catch (err) {
+            console.log('No se ha logrado eliminar el recurso:', err)
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'No se ha logrado eliminar el recurso', life: 3000 })
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const onModalClear = () => {
         setTotalSize(0);
@@ -140,12 +153,15 @@ export default function Recursos() {
     const handleVerRecursos = async () => {
         try {
             console.log(id)
-            const response = await axios.get(`/archivo/curso/${id}`, {withCredentials: true})
-            if(response.data){
+            const response = await axios.get(`/archivo/curso/${id}`, { withCredentials: true });
+            if (response.data) {
                 setArchivos(response.data)
+            } else {
+                setArchivos([]) // Asegurarse de que la lista de archivos esté vacía si no hay datos
             }
         } catch (err) {
             console.log('No se ha logrado obtener los recursos:', err)
+            setArchivos([])// Asegurarse de que la lista de archivos esté vacía si hay un error
         }
     }
 
@@ -194,9 +210,7 @@ export default function Recursos() {
         }
     };
 
-    const accept = () => {
-        toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Recurso/s eliminado/s con éxito', life: 3000 });
-    };
+
 
     const showConfirmDelete = (event) => {
         confirmPopup({
@@ -216,7 +230,7 @@ export default function Recursos() {
             rejectLabel: 'Cancelar',
             rejectClass: 'p-button-sm',
             acceptClass: 'p-button-outlined p-button-sm btn-eliminar-recurso',
-            accept
+            accept: handleRemoveFile // Llamar a handleRemoveFile al aceptar
         });
     };
 

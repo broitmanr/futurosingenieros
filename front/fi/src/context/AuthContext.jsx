@@ -8,7 +8,8 @@ export const AuthProvider = ({ children }) => {
     });
 
     // MODIFICACIONES PARA GUARDAR LA DATA DEL USER.
-    const [userData, setUserData] = useState(() => { const savedUserData = localStorage.getItem('userData')
+    const [userData, setUserData] = useState(() => { 
+        const savedUserData = localStorage.getItem('userData')
         try { 
             return savedUserData ? JSON.parse(savedUserData) : null; // Obtener data del usuario logeado 
         } catch (error) {

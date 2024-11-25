@@ -232,9 +232,9 @@ export const CursoInstanciasEval = () => {
                                                         <p className="instancias-eval-nombre m-0">{value.nombre}</p>
                                                         { role === 'D' && (
                                                             <div className="ms-auto d-flex align-items-center" onClick={(e) => e.stopPropagation()}>
-                                                                <div>
+                                                                {/* <div>
                                                                     <TbEdit color='#632f79' size={24} className="icon-delete-curso" />
-                                                                </div>
+                                                                </div> */}
                                                                 <BsTrash color='red' size={21} className="icon-delete-curso"
                                                                 onClick={(e) => showConfirmDelete(e, value)} />
                                                                 <ConfirmDialog

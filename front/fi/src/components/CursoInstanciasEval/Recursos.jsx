@@ -85,6 +85,7 @@ export default function Recursos() {
                 console.log('Agregado con éxito', response.data)
                 setLoading(false)
                 handleVerRecursos()
+                toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Archivo/s agregado/s con éxito', life: 3000 })
                 onModalClear()
                 handleCloseUpload()
             }
@@ -105,7 +106,7 @@ export default function Recursos() {
                 }
             }
             await handleVerRecursos(); // Actualizar la lista de archivos
-            toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Archivos eliminados con éxito', life: 3000 })
+            toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Archivo/s eliminado/s con éxito', life: 3000 })
         } catch (err) {
             console.log('No se ha logrado eliminar el recurso:', err)
             toast.current.show({ severity: 'error', summary: 'Error', detail: 'No se ha logrado eliminar el recurso', life: 3000 })

@@ -16,6 +16,8 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { TbEdit } from "react-icons/tb";
 import { EntregaModify } from './EntregaModicarForm';
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { AiOutlineHome } from "react-icons/ai";
 
 export const InstanciaEvalEntregas = () => {
     const { role } = useRole()
@@ -34,6 +36,35 @@ export const InstanciaEvalEntregas = () => {
     const handleCloseModify = () => setShowModify(false);
     const [isLoading, setLoading] = useState(true);
     const badges = ['dark', 'success', 'info', 'danger', 'warning', 'light']
+    const [curso, setCurso] = useState(null);
+
+    useEffect(() => { // OBTENER LOS DATOS DEL CURSO
+        const cursoID = instancia.curso_id
+        if(cursoID && cursoID !== 'null' && curso !== ''){
+           axios.get(`/curso/${cursoID}`, { withCredentials: true })
+            .then(response => {
+                setCurso(response.data)
+            })
+            .catch(err => {
+                console.log(err)
+            }) 
+        }else{
+            console.log('No es válido el curso id')
+        }
+    }, [instancia])
+
+    const items = [
+        {template: () => 
+            <Link className="item-path-recursos" to={`/curso/${instancia.curso_id}`}>
+                {curso && curso.Materium ? curso.Materium.nombre: 'Cargando...'}
+            </Link>},
+        {template: () => 
+            <Link className="item-path-recursos">
+                {instancia.nombre}
+            </Link>
+        }
+        ]
+        const home = { icon: <AiOutlineHome size={22} color='#1a2035' />, url: ('/cursos') }
 
     useEffect(()=> {
         const idInstanciaEval = params.id;
@@ -96,17 +127,17 @@ export const InstanciaEvalEntregas = () => {
                 <div className='p-d-flex row p-jc-between'>
                     <span className='entrega-label-cd'>{entrega.label}</span>
                     <div className='icon-container-entrega' onClick={(e) => e.stopPropagation()}>
-                        <TbEdit color='#ead9f5' size={24} className="icon-delete-entrega"
-                        onClick={() => setShowModify(true)} />
+                        {/* <TbEdit color='#ead9f5' size={24} className="icon-delete-entrega"
+                        onClick={() => setShowModify(true)} /> */}
                         <BsTrash color='red' size={22} className="icon-delete-entrega"
                         onClick={(e) => showConfirmDeleteEntrega(e, entrega)} />
                     </div>
-                    {
+                    {/* {
                         idInstanciaEval ? 
                             <EntregaModify showModify={showModify} handleCloseModify={handleCloseModify} idInstanciaEval={idInstanciaEval} 
-                            entregas={entregas} /*handleEntregaAgregada={handleEntregaAgregada}*/ /> 
+                            entregas={entregas} handleEntregaAgregada={handleEntregaAgregada} /> 
                         : null
-                    }
+                    } */}
                 </div>
                 
             )
@@ -128,7 +159,9 @@ export const InstanciaEvalEntregas = () => {
         try {
             const response = await axios.delete(`/entregaPactada/${entregaDelete}`, { withCredentials: true });
             if (response.status === 204) {
-                fetchEntregaInstancia();
+                setTimeout(() => {
+                   fetchEntregaInstancia(); 
+                }, 1000)
                 toastR.current.show({ severity: 'success', summary: 'Éxito', detail: 'Entrega pactada eliminada con éxito', life: 3000 });
             }
         } catch (err) {
@@ -155,6 +188,9 @@ export const InstanciaEvalEntregas = () => {
     return (
         <div className='actividad-entregas-container'>
         <>
+            <div className='breadscrumb-container'>
+                <BreadCrumb className='entrega-detalle-breadcrumb' model={items} home={home} />
+            </div>
             <section className="seccionBanner py-4 banner-instancias">
                 <div className="container">
                     <div className="row">

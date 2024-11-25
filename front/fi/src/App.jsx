@@ -19,8 +19,7 @@ import axios from "axios";
 import RendimientoAlumno from "./components/Rendimiento/RendimientoAlumno.jsx";
 import RendimientoGrupo from "./components/Rendimiento/RendimientoGrupo.jsx";
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
-import { PerfilAlumno } from './components/Perfil/PerfilAlumno.jsx';
-import { PerfilDocente } from './components/Perfil/PerfilDocente.jsx';
+import { Perfil } from './components/Perfil/Perfil.jsx';
 
 
 axios.defaults.baseURL = 'http://localhost:5000/api'
@@ -47,18 +46,10 @@ const AppContent = () => {
           }
         />
         <Route
-          path="/perfil/alumno"
+          path="/mi-perfil"
           element={
-            <PrivateRoute allowedRoles={['A']}>
-              <PerfilAlumno />
-            </PrivateRoute>
-          }
-        />
-         <Route
-          path="/perfil/docente"
-          element={
-            <PrivateRoute allowedRoles={['D']}>
-              <PerfilDocente />
+            <PrivateRoute allowedRoles={['D', 'A']}>
+              <Perfil />
             </PrivateRoute>
           }
         />

@@ -74,8 +74,7 @@ function AlumnosCurso() {
     const file = e.target.files[0];
     if (!file) {
       console.log('No se seleccionó un archivo')
-      //alert('Por favor, selecciona un archivo.');
-        setLoading(false)
+      setLoading(false)
       return;
     }
     const formData = new FormData();
@@ -85,7 +84,7 @@ function AlumnosCurso() {
     const allowedExtensions = /(\.xls|\.xlsx)$/;
     if (!allowedExtensions.exec(file.name)) {
         console.log('Archivo inválido')
-        //alert('Por favor, selecciona un archivo válido (.xls o .xlsx).');
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Por favor, selecciona un archivo válido (.xls o .xlsx)', life: 3000 });
         setLoading(false)
         return;
     }
@@ -96,6 +95,7 @@ function AlumnosCurso() {
       if (response.status === 200) {
         console.log('Estudiantes agregados con éxito', response.data)
         fetchAlumnos()
+        toast.current.show({ severity: 'success', summary: 'Éxito', detail: `¡Alumno/s agregado/s con éxito!`, life: 3000 });
         setLoading(false)
       }
     }catch (err) {
@@ -195,7 +195,7 @@ function AlumnosCurso() {
       }
       const response = await axios.delete(`/curso/${id}/estudiantes`, {
       data: { estudiantes: selectedAlumnos }, withCredentials: true })
-      if (response.data) {
+      if (response.status===204) {
         fetchAlumnos();
         setSelectedAlumnos([])
         toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Alumno/s eliminado/s con éxito', life: 3000 });

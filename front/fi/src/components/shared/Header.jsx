@@ -1,47 +1,48 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useRole } from '../../context/RolesContext';
-import { FaRegUserCircle } from "react-icons/fa";
-import './SharedStyles.css';
-import Dropdown from 'react-bootstrap/Dropdown';
+import React, { useRef, useState, useEffect } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { useRole } from '../../context/RolesContext'
+import { FaRegUserCircle } from "react-icons/fa"
+import './SharedStyles.css'
+import Dropdown from 'react-bootstrap/Dropdown'
 import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
-import { GoSignOut } from "react-icons/go";
-import { CgProfile } from "react-icons/cg";
-import { FaRegBell } from "react-icons/fa6";
-import { Badge } from 'primereact/badge';
-import moment from "moment";
-import { PiGraduationCapDuotone } from "react-icons/pi";
+import { useAuth } from '../../context/AuthContext'
+import { GoSignOut } from "react-icons/go"
+import { CgProfile } from "react-icons/cg"
+import { FaRegBell } from "react-icons/fa6"
+import { Badge } from 'primereact/badge'
+import moment from "moment"
+import { PiGraduationCapDuotone } from "react-icons/pi"
 
 const Header = () => {
-    const { role, setRole } = useRole();
+    const { role, setRole } = useRole()
     const [nombre, setNombre] = useState('')
-    const navigate = useNavigate();
-    const [dropdownUserVisible, setDropdownUserVisible] = useState(false);
-    const dropdownUserRef = useRef(null);
-    const dropdownNotificationsRef = useRef(null);
-    const { userData, setIsLoggedIn } = useAuth();
-    const [hasNotifications, setHasNotifications] = useState(false);
-    const [notificaciones, setNotificaciones] = useState([]); // Estado para notificaciones
-    const [dropdownNotificacionesVisible, setDropdownNotificacionesVisible] = useState(false); // Para mostrar las notificaciones
+    const navigate = useNavigate()
+    const [dropdownUserVisible, setDropdownUserVisible] = useState(false)
+    const dropdownUserRef = useRef(null)
+    const dropdownNotificationsRef = useRef(null)
+    const { userData, setIsLoggedIn, isLoggedIn } = useAuth()
+    const [hasNotifications, setHasNotifications] = useState(false)
+    const [notificaciones, setNotificaciones] = useState([]) // Estado para notificaciones
+    const [dropdownNotificacionesVisible, setDropdownNotificacionesVisible] = useState(false) // Para mostrar las notificaciones
 
     useEffect(() => {
-        if (role && location.pathname === '/') {
-            navigate('/cursos');
+        if (isLoggedIn && role && location.pathname === '/login') {
+            navigate('/cursos')
         }
-    }, [role, navigate, location.pathname]);
+    }, [isLoggedIn, role, navigate, location.pathname])
 
-    /*new*/
-    const handleProfileClick = () => {
-        if (role === 'A') {  // Si el rol es alumno
-            navigate('/perfil/alumno'); // Redirige a la página de perfil de alumno
-        } else if (role === 'D') {
-            navigate('/perfil/docente');
+    useEffect(() => {
+        if (!isLoggedIn && !role && !location.pathname === '/login') {
+            navigate('/login')
         }
+    }, [isLoggedIn, role, navigate, location.pathname])
+
+    const handleProfileClick = () => {
+        navigate('/mi-perfil') // Redirige a la página de perfil de alumno
     }
 
     const toogleDropdownUser = () => {
-        setDropdownUserVisible(!dropdownUserVisible);
+        setDropdownUserVisible(!dropdownUserVisible)
     }
 
     const toogleDropdownNotificaciones = () => {
@@ -63,6 +64,7 @@ const Header = () => {
                 setIsLoggedIn(false)
                 localStorage.removeItem('role')
                 localStorage.removeItem('userData')
+                localStorage.removeItem('isLoggedIn')
                 navigate('/login')
             }
         } catch (err) {
@@ -99,16 +101,11 @@ const Header = () => {
     }
     // Obtener las notificaciones al montar el componente
     useEffect(() => {
-
         obtenerNotificaciones()
-
         const interval = setInterval(obtenerNotificaciones, 15000);
-
         // Limpia el intervalo cuando el componente se desmonte
         return () => clearInterval(interval);
     }, [])
-
-
 
     // Marcar notificación como leída
     const marcarComoLeida = async (id) => {
@@ -138,7 +135,7 @@ const Header = () => {
                         <PiGraduationCapDuotone className='btn-fi-icon' color="#fff" size={22} />
                         FUTUROS INGENIEROS
                     </div>
-                    {role && (
+                    {isLoggedIn && role && (
                         <div className='user-items-container'>
                             {/* Icono de notificaciones */}
                             <div className='flex flex-wrap justify-content-center gap-4' ref={dropdownNotificationsRef}>
@@ -174,7 +171,7 @@ const Header = () => {
                                 <Dropdown show={dropdownUserVisible} ref={dropdownUserRef} onToggle={toogleDropdownUser}>
                                     <Dropdown.Toggle className='dropdown-toogle-user' as={FaRegUserCircle} size={32} data-cy="perfil-icon"/>
                                     <Dropdown.Menu className='dropdown-menu-user'>
-                                    <Dropdown.Item className='dropdown-item-user' eventKey="1" onClick={handleProfileClick}>
+                                        <Dropdown.Item className='dropdown-item-user' eventKey="1" onClick={handleProfileClick}>
                                             <CgProfile size={24} /> Mi perfil
                                         </Dropdown.Item>
                                         <Dropdown.Item className='dropdown-item-user' eventKey="2" onClick={handleLogOut}><GoSignOut size={24}  data-cy="logout"  /> Cerrar sesión</Dropdown.Item>
@@ -186,8 +183,8 @@ const Header = () => {
                     )}
                 </div>
             </nav>
-        </React.Fragment>
-    );
-};
+        </React.Fragment>  
+    )
+}
 
 export default Header;

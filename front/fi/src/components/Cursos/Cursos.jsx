@@ -216,13 +216,13 @@ const Cursos = () => {
                                                 <Col className="col-md-2">
                                                     <div onClick={(e) => e.stopPropagation()}>
                                                         <div className="flex flex-wrap justify-content-center">
-                                                            <div>
+                                                            {/* <div>
                                                                 <TbEdit color='#632f79' size={22} className="icon-delete-curso"
                                                                 onClick={() => {
                                                                     setCursoToModify(item)
                                                                     setShowFormModificar(true)
                                                                 }} />
-                                                            </div>
+                                                            </div> */}
                                                             <BsTrash color='red' size={22} className="icon-delete-curso"
                                                             onClick={(e) => showConfirmDelete(e, item)} />
                                                         </div>
@@ -254,9 +254,9 @@ const Cursos = () => {
                             </Card>
                         </Col>
                     ))}
-                    {cursoToModify && (
+                    {/* {cursoToModify && (
                         <CursoModificar showFormModificar={showFormModificar} handleCloseModificarForm={handleCloseModificarForm} curso={cursoToModify} handleCursoModificado={handleCursoModificado} />
-                    )}
+                    )} */}
                 </Row>
             )}
         </div>

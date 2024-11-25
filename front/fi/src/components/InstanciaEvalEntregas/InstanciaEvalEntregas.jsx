@@ -128,7 +128,10 @@ export const InstanciaEvalEntregas = () => {
         try {
             const response = await axios.delete(`/entregaPactada/${entregaDelete}`, { withCredentials: true });
             if (response.status === 204) {
-                fetchEntregaInstancia();
+                setTimeout(()=>{
+                    fetchEntregaInstancia();
+                },1000)
+                
                 toastR.current.show({ severity: 'success', summary: 'Éxito', detail: 'Entrega pactada eliminada con éxito', life: 3000 });
             }
         } catch (err) {
@@ -204,7 +207,7 @@ export const InstanciaEvalEntregas = () => {
                                     onHide={reject}
                                     message={
                                         <div className="flex flex-column align-items-center w-full gap-3">
-                                            <span className="popup-message">¿Está seguro que desea eliminar el curso?</span>
+                                            <span className="popup-message">¿Está seguro que desea eliminar la entrega?</span>
                                         </div>
                                     }
                                     header="Confirmación"

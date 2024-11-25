@@ -93,7 +93,7 @@ function AlumnosCurso() {
     try {
 
       const response = await axios.post(`/curso/${id}/estudiantesExcel`, formData, { withCredentials: true });
-      if (response.status === 200) {
+      if (response.status === 204) {
         console.log('Estudiantes agregados con éxito', response.data)
         fetchAlumnos()
         setLoading(false)
@@ -195,7 +195,7 @@ function AlumnosCurso() {
       }
       const response = await axios.delete(`/curso/${id}/estudiantes`, {
       data: { estudiantes: selectedAlumnos }, withCredentials: true })
-      if (response.data) {
+      if (response.status === 204) {
         fetchAlumnos();
         setSelectedAlumnos([])
         toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Alumno/s eliminado/s con éxito', life: 3000 });

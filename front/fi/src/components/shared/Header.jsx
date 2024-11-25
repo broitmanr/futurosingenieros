@@ -56,7 +56,7 @@ const Header = () => {
 
     const handleLogOut = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/auth/sign-out', { withCredentials: true })
+            const response = await axios.post('https://api.futurosingenieros.site/auth/sign-out', { withCredentials: true })
             if (response) {
                 setDropdownUserVisible(false)
                 setRole('')
@@ -89,13 +89,16 @@ const Header = () => {
     }, [])
 
     const obtenerNotificaciones = async () => {
-        try {
-            const response = await axios.get('/notificacion', { withCredentials: true })
-            setNotificaciones(response.data)
-            setHasNotifications(response.data.some(notif => !notif.leido))
-        } catch (error) {
-            console.log('Error al obtener las notificaciones:', error)
+        if (role){
+            try {
+                const response = await axios.get('/notificacion', { withCredentials: true })
+                setNotificaciones(response.data)
+                setHasNotifications(response.data.some(notif => !notif.leido))
+            } catch (error) {
+                console.log('Error al obtener las notificaciones:', error)
+            }
         }
+      
     }
     // Obtener las notificaciones al montar el componente
     useEffect(() => {
@@ -106,7 +109,7 @@ const Header = () => {
 
         // Limpia el intervalo cuando el componente se desmonte
         return () => clearInterval(interval);
-    }, [])
+    }, [role])
 
 
 

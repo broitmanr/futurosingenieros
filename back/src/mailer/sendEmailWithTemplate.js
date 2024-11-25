@@ -24,7 +24,7 @@ async function mailRegistro (mail, nombre) {
     attachments: [
       {
         filename: 'logo.png',
-        path: '../back/src/utils/logo.png',
+        path: '/app/src/utils/logo.png',
         cid: 'logo@empresa.com'
       }
     ]
@@ -90,7 +90,7 @@ async function mailEntrega(mails, mensajePersonalizado) {
     attachments: [
       {
         filename: 'logo.png',
-        path: '../back/src/utils/logo.png',
+        path: '/app/src/utils/logo.png',
         cid: 'logo@empresa.com'
       }
     ]

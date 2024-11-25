@@ -50,7 +50,7 @@ export default function SignOut() {
         }else{
             setValidatedFirst(false);
             try{
-                const response = await axios.post('http://localhost:5000/auth/sign-up',userData, { withCredentials: true })
+                const response = await axios.post('https://api.futurosingenieros.site/auth/sign-up',userData, { withCredentials: true })
                 if(response.data.success){
                     toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Registro exitoso', life: 3000 });
                     navigate('/login')
@@ -82,7 +82,7 @@ export default function SignOut() {
             setValidatedSecond(false);
             try{
                 console.log(userData,personData)
-                const response = await axios.post('http://localhost:5000/auth/sign-up-zero',{userData,personData}, { withCredentials: true })
+                const response = await axios.post('https://api.futurosingenieros.site/auth/sign-up-zero',{userData,personData}, { withCredentials: true })
                 if(response.data.success){
                     toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Registro exitoso', life: 3000 });
                     navigate('/login')

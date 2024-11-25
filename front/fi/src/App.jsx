@@ -23,7 +23,7 @@ import { PerfilAlumno } from './components/Perfil/PerfilAlumno.jsx';
 import { PerfilDocente } from './components/Perfil/PerfilDocente.jsx';
 
 
-axios.defaults.baseURL = 'http://localhost:5000/api'
+axios.defaults.baseURL = 'https://api.futurosingenieros.site/api'
 
 const AppContent = () => {
   const { isLoggedIn } = useAuth()

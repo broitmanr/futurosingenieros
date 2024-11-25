@@ -20,7 +20,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import moment from "moment/moment";
 
-const PRIMARY_PDF_URL = "http://localhost:5000/api/archivo/";
+const PRIMARY_PDF_URL = "https://api.futurosingenieros.site/api/archivo/";
 
 const getNextId = () => String(Math.random()).slice(2);
 

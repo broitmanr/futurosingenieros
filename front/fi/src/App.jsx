@@ -22,7 +22,7 @@ import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { Perfil } from './components/Perfil/Perfil.jsx';
 
 
-axios.defaults.baseURL = 'http://localhost:5000/api'
+axios.defaults.baseURL = 'https://api.futurosingenieros.site/api'
 
 const AppContent = () => {
   const { isLoggedIn } = useAuth()

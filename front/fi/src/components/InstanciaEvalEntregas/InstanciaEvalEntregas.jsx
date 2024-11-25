@@ -240,7 +240,7 @@ export const InstanciaEvalEntregas = () => {
                                     onHide={reject}
                                     message={
                                         <div className="flex flex-column align-items-center w-full gap-3">
-                                            <span className="popup-message">¿Está seguro que desea eliminar el curso?</span>
+                                            <span className="popup-message">¿Está seguro que desea eliminar la entrega?</span>
                                         </div>
                                     }
                                     header="Confirmación"

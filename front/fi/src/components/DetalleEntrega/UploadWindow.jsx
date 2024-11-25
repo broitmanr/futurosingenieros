@@ -54,7 +54,7 @@ export default function UploadWindow({ entregaPactadaId, onUploadSuccess }) {
             });
             formData.append('entregaPactadaId', entregaPactadaId);
 
-            const response = await axios.post(`http://localhost:5000/api/entrega/`, formData, {
+            const response = await axios.post(`https://api.futurosingenieros.site/api/entrega/`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 withCredentials: true
             });

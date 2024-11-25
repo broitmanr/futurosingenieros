@@ -57,7 +57,12 @@ const crearEntrega = async (req, res, next) => {
         where: {
           entregaPactada_ID: entregaPactadaId,
           [models.Sequelize.Op.or]: [
-            { grupo_ID: grupoId },
+            {
+              [models.Sequelize.Op.and]: [
+                { grupo_ID: grupoId },
+                { grupo_ID: { [models.Sequelize.Op.not]: null } }
+              ]
+            },
             { persona_ID: res.locals.usuario.persona_id }
           ]
         },

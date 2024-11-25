@@ -29,6 +29,7 @@ async function crear (req, res, next) {
         include: [
           {
             model: models.Persona,
+            required:false,
             where: { rol: 'A' },
             include: {
               model: models.Usuario,

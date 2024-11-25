@@ -73,15 +73,21 @@ export default function Recursos() {
     };
     
     const handleSubirRecurso = async () => {
-        const formData = new FormData();
-        files.forEach(file => {
-            formData.append('files', file);
-        });
-
-        try{
-            setLoading(true)
-            const response = await axios.post(`/archivo/subirMaterial/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true})
-            if(response.data){
+        if (files.length === 0) {
+            toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'Debe seleccionar al menos un archivo para subir', life: 3000 });
+            return;
+        }
+        if (loading) {
+            return; // Evitar múltiples clics
+        }
+        try {
+            setLoading(true);
+            const formData = new FormData();
+            files.forEach(file => {
+                formData.append('files', file);
+            })
+            const response = await axios.post(`/archivo/subirMaterial/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true });
+            if (response.data) {
                 console.log('Agregado con éxito', response.data)
                 setLoading(false)
                 handleVerRecursos()
@@ -89,20 +95,27 @@ export default function Recursos() {
                 onModalClear()
                 handleCloseUpload()
             }
-        }catch(err){
-            setLoading(false)
-            console.log('No se ha logrado subir el recurso:', err)
+        } catch (err) {
+            setLoading(false);
+            console.log('No se ha logrado subir el recurso:', err);
         }
-    }
+    };
     const handleRemoveFile = async () => {
+        if (selectedItems.length === 0) {
+            toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'Debe seleccionar al menos un archivo para eliminar', life: 3000 });
+            return;
+        }
+        if (loading) {
+            return; // Evitar múltiples clics
+        }    
         try {
-            setLoading(true)
+            setLoading(true);
             for (const fileId of selectedItems) {
-                const response = await axios.delete(`/archivo/${fileId}`, { withCredentials: true })
+                const response = await axios.delete(`/archivo/${fileId}`, { withCredentials: true });
                 if (response.status === 204) {
-                    const newFiles = files.filter(f => f.id !== fileId)
-                    setFiles(newFiles)
-                    updateTotalSize(newFiles)
+                    const newFiles = files.filter(f => f.id !== fileId);
+                    setFiles(newFiles);
+                    updateTotalSize(newFiles);
                 }
             }
             await handleVerRecursos(); // Actualizar la lista de archivos
@@ -118,14 +131,13 @@ export default function Recursos() {
     const onModalClear = () => {
         setTotalSize(0);
         setFiles([]);
-    };
-
+    }
     const headerModal = (options) => {
         const { chooseButton, cancelButton } = options;
-        return(
+        return (
             <div className='header-modal-recursos-container'>
                 {chooseButton}
-                <Button icon={<SlCloudUpload color='#155724' />} onClick={handleSubirRecurso} className="p-button-success btn-header-modal-recursos" />
+                <Button icon={<SlCloudUpload color='#155724' />} onClick={handleSubirRecurso} className="p-button-success btn-header-modal-recursos" disabled={loading} />
                 {cancelButton}
                 <div className="flex align-items-center gap-3 ml-auto">
                     <span>{fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B'} / 10 MB</span>
@@ -133,7 +145,7 @@ export default function Recursos() {
                 </div>
             </div>
         )
-    };
+    }
 
     const itemModal = (file, props) => (
         <div className="flex align-items-center flex-wrap">
@@ -312,7 +324,7 @@ export default function Recursos() {
             return (
                 <div className="no-recursos">
                     <img 
-                        src="../../../public/NoEncontrado.png" 
+                        src="/NoEncontrado.png" 
                         alt="No recursos"
                     />
                     <span className='no-recursos-text'>
